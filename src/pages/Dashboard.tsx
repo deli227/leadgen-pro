@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { LeadsTable } from "@/components/leads/LeadsTable"
 import { LeadsFilters } from "@/components/leads/LeadsFilters"
 import { LeadsExport } from "@/components/leads/LeadsExport"
+import { LeadsStats } from "@/components/leads/LeadsStats"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button"
 import { LogOut } from "lucide-react"
@@ -88,7 +89,7 @@ export function Dashboard() {
       const { data, error } = await supabase
         .from('subscription_limits')
         .select('daily_leads_limit, monthly_leads_limit')
-        .eq('type', profile.subscription_type)
+        .eq('subscription_type', profile.subscription_type)
         .single();
       
       if (error) throw error;
@@ -100,9 +101,13 @@ export function Dashboard() {
   const { data: supabaseLeads = [] } = useQuery({
     queryKey: ['leads'],
     queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
       const { data, error } = await supabase
         .from('leads')
         .select('*')
+        .eq('user_id', user.id);
       
       if (error) throw error;
       return data as SupabaseLead[];
@@ -155,16 +160,6 @@ export function Dashboard() {
             Tableau de bord des leads
           </h1>
           <div className="flex gap-4 items-center">
-            {profile && limits && (
-              <div className="text-primary-light text-sm">
-                <span className="mr-4">
-                  {profile.leads_generated_today}/{limits.daily_leads_limit} leads aujourd'hui
-                </span>
-                <span>
-                  {profile.leads_generated_this_month}/{limits.monthly_leads_limit} leads ce mois
-                </span>
-              </div>
-            )}
             <LeadsExport leads={leads} />
             <Button
               onClick={handleLogout}
@@ -176,6 +171,17 @@ export function Dashboard() {
             </Button>
           </div>
         </div>
+
+        {profile && limits && (
+          <div className="mb-8">
+            <LeadsStats
+              dailyLeadsLeft={limits.daily_leads_limit - profile.leads_generated_today}
+              monthlyLeadsLeft={limits.monthly_leads_limit - profile.leads_generated_this_month}
+              totalDailyLeads={limits.daily_leads_limit}
+              totalMonthlyLeads={limits.monthly_leads_limit}
+            />
+          </div>
+        )}
         
         <div className="grid gap-8">
           <LeadsFilters filters={filters} setFilters={setFilters} />
