@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { ChartBar, Building2, Mail, Phone, LinkedinIcon, TwitterIcon, TrendingUp, AlertTriangle } from "lucide-react"
+import { ChartBar, Building2, Mail, Phone, LinkedinIcon, TwitterIcon, TrendingUp, AlertTriangle, MapPin, Star } from "lucide-react"
 
 interface LeadDetailsProps {
   lead: {
@@ -14,6 +14,8 @@ interface LeadDetailsProps {
     company: string
     email: string
     phone: string
+    address?: string
+    qualification: number
     socialMedia: {
       linkedin: string
       twitter: string
@@ -36,8 +38,8 @@ export function LeadDetails({ lead, onClose }: LeadDetailsProps) {
             <CardDescription className="text-primary-light/70">{lead.industry}</CardDescription>
           </div>
           <div className="flex items-center gap-2">
-            <ChartBar className="h-5 w-5 text-primary" />
-            <span className="text-xl font-bold text-primary-light">{lead.score.toFixed(1)}</span>
+            <Star className="h-5 w-5 text-primary" fill="currentColor" />
+            <span className="text-xl font-bold text-primary-light">{lead.qualification}/10</span>
           </div>
         </div>
       </CardHeader>
@@ -58,6 +60,10 @@ export function LeadDetails({ lead, onClose }: LeadDetailsProps) {
                 <div className="flex items-center gap-2 text-primary-light">
                   <Phone className="h-4 w-4 text-primary-light/70" />
                   <span>{lead.phone}</span>
+                </div>
+                <div className="flex items-center gap-2 text-primary-light">
+                  <MapPin className="h-4 w-4 text-primary-light/70" />
+                  <span>{lead.address || "Adresse non spécifiée"}</span>
                 </div>
               </div>
             </div>
@@ -81,7 +87,7 @@ export function LeadDetails({ lead, onClose }: LeadDetailsProps) {
             </div>
 
             <div className="space-y-2">
-              <h3 className="text-lg font-semibold text-primary-light">Analyse IA</h3>
+              <h3 className="text-lg font-semibold text-primary-light">Analyse</h3>
               <div className="space-y-4">
                 <div>
                   <div className="flex items-center gap-2 mb-2">

@@ -20,6 +20,8 @@ export function Dashboard() {
       company: "TechCorp",
       email: "contact@techcorp.com",
       phone: "+33 1 23 45 67 89",
+      address: "123 rue de la Tech, 75001 Paris",
+      qualification: 8,
       socialMedia: {
         linkedin: "techcorp",
         twitter: "@techcorp"
@@ -34,6 +36,8 @@ export function Dashboard() {
       company: "EcoSolutions",
       email: "info@ecosolutions.fr",
       phone: "+33 1 98 76 54 32",
+      address: "45 avenue Verte, 69002 Lyon",
+      qualification: 7,
       socialMedia: {
         linkedin: "ecosolutions",
         twitter: "@ecosolutions"

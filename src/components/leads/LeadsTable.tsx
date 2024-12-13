@@ -7,17 +7,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { LineChart, Eye, NotebookPen } from "lucide-react"
+import { LineChart, Eye, NotebookPen, MapPin, Star, PlusCircle } from "lucide-react"
 import { LeadDetails } from "./LeadDetails"
 import { LeadNotes } from "./LeadNotes"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { useToast } from "@/components/ui/use-toast"
+import { Button } from "@/components/ui/button"
 
 interface Lead {
   id: number
   company: string
   email: string
   phone: string
+  address?: string
+  qualification: number
   socialMedia: {
     linkedin: string
     twitter: string
@@ -42,7 +45,18 @@ interface LeadsTableProps {
 export function LeadsTable({ leads, filters }: LeadsTableProps) {
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
   const [showNotes, setShowNotes] = useState(false)
+  const [exportList, setExportList] = useState<number[]>([])
   const { toast } = useToast()
+
+  const handleAddToExport = (leadId: number) => {
+    if (!exportList.includes(leadId)) {
+      setExportList([...exportList, leadId])
+      toast({
+        title: "Lead ajouté à la liste d'export",
+        description: "Le lead a été ajouté avec succès à votre liste d'export."
+      })
+    }
+  }
 
   const filteredLeads = leads.filter(lead => {
     const matchesSearch = lead.company.toLowerCase().includes(filters.search.toLowerCase()) ||
@@ -61,7 +75,8 @@ export function LeadsTable({ leads, filters }: LeadsTableProps) {
           <TableRow className="border-primary-light">
             <TableHead className="text-primary-light">Entreprise</TableHead>
             <TableHead className="text-primary-light">Contact</TableHead>
-            <TableHead className="text-primary-light">Nombre de leads</TableHead>
+            <TableHead className="text-primary-light">Adresse</TableHead>
+            <TableHead className="text-primary-light">Qualification</TableHead>
             <TableHead className="text-primary-light">Secteur</TableHead>
             <TableHead className="text-primary-light">Actions</TableHead>
           </TableRow>
@@ -76,9 +91,16 @@ export function LeadsTable({ leads, filters }: LeadsTableProps) {
                   <div className="text-sm text-primary-light/70">{lead.phone}</div>
                 </div>
               </TableCell>
-              <TableCell>
+              <TableCell className="text-primary-light">
                 <div className="flex items-center gap-2">
-                  <span className="text-primary-light">{filters.leadCount}</span>
+                  <MapPin className="h-4 w-4 text-primary-light/70" />
+                  {lead.address || "Non spécifiée"}
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center gap-1 text-primary-light">
+                  <Star className="h-4 w-4 text-primary" fill="currentColor" />
+                  <span>{lead.qualification}/10</span>
                 </div>
               </TableCell>
               <TableCell className="text-primary-light">{lead.industry}</TableCell>
@@ -86,13 +108,15 @@ export function LeadsTable({ leads, filters }: LeadsTableProps) {
                 <div className="flex gap-2">
                   <Dialog>
                     <DialogTrigger asChild>
-                      <button
+                      <Button
                         onClick={() => setSelectedLead(lead)}
-                        className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-primary-light bg-transparent text-primary-light hover:bg-primary-light/10 h-10 px-4 py-2 animate-fade-up"
+                        variant="outline"
+                        size="sm"
+                        className="border-primary-light text-primary-light hover:bg-primary-light/10"
                       >
                         <Eye className="h-4 w-4 mr-2" />
                         Détails
-                      </button>
+                      </Button>
                     </DialogTrigger>
                     <DialogContent className="bg-secondary-dark border-primary-light">
                       {selectedLead && (
@@ -106,16 +130,18 @@ export function LeadsTable({ leads, filters }: LeadsTableProps) {
                   
                   <Dialog open={showNotes} onOpenChange={setShowNotes}>
                     <DialogTrigger asChild>
-                      <button
+                      <Button
                         onClick={() => {
                           setSelectedLead(lead)
                           setShowNotes(true)
                         }}
-                        className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-primary-light bg-transparent text-primary-light hover:bg-primary-light/10 h-10 px-4 py-2 animate-fade-up"
+                        variant="outline"
+                        size="sm"
+                        className="border-primary-light text-primary-light hover:bg-primary-light/10"
                       >
                         <NotebookPen className="h-4 w-4 mr-2" />
                         Notes
-                      </button>
+                      </Button>
                     </DialogTrigger>
                     <DialogContent className="bg-secondary-dark border-primary-light">
                       {selectedLead && (
@@ -133,13 +159,16 @@ export function LeadsTable({ leads, filters }: LeadsTableProps) {
                     </DialogContent>
                   </Dialog>
                   
-                  <button
-                    onClick={() => console.log("Voir analyse", lead.id)}
-                    className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-primary-light bg-transparent text-primary-light hover:bg-primary-light/10 h-10 px-4 py-2 animate-fade-up"
+                  <Button
+                    onClick={() => handleAddToExport(lead.id)}
+                    variant="outline"
+                    size="sm"
+                    className="border-primary-light text-primary-light hover:bg-primary-light/10"
+                    disabled={exportList.includes(lead.id)}
                   >
-                    <LineChart className="h-4 w-4 mr-2" />
-                    Analyse
-                  </button>
+                    <PlusCircle className="h-4 w-4 mr-2" />
+                    {exportList.includes(lead.id) ? "Ajouté" : "Exporter"}
+                  </Button>
                 </div>
               </TableCell>
             </TableRow>
