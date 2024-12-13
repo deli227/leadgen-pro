@@ -33,8 +33,14 @@ export function LeadsFilters({ filters, setFilters }: LeadsFiltersProps) {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('Non authentifié')
 
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) throw new Error('Session non trouvée')
+
       const response = await supabase.functions.invoke('generate-leads', {
-        body: { filters }
+        body: { filters },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
       })
 
       if (response.error) throw response.error
@@ -43,6 +49,9 @@ export function LeadsFilters({ filters, setFilters }: LeadsFiltersProps) {
         title: "Génération réussie",
         description: "Les leads ont été générés avec succès.",
       })
+
+      // Forcer un rechargement des leads
+      window.location.reload()
     } catch (error) {
       console.error('Erreur:', error)
       toast({
