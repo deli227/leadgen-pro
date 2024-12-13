@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { LineChart, Eye, NotebookPen, MapPin, Star, PlusCircle } from "lucide-react"
+import { LineChart, Eye, NotebookPen, MapPin, Star, PlusCircle, Globe } from "lucide-react"
 import { LeadDetails } from "./LeadDetails"
 import { LeadNotes } from "./LeadNotes"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
@@ -56,6 +56,23 @@ export function LeadsTable({ leads, filters }: LeadsTableProps) {
         description: "Le lead a été ajouté avec succès à votre liste d'export."
       })
     }
+  }
+
+  const handleScrape = async (company: string) => {
+    toast({
+      title: "Scraping en cours",
+      description: `Recherche d'informations pour ${company}...`
+    })
+    
+    // Ici, nous simulerons le scraping pour le moment
+    // Une fois que vous aurez connecté Supabase et ajouté votre clé API,
+    // nous pourrons implémenter la vraie fonctionnalité de scraping
+    setTimeout(() => {
+      toast({
+        title: "Scraping terminé",
+        description: "Connectez-vous à Supabase pour activer le scraping en temps réel."
+      })
+    }, 2000)
   }
 
   const filteredLeads = leads.filter(lead => {
@@ -168,6 +185,16 @@ export function LeadsTable({ leads, filters }: LeadsTableProps) {
                   >
                     <PlusCircle className="h-4 w-4 mr-2" />
                     {exportList.includes(lead.id) ? "Ajouté" : "Exporter"}
+                  </Button>
+
+                  <Button
+                    onClick={() => handleScrape(lead.company)}
+                    variant="outline"
+                    size="sm"
+                    className="bg-primary hover:bg-primary-dark text-white border-none"
+                  >
+                    <Globe className="h-4 w-4 mr-2" />
+                    Scraper
                   </Button>
                 </div>
               </TableCell>
