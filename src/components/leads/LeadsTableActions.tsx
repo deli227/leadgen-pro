@@ -1,11 +1,9 @@
 import { Button } from "@/components/ui/button"
-import { Eye, NotebookPen, PlusCircle, Globe } from "lucide-react"
+import { Eye, NotebookPen, PlusCircle } from "lucide-react"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { useToast } from "@/components/ui/use-toast"
-import { getScrapingApiKey } from "@/utils/scraping"
 import { LeadDetails } from "./LeadDetails"
 import { LeadNotes } from "./LeadNotes"
-import { ApiKeyDialog } from "./ApiKeyDialog"
 
 interface Lead {
   id: number
@@ -41,33 +39,6 @@ export function LeadsTableActions({
 }: LeadsTableActionsProps) {
   const { toast } = useToast()
 
-  const handleScrape = async (company: string) => {
-    const apiKey = await getScrapingApiKey();
-    
-    if (!apiKey) {
-      toast({
-        title: "Clé API manquante",
-        description: "Veuillez configurer votre clé API pour utiliser le scraping.",
-        variant: "destructive"
-      })
-      return
-    }
-
-    toast({
-      title: "Scraping en cours",
-      description: `Recherche d'informations pour ${company}...`
-    })
-    
-    // Simulation du scraping avec la clé API
-    // À remplacer par votre véritable appel API
-    setTimeout(() => {
-      toast({
-        title: "Scraping terminé",
-        description: "Les informations ont été récupérées avec succès."
-      })
-    }, 2000)
-  }
-
   return (
     <div className="flex gap-2">
       <Dialog>
@@ -76,13 +47,13 @@ export function LeadsTableActions({
             onClick={() => onShowDetails(lead)}
             variant="outline"
             size="sm"
-            className="bg-primary hover:bg-primary-dark text-white border-none"
+            className="bg-gradient-to-r from-primary to-primary-dark text-white border-none hover:opacity-90 transition-all duration-300"
           >
             <Eye className="h-4 w-4 mr-2" />
             Détails
           </Button>
         </DialogTrigger>
-        <DialogContent className="bg-secondary-dark border-primary-light">
+        <DialogContent className="bg-secondary-dark border-primary-light backdrop-blur-lg bg-opacity-95">
           <LeadDetails lead={lead} onClose={() => {}} />
         </DialogContent>
       </Dialog>
@@ -91,7 +62,7 @@ export function LeadsTableActions({
         onClick={() => onShowNotes(lead)}
         variant="outline"
         size="sm"
-        className="bg-primary hover:bg-primary-dark text-white border-none"
+        className="bg-gradient-to-r from-primary to-primary-dark text-white border-none hover:opacity-90 transition-all duration-300"
       >
         <NotebookPen className="h-4 w-4 mr-2" />
         Notes
@@ -101,21 +72,11 @@ export function LeadsTableActions({
         onClick={() => onAddToExport(lead.id)}
         variant="outline"
         size="sm"
-        className="bg-primary hover:bg-primary-dark text-white border-none"
+        className="bg-gradient-to-r from-primary to-primary-dark text-white border-none hover:opacity-90 transition-all duration-300"
         disabled={exportList.includes(lead.id)}
       >
         <PlusCircle className="h-4 w-4 mr-2" />
         {exportList.includes(lead.id) ? "Ajouté" : "Exporter"}
-      </Button>
-
-      <Button
-        onClick={() => handleScrape(lead.company)}
-        variant="outline"
-        size="sm"
-        className="bg-primary hover:bg-primary-dark text-white border-none"
-      >
-        <Globe className="h-4 w-4 mr-2" />
-        Scraper
       </Button>
     </div>
   )

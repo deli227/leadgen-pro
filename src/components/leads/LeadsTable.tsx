@@ -12,7 +12,6 @@ import { LeadsTableActions } from "./LeadsTableActions"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { useToast } from "@/components/ui/use-toast"
 import { LeadNotes } from "./LeadNotes"
-import { ApiKeyDialog } from "./ApiKeyDialog"
 
 interface Lead {
   id: number
@@ -70,23 +69,20 @@ export function LeadsTable({ leads, filters }: LeadsTableProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
-        <ApiKeyDialog />
-      </div>
       <Table>
         <TableHeader>
-          <TableRow className="border-primary-light">
-            <TableHead className="text-primary-light">Entreprise</TableHead>
-            <TableHead className="text-primary-light">Contact</TableHead>
-            <TableHead className="text-primary-light">Adresse</TableHead>
-            <TableHead className="text-primary-light">Qualification</TableHead>
-            <TableHead className="text-primary-light">Secteur</TableHead>
-            <TableHead className="text-primary-light">Actions</TableHead>
+          <TableRow className="border-primary/20 hover:bg-transparent">
+            <TableHead className="text-primary-light font-medium">Entreprise</TableHead>
+            <TableHead className="text-primary-light font-medium">Contact</TableHead>
+            <TableHead className="text-primary-light font-medium">Adresse</TableHead>
+            <TableHead className="text-primary-light font-medium">Qualification</TableHead>
+            <TableHead className="text-primary-light font-medium">Secteur</TableHead>
+            <TableHead className="text-primary-light font-medium">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {filteredLeads.map((lead) => (
-            <TableRow key={lead.id} className="border-primary-light/20 hover:bg-secondary-dark/50">
+            <TableRow key={lead.id} className="border-primary/10 hover:bg-primary/5 transition-colors duration-200">
               <TableCell className="font-medium text-primary-light">{lead.company}</TableCell>
               <TableCell>
                 <div className="space-y-1">
@@ -125,7 +121,7 @@ export function LeadsTable({ leads, filters }: LeadsTableProps) {
       </Table>
 
       <Dialog open={showNotes} onOpenChange={setShowNotes}>
-        <DialogContent className="bg-secondary-dark border-primary-light">
+        <DialogContent className="bg-secondary-dark border-primary-light backdrop-blur-lg bg-opacity-95">
           {selectedLead && (
             <LeadNotes
               lead={selectedLead}

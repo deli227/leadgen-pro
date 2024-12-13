@@ -50,10 +50,10 @@ export function Dashboard() {
   ]
 
   return (
-    <div className="min-h-screen bg-secondary-dark">
+    <div className="min-h-screen bg-gradient-to-br from-secondary-dark to-[#1A1F2C]">
       <div className="container mx-auto py-8 px-4 animate-fade-in">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-primary-light bg-clip-text">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-light to-primary bg-clip-text text-transparent">
             Tableau de bord des leads
           </h1>
           <LeadsExport leads={leads} />
@@ -61,7 +61,7 @@ export function Dashboard() {
         
         <div className="grid gap-8">
           <LeadsFilters filters={filters} setFilters={setFilters} />
-          <ScrollArea className="h-[calc(100vh-24rem)] rounded-md border border-primary-light bg-black">
+          <ScrollArea className="h-[calc(100vh-24rem)] rounded-xl border border-primary/20 bg-black/40 backdrop-blur-sm shadow-lg shadow-primary/5">
             <LeadsTable leads={leads} filters={filters} />
           </ScrollArea>
         </div>
