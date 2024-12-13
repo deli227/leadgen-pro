@@ -2,14 +2,6 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { corsHeaders } from '../_shared/cors.ts'
 import { faker } from 'npm:@faker-js/faker/locale/fr'
 
-interface ScrapingFilters {
-  search: string
-  industry: string
-  country: string
-  city: string
-  leadCount: number
-}
-
 const industries = [
   "Technologies", "E-commerce", "Finance", "Santé", "Éducation",
   "Immobilier", "Services aux entreprises", "Marketing", "Logistique",
@@ -34,11 +26,12 @@ const generateRandomWeaknesses = () => {
   return faker.helpers.arrayElements(allWeaknesses, { min: 1, max: 3 })
 }
 
-const generateMockLead = () => {
+const generateMockLead = (userId: string) => {
   const company = faker.company.name()
   const domain = faker.internet.domainName()
   
   return {
+    user_id: userId,
     company,
     email: `contact@${domain}`,
     phone: faker.phone.number(),
@@ -66,31 +59,38 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    const { filters } = await req.json()
-    const { leadCount } = filters as ScrapingFilters
-
-    // Get user ID from the request
+    // Get the JWT from the Authorization header
     const authHeader = req.headers.get('Authorization')?.split('Bearer ')[1]
-    if (!authHeader) throw new Error('Non authentifié')
+    if (!authHeader) {
+      throw new Error('Non authentifié')
+    }
 
+    // Get the user from the JWT
     const { data: { user }, error: userError } = await supabase.auth.getUser(authHeader)
-    if (userError || !user) throw new Error('Utilisateur non trouvé')
+    if (userError || !user) {
+      throw new Error('Utilisateur non trouvé')
+    }
 
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    // Get the request body
+    const { filters } = await req.json()
+    const { leadCount = 10 } = filters || {}
 
-    // Generate and insert mock leads
-    const mockLeads = Array.from({ length: leadCount }, () => ({
-      ...generateMockLead(),
-      user_id: user.id
-    }))
+    console.log('Generating leads for user:', user.id)
+    console.log('Lead count:', leadCount)
 
+    // Generate mock leads
+    const mockLeads = Array.from({ length: leadCount }, () => generateMockLead(user.id))
+
+    // Insert the leads into the database
     const { data: insertedLeads, error: insertError } = await supabase
       .from('leads')
       .insert(mockLeads)
       .select()
 
-    if (insertError) throw insertError
+    if (insertError) {
+      console.error('Error inserting leads:', insertError)
+      throw insertError
+    }
 
     // Update user's lead generation counts
     const { error: updateError } = await supabase
@@ -102,7 +102,10 @@ Deno.serve(async (req) => {
       })
       .eq('id', user.id)
 
-    if (updateError) throw updateError
+    if (updateError) {
+      console.error('Error updating profile:', updateError)
+      throw updateError
+    }
 
     return new Response(JSON.stringify(insertedLeads), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
