@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
+import jsPDF from 'jspdf'
 
 interface LeadsExportProps {
   leads: any[]
@@ -50,20 +51,34 @@ export function LeadsExport({ leads }: LeadsExportProps) {
     })
   }
 
-  const exportToPDF = async () => {
+  const exportToPDF = () => {
     try {
-      const response = await fetch("https://api.pdfendpoint.com/v1/export", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ leads })
+      const pdf = new jsPDF()
+      
+      // Add title
+      pdf.setFontSize(16)
+      pdf.text("Liste des Leads", 14, 15)
+      
+      // Add headers
+      pdf.setFontSize(12)
+      const headers = ["Entreprise", "Email", "Téléphone", "Score", "Secteur"]
+      pdf.text(headers.join("   "), 14, 25)
+      
+      // Add content
+      pdf.setFontSize(10)
+      leads.forEach((lead, index) => {
+        const y = 35 + (index * 10)
+        const row = [
+          lead.company,
+          lead.email,
+          lead.phone,
+          lead.score,
+          lead.industry
+        ]
+        pdf.text(row.join("   "), 14, y)
       })
-
-      if (!response.ok) throw new Error("Erreur lors de l'export PDF")
-
-      const blob = await response.blob()
-      downloadFile(blob, "leads.pdf")
+      
+      pdf.save("leads.pdf")
       
       toast({
         title: "Export réussi",
