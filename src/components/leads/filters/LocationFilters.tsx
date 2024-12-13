@@ -13,15 +13,37 @@ interface LocationFiltersProps {
   onCityChange: (value: string) => void
 }
 
+const citiesByCountry = {
+  FR: [
+    "Paris", "Lyon", "Marseille", "Bordeaux", "Toulouse", 
+    "Nantes", "Strasbourg", "Lille", "Montpellier", "Rennes",
+    "Nice", "Grenoble", "Tours", "Dijon", "Angers"
+  ],
+  BE: ["Bruxelles", "Anvers", "Gand", "Liège", "Charleroi"],
+  CH: ["Genève", "Zurich", "Bâle", "Lausanne", "Berne"],
+  CA: ["Montréal", "Toronto", "Vancouver", "Ottawa", "Québec"],
+  LU: ["Luxembourg", "Esch-sur-Alzette", "Differdange"],
+  MC: ["Monaco", "Monte-Carlo", "La Condamine"],
+  MA: ["Casablanca", "Rabat", "Marrakech", "Tanger", "Fès"],
+  TN: ["Tunis", "Sfax", "Sousse", "Kairouan", "Bizerte"],
+  SN: ["Dakar", "Thiès", "Saint-Louis", "Rufisque", "Kaolack"],
+  CI: ["Abidjan", "Yamoussoukro", "Bouaké", "Daloa", "Korhogo"]
+}
+
 export function LocationFilters({ 
   country, 
   city, 
   onCountryChange, 
   onCityChange 
 }: LocationFiltersProps) {
+  const handleCountryChange = (value: string) => {
+    onCountryChange(value);
+    onCityChange('all'); // Reset city when country changes
+  }
+
   return (
     <>
-      <Select value={country} onValueChange={onCountryChange}>
+      <Select value={country} onValueChange={handleCountryChange}>
         <SelectTrigger className="w-[180px] bg-transparent border-primary-light text-primary-light">
           <SelectValue placeholder="Pays" />
         </SelectTrigger>
@@ -46,24 +68,15 @@ export function LocationFilters({
         </SelectTrigger>
         <SelectContent className="bg-secondary-dark/95 border-primary-light text-primary-light">
           <SelectItem value="all" className="text-primary-light hover:bg-primary/20">Toutes les villes</SelectItem>
-          <SelectItem value="Paris" className="text-primary-light hover:bg-primary/20">Paris</SelectItem>
-          <SelectItem value="Lyon" className="text-primary-light hover:bg-primary/20">Lyon</SelectItem>
-          <SelectItem value="Marseille" className="text-primary-light hover:bg-primary/20">Marseille</SelectItem>
-          <SelectItem value="Bordeaux" className="text-primary-light hover:bg-primary/20">Bordeaux</SelectItem>
-          <SelectItem value="Toulouse" className="text-primary-light hover:bg-primary/20">Toulouse</SelectItem>
-          <SelectItem value="Nantes" className="text-primary-light hover:bg-primary/20">Nantes</SelectItem>
-          <SelectItem value="Strasbourg" className="text-primary-light hover:bg-primary/20">Strasbourg</SelectItem>
-          <SelectItem value="Lille" className="text-primary-light hover:bg-primary/20">Lille</SelectItem>
-          <SelectItem value="Montpellier" className="text-primary-light hover:bg-primary/20">Montpellier</SelectItem>
-          <SelectItem value="Rennes" className="text-primary-light hover:bg-primary/20">Rennes</SelectItem>
-          <SelectItem value="Bruxelles" className="text-primary-light hover:bg-primary/20">Bruxelles</SelectItem>
-          <SelectItem value="Genève" className="text-primary-light hover:bg-primary/20">Genève</SelectItem>
-          <SelectItem value="Montréal" className="text-primary-light hover:bg-primary/20">Montréal</SelectItem>
-          <SelectItem value="Luxembourg" className="text-primary-light hover:bg-primary/20">Luxembourg</SelectItem>
-          <SelectItem value="Casablanca" className="text-primary-light hover:bg-primary/20">Casablanca</SelectItem>
-          <SelectItem value="Tunis" className="text-primary-light hover:bg-primary/20">Tunis</SelectItem>
-          <SelectItem value="Dakar" className="text-primary-light hover:bg-primary/20">Dakar</SelectItem>
-          <SelectItem value="Abidjan" className="text-primary-light hover:bg-primary/20">Abidjan</SelectItem>
+          {country !== 'all' && citiesByCountry[country]?.map((cityName) => (
+            <SelectItem 
+              key={cityName} 
+              value={cityName} 
+              className="text-primary-light hover:bg-primary/20"
+            >
+              {cityName}
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
     </>

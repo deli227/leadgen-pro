@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
 import { supabase } from "@/integrations/supabase/client"
 import { useState } from "react"
+import { Textarea } from "@/components/ui/textarea"
 
 interface LeadsFiltersProps {
   filters: {
@@ -23,6 +24,7 @@ interface LeadsFiltersProps {
 export function LeadsFilters({ filters, setFilters }: LeadsFiltersProps) {
   const { toast } = useToast()
   const [isGenerating, setIsGenerating] = useState(false)
+  const [aiAnalysis, setAiAnalysis] = useState("")
 
   const handleGenerateLeads = async () => {
     try {
@@ -130,11 +132,22 @@ export function LeadsFilters({ filters, setFilters }: LeadsFiltersProps) {
       </TabsContent>
 
       <TabsContent value="analytics" className="space-y-4 bg-gradient-to-br from-black/80 to-secondary-dark/80 p-6 rounded-lg border border-primary/10">
-        <div className="p-6 border border-primary/20 rounded-lg bg-black/40">
-          <h3 className="text-lg font-semibold text-primary-light mb-2">Analytiques</h3>
-          <p className="text-primary-light/70">
-            Les analyses détaillées seront disponibles prochainement.
-          </p>
+        <div className="grid grid-cols-2 gap-6">
+          <div className="p-6 border border-primary/20 rounded-lg bg-black/40">
+            <h3 className="text-lg font-semibold text-primary-light mb-2">Analytiques</h3>
+            <p className="text-primary-light/70">
+              Les analyses détaillées seront disponibles prochainement.
+            </p>
+          </div>
+          <div className="p-6 border border-primary/20 rounded-lg bg-black/40">
+            <h3 className="text-lg font-semibold text-primary-light mb-2">Analyse IA</h3>
+            <Textarea
+              value={aiAnalysis}
+              onChange={(e) => setAiAnalysis(e.target.value)}
+              placeholder="L'analyse IA des leads apparaîtra ici..."
+              className="w-full h-[200px] bg-transparent border-primary-light/20 text-primary-light placeholder:text-primary-light/50"
+            />
+          </div>
         </div>
       </TabsContent>
 
