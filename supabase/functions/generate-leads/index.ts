@@ -21,41 +21,42 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_ANON_KEY') ?? ''
     )
 
-    // Récupérer la clé API de scraping
-    const { data: secretData, error: secretError } = await supabase
-      .from('secrets')
-      .select('value')
-      .eq('name', 'scraping_api_key')
-      .single()
-
-    if (secretError || !secretData) {
-      throw new Error('Clé API de scraping non trouvée')
-    }
-
     const { filters } = await req.json()
-    const { search, industry, country, city, leadCount } = filters as ScrapingFilters
+    const { leadCount } = filters as ScrapingFilters
 
-    // Simuler l'appel à l'API de scraping (à remplacer par votre vrai appel API)
-    const response = await fetch('https://api.scraping-service.com/search', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${secretData.value}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        query: search,
-        industry,
-        location: {
-          country,
-          city,
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 1000))
+
+    // Generate mock leads
+    const mockLeads = Array.from({ length: leadCount }, () => {
+      const companies = [
+        "TechVision", "DataFlow", "SmartSolutions", "InnovaTech",
+        "EcoSystems", "CloudNine", "DigitalPulse", "FutureWave",
+        "GlobalTech", "CyberForce", "GreenTech", "SmartLife"
+      ]
+      
+      const company = companies[Math.floor(Math.random() * companies.length)]
+      const domain = company.toLowerCase().replace(/\s+/g, '') + '.com'
+      
+      return {
+        id: Math.floor(Math.random() * 10000),
+        company,
+        email: `contact@${domain}`,
+        phone: '+33 ' + Math.floor(Math.random() * 1000000000),
+        address: '123 Tech Street',
+        qualification: Math.floor(Math.random() * 5) + 5,
+        socialMedia: {
+          linkedin: `https://linkedin.com/company/${company.toLowerCase()}`,
+          twitter: `https://twitter.com/${company.toLowerCase()}`
         },
-        limit: leadCount,
-      }),
+        score: Math.floor(Math.random() * 5) + 5,
+        industry: "Technologies",
+        strengths: ["Innovation", "Équipe expérimentée"],
+        weaknesses: ["Concurrence forte"]
+      }
     })
 
-    const leads = await response.json()
-
-    return new Response(JSON.stringify(leads), {
+    return new Response(JSON.stringify(mockLeads), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
   } catch (error) {
