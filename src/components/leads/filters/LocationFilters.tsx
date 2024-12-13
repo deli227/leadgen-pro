@@ -25,18 +25,18 @@ export function LocationFilters({
         <SelectTrigger className="w-[180px] bg-transparent border-primary-light text-primary-light">
           <SelectValue placeholder="Pays" />
         </SelectTrigger>
-        <SelectContent className="bg-secondary-dark border-primary-light">
-          <SelectItem value="all">Tous les pays</SelectItem>
-          <SelectItem value="FR">France</SelectItem>
-          <SelectItem value="BE">Belgique</SelectItem>
-          <SelectItem value="CH">Suisse</SelectItem>
-          <SelectItem value="CA">Canada</SelectItem>
-          <SelectItem value="LU">Luxembourg</SelectItem>
-          <SelectItem value="MC">Monaco</SelectItem>
-          <SelectItem value="MA">Maroc</SelectItem>
-          <SelectItem value="TN">Tunisie</SelectItem>
-          <SelectItem value="SN">Sénégal</SelectItem>
-          <SelectItem value="CI">Côte d'Ivoire</SelectItem>
+        <SelectContent className="bg-secondary-dark/95 border-primary-light text-primary-light">
+          <SelectItem value="all" className="text-primary-light hover:bg-primary/20">Tous les pays</SelectItem>
+          <SelectItem value="FR" className="text-primary-light hover:bg-primary/20">France</SelectItem>
+          <SelectItem value="BE" className="text-primary-light hover:bg-primary/20">Belgique</SelectItem>
+          <SelectItem value="CH" className="text-primary-light hover:bg-primary/20">Suisse</SelectItem>
+          <SelectItem value="CA" className="text-primary-light hover:bg-primary/20">Canada</SelectItem>
+          <SelectItem value="LU" className="text-primary-light hover:bg-primary/20">Luxembourg</SelectItem>
+          <SelectItem value="MC" className="text-primary-light hover:bg-primary/20">Monaco</SelectItem>
+          <SelectItem value="MA" className="text-primary-light hover:bg-primary/20">Maroc</SelectItem>
+          <SelectItem value="TN" className="text-primary-light hover:bg-primary/20">Tunisie</SelectItem>
+          <SelectItem value="SN" className="text-primary-light hover:bg-primary/20">Sénégal</SelectItem>
+          <SelectItem value="CI" className="text-primary-light hover:bg-primary/20">Côte d'Ivoire</SelectItem>
         </SelectContent>
       </Select>
 
@@ -44,26 +44,26 @@ export function LocationFilters({
         <SelectTrigger className="w-[180px] bg-transparent border-primary-light text-primary-light">
           <SelectValue placeholder="Ville" />
         </SelectTrigger>
-        <SelectContent className="bg-secondary-dark border-primary-light">
-          <SelectItem value="all">Toutes les villes</SelectItem>
-          <SelectItem value="Paris">Paris</SelectItem>
-          <SelectItem value="Lyon">Lyon</SelectItem>
-          <SelectItem value="Marseille">Marseille</SelectItem>
-          <SelectItem value="Bordeaux">Bordeaux</SelectItem>
-          <SelectItem value="Toulouse">Toulouse</SelectItem>
-          <SelectItem value="Nantes">Nantes</SelectItem>
-          <SelectItem value="Strasbourg">Strasbourg</SelectItem>
-          <SelectItem value="Lille">Lille</SelectItem>
-          <SelectItem value="Montpellier">Montpellier</SelectItem>
-          <SelectItem value="Rennes">Rennes</SelectItem>
-          <SelectItem value="Bruxelles">Bruxelles</SelectItem>
-          <SelectItem value="Genève">Genève</SelectItem>
-          <SelectItem value="Montréal">Montréal</SelectItem>
-          <SelectItem value="Luxembourg">Luxembourg</SelectItem>
-          <SelectItem value="Casablanca">Casablanca</SelectItem>
-          <SelectItem value="Tunis">Tunis</SelectItem>
-          <SelectItem value="Dakar">Dakar</SelectItem>
-          <SelectItem value="Abidjan">Abidjan</SelectItem>
+        <SelectContent className="bg-secondary-dark/95 border-primary-light text-primary-light">
+          <SelectItem value="all" className="text-primary-light hover:bg-primary/20">Toutes les villes</SelectItem>
+          <SelectItem value="Paris" className="text-primary-light hover:bg-primary/20">Paris</SelectItem>
+          <SelectItem value="Lyon" className="text-primary-light hover:bg-primary/20">Lyon</SelectItem>
+          <SelectItem value="Marseille" className="text-primary-light hover:bg-primary/20">Marseille</SelectItem>
+          <SelectItem value="Bordeaux" className="text-primary-light hover:bg-primary/20">Bordeaux</SelectItem>
+          <SelectItem value="Toulouse" className="text-primary-light hover:bg-primary/20">Toulouse</SelectItem>
+          <SelectItem value="Nantes" className="text-primary-light hover:bg-primary/20">Nantes</SelectItem>
+          <SelectItem value="Strasbourg" className="text-primary-light hover:bg-primary/20">Strasbourg</SelectItem>
+          <SelectItem value="Lille" className="text-primary-light hover:bg-primary/20">Lille</SelectItem>
+          <SelectItem value="Montpellier" className="text-primary-light hover:bg-primary/20">Montpellier</SelectItem>
+          <SelectItem value="Rennes" className="text-primary-light hover:bg-primary/20">Rennes</SelectItem>
+          <SelectItem value="Bruxelles" className="text-primary-light hover:bg-primary/20">Bruxelles</SelectItem>
+          <SelectItem value="Genève" className="text-primary-light hover:bg-primary/20">Genève</SelectItem>
+          <SelectItem value="Montréal" className="text-primary-light hover:bg-primary/20">Montréal</SelectItem>
+          <SelectItem value="Luxembourg" className="text-primary-light hover:bg-primary/20">Luxembourg</SelectItem>
+          <SelectItem value="Casablanca" className="text-primary-light hover:bg-primary/20">Casablanca</SelectItem>
+          <SelectItem value="Tunis" className="text-primary-light hover:bg-primary/20">Tunis</SelectItem>
+          <SelectItem value="Dakar" className="text-primary-light hover:bg-primary/20">Dakar</SelectItem>
+          <SelectItem value="Abidjan" className="text-primary-light hover:bg-primary/20">Abidjan</SelectItem>
         </SelectContent>
       </Select>
     </>
