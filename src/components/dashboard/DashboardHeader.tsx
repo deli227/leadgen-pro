@@ -24,10 +24,7 @@ export function DashboardHeader({ exportLeads }: DashboardHeaderProps) {
         return
       }
 
-      // Clear any existing session data
-      await supabase.auth.clearSession()
-      
-      // Then sign out
+      // Sign out locally
       const { error } = await supabase.auth.signOut({
         scope: 'local'
       })
