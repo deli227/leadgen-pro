@@ -28,7 +28,7 @@ export const plans = [
     buttonText: "Choisir Pro",
     type: "pro",
     popular: true,
-    priceId: "REMPLACEZ_PAR_VOTRE_PRICE_ID_PRO", // Remplacez cette valeur par votre Price ID Pro
+    priceId: "price_1QV8FaB0B6nBBCbUFoQrwDwm",
   },
   {
     name: "Enterprise",
@@ -44,6 +44,6 @@ export const plans = [
     ],
     buttonText: "Contacter les ventes",
     type: "enterprise",
-    priceId: "REMPLACEZ_PAR_VOTRE_PRICE_ID_ENTERPRISE", // Remplacez cette valeur par votre Price ID Enterprise
+    priceId: "REMPLACEZ_PAR_VOTRE_PRICE_ID_ENTERPRISE",
   },
 ];
