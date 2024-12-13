@@ -16,21 +16,14 @@ export function DashboardHeader({ exportLeads }: DashboardHeaderProps) {
 
   const handleLogout = async () => {
     try {
-      // First check if we have a session
-      const { data: { session } } = await supabase.auth.getSession()
+      const { error } = await supabase.auth.signOut()
       
-      if (!session) {
-        navigate('/auth')
-        return
+      if (error) {
+        console.error('Error during logout:', error)
+        throw error
       }
 
-      // Sign out locally
-      const { error } = await supabase.auth.signOut({
-        scope: 'local'
-      })
-      
-      if (error) throw error
-
+      // Only navigate after successful logout
       navigate('/auth')
     } catch (error) {
       console.error('Error logging out:', error)
