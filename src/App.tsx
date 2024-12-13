@@ -33,10 +33,11 @@ const App = () => {
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      console.log("Auth state changed:", _event, session);
       setSession(session);
       // Invalidate and refetch queries when session changes
-      await queryClient.invalidateQueries();
+      queryClient.invalidateQueries();
     });
 
     return () => {
