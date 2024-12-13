@@ -120,17 +120,17 @@ export type Database = {
         Row: {
           daily_leads_limit: number
           monthly_leads_limit: number
-          type: Database["public"]["Enums"]["subscription_type"]
+          subscription_type: Database["public"]["Enums"]["subscription_type"]
         }
         Insert: {
           daily_leads_limit: number
           monthly_leads_limit: number
-          type: Database["public"]["Enums"]["subscription_type"]
+          subscription_type: Database["public"]["Enums"]["subscription_type"]
         }
         Update: {
           daily_leads_limit?: number
           monthly_leads_limit?: number
-          type?: Database["public"]["Enums"]["subscription_type"]
+          subscription_type?: Database["public"]["Enums"]["subscription_type"]
         }
         Relationships: []
       }
