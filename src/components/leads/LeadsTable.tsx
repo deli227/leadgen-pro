@@ -7,12 +7,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Eye, NotebookPen, MapPin, Star, PlusCircle, Globe } from "lucide-react"
-import { LeadDetails } from "./LeadDetails"
-import { LeadNotes } from "./LeadNotes"
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
+import { MapPin, Star } from "lucide-react"
+import { LeadsTableActions } from "./LeadsTableActions"
+import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { useToast } from "@/components/ui/use-toast"
-import { Button } from "@/components/ui/button"
+import { LeadNotes } from "./LeadNotes"
 import { ApiKeyDialog } from "./ApiKeyDialog"
 
 interface Lead {
@@ -57,33 +56,6 @@ export function LeadsTable({ leads, filters }: LeadsTableProps) {
         description: "Le lead a été ajouté avec succès à votre liste d'export."
       })
     }
-  }
-
-  const handleScrape = async (company: string) => {
-    const apiKey = localStorage.getItem("scraping_api_key")
-    
-    if (!apiKey) {
-      toast({
-        title: "Clé API manquante",
-        description: "Veuillez configurer votre clé API pour utiliser le scraping.",
-        variant: "destructive"
-      })
-      return
-    }
-
-    toast({
-      title: "Scraping en cours",
-      description: `Recherche d'informations pour ${company}...`
-    })
-    
-    // Simulation du scraping avec la clé API
-    // À remplacer par votre véritable appel API
-    setTimeout(() => {
-      toast({
-        title: "Scraping terminé",
-        description: "Les informations ont été récupérées avec succès."
-      })
-    }, 2000)
   }
 
   const filteredLeads = leads.filter(lead => {
@@ -136,86 +108,38 @@ export function LeadsTable({ leads, filters }: LeadsTableProps) {
               </TableCell>
               <TableCell className="text-primary-light">{lead.industry}</TableCell>
               <TableCell>
-                <div className="flex gap-2">
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button
-                        onClick={() => setSelectedLead(lead)}
-                        variant="outline"
-                        size="sm"
-                        className="bg-primary hover:bg-primary-dark text-white border-none"
-                      >
-                        <Eye className="h-4 w-4 mr-2" />
-                        Détails
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="bg-secondary-dark border-primary-light">
-                      {selectedLead && (
-                        <LeadDetails 
-                          lead={selectedLead} 
-                          onClose={() => setSelectedLead(null)} 
-                        />
-                      )}
-                    </DialogContent>
-                  </Dialog>
-                  
-                  <Dialog open={showNotes} onOpenChange={setShowNotes}>
-                    <DialogTrigger asChild>
-                      <Button
-                        onClick={() => {
-                          setSelectedLead(lead)
-                          setShowNotes(true)
-                        }}
-                        variant="outline"
-                        size="sm"
-                        className="bg-primary hover:bg-primary-dark text-white border-none"
-                      >
-                        <NotebookPen className="h-4 w-4 mr-2" />
-                        Notes
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="bg-secondary-dark border-primary-light">
-                      {selectedLead && (
-                        <LeadNotes
-                          lead={selectedLead}
-                          onClose={() => {
-                            setShowNotes(false)
-                            toast({
-                              title: "Note enregistrée",
-                              description: "Votre note a été sauvegardée avec succès.",
-                            })
-                          }}
-                        />
-                      )}
-                    </DialogContent>
-                  </Dialog>
-                  
-                  <Button
-                    onClick={() => handleAddToExport(lead.id)}
-                    variant="outline"
-                    size="sm"
-                    className="bg-primary hover:bg-primary-dark text-white border-none"
-                    disabled={exportList.includes(lead.id)}
-                  >
-                    <PlusCircle className="h-4 w-4 mr-2" />
-                    {exportList.includes(lead.id) ? "Ajouté" : "Exporter"}
-                  </Button>
-
-                  <Button
-                    onClick={() => handleScrape(lead.company)}
-                    variant="outline"
-                    size="sm"
-                    className="bg-primary hover:bg-primary-dark text-white border-none"
-                  >
-                    <Globe className="h-4 w-4 mr-2" />
-                    Scraper
-                  </Button>
-                </div>
+                <LeadsTableActions
+                  lead={lead}
+                  onShowDetails={setSelectedLead}
+                  onShowNotes={(lead) => {
+                    setSelectedLead(lead)
+                    setShowNotes(true)
+                  }}
+                  onAddToExport={handleAddToExport}
+                  exportList={exportList}
+                />
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
+
+      <Dialog open={showNotes} onOpenChange={setShowNotes}>
+        <DialogContent className="bg-secondary-dark border-primary-light">
+          {selectedLead && (
+            <LeadNotes
+              lead={selectedLead}
+              onClose={() => {
+                setShowNotes(false)
+                toast({
+                  title: "Note enregistrée",
+                  description: "Votre note a été sauvegardée avec succès.",
+                })
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
