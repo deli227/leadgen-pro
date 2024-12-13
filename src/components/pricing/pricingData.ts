@@ -28,7 +28,7 @@ export const plans = [
     buttonText: "Choisir Pro",
     type: "pro",
     popular: true,
-    priceId: "VOTRE_PRICE_ID_PRO", // Remplacez par votre Price ID Stripe pour le plan Pro
+    priceId: "price_1OvPbXKez0DZOIrPbvmzWqxR",
   },
   {
     name: "Enterprise",
@@ -44,6 +44,6 @@ export const plans = [
     ],
     buttonText: "Contacter les ventes",
     type: "enterprise",
-    priceId: "VOTRE_PRICE_ID_ENTERPRISE", // Remplacez par votre Price ID Stripe pour le plan Enterprise
+    priceId: "price_1OvPbXKez0DZOIrPbvmzWqxR",
   },
 ];
