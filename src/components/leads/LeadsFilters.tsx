@@ -57,13 +57,23 @@ export function LeadsFilters({ filters, setFilters }: LeadsFiltersProps) {
 
   return (
     <Tabs defaultValue="filters" className="w-full">
-      <TabsList className="grid w-full grid-cols-3 bg-gradient-to-r from-black to-secondary-dark border border-primary-light/20 rounded-t-lg overflow-hidden">
+      <TabsList className="grid w-full grid-cols-4 bg-gradient-to-r from-black to-secondary-dark border border-primary-light/20 rounded-t-lg overflow-hidden">
         <TabsTrigger 
           value="filters" 
           className="relative text-primary-light data-[state=active]:bg-black/60 data-[state=active]:text-primary-light group transition-all duration-300"
         >
           <span className="flex items-center gap-2">
-            Générer des leads
+            Filtres
+            <ChevronRight className="h-4 w-4 transition-transform group-data-[state=active]:rotate-90" />
+          </span>
+          <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary scale-x-0 group-data-[state=active]:scale-x-100 transition-transform" />
+        </TabsTrigger>
+        <TabsTrigger 
+          value="search" 
+          className="relative text-primary-light data-[state=active]:bg-black/60 data-[state=active]:text-primary-light group transition-all duration-300"
+        >
+          <span className="flex items-center gap-2">
+            Recherche
             <ChevronRight className="h-4 w-4 transition-transform group-data-[state=active]:rotate-90" />
           </span>
           <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary scale-x-0 group-data-[state=active]:scale-x-100 transition-transform" />
@@ -92,15 +102,13 @@ export function LeadsFilters({ filters, setFilters }: LeadsFiltersProps) {
 
       <TabsContent value="filters" className="space-y-6 bg-gradient-to-br from-black/80 to-secondary-dark/80 p-6 rounded-lg border border-primary/10">
         <div className="flex flex-wrap gap-4">
-          <SearchInput 
-            value={filters.search}
-            onChange={(value) => setFilters({ ...filters, search: value })}
-          />
-          
           <LocationFilters 
             country={filters.country}
             city={filters.city}
-            onCountryChange={(value) => setFilters({ ...filters, country: value })}
+            onCountryChange={(value) => {
+              console.log("Changement de pays dans LeadsFilters:", value)
+              setFilters({ ...filters, country: value, city: "all" })
+            }}
             onCityChange={(value) => setFilters({ ...filters, city: value })}
           />
           
@@ -129,6 +137,16 @@ export function LeadsFilters({ filters, setFilters }: LeadsFiltersProps) {
           value={filters.leadCount}
           onChange={(value) => setFilters({ ...filters, leadCount: value })}
         />
+      </TabsContent>
+
+      <TabsContent value="search" className="space-y-4 bg-gradient-to-br from-black/80 to-secondary-dark/80 p-6 rounded-lg border border-primary/10">
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-primary-light">Rechercher une entreprise</h3>
+          <SearchInput 
+            value={filters.search}
+            onChange={(value) => setFilters({ ...filters, search: value })}
+          />
+        </div>
       </TabsContent>
 
       <TabsContent value="analytics" className="space-y-4 bg-gradient-to-br from-black/80 to-secondary-dark/80 p-6 rounded-lg border border-primary/10">

@@ -14,21 +14,17 @@ interface LocationFiltersProps {
 }
 
 const citiesByCountry = {
-  FR: [
-    "Paris", "Lyon", "Marseille", "Bordeaux", "Toulouse", 
-    "Nantes", "Strasbourg", "Lille", "Montpellier", "Rennes",
-    "Nice", "Grenoble", "Tours", "Dijon", "Angers"
-  ],
-  BE: ["Bruxelles", "Anvers", "Gand", "Liège", "Charleroi"],
+  FR: ["Paris", "Lyon", "Marseille", "Bordeaux", "Lille", "Toulouse", "Nantes", "Strasbourg"],
+  BE: ["Bruxelles", "Anvers", "Gand", "Liège", "Bruges"],
   CH: ["Genève", "Zurich", "Bâle", "Lausanne", "Berne"],
-  CA: ["Montréal", "Toronto", "Vancouver", "Ottawa", "Québec"],
-  LU: ["Luxembourg", "Esch-sur-Alzette", "Differdange"],
-  MC: ["Monaco", "Monte-Carlo", "La Condamine"],
+  CA: ["Montréal", "Québec", "Ottawa", "Toronto", "Vancouver"],
+  LU: ["Luxembourg"],
+  MC: ["Monaco"],
   MA: ["Casablanca", "Rabat", "Marrakech", "Tanger", "Fès"],
-  TN: ["Tunis", "Sfax", "Sousse", "Kairouan", "Bizerte"],
-  SN: ["Dakar", "Thiès", "Saint-Louis", "Rufisque", "Kaolack"],
-  CI: ["Abidjan", "Yamoussoukro", "Bouaké", "Daloa", "Korhogo"]
-} as const
+  TN: ["Tunis", "Sfax", "Sousse", "Kairouan"],
+  SN: ["Dakar", "Saint-Louis", "Thiès", "Rufisque"],
+  CI: ["Abidjan", "Yamoussoukro", "Bouaké", "Korhogo"]
+}
 
 export function LocationFilters({ 
   country, 
@@ -36,27 +32,18 @@ export function LocationFilters({
   onCountryChange, 
   onCityChange 
 }: LocationFiltersProps) {
-  const handleCountryChange = (value: string) => {
-    console.log("Changement de pays:", value)
-    onCountryChange(value)
-    // Reset city when country changes
-    if (value !== country) {
-      onCityChange("all")
-    }
-  }
-
   return (
     <div className="flex gap-4">
       <Select 
         value={country}
-        onValueChange={handleCountryChange}
+        onValueChange={onCountryChange}
       >
-        <SelectTrigger className="w-[180px] bg-secondary-dark border-primary-light/20 text-primary-light">
-          <SelectValue>
+        <SelectTrigger className="w-[180px] bg-secondary-dark border-primary-light text-primary-light">
+          <SelectValue placeholder="Pays">
             {country === "all" ? "Tous les pays" : country}
           </SelectValue>
         </SelectTrigger>
-        <SelectContent className="bg-secondary-dark border-primary-light/20 text-primary-light">
+        <SelectContent className="bg-secondary-dark border-primary-light text-primary-light">
           <SelectItem value="all">Tous les pays</SelectItem>
           <SelectItem value="FR">France</SelectItem>
           <SelectItem value="BE">Belgique</SelectItem>
@@ -76,12 +63,12 @@ export function LocationFilters({
         onValueChange={onCityChange}
         disabled={country === "all"}
       >
-        <SelectTrigger className="w-[180px] bg-secondary-dark border-primary-light/20 text-primary-light">
-          <SelectValue>
+        <SelectTrigger className="w-[180px] bg-secondary-dark border-primary-light text-primary-light">
+          <SelectValue placeholder="Ville">
             {city === "all" ? "Toutes les villes" : city}
           </SelectValue>
         </SelectTrigger>
-        <SelectContent className="bg-secondary-dark border-primary-light/20 text-primary-light">
+        <SelectContent className="bg-secondary-dark border-primary-light text-primary-light">
           <SelectItem value="all">Toutes les villes</SelectItem>
           {country !== "all" && citiesByCountry[country as keyof typeof citiesByCountry]?.map((cityName) => (
             <SelectItem 
