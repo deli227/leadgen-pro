@@ -21,7 +21,7 @@ export const HowItWorksSection = () => {
   ];
 
   return (
-    <div className="bg-white py-24 sm:py-32">
+    <div className="bg-secondary-dark py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -29,10 +29,10 @@ export const HowItWorksSection = () => {
           transition={{ duration: 0.6 }}
           className="mx-auto max-w-2xl text-center"
         >
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+          <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
             Comment ça marche ?
           </h2>
-          <p className="mt-6 text-lg leading-8 text-gray-600">
+          <p className="mt-6 text-lg leading-8 text-gray-300">
             Découvrez comment LeadGen Pro peut transformer votre approche de la prospection
           </p>
         </motion.div>
@@ -45,13 +45,13 @@ export const HowItWorksSection = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.2 }}
-                className="relative flex flex-col items-center text-center"
+                className="relative flex flex-col items-center text-center group"
               >
-                <div className="mb-6 rounded-full bg-primary/10 p-4 ring-2 ring-primary/20">
-                  <step.icon className="h-8 w-8 text-primary" />
+                <div className="mb-6 rounded-full bg-primary/10 p-4 ring-2 ring-primary/20 transform transition-all group-hover:scale-110 shadow-[0_0_15px_rgba(155,135,245,0.3)] group-hover:shadow-[0_0_25px_rgba(155,135,245,0.6)]">
+                  <step.icon className="h-8 w-8 text-primary animate-pulse" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900">{step.title}</h3>
-                <p className="mt-2 text-gray-600">{step.description}</p>
+                <h3 className="text-xl font-semibold text-white">{step.title}</h3>
+                <p className="mt-2 text-gray-300">{step.description}</p>
               </motion.div>
             ))}
           </div>
