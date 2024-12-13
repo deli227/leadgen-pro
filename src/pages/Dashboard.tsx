@@ -7,8 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 export function Dashboard() {
   const [filters, setFilters] = useState({
     search: "",
-    minScore: 0,
-    maxScore: 10,
+    leadCount: 10,
     industry: "all",
     country: "all",
     city: "all"

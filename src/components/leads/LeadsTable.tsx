@@ -30,8 +30,7 @@ interface LeadsTableProps {
   leads: Lead[]
   filters: {
     search: string
-    minScore: number
-    maxScore: number
+    leadCount: number
     industry: string
     country: string
     city: string
@@ -44,14 +43,12 @@ export function LeadsTable({ leads, filters }: LeadsTableProps) {
   const filteredLeads = leads.filter(lead => {
     const matchesSearch = lead.company.toLowerCase().includes(filters.search.toLowerCase()) ||
       lead.email.toLowerCase().includes(filters.search.toLowerCase())
-    const matchesScore = lead.score >= filters.minScore && lead.score <= filters.maxScore
     const matchesIndustry = filters.industry === "all" || lead.industry === filters.industry
-    // Note: country and city filters are prepared for future implementation
-    const matchesCountry = filters.country === "all" // To be implemented with real data
-    const matchesCity = filters.city === "all" // To be implemented with real data
+    const matchesCountry = filters.country === "all"
+    const matchesCity = filters.city === "all"
 
-    return matchesSearch && matchesScore && matchesIndustry && matchesCountry && matchesCity
-  })
+    return matchesSearch && matchesIndustry && matchesCountry && matchesCity
+  }).slice(0, filters.leadCount)
 
   return (
     <>

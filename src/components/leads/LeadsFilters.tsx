@@ -9,13 +9,12 @@ import {
 } from "@/components/ui/select"
 import { Slider } from "@/components/ui/slider"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Search } from "lucide-react"
+import { Search, ChevronRight } from "lucide-react"
 
 interface LeadsFiltersProps {
   filters: {
     search: string
-    minScore: number
-    maxScore: number
+    leadCount: number
     industry: string
     country: string
     city: string
@@ -26,10 +25,37 @@ interface LeadsFiltersProps {
 export function LeadsFilters({ filters, setFilters }: LeadsFiltersProps) {
   return (
     <Tabs defaultValue="filters" className="w-full">
-      <TabsList className="grid w-full grid-cols-3 bg-black">
-        <TabsTrigger value="filters" className="text-primary-light data-[state=active]:bg-secondary-dark data-[state=active]:text-primary-light">Générer des leads</TabsTrigger>
-        <TabsTrigger value="analytics" className="text-primary-light data-[state=active]:bg-secondary-dark data-[state=active]:text-primary-light">Analytiques</TabsTrigger>
-        <TabsTrigger value="export" className="text-primary-light data-[state=active]:bg-secondary-dark data-[state=active]:text-primary-light">Export</TabsTrigger>
+      <TabsList className="grid w-full grid-cols-3 bg-black border border-primary-light rounded-t-lg overflow-hidden">
+        <TabsTrigger 
+          value="filters" 
+          className="relative text-primary-light data-[state=active]:bg-secondary-dark data-[state=active]:text-primary-light group transition-all duration-300"
+        >
+          <span className="flex items-center gap-2">
+            Générer des leads
+            <ChevronRight className="h-4 w-4 transition-transform group-data-[state=active]:rotate-90" />
+          </span>
+          <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary-light scale-x-0 group-data-[state=active]:scale-x-100 transition-transform" />
+        </TabsTrigger>
+        <TabsTrigger 
+          value="analytics" 
+          className="relative text-primary-light data-[state=active]:bg-secondary-dark data-[state=active]:text-primary-light group transition-all duration-300"
+        >
+          <span className="flex items-center gap-2">
+            Analytiques
+            <ChevronRight className="h-4 w-4 transition-transform group-data-[state=active]:rotate-90" />
+          </span>
+          <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary-light scale-x-0 group-data-[state=active]:scale-x-100 transition-transform" />
+        </TabsTrigger>
+        <TabsTrigger 
+          value="export" 
+          className="relative text-primary-light data-[state=active]:bg-secondary-dark data-[state=active]:text-primary-light group transition-all duration-300"
+        >
+          <span className="flex items-center gap-2">
+            Export
+            <ChevronRight className="h-4 w-4 transition-transform group-data-[state=active]:rotate-90" />
+          </span>
+          <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary-light scale-x-0 group-data-[state=active]:scale-x-100 transition-transform" />
+        </TabsTrigger>
       </TabsList>
 
       <TabsContent value="filters" className="space-y-4 bg-black p-4 rounded-lg">
@@ -146,21 +172,23 @@ export function LeadsFilters({ filters, setFilters }: LeadsFiltersProps) {
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-primary-light">Score IA (min-max)</label>
+          <label className="text-sm font-medium text-primary-light">Nombre de leads à générer (1-50)</label>
           <div className="px-2">
             <Slider
-              defaultValue={[filters.minScore, filters.maxScore]}
-              max={10}
-              step={0.5}
-              onValueChange={([min, max]) => 
-                setFilters({ ...filters, minScore: min, maxScore: max })
+              defaultValue={[filters.leadCount]}
+              max={50}
+              min={1}
+              step={1}
+              onValueChange={([value]) => 
+                setFilters({ ...filters, leadCount: value })
               }
               className="[&_[role=slider]]:bg-primary-light [&_[role=slider]]:border-primary-light"
             />
           </div>
           <div className="flex justify-between text-sm text-primary-light">
-            <span>{filters.minScore}</span>
-            <span>{filters.maxScore}</span>
+            <span>1</span>
+            <span>{filters.leadCount}</span>
+            <span>50</span>
           </div>
         </div>
       </TabsContent>
