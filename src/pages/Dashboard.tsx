@@ -9,7 +9,9 @@ export function Dashboard() {
     search: "",
     minScore: 0,
     maxScore: 10,
-    industry: "all"
+    industry: "all",
+    country: "all",
+    city: "all"
   })
 
   // Données mockées pour la démo

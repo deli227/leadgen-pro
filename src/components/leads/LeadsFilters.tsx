@@ -15,6 +15,8 @@ interface LeadsFiltersProps {
     minScore: number
     maxScore: number
     industry: string
+    country: string
+    city: string
   }
   setFilters: (filters: any) => void
 }
@@ -39,6 +41,58 @@ export function LeadsFilters({ filters, setFilters }: LeadsFiltersProps) {
           </div>
           
           <Select
+            value={filters.country}
+            onValueChange={(value) => setFilters({ ...filters, country: value })}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Pays" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tous les pays</SelectItem>
+              <SelectItem value="FR">France</SelectItem>
+              <SelectItem value="BE">Belgique</SelectItem>
+              <SelectItem value="CH">Suisse</SelectItem>
+              <SelectItem value="CA">Canada</SelectItem>
+              <SelectItem value="LU">Luxembourg</SelectItem>
+              <SelectItem value="MC">Monaco</SelectItem>
+              <SelectItem value="MA">Maroc</SelectItem>
+              <SelectItem value="TN">Tunisie</SelectItem>
+              <SelectItem value="SN">Sénégal</SelectItem>
+              <SelectItem value="CI">Côte d'Ivoire</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={filters.city}
+            onValueChange={(value) => setFilters({ ...filters, city: value })}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Ville" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Toutes les villes</SelectItem>
+              <SelectItem value="Paris">Paris</SelectItem>
+              <SelectItem value="Lyon">Lyon</SelectItem>
+              <SelectItem value="Marseille">Marseille</SelectItem>
+              <SelectItem value="Bordeaux">Bordeaux</SelectItem>
+              <SelectItem value="Toulouse">Toulouse</SelectItem>
+              <SelectItem value="Nantes">Nantes</SelectItem>
+              <SelectItem value="Strasbourg">Strasbourg</SelectItem>
+              <SelectItem value="Lille">Lille</SelectItem>
+              <SelectItem value="Montpellier">Montpellier</SelectItem>
+              <SelectItem value="Rennes">Rennes</SelectItem>
+              <SelectItem value="Bruxelles">Bruxelles</SelectItem>
+              <SelectItem value="Genève">Genève</SelectItem>
+              <SelectItem value="Montréal">Montréal</SelectItem>
+              <SelectItem value="Luxembourg">Luxembourg</SelectItem>
+              <SelectItem value="Casablanca">Casablanca</SelectItem>
+              <SelectItem value="Tunis">Tunis</SelectItem>
+              <SelectItem value="Dakar">Dakar</SelectItem>
+              <SelectItem value="Abidjan">Abidjan</SelectItem>
+            </SelectContent>
+          </Select>
+          
+          <Select
             value={filters.industry}
             onValueChange={(value) => setFilters({ ...filters, industry: value })}
           >
@@ -60,6 +114,22 @@ export function LeadsFilters({ filters, setFilters }: LeadsFiltersProps) {
               <SelectItem value="Transportation">Transport</SelectItem>
               <SelectItem value="Media">Médias</SelectItem>
               <SelectItem value="Tourism">Tourisme</SelectItem>
+              <SelectItem value="Construction">Construction</SelectItem>
+              <SelectItem value="Consulting">Conseil</SelectItem>
+              <SelectItem value="Legal">Services juridiques</SelectItem>
+              <SelectItem value="Insurance">Assurance</SelectItem>
+              <SelectItem value="Telecom">Télécommunications</SelectItem>
+              <SelectItem value="Automotive">Automobile</SelectItem>
+              <SelectItem value="Aerospace">Aérospatiale</SelectItem>
+              <SelectItem value="Biotechnology">Biotechnologie</SelectItem>
+              <SelectItem value="Pharmaceutical">Pharmaceutique</SelectItem>
+              <SelectItem value="Entertainment">Divertissement</SelectItem>
+              <SelectItem value="Sports">Sport</SelectItem>
+              <SelectItem value="Fashion">Mode</SelectItem>
+              <SelectItem value="Food">Alimentation</SelectItem>
+              <SelectItem value="Hospitality">Hôtellerie</SelectItem>
+              <SelectItem value="NGO">ONG</SelectItem>
+              <SelectItem value="Government">Secteur public</SelectItem>
             </SelectContent>
           </Select>
         </div>
