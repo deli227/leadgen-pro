@@ -14,16 +14,50 @@ interface LocationFiltersProps {
 }
 
 const citiesByCountry = {
-  FR: ["Paris", "Lyon", "Marseille", "Bordeaux", "Lille", "Toulouse", "Nantes", "Strasbourg"],
-  BE: ["Bruxelles", "Anvers", "Gand", "Liège", "Bruges"],
-  CH: ["Genève", "Zurich", "Bâle", "Lausanne", "Berne"],
-  CA: ["Montréal", "Québec", "Ottawa", "Toronto", "Vancouver"],
-  LU: ["Luxembourg"],
-  MC: ["Monaco"],
-  MA: ["Casablanca", "Rabat", "Marrakech", "Tanger", "Fès"],
-  TN: ["Tunis", "Sfax", "Sousse", "Kairouan"],
-  SN: ["Dakar", "Saint-Louis", "Thiès", "Rufisque"],
-  CI: ["Abidjan", "Yamoussoukro", "Bouaké", "Korhogo"]
+  FR: [
+    "Paris", "Lyon", "Marseille", "Bordeaux", "Lille", "Toulouse", "Nantes", 
+    "Strasbourg", "Nice", "Rennes", "Montpellier", "Reims", "Toulon", "Grenoble", 
+    "Dijon", "Angers", "Nîmes", "Saint-Étienne", "Perpignan", "Besançon", "Orléans",
+    "Rouen", "Caen", "Nancy", "Metz", "Tours", "Clermont-Ferrand", "Avignon"
+  ],
+  BE: [
+    "Bruxelles", "Anvers", "Gand", "Liège", "Bruges", "Namur", "Louvain", "Mons",
+    "Ostende", "Charleroi", "Courtrai", "Hasselt", "Tournai", "Arlon", "Wavre",
+    "Malines", "Verviers", "Seraing", "Dinant", "La Louvière"
+  ],
+  CH: [
+    "Genève", "Zurich", "Bâle", "Lausanne", "Berne", "Lucerne", "Winterthour",
+    "Saint-Gall", "Lugano", "Bienne", "Thoune", "Köniz", "Fribourg", "Neuchâtel",
+    "Vernier", "Sion", "Coire", "Schaffhouse", "Yverdon-les-Bains"
+  ],
+  CA: [
+    "Montréal", "Québec", "Ottawa", "Toronto", "Vancouver", "Calgary", "Edmonton",
+    "Winnipeg", "Halifax", "Victoria", "Regina", "Saskatoon", "Gatineau", "Laval",
+    "Sherbrooke", "Trois-Rivières", "Longueuil", "Saint-Jean-sur-Richelieu"
+  ],
+  LU: [
+    "Luxembourg", "Esch-sur-Alzette", "Differdange", "Dudelange", "Pétange",
+    "Ettelbruck", "Diekirch", "Wiltz", "Echternach", "Remich", "Vianden"
+  ],
+  MC: ["Monaco", "Monte-Carlo", "La Condamine", "Fontvieille", "Larvotto"],
+  MA: [
+    "Casablanca", "Rabat", "Marrakech", "Tanger", "Fès", "Meknès", "Oujda",
+    "Agadir", "Tétouan", "Safi", "El Jadida", "Kénitra", "Nador", "Essaouira",
+    "Mohammedia", "Ouarzazate", "Ifrane"
+  ],
+  TN: [
+    "Tunis", "Sfax", "Sousse", "Kairouan", "Bizerte", "Gabès", "Ariana",
+    "Gafsa", "Monastir", "Nabeul", "Hammamet", "Médenine", "Kasserine",
+    "La Marsa", "Mahdia", "Djerba", "Tozeur"
+  ],
+  SN: [
+    "Dakar", "Saint-Louis", "Thiès", "Rufisque", "Kaolack", "Ziguinchor",
+    "Touba", "Diourbel", "Louga", "Tambacounda", "Kolda", "Mbour", "Fatick"
+  ],
+  CI: [
+    "Abidjan", "Yamoussoukro", "Bouaké", "Korhogo", "San-Pédro", "Daloa",
+    "Man", "Divo", "Gagnoa", "Grand-Bassam", "Dabou", "Séguéla", "Abengourou"
+  ]
 }
 
 export function LocationFilters({ 
@@ -68,7 +102,7 @@ export function LocationFilters({
             {city === "all" ? "Toutes les villes" : city}
           </SelectValue>
         </SelectTrigger>
-        <SelectContent className="bg-secondary-dark border-primary-light text-primary-light">
+        <SelectContent className="bg-secondary-dark border-primary-light text-primary-light max-h-[300px] overflow-y-auto">
           <SelectItem value="all">Toutes les villes</SelectItem>
           {country !== "all" && citiesByCountry[country as keyof typeof citiesByCountry]?.map((cityName) => (
             <SelectItem 
