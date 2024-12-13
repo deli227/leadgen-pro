@@ -1,18 +1,25 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Brain, BarChart3, Database, LogIn, Sparkles, Mail, Phone } from "lucide-react";
+import { ArrowRight, Brain, BarChart3, Database, LogIn } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { RobotMascot } from "./RobotMascot";
 
 export const HeroSection = () => {
   return (
     <div className="relative overflow-hidden bg-secondary-dark py-24 sm:py-32">
       <div className="absolute inset-0 bg-grid-pattern opacity-5" />
+      
+      {/* Add a gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent" />
+      
       <div className="mx-auto max-w-7xl px-6 lg:px-8 relative">
+        <RobotMascot />
+        
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mx-auto max-w-3xl text-center"
+          className="mx-auto max-w-3xl text-center relative z-20"
         >
           <h1 className="text-6xl font-bold tracking-tight text-white sm:text-7xl mb-4">
             LeadGen Pro{" "}
@@ -28,10 +35,11 @@ export const HeroSection = () => {
             <Link to="/auth">
               <Button 
                 size="lg" 
-                className="bg-gradient-to-r from-accent to-primary hover:from-accent/90 hover:to-primary/90 text-white font-semibold px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent"
+                className="bg-gradient-to-r from-accent to-primary hover:from-accent/90 hover:to-primary/90 text-white font-semibold px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent relative overflow-hidden group"
               >
-                Essayer la démo
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <span className="relative z-10">Essayer la démo</span>
+                <ArrowRight className="ml-2 h-5 w-5 relative z-10" />
+                <div className="absolute inset-0 bg-gradient-to-r from-primary to-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </Button>
             </Link>
             <Link to="/auth">
@@ -51,7 +59,7 @@ export const HeroSection = () => {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="mt-20 grid grid-cols-1 gap-8 sm:grid-cols-3"
+          className="mt-20 grid grid-cols-1 gap-8 sm:grid-cols-3 relative z-20"
         >
           <div className="flex flex-col items-center text-center group">
             <div className="rounded-lg bg-primary/10 p-3 transform transition-all group-hover:scale-110 group-hover:bg-primary/20 shadow-[0_0_10px_rgba(155,135,245,0.3)] group-hover:shadow-[0_0_20px_rgba(155,135,245,0.6)]">
