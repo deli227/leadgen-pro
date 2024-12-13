@@ -23,8 +23,8 @@ export default function Index() {
       </div>
       <main>
         <HeroSection />
-        <PricingSection />
         <HowItWorksSection />
+        <PricingSection />
         <FeaturesSection />
         <TestimonialsSection />
         <ContactSection />
