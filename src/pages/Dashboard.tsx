@@ -47,15 +47,17 @@ export function Dashboard() {
 
   return (
     <div className="min-h-screen bg-secondary-dark">
-      <div className="container mx-auto py-8">
+      <div className="container mx-auto py-8 px-4 animate-fade-in">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-primary-light">Tableau de bord des leads</h1>
+          <h1 className="text-3xl font-bold text-primary-light bg-clip-text">
+            Tableau de bord des leads
+          </h1>
           <LeadsExport leads={leads} />
         </div>
         
         <div className="grid gap-8">
           <LeadsFilters filters={filters} setFilters={setFilters} />
-          <ScrollArea className="h-[600px] rounded-md border border-primary-light bg-black">
+          <ScrollArea className="h-[calc(100vh-24rem)] rounded-md border border-primary-light bg-black">
             <LeadsTable leads={leads} filters={filters} />
           </ScrollArea>
         </div>

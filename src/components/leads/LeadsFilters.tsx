@@ -1,15 +1,9 @@
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Slider } from "@/components/ui/slider"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Search, ChevronRight } from "lucide-react"
+import { ChevronRight } from "lucide-react"
+import { SearchInput } from "./filters/SearchInput"
+import { LocationFilters } from "./filters/LocationFilters"
+import { IndustrySelect } from "./filters/IndustrySelect"
+import { LeadCountSlider } from "./filters/LeadCountSlider"
 
 interface LeadsFiltersProps {
   filters: {
@@ -60,137 +54,28 @@ export function LeadsFilters({ filters, setFilters }: LeadsFiltersProps) {
 
       <TabsContent value="filters" className="space-y-4 bg-black p-4 rounded-lg">
         <div className="flex flex-wrap gap-4">
-          <div className="flex-1 min-w-[200px] relative">
-            <Input
-              placeholder="Rechercher une entreprise..."
-              value={filters.search}
-              onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-              className="bg-transparent border-primary-light text-primary-light placeholder:text-primary-light/70"
-            />
-            <Button 
-              variant="ghost" 
-              size="icon"
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-primary-light hover:text-primary hover:bg-transparent"
-              onClick={() => console.log("Recherche lancée")}
-            >
-              <Search className="h-4 w-4" />
-            </Button>
-          </div>
+          <SearchInput 
+            value={filters.search}
+            onChange={(value) => setFilters({ ...filters, search: value })}
+          />
           
-          <Select
-            value={filters.country}
-            onValueChange={(value) => setFilters({ ...filters, country: value })}
-          >
-            <SelectTrigger className="w-[180px] bg-transparent border-primary-light text-primary-light">
-              <SelectValue placeholder="Pays" />
-            </SelectTrigger>
-            <SelectContent className="bg-secondary-dark border-primary-light">
-              <SelectItem value="all">Tous les pays</SelectItem>
-              <SelectItem value="FR">France</SelectItem>
-              <SelectItem value="BE">Belgique</SelectItem>
-              <SelectItem value="CH">Suisse</SelectItem>
-              <SelectItem value="CA">Canada</SelectItem>
-              <SelectItem value="LU">Luxembourg</SelectItem>
-              <SelectItem value="MC">Monaco</SelectItem>
-              <SelectItem value="MA">Maroc</SelectItem>
-              <SelectItem value="TN">Tunisie</SelectItem>
-              <SelectItem value="SN">Sénégal</SelectItem>
-              <SelectItem value="CI">Côte d'Ivoire</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select
-            value={filters.city}
-            onValueChange={(value) => setFilters({ ...filters, city: value })}
-          >
-            <SelectTrigger className="w-[180px] bg-transparent border-primary-light text-primary-light">
-              <SelectValue placeholder="Ville" />
-            </SelectTrigger>
-            <SelectContent className="bg-secondary-dark border-primary-light">
-              <SelectItem value="all">Toutes les villes</SelectItem>
-              <SelectItem value="Paris">Paris</SelectItem>
-              <SelectItem value="Lyon">Lyon</SelectItem>
-              <SelectItem value="Marseille">Marseille</SelectItem>
-              <SelectItem value="Bordeaux">Bordeaux</SelectItem>
-              <SelectItem value="Toulouse">Toulouse</SelectItem>
-              <SelectItem value="Nantes">Nantes</SelectItem>
-              <SelectItem value="Strasbourg">Strasbourg</SelectItem>
-              <SelectItem value="Lille">Lille</SelectItem>
-              <SelectItem value="Montpellier">Montpellier</SelectItem>
-              <SelectItem value="Rennes">Rennes</SelectItem>
-              <SelectItem value="Bruxelles">Bruxelles</SelectItem>
-              <SelectItem value="Genève">Genève</SelectItem>
-              <SelectItem value="Montréal">Montréal</SelectItem>
-              <SelectItem value="Luxembourg">Luxembourg</SelectItem>
-              <SelectItem value="Casablanca">Casablanca</SelectItem>
-              <SelectItem value="Tunis">Tunis</SelectItem>
-              <SelectItem value="Dakar">Dakar</SelectItem>
-              <SelectItem value="Abidjan">Abidjan</SelectItem>
-            </SelectContent>
-          </Select>
+          <LocationFilters 
+            country={filters.country}
+            city={filters.city}
+            onCountryChange={(value) => setFilters({ ...filters, country: value })}
+            onCityChange={(value) => setFilters({ ...filters, city: value })}
+          />
           
-          <Select
+          <IndustrySelect 
             value={filters.industry}
-            onValueChange={(value) => setFilters({ ...filters, industry: value })}
-          >
-            <SelectTrigger className="w-[180px] bg-transparent border-primary-light text-primary-light">
-              <SelectValue placeholder="Secteur d'activité" />
-            </SelectTrigger>
-            <SelectContent className="bg-secondary-dark border-primary-light">
-              <SelectItem value="all">Tous les secteurs</SelectItem>
-              <SelectItem value="Technology">Technologie</SelectItem>
-              <SelectItem value="Environmental">Environnement</SelectItem>
-              <SelectItem value="Finance">Finance</SelectItem>
-              <SelectItem value="Healthcare">Santé</SelectItem>
-              <SelectItem value="Retail">Commerce de détail</SelectItem>
-              <SelectItem value="Manufacturing">Industrie</SelectItem>
-              <SelectItem value="Education">Éducation</SelectItem>
-              <SelectItem value="RealEstate">Immobilier</SelectItem>
-              <SelectItem value="Energy">Énergie</SelectItem>
-              <SelectItem value="Agriculture">Agriculture</SelectItem>
-              <SelectItem value="Transportation">Transport</SelectItem>
-              <SelectItem value="Media">Médias</SelectItem>
-              <SelectItem value="Tourism">Tourisme</SelectItem>
-              <SelectItem value="Construction">Construction</SelectItem>
-              <SelectItem value="Consulting">Conseil</SelectItem>
-              <SelectItem value="Legal">Services juridiques</SelectItem>
-              <SelectItem value="Insurance">Assurance</SelectItem>
-              <SelectItem value="Telecom">Télécommunications</SelectItem>
-              <SelectItem value="Automotive">Automobile</SelectItem>
-              <SelectItem value="Aerospace">Aérospatiale</SelectItem>
-              <SelectItem value="Biotechnology">Biotechnologie</SelectItem>
-              <SelectItem value="Pharmaceutical">Pharmaceutique</SelectItem>
-              <SelectItem value="Entertainment">Divertissement</SelectItem>
-              <SelectItem value="Sports">Sport</SelectItem>
-              <SelectItem value="Fashion">Mode</SelectItem>
-              <SelectItem value="Food">Alimentation</SelectItem>
-              <SelectItem value="Hospitality">Hôtellerie</SelectItem>
-              <SelectItem value="NGO">ONG</SelectItem>
-              <SelectItem value="Government">Secteur public</SelectItem>
-            </SelectContent>
-          </Select>
+            onChange={(value) => setFilters({ ...filters, industry: value })}
+          />
         </div>
 
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-primary-light">Nombre de leads à générer (1-50)</label>
-          <div className="px-2">
-            <Slider
-              defaultValue={[filters.leadCount]}
-              max={50}
-              min={1}
-              step={1}
-              onValueChange={([value]) => 
-                setFilters({ ...filters, leadCount: value })
-              }
-              className="[&_[role=slider]]:bg-primary-light [&_[role=slider]]:border-primary-light"
-            />
-          </div>
-          <div className="flex justify-between text-sm text-primary-light">
-            <span>1</span>
-            <span>{filters.leadCount}</span>
-            <span>50</span>
-          </div>
-        </div>
+        <LeadCountSlider 
+          value={filters.leadCount}
+          onChange={(value) => setFilters({ ...filters, leadCount: value })}
+        />
       </TabsContent>
 
       <TabsContent value="analytics" className="space-y-4 bg-black p-4 rounded-lg">
