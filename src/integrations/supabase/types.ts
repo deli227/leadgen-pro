@@ -70,16 +70,28 @@ export type Database = {
           created_at: string
           email: string | null
           id: string
+          last_lead_generation_date: string | null
+          leads_generated_this_month: number
+          leads_generated_today: number
+          subscription_type: Database["public"]["Enums"]["subscription_type"]
         }
         Insert: {
           created_at?: string
           email?: string | null
           id: string
+          last_lead_generation_date?: string | null
+          leads_generated_this_month?: number
+          leads_generated_today?: number
+          subscription_type?: Database["public"]["Enums"]["subscription_type"]
         }
         Update: {
           created_at?: string
           email?: string | null
           id?: string
+          last_lead_generation_date?: string | null
+          leads_generated_this_month?: number
+          leads_generated_today?: number
+          subscription_type?: Database["public"]["Enums"]["subscription_type"]
         }
         Relationships: []
       }
@@ -104,6 +116,24 @@ export type Database = {
         }
         Relationships: []
       }
+      subscription_limits: {
+        Row: {
+          daily_leads_limit: number
+          monthly_leads_limit: number
+          type: Database["public"]["Enums"]["subscription_type"]
+        }
+        Insert: {
+          daily_leads_limit: number
+          monthly_leads_limit: number
+          type: Database["public"]["Enums"]["subscription_type"]
+        }
+        Update: {
+          daily_leads_limit?: number
+          monthly_leads_limit?: number
+          type?: Database["public"]["Enums"]["subscription_type"]
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -112,7 +142,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      subscription_type: "free" | "pro" | "enterprise"
     }
     CompositeTypes: {
       [_ in never]: never

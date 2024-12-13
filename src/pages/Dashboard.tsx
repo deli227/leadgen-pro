@@ -8,6 +8,7 @@ import { LogOut } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 import { useNavigate } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
+import { useToast } from "@/components/ui/use-toast"
 
 interface SupabaseLead {
   id: string
@@ -45,14 +46,55 @@ interface Lead {
   weaknesses: string[]
 }
 
+interface UserProfile {
+  subscription_type: 'free' | 'pro' | 'enterprise'
+  leads_generated_today: number
+  leads_generated_this_month: number
+  last_lead_generation_date: string
+}
+
 export function Dashboard() {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [filters, setFilters] = useState({
     search: "",
     leadCount: 10,
     industry: "all",
     country: "all",
     city: "all"
+  });
+
+  const { data: profile } = useQuery({
+    queryKey: ['profile'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('subscription_type, leads_generated_today, leads_generated_this_month, last_lead_generation_date')
+        .eq('id', user.id)
+        .single();
+      
+      if (error) throw error;
+      return data as UserProfile;
+    }
+  });
+
+  const { data: limits } = useQuery({
+    queryKey: ['subscription_limits', profile?.subscription_type],
+    queryFn: async () => {
+      if (!profile) return null;
+      const { data, error } = await supabase
+        .from('subscription_limits')
+        .select('daily_leads_limit, monthly_leads_limit')
+        .eq('type', profile.subscription_type)
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!profile
   });
 
   const { data: supabaseLeads = [] } = useQuery({
@@ -67,9 +109,27 @@ export function Dashboard() {
     }
   });
 
+  useEffect(() => {
+    if (profile && limits) {
+      if (profile.leads_generated_today >= limits.daily_leads_limit) {
+        toast({
+          title: "Limite quotidienne atteinte",
+          description: `Vous avez atteint votre limite de ${limits.daily_leads_limit} leads par jour. Passez à un forfait supérieur pour générer plus de leads.`,
+          variant: "destructive",
+        });
+      } else if (profile.leads_generated_this_month >= limits.monthly_leads_limit) {
+        toast({
+          title: "Limite mensuelle atteinte",
+          description: `Vous avez atteint votre limite de ${limits.monthly_leads_limit} leads par mois. Passez à un forfait supérieur pour générer plus de leads.`,
+          variant: "destructive",
+        });
+      }
+    }
+  }, [profile, limits, toast]);
+
   // Transform Supabase leads to match the expected Lead interface
   const leads: Lead[] = supabaseLeads.map(lead => ({
-    id: parseInt(lead.id), // Convert string id to number
+    id: parseInt(lead.id),
     company: lead.company,
     email: lead.email || "",
     phone: lead.phone || "",
@@ -95,6 +155,16 @@ export function Dashboard() {
             Tableau de bord des leads
           </h1>
           <div className="flex gap-4 items-center">
+            {profile && limits && (
+              <div className="text-primary-light text-sm">
+                <span className="mr-4">
+                  {profile.leads_generated_today}/{limits.daily_leads_limit} leads aujourd'hui
+                </span>
+                <span>
+                  {profile.leads_generated_this_month}/{limits.monthly_leads_limit} leads ce mois
+                </span>
+              </div>
+            )}
             <LeadsExport leads={leads} />
             <Button
               onClick={handleLogout}
