@@ -132,6 +132,14 @@ export function Dashboard() {
     }
   }
 
+  const handleRemoveFromExport = (leadId: number) => {
+    setExportLeads(prev => prev.filter(lead => lead.id !== leadId))
+    toast({
+      title: "Lead retiré de l'export",
+      description: "Le lead a été retiré avec succès de la liste d'export."
+    })
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary-dark via-[#1A1F2C] to-black">
       <div className="container mx-auto py-8 px-4 animate-fade-in">
@@ -177,6 +185,8 @@ export function Dashboard() {
             analyticsLeads={analyticsLeads}
             onAddToAnalytics={handleAddToAnalytics}
             onAddToExport={handleAddToExport}
+            exportLeads={exportLeads}
+            onRemoveFromExport={handleRemoveFromExport}
           />
         </div>
       </div>

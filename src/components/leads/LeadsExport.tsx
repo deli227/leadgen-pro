@@ -17,6 +17,15 @@ export function LeadsExport({ leads }: LeadsExportProps) {
   const { toast } = useToast()
 
   const exportToCSV = () => {
+    if (leads.length === 0) {
+      toast({
+        variant: "destructive",
+        title: "Aucun lead à exporter",
+        description: "Ajoutez d'abord des leads à votre liste d'export."
+      })
+      return
+    }
+
     const headers = ["Entreprise", "Email", "Téléphone", "Score", "Secteur"]
     const csvContent = [
       headers.join(","),
@@ -36,22 +45,40 @@ export function LeadsExport({ leads }: LeadsExportProps) {
     
     toast({
       title: "Export réussi",
-      description: "Les leads ont été exportés au format CSV"
+      description: `${leads.length} leads ont été exportés au format CSV`
     })
   }
 
   const exportToJSON = () => {
+    if (leads.length === 0) {
+      toast({
+        variant: "destructive",
+        title: "Aucun lead à exporter",
+        description: "Ajoutez d'abord des leads à votre liste d'export."
+      })
+      return
+    }
+
     const jsonContent = JSON.stringify(leads, null, 2)
     const blob = new Blob([jsonContent], { type: "application/json" })
     downloadFile(blob, "leads.json")
     
     toast({
       title: "Export réussi",
-      description: "Les leads ont été exportés au format JSON"
+      description: `${leads.length} leads ont été exportés au format JSON`
     })
   }
 
   const exportToPDF = () => {
+    if (leads.length === 0) {
+      toast({
+        variant: "destructive",
+        title: "Aucun lead à exporter",
+        description: "Ajoutez d'abord des leads à votre liste d'export."
+      })
+      return
+    }
+
     try {
       const pdf = new jsPDF()
       
@@ -82,7 +109,7 @@ export function LeadsExport({ leads }: LeadsExportProps) {
       
       toast({
         title: "Export réussi",
-        description: "Les leads ont été exportés au format PDF"
+        description: `${leads.length} leads ont été exportés au format PDF`
       })
     } catch (error) {
       console.error("Erreur d'export PDF:", error)
@@ -106,9 +133,13 @@ export function LeadsExport({ leads }: LeadsExportProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="bg-gradient-to-r from-primary/20 to-primary-dark/20 text-primary-light border-primary-light/20 hover:bg-primary/30 hover:text-white transition-all duration-300">
+        <Button 
+          variant="outline" 
+          className="bg-gradient-to-r from-primary/20 to-primary-dark/20 text-primary-light border-primary-light/20 hover:bg-primary/30 hover:text-white transition-all duration-300"
+          disabled={leads.length === 0}
+        >
           <Download className="h-4 w-4 mr-2" />
-          Exporter
+          Exporter ({leads.length})
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="bg-secondary-dark border-primary-light">
