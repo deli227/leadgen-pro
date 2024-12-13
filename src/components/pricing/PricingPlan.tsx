@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Check, Infinity } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -26,18 +26,20 @@ export const PricingPlan = ({
   priceId,
 }: PricingPlanProps) => {
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleSubscribe = async () => {
-    if (type === 'free') {
-      window.location.href = '/auth';
-      return;
-    }
-
     try {
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
-        window.location.href = '/auth';
+        // Si l'utilisateur n'est pas connecté, on le redirige vers la page d'authentification
+        navigate('/auth');
+        return;
+      }
+
+      if (type === 'free') {
+        navigate('/dashboard');
         return;
       }
 
