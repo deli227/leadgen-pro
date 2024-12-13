@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ChevronRight, Loader2, Mail, MapPin, Phone } from "lucide-react"
+import { ChevronRight, Loader2 } from "lucide-react"
 import { SearchInput } from "./filters/SearchInput"
 import { LocationFilters } from "./filters/LocationFilters"
 import { IndustrySelect } from "./filters/IndustrySelect"
@@ -9,8 +9,8 @@ import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
 import { useState } from "react"
 import { LeadsAnalytics } from "./LeadsAnalytics"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { LeadScoreDisplay } from "./LeadScoreDisplay"
+import { LeadsList } from "./filters/LeadsList"
+import { motion } from "framer-motion"
 
 interface LeadsFiltersProps {
   filters: {
@@ -77,7 +77,7 @@ export function LeadsFilters({
 
   return (
     <Tabs defaultValue="filters" className="w-full">
-      <TabsList className="grid w-full grid-cols-4 bg-gradient-to-r from-black to-secondary-dark border border-primary-light/20 rounded-t-lg overflow-hidden">
+      <TabsList className="grid w-full grid-cols-4 bg-gradient-to-r from-black to-secondary-dark border border-primary-light/20 rounded-t-xl overflow-hidden shadow-lg">
         <TabsTrigger 
           value="filters" 
           className="relative text-primary-light data-[state=active]:bg-black/60 data-[state=active]:text-primary-light group transition-all duration-300"
@@ -86,7 +86,12 @@ export function LeadsFilters({
             Filtres
             <ChevronRight className="h-4 w-4 transition-transform group-data-[state=active]:rotate-90" />
           </span>
-          <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary scale-x-0 group-data-[state=active]:scale-x-100 transition-transform" />
+          <motion.span 
+            className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-primary to-accent"
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 0.3 }}
+          />
         </TabsTrigger>
         <TabsTrigger 
           value="analytics" 
@@ -120,8 +125,13 @@ export function LeadsFilters({
         </TabsTrigger>
       </TabsList>
 
-      <TabsContent value="filters" className="space-y-6 bg-gradient-to-br from-black/80 to-secondary-dark/80 p-6 rounded-lg border border-primary/10">
-        <div className="flex flex-wrap gap-4">
+      <TabsContent value="filters" className="space-y-6 bg-gradient-to-br from-black/80 to-secondary-dark/80 p-8 rounded-b-xl border border-primary/10 shadow-xl">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="flex flex-wrap gap-4"
+        >
           <LocationFilters 
             country={filters.country}
             city={filters.city}
@@ -140,7 +150,7 @@ export function LeadsFilters({
           <Button
             onClick={handleGenerateLeads}
             disabled={isGenerating}
-            className="ml-auto bg-gradient-to-r from-primary to-accent hover:from-primary-dark hover:to-accent-dark text-white shadow-lg shadow-primary/20 transition-all duration-300"
+            className="ml-auto bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white shadow-lg hover:shadow-xl transition-all duration-300"
           >
             {isGenerating ? (
               <>
@@ -151,106 +161,47 @@ export function LeadsFilters({
               'Générer les leads'
             )}
           </Button>
-        </div>
+        </motion.div>
 
         <LeadCountSlider 
           value={filters.leadCount}
           onChange={(value) => setFilters({ ...filters, leadCount: value })}
         />
 
-        <div className="mt-6">
-          <h3 className="text-lg font-semibold text-primary-light mb-4">Leads générés</h3>
-          <ScrollArea className="h-[400px] pr-4">
-            <div className="space-y-4">
-              {leads.map(lead => (
-                <div key={lead.id} className="p-4 border border-primary/20 rounded-lg bg-black/40">
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
-                      <h4 className="text-primary-light font-medium">{lead.company}</h4>
-                      <p className="text-sm text-primary-light/70">{lead.industry}</p>
-                    </div>
-                    <Button
-                      onClick={() => onAddToAnalytics(lead)}
-                      variant="outline"
-                      size="sm"
-                      className="bg-gradient-to-r from-primary to-primary-dark text-white border-none hover:opacity-90"
-                    >
-                      Ajouter aux analytiques
-                    </Button>
-                  </div>
-                  
-                  <div className="space-y-2 text-sm text-primary-light/80">
-                    <LeadScoreDisplay score={lead.score} />
-                    <div className="flex items-center gap-2">
-                      <Mail className="h-4 w-4" />
-                      {lead.email}
-                    </div>
-                    {lead.phone && (
-                      <div className="flex items-center gap-2">
-                        <Phone className="h-4 w-4" />
-                        {lead.phone}
-                      </div>
-                    )}
-                    {lead.address && (
-                      <div className="flex items-center gap-2">
-                        <MapPin className="h-4 w-4" />
-                        {lead.address}
-                      </div>
-                    )}
-                  </div>
-
-                  {(lead.socialMedia?.linkedin || lead.socialMedia?.twitter) && (
-                    <div className="mt-3 flex gap-3">
-                      {lead.socialMedia.linkedin && (
-                        <a 
-                          href={lead.socialMedia.linkedin}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs text-primary-light/70 hover:text-primary-light"
-                        >
-                          LinkedIn
-                        </a>
-                      )}
-                      {lead.socialMedia.twitter && (
-                        <a 
-                          href={lead.socialMedia.twitter}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs text-primary-light/70 hover:text-primary-light"
-                        >
-                          Twitter
-                        </a>
-                      )}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </ScrollArea>
-        </div>
+        <LeadsList leads={leads} onAddToAnalytics={onAddToAnalytics} />
       </TabsContent>
 
-      <TabsContent value="analytics" className="space-y-4 bg-gradient-to-br from-black/80 to-secondary-dark/80 p-6 rounded-lg border border-primary/10">
+      <TabsContent value="analytics" className="space-y-4 bg-gradient-to-br from-black/80 to-secondary-dark/80 p-8 rounded-b-xl border border-primary/10 shadow-xl">
         <LeadsAnalytics leads={analyticsLeads} onAddToExport={onAddToExport} />
       </TabsContent>
 
-      <TabsContent value="search" className="space-y-4 bg-gradient-to-br from-black/80 to-secondary-dark/80 p-6 rounded-lg border border-primary/10">
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-primary-light">Rechercher une entreprise</h3>
+      <TabsContent value="search" className="space-y-4 bg-gradient-to-br from-black/80 to-secondary-dark/80 p-8 rounded-b-xl border border-primary/10 shadow-xl">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="space-y-4"
+        >
+          <h3 className="text-xl font-semibold text-primary-light">Rechercher une entreprise</h3>
           <SearchInput 
             value={filters.search}
             onChange={(value) => setFilters({ ...filters, search: value })}
           />
-        </div>
+        </motion.div>
       </TabsContent>
 
-      <TabsContent value="export" className="space-y-4 bg-gradient-to-br from-black/80 to-secondary-dark/80 p-6 rounded-lg border border-primary/10">
-        <div className="p-6 border border-primary/20 rounded-lg bg-black/40">
-          <h3 className="text-lg font-semibold text-primary-light mb-2">Export des données</h3>
+      <TabsContent value="export" className="space-y-4 bg-gradient-to-br from-black/80 to-secondary-dark/80 p-8 rounded-b-xl border border-primary/10 shadow-xl">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="p-6 border border-primary/20 rounded-xl bg-black/40"
+        >
+          <h3 className="text-xl font-semibold text-primary-light mb-2">Export des données</h3>
           <p className="text-primary-light/70">
             Les options d'export seront disponibles prochainement.
           </p>
-        </div>
+        </motion.div>
       </TabsContent>
     </Tabs>
   )
