@@ -95,10 +95,13 @@ export function Dashboard() {
     company: lead.company,
     email: lead.email || "",
     phone: lead.phone || "",
-    address: lead.address,
-    qualification: lead.qualification,
-    socialMedia: lead.social_media || { linkedin: "", twitter: "" },
-    score: lead.score,
+    address: lead.address || undefined,
+    qualification: lead.qualification || 0,
+    socialMedia: {
+      linkedin: (lead.social_media as any)?.linkedin || "",
+      twitter: (lead.social_media as any)?.twitter || ""
+    },
+    score: lead.score || 0,
     industry: lead.industry || "",
     strengths: lead.strengths || [],
     weaknesses: lead.weaknesses || []
