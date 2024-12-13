@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Brain, BarChart3, Database } from "lucide-react";
+import { ArrowRight, Brain, BarChart3, Database, LogIn } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export const HeroSection = () => {
   return (
@@ -15,13 +16,18 @@ export const HeroSection = () => {
             qualifier et classer vos prospects automatiquement.
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6 animate-fade-up" style={{ animationDelay: "0.4s" }}>
-            <Button size="lg" className="bg-primary hover:bg-primary-dark">
-              Commencer maintenant
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-            <Button variant="outline" size="lg">
-              Demander une démo
-            </Button>
+            <Link to="/auth">
+              <Button size="lg" className="bg-primary hover:bg-primary-dark">
+                Commencer maintenant
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+            <Link to="/auth">
+              <Button variant="outline" size="lg">
+                <LogIn className="mr-2 h-4 w-4" />
+                Connexion
+              </Button>
+            </Link>
           </div>
         </div>
 

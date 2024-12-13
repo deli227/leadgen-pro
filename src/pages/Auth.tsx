@@ -3,6 +3,7 @@ import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export function Auth() {
   const navigate = useNavigate();
@@ -21,41 +22,72 @@ export function Auth() {
         <h1 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-primary-light to-primary bg-clip-text text-transparent">
           Bienvenue
         </h1>
-        <SupabaseAuth
-          supabaseClient={supabase}
-          appearance={{
-            theme: ThemeSupa,
-            variables: {
-              default: {
-                colors: {
-                  brand: '#646cff',
-                  brandAccent: '#747bff',
+        <Tabs defaultValue="login" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-8">
+            <TabsTrigger value="login">Connexion</TabsTrigger>
+            <TabsTrigger value="signup">Inscription</TabsTrigger>
+          </TabsList>
+          <TabsContent value="login">
+            <SupabaseAuth
+              supabaseClient={supabase}
+              view="sign_in"
+              appearance={{
+                theme: ThemeSupa,
+                variables: {
+                  default: {
+                    colors: {
+                      brand: '#646cff',
+                      brandAccent: '#747bff',
+                    }
+                  }
                 }
-              }
-            }
-          }}
-          providers={[]}
-          localization={{
-            variables: {
-              sign_in: {
-                email_label: 'Email',
-                password_label: 'Mot de passe',
-                button_label: 'Se connecter',
-                loading_button_label: 'Connexion en cours...',
-                social_provider_text: 'Se connecter avec {{provider}}',
-                link_text: "Vous avez déjà un compte ? Connectez-vous",
-              },
-              sign_up: {
-                email_label: 'Email',
-                password_label: 'Mot de passe',
-                button_label: "S'inscrire",
-                loading_button_label: 'Inscription en cours...',
-                social_provider_text: "S'inscrire avec {{provider}}",
-                link_text: "Vous n'avez pas de compte ? Inscrivez-vous",
-              },
-            },
-          }}
-        />
+              }}
+              providers={[]}
+              localization={{
+                variables: {
+                  sign_in: {
+                    email_label: 'Email',
+                    password_label: 'Mot de passe',
+                    button_label: 'Se connecter',
+                    loading_button_label: 'Connexion en cours...',
+                    social_provider_text: 'Se connecter avec {{provider}}',
+                    link_text: "Vous avez déjà un compte ? Connectez-vous",
+                  }
+                },
+              }}
+            />
+          </TabsContent>
+          <TabsContent value="signup">
+            <SupabaseAuth
+              supabaseClient={supabase}
+              view="sign_up"
+              appearance={{
+                theme: ThemeSupa,
+                variables: {
+                  default: {
+                    colors: {
+                      brand: '#646cff',
+                      brandAccent: '#747bff',
+                    }
+                  }
+                }
+              }}
+              providers={[]}
+              localization={{
+                variables: {
+                  sign_up: {
+                    email_label: 'Email',
+                    password_label: 'Mot de passe',
+                    button_label: "S'inscrire",
+                    loading_button_label: 'Inscription en cours...',
+                    social_provider_text: "S'inscrire avec {{provider}}",
+                    link_text: "Vous n'avez pas de compte ? Inscrivez-vous",
+                  }
+                },
+              }}
+            />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
