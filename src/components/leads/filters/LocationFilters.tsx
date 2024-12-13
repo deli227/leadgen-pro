@@ -36,21 +36,20 @@ export function LocationFilters({
   onCountryChange, 
   onCityChange 
 }: LocationFiltersProps) {
-  const handleCountryChange = (newCountry: string) => {
-    console.log("Changing country to:", newCountry)
-    onCountryChange(newCountry)
-    // Reset city when country changes
-    onCityChange('all')
-  }
-
   return (
     <div className="flex gap-4">
       <Select 
-        value={country} 
-        onValueChange={handleCountryChange}
+        defaultValue={country}
+        onValueChange={(value) => {
+          console.log("Sélection du pays:", value)
+          onCountryChange(value)
+          onCityChange("all")
+        }}
       >
         <SelectTrigger className="w-[180px] bg-transparent border-primary-light/20 text-primary-light">
-          <SelectValue placeholder="Pays" />
+          <SelectValue placeholder="Pays">
+            {country === "all" ? "Tous les pays" : country}
+          </SelectValue>
         </SelectTrigger>
         <SelectContent className="bg-secondary-dark/95 border-primary-light/20 text-primary-light">
           <SelectItem value="all" className="text-primary-light hover:bg-primary/20">Tous les pays</SelectItem>
@@ -68,16 +67,18 @@ export function LocationFilters({
       </Select>
 
       <Select 
-        value={city} 
+        defaultValue={city}
         onValueChange={onCityChange}
-        disabled={country === 'all'}
+        disabled={country === "all"}
       >
         <SelectTrigger className="w-[180px] bg-transparent border-primary-light/20 text-primary-light">
-          <SelectValue placeholder="Ville" />
+          <SelectValue placeholder="Ville">
+            {city === "all" ? "Toutes les villes" : city}
+          </SelectValue>
         </SelectTrigger>
         <SelectContent className="bg-secondary-dark/95 border-primary-light/20 text-primary-light">
           <SelectItem value="all" className="text-primary-light hover:bg-primary/20">Toutes les villes</SelectItem>
-          {country !== 'all' && citiesByCountry[country as keyof typeof citiesByCountry]?.map((cityName) => (
+          {country !== "all" && citiesByCountry[country as keyof typeof citiesByCountry]?.map((cityName) => (
             <SelectItem 
               key={cityName} 
               value={cityName} 
