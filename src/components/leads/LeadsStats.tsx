@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { ArrowUpCircle } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
 import { supabase } from "@/integrations/supabase/client"
+import { plans } from "../pricing/pricingData"
 
 interface LeadsStatsProps {
   dailyLeadsLeft: number
@@ -22,10 +23,10 @@ export function LeadsStats({
 }: LeadsStatsProps) {
   const { toast } = useToast()
 
-  const handleUpgrade = async () => {
+  const handleUpgrade = async (priceId: string) => {
     try {
       const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { priceId: 'price_1QV8EyB0B6nBBCbUWZIuAQ8q' },
+        body: { priceId },
       })
 
       if (error) throw error
@@ -41,6 +42,9 @@ export function LeadsStats({
       })
     }
   }
+
+  // Filter out the free plan and get upgrade options
+  const upgradeOptions = plans.filter(plan => plan.type !== 'free')
 
   return (
     <div className="grid gap-4 md:grid-cols-2">
@@ -68,20 +72,29 @@ export function LeadsStats({
 
       {subscriptionType === 'free' && (
         <Card className="md:col-span-2 p-6 bg-gradient-to-r from-primary/10 to-primary-dark/10 backdrop-blur-sm border-primary/20">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="text-center md:text-left">
-              <h3 className="text-lg font-medium text-primary-light">Passez au plan Pro</h3>
+          <div className="flex flex-col space-y-6">
+            <div className="text-center">
+              <h3 className="text-lg font-medium text-primary-light">Passez à un plan supérieur</h3>
               <p className="text-sm text-primary-light/70">
-                Obtenez plus de leads et des fonctionnalités avancées
+                Choisissez le plan qui correspond le mieux à vos besoins
               </p>
             </div>
-            <Button
-              onClick={handleUpgrade}
-              className="bg-gradient-to-r from-primary to-primary-dark text-white border-none hover:opacity-90"
-            >
-              <ArrowUpCircle className="mr-2 h-4 w-4" />
-              Upgrader maintenant
-            </Button>
+            <div className="grid md:grid-cols-2 gap-4">
+              {upgradeOptions.map((plan) => (
+                <div key={plan.type} className="flex flex-col items-center p-4 rounded-lg bg-black/20 space-y-3">
+                  <h4 className="text-lg font-medium text-primary-light">{plan.name}</h4>
+                  <p className="text-2xl font-bold text-primary">{plan.price}</p>
+                  <p className="text-sm text-primary-light/70 text-center">{plan.description}</p>
+                  <Button
+                    onClick={() => handleUpgrade(plan.priceId!)}
+                    className="w-full bg-gradient-to-r from-primary to-primary-dark text-white border-none hover:opacity-90"
+                  >
+                    <ArrowUpCircle className="mr-2 h-4 w-4" />
+                    Choisir {plan.name}
+                  </Button>
+                </div>
+              ))}
+            </div>
           </div>
         </Card>
       )}
