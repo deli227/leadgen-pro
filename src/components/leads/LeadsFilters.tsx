@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ChevronRight, Loader2 } from "lucide-react"
+import { ChevronRight, Loader2, Mail, MapPin, Phone } from "lucide-react"
 import { SearchInput } from "./filters/SearchInput"
 import { LocationFilters } from "./filters/LocationFilters"
 import { IndustrySelect } from "./filters/IndustrySelect"
@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
 import { useState } from "react"
 import { LeadsAnalytics } from "./LeadsAnalytics"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 interface LeadsFiltersProps {
   filters: {
@@ -158,24 +159,72 @@ export function LeadsFilters({
 
         <div className="mt-6">
           <h3 className="text-lg font-semibold text-primary-light mb-4">Leads générés</h3>
-          <div className="space-y-4">
-            {leads.map(lead => (
-              <div key={lead.id} className="p-4 border border-primary/20 rounded-lg bg-black/40 flex justify-between items-center">
-                <div>
-                  <h4 className="text-primary-light font-medium">{lead.company}</h4>
-                  <p className="text-sm text-primary-light/70">{lead.industry}</p>
+          <ScrollArea className="h-[400px] pr-4">
+            <div className="space-y-4">
+              {leads.map(lead => (
+                <div key={lead.id} className="p-4 border border-primary/20 rounded-lg bg-black/40">
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <h4 className="text-primary-light font-medium">{lead.company}</h4>
+                      <p className="text-sm text-primary-light/70">{lead.industry}</p>
+                    </div>
+                    <Button
+                      onClick={() => onAddToAnalytics(lead)}
+                      variant="outline"
+                      size="sm"
+                      className="bg-gradient-to-r from-primary to-primary-dark text-white border-none hover:opacity-90"
+                    >
+                      Ajouter aux analytiques
+                    </Button>
+                  </div>
+                  
+                  <div className="space-y-2 text-sm text-primary-light/80">
+                    <div className="flex items-center gap-2">
+                      <Mail className="h-4 w-4" />
+                      {lead.email}
+                    </div>
+                    {lead.phone && (
+                      <div className="flex items-center gap-2">
+                        <Phone className="h-4 w-4" />
+                        {lead.phone}
+                      </div>
+                    )}
+                    {lead.address && (
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-4 w-4" />
+                        {lead.address}
+                      </div>
+                    )}
+                  </div>
+
+                  {(lead.socialMedia?.linkedin || lead.socialMedia?.twitter) && (
+                    <div className="mt-3 flex gap-3">
+                      {lead.socialMedia.linkedin && (
+                        <a 
+                          href={lead.socialMedia.linkedin}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-primary-light/70 hover:text-primary-light"
+                        >
+                          LinkedIn
+                        </a>
+                      )}
+                      {lead.socialMedia.twitter && (
+                        <a 
+                          href={lead.socialMedia.twitter}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-primary-light/70 hover:text-primary-light"
+                        >
+                          Twitter
+                        </a>
+                      )}
+                    </div>
+                  )}
                 </div>
-                <Button
-                  onClick={() => onAddToAnalytics(lead)}
-                  variant="outline"
-                  size="sm"
-                  className="bg-gradient-to-r from-primary to-primary-dark text-white border-none hover:opacity-90"
-                >
-                  Ajouter aux analytiques
-                </Button>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </ScrollArea>
         </div>
       </TabsContent>
 
