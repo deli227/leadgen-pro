@@ -43,54 +43,51 @@ export function LeadsStats({
     }
   }
 
-  // Filter out the free plan and get upgrade options
   const upgradeOptions = plans.filter(plan => plan.type !== 'free')
 
   return (
-    <div className="grid gap-4 md:grid-cols-2">
-      <Card className="p-6 bg-black/40 backdrop-blur-sm border-primary/20">
-        <div className="flex flex-col space-y-4">
-          <h3 className="text-lg font-medium text-primary-light">Leads quotidiens</h3>
-          <div className="flex items-center justify-between text-sm text-primary-light/70">
+    <div className="grid gap-4 md:grid-cols-2 mb-8">
+      <Card className="p-4 bg-black/40 backdrop-blur-sm border-primary/10">
+        <div className="flex flex-col space-y-3">
+          <h3 className="text-sm font-medium text-primary-light/70">Leads quotidiens</h3>
+          <div className="flex items-center justify-between text-xs text-primary-light/70">
             <span>Restants aujourd'hui</span>
             <span>{dailyLeadsLeft} / {totalDailyLeads}</span>
           </div>
-          <Progress value={(dailyLeadsLeft / totalDailyLeads) * 100} className="bg-primary/20" />
+          <Progress value={(dailyLeadsLeft / totalDailyLeads) * 100} className="h-1.5 bg-primary/10" />
         </div>
       </Card>
 
-      <Card className="p-6 bg-black/40 backdrop-blur-sm border-primary/20">
-        <div className="flex flex-col space-y-4">
-          <h3 className="text-lg font-medium text-primary-light">Leads mensuels</h3>
-          <div className="flex items-center justify-between text-sm text-primary-light/70">
+      <Card className="p-4 bg-black/40 backdrop-blur-sm border-primary/10">
+        <div className="flex flex-col space-y-3">
+          <h3 className="text-sm font-medium text-primary-light/70">Leads mensuels</h3>
+          <div className="flex items-center justify-between text-xs text-primary-light/70">
             <span>Restants ce mois</span>
             <span>{monthlyLeadsLeft} / {totalMonthlyLeads}</span>
           </div>
-          <Progress value={(monthlyLeadsLeft / totalMonthlyLeads) * 100} className="bg-primary/20" />
+          <Progress value={(monthlyLeadsLeft / totalMonthlyLeads) * 100} className="h-1.5 bg-primary/10" />
         </div>
       </Card>
 
       {subscriptionType === 'free' && (
-        <Card className="md:col-span-2 p-6 bg-gradient-to-r from-primary/10 to-primary-dark/10 backdrop-blur-sm border-primary/20">
-          <div className="flex flex-col space-y-6">
+        <Card className="md:col-span-2 p-4 bg-black/40 backdrop-blur-sm border-primary/10">
+          <div className="flex flex-col space-y-4">
             <div className="text-center">
-              <h3 className="text-lg font-medium text-primary-light">Passez à un plan supérieur</h3>
-              <p className="text-sm text-primary-light/70">
-                Choisissez le plan qui correspond le mieux à vos besoins
-              </p>
+              <h3 className="text-sm font-medium text-primary-light/70">Passez à un plan supérieur</h3>
             </div>
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid md:grid-cols-2 gap-3">
               {upgradeOptions.map((plan) => (
-                <div key={plan.type} className="flex flex-col items-center p-4 rounded-lg bg-black/20 space-y-3">
-                  <h4 className="text-lg font-medium text-primary-light">{plan.name}</h4>
-                  <p className="text-2xl font-bold text-primary">{plan.price}</p>
-                  <p className="text-sm text-primary-light/70 text-center">{plan.description}</p>
+                <div key={plan.type} className="flex items-center justify-between p-3 rounded-lg bg-black/20 space-x-4">
+                  <div>
+                    <h4 className="text-sm font-medium text-primary-light">{plan.name}</h4>
+                    <p className="text-xs text-primary-light/70">{plan.price}</p>
+                  </div>
                   <Button
                     onClick={() => handleUpgrade(plan.priceId!)}
-                    className="w-full bg-gradient-to-r from-primary to-primary-dark text-white border-none hover:opacity-90"
+                    className="bg-primary/20 hover:bg-primary/30 text-primary-light text-xs px-3 py-1 h-auto"
                   >
-                    <ArrowUpCircle className="mr-2 h-4 w-4" />
-                    Choisir {plan.name}
+                    <ArrowUpCircle className="mr-1 h-3 w-3" />
+                    Upgrade
                   </Button>
                 </div>
               ))}

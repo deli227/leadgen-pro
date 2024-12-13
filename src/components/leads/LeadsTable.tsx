@@ -71,39 +71,55 @@ export function LeadsTable({ leads, filters }: LeadsTableProps) {
     <div className="space-y-4">
       <Table>
         <TableHeader>
-          <TableRow className="border-primary/20 hover:bg-transparent">
-            <TableHead className="text-primary-light font-medium">Entreprise</TableHead>
-            <TableHead className="text-primary-light font-medium">Contact</TableHead>
-            <TableHead className="text-primary-light font-medium">Adresse</TableHead>
-            <TableHead className="text-primary-light font-medium">Qualification</TableHead>
-            <TableHead className="text-primary-light font-medium">Secteur</TableHead>
-            <TableHead className="text-primary-light font-medium">Actions</TableHead>
+          <TableRow className="border-primary/10 hover:bg-transparent">
+            <TableHead className="text-xs text-primary-light/70 font-medium">Entreprise</TableHead>
+            <TableHead className="text-xs text-primary-light/70 font-medium">Contact</TableHead>
+            <TableHead className="text-xs text-primary-light/70 font-medium">Réseaux Sociaux</TableHead>
+            <TableHead className="text-xs text-primary-light/70 font-medium">Score</TableHead>
+            <TableHead className="text-xs text-primary-light/70 font-medium">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {filteredLeads.map((lead) => (
-            <TableRow key={lead.id} className="border-primary/10 hover:bg-primary/5 transition-colors duration-200">
-              <TableCell className="font-medium text-primary-light">{lead.company}</TableCell>
-              <TableCell>
-                <div className="space-y-1">
-                  <div className="text-primary-light">{lead.email}</div>
-                  <div className="text-sm text-primary-light/70">{lead.phone}</div>
+            <TableRow key={lead.id} className="border-primary/5 hover:bg-black/20 transition-colors duration-200">
+              <TableCell className="py-2">
+                <span className="font-medium text-sm text-primary-light">{lead.company}</span>
+              </TableCell>
+              <TableCell className="py-2">
+                <div className="space-y-0.5">
+                  <div className="text-sm text-primary-light">{lead.email}</div>
+                  <div className="text-xs text-primary-light/70">{lead.phone}</div>
                 </div>
               </TableCell>
-              <TableCell className="text-primary-light">
+              <TableCell className="py-2">
                 <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-primary-light/70" />
-                  {lead.address || "Non spécifiée"}
+                  {lead.socialMedia.linkedin && (
+                    <a href={lead.socialMedia.linkedin} target="_blank" rel="noopener noreferrer" 
+                       className="text-primary-light/70 hover:text-primary-light">
+                      LinkedIn
+                    </a>
+                  )}
+                  {lead.socialMedia.twitter && (
+                    <a href={lead.socialMedia.twitter} target="_blank" rel="noopener noreferrer"
+                       className="text-primary-light/70 hover:text-primary-light">
+                      Twitter
+                    </a>
+                  )}
                 </div>
               </TableCell>
-              <TableCell>
-                <div className="flex items-center gap-1 text-primary-light">
-                  <Star className="h-4 w-4 text-primary" fill="currentColor" />
-                  <span>{lead.qualification}/10</span>
+              <TableCell className="py-2">
+                <div className="flex items-center gap-1">
+                  <div className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs">
+                    Score: {lead.score}/10
+                  </div>
+                  {lead.qualification >= 7 && (
+                    <div className="px-2 py-0.5 rounded-full bg-primary/20 text-primary-light text-xs">
+                      Qualifié
+                    </div>
+                  )}
                 </div>
               </TableCell>
-              <TableCell className="text-primary-light">{lead.industry}</TableCell>
-              <TableCell>
+              <TableCell className="py-2">
                 <LeadsTableActions
                   lead={lead}
                   onShowDetails={setSelectedLead}
