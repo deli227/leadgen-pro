@@ -41,6 +41,32 @@ interface LeadsTableProps {
   }
 }
 
+const calculateLeadScore = (lead: Lead): number => {
+  let score = 0;
+  
+  // Qualification (2 points)
+  if (lead.qualification > 0) {
+    score += (lead.qualification / 10) * 2;
+  }
+  
+  // Social Media (2 points)
+  if (lead.socialMedia) {
+    if (lead.socialMedia.linkedin) score += 1;
+    if (lead.socialMedia.twitter) score += 1;
+  }
+  
+  // Address (2 points)
+  if (lead.address && lead.address.length > 5) score += 2;
+  
+  // Phone (2 points)
+  if (lead.phone && lead.phone.length > 8) score += 2;
+  
+  // Email (2 points)
+  if (lead.email && lead.email.includes('@') && lead.email.includes('.')) score += 2;
+  
+  return Math.round(score * 10) / 10;
+};
+
 export function LeadsTable({ leads, filters }: LeadsTableProps) {
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
   const [showNotes, setShowNotes] = useState(false)
@@ -80,59 +106,63 @@ export function LeadsTable({ leads, filters }: LeadsTableProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredLeads.map((lead) => (
-            <TableRow key={lead.id} className="border-primary/5 hover:bg-black/20 transition-colors duration-200">
-              <TableCell className="py-2">
-                <span className="font-medium text-sm text-primary-light">{lead.company}</span>
-              </TableCell>
-              <TableCell className="py-2">
-                <div className="space-y-0.5">
-                  <div className="text-sm text-primary-light">{lead.email}</div>
-                  <div className="text-xs text-primary-light/70">{lead.phone}</div>
-                </div>
-              </TableCell>
-              <TableCell className="py-2">
-                <div className="flex items-center gap-2">
-                  {lead.socialMedia.linkedin && (
-                    <a href={lead.socialMedia.linkedin} target="_blank" rel="noopener noreferrer" 
-                       className="text-primary-light/70 hover:text-primary-light">
-                      LinkedIn
-                    </a>
-                  )}
-                  {lead.socialMedia.twitter && (
-                    <a href={lead.socialMedia.twitter} target="_blank" rel="noopener noreferrer"
-                       className="text-primary-light/70 hover:text-primary-light">
-                      Twitter
-                    </a>
-                  )}
-                </div>
-              </TableCell>
-              <TableCell className="py-2">
-                <div className="flex items-center gap-1">
-                  <div className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs">
-                    Score: {lead.score}/10
+          {filteredLeads.map((lead) => {
+            const leadScore = calculateLeadScore(lead);
+            return (
+              <TableRow key={lead.id} className="border-primary/5 hover:bg-black/20 transition-colors duration-200">
+                <TableCell className="py-2">
+                  <span className="font-medium text-sm text-primary-light">{lead.company}</span>
+                </TableCell>
+                <TableCell className="py-2">
+                  <div className="space-y-0.5">
+                    <div className="text-sm text-primary-light">{lead.email}</div>
+                    <div className="text-xs text-primary-light/70">{lead.phone}</div>
                   </div>
-                  {lead.qualification >= 7 && (
-                    <div className="px-2 py-0.5 rounded-full bg-primary/20 text-primary-light text-xs">
-                      Qualifié
+                </TableCell>
+                <TableCell className="py-2">
+                  <div className="flex items-center gap-2">
+                    {lead.socialMedia.linkedin && (
+                      <a href={lead.socialMedia.linkedin} target="_blank" rel="noopener noreferrer" 
+                         className="text-primary-light/70 hover:text-primary-light">
+                        LinkedIn
+                      </a>
+                    )}
+                    {lead.socialMedia.twitter && (
+                      <a href={lead.socialMedia.twitter} target="_blank" rel="noopener noreferrer"
+                         className="text-primary-light/70 hover:text-primary-light">
+                        Twitter
+                      </a>
+                    )}
+                  </div>
+                </TableCell>
+                <TableCell className="py-2">
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
+                      <Star className="h-4 w-4 text-yellow-500" fill="currentColor" />
+                      <span className="text-sm font-medium text-primary-light">{leadScore}/10</span>
                     </div>
-                  )}
-                </div>
-              </TableCell>
-              <TableCell className="py-2">
-                <LeadsTableActions
-                  lead={lead}
-                  onShowDetails={setSelectedLead}
-                  onShowNotes={(lead) => {
-                    setSelectedLead(lead)
-                    setShowNotes(true)
-                  }}
-                  onAddToExport={handleAddToExport}
-                  exportList={exportList}
-                />
-              </TableCell>
-            </TableRow>
-          ))}
+                    {leadScore >= 7 && (
+                      <div className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs">
+                        Lead qualifié
+                      </div>
+                    )}
+                  </div>
+                </TableCell>
+                <TableCell className="py-2">
+                  <LeadsTableActions
+                    lead={lead}
+                    onShowDetails={setSelectedLead}
+                    onShowNotes={(lead) => {
+                      setSelectedLead(lead)
+                      setShowNotes(true)
+                    }}
+                    onAddToExport={handleAddToExport}
+                    exportList={exportList}
+                  />
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
 
