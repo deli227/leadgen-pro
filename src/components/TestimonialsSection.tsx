@@ -1,53 +1,82 @@
-import { Star } from "lucide-react";
+import { Star, Quote } from "lucide-react";
+import { motion } from "framer-motion";
 
 export const TestimonialsSection = () => {
   const testimonials = [
     {
-      content: "Grâce à LeadGen Pro Beta, nous avons augmenté notre taux de conversion de 25% en 3 mois.",
+      content: "Grâce à LeadGen Pro Beta, nous avons augmenté notre taux de conversion de 25% en 3 mois. L'outil est devenu indispensable pour notre équipe commerciale.",
       author: "Marie D.",
       role: "Directrice Commerciale",
       company: "TechStart SAS",
+      avatar: "/placeholder.svg"
     },
     {
-      content: "L'analyse IA nous permet d'identifier rapidement les leads les plus prometteurs.",
+      content: "L'analyse IA nous permet d'identifier rapidement les leads les plus prometteurs. Un gain de temps considérable dans notre processus de prospection.",
       author: "Thomas L.",
       role: "Business Developer",
       company: "InnovCorp",
+      avatar: "/placeholder.svg"
     },
+    {
+      content: "Interface intuitive et résultats pertinents. LeadGen Pro Beta a transformé notre approche de la prospection commerciale.",
+      author: "Sophie M.",
+      role: "Sales Manager",
+      company: "DigitalFirst",
+      avatar: "/placeholder.svg"
+    }
   ];
 
   return (
-    <div className="bg-white py-24 sm:py-32">
+    <div className="bg-gradient-to-b from-gray-50 to-white py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-xl text-center">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="mx-auto max-w-xl text-center"
+        >
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
             Ils nous font confiance
           </h2>
-        </div>
+          <p className="mt-4 text-lg text-gray-600">
+            Découvrez ce que nos clients disent de LeadGen Pro Beta
+          </p>
+        </motion.div>
         <div className="mx-auto mt-16 flow-root max-w-2xl sm:mt-20 lg:mx-0 lg:max-w-none">
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {testimonials.map((testimonial, index) => (
-              <div
+              <motion.div
                 key={index}
-                className="flex flex-col justify-between bg-gray-50 p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.2 }}
+                className="relative flex flex-col justify-between bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300"
               >
-                <div className="flex items-center gap-x-1 text-primary">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-5 w-5 fill-current" />
-                  ))}
+                <Quote className="absolute top-4 right-4 h-8 w-8 text-primary/20" />
+                <div>
+                  <div className="flex items-center gap-x-1 text-primary">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="h-5 w-5 fill-current" />
+                    ))}
+                  </div>
+                  <blockquote className="mt-4 text-lg font-medium leading-6 text-gray-900">
+                    "{testimonial.content}"
+                  </blockquote>
                 </div>
-                <blockquote className="mt-4 text-lg font-semibold leading-6 text-gray-900">
-                  "{testimonial.content}"
-                </blockquote>
                 <figcaption className="mt-6 flex items-center gap-x-4">
+                  <img
+                    className="h-12 w-12 rounded-full bg-gray-100"
+                    src={testimonial.avatar}
+                    alt={testimonial.author}
+                  />
                   <div>
-                    <div className="font-semibold">{testimonial.author}</div>
+                    <div className="font-semibold text-gray-900">{testimonial.author}</div>
                     <div className="text-sm text-gray-600">
                       {testimonial.role} - {testimonial.company}
                     </div>
                   </div>
                 </figcaption>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
