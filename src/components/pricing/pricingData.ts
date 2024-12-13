@@ -28,7 +28,7 @@ export const plans = [
     buttonText: "Choisir Pro",
     type: "pro",
     popular: true,
-    priceId: "price_1QV8FaB0B6nBBCbUFoQrwDwm",
+    priceId: "price_1QV8EyB0B6nBBCbUWZIuAQ8q",
   },
   {
     name: "Enterprise",
