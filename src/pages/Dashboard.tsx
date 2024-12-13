@@ -9,6 +9,42 @@ import { supabase } from "@/integrations/supabase/client"
 import { useNavigate } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
 
+interface SupabaseLead {
+  id: string
+  company: string
+  email: string
+  phone: string
+  address: string
+  qualification: number
+  social_media: {
+    linkedin: string
+    twitter: string
+  }
+  score: number
+  industry: string
+  strengths: string[]
+  weaknesses: string[]
+  user_id: string
+  created_at: string
+}
+
+interface Lead {
+  id: number
+  company: string
+  email: string
+  phone: string
+  address?: string
+  qualification: number
+  socialMedia: {
+    linkedin: string
+    twitter: string
+  }
+  score: number
+  industry: string
+  strengths: string[]
+  weaknesses: string[]
+}
+
 export function Dashboard() {
   const navigate = useNavigate();
   const [filters, setFilters] = useState({
@@ -19,7 +55,7 @@ export function Dashboard() {
     city: "all"
   });
 
-  const { data: leads = [] } = useQuery({
+  const { data: supabaseLeads = [] } = useQuery({
     queryKey: ['leads'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -27,9 +63,24 @@ export function Dashboard() {
         .select('*')
       
       if (error) throw error;
-      return data;
+      return data as SupabaseLead[];
     }
   });
+
+  // Transform Supabase leads to match the expected Lead interface
+  const leads: Lead[] = supabaseLeads.map(lead => ({
+    id: parseInt(lead.id), // Convert string id to number
+    company: lead.company,
+    email: lead.email || "",
+    phone: lead.phone || "",
+    address: lead.address,
+    qualification: lead.qualification,
+    socialMedia: lead.social_media || { linkedin: "", twitter: "" },
+    score: lead.score,
+    industry: lead.industry || "",
+    strengths: lead.strengths || [],
+    weaknesses: lead.weaknesses || []
+  }));
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
