@@ -8,20 +8,33 @@ import { Dashboard } from "./pages/Dashboard";
 import { Auth } from "./pages/Auth";
 import { useEffect, useState } from "react";
 import { supabase } from "./integrations/supabase/client";
+import { Session } from "@supabase/supabase-js";
 
 const queryClient = new QueryClient();
 
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.onAuthStateChange((event, session) => {
-      setIsAuthenticated(!!session);
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setIsLoading(false);
     });
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  if (isAuthenticated === null) {
-    return null; // Loading state
+  if (isLoading) {
+    return null; // Or a loading spinner
   }
 
   return (
@@ -35,13 +48,13 @@ const App = () => {
             <Route
               path="/auth"
               element={
-                isAuthenticated ? <Navigate to="/dashboard" /> : <Auth />
+                session ? <Navigate to="/dashboard" /> : <Auth />
               }
             />
             <Route
               path="/dashboard"
               element={
-                isAuthenticated ? <Dashboard /> : <Navigate to="/auth" />
+                session ? <Dashboard /> : <Navigate to="/auth" />
               }
             />
           </Routes>
