@@ -30,7 +30,6 @@ export function Auth() {
           <TabsContent value="login">
             <SupabaseAuth
               supabaseClient={supabase}
-              view="sign_in"
               appearance={{
                 theme: ThemeSupa,
                 variables: {
@@ -38,8 +37,17 @@ export function Auth() {
                     colors: {
                       brand: '#646cff',
                       brandAccent: '#747bff',
-                    }
+                      inputText: 'white',
+                      inputBackground: 'rgba(255, 255, 255, 0.1)',
+                      inputBorder: 'rgba(255, 255, 255, 0.2)',
+                      inputLabelText: 'white',
+                      inputPlaceholder: 'rgba(255, 255, 255, 0.5)',
+                    },
                   }
+                },
+                className: {
+                  input: 'text-white',
+                  label: 'text-white',
                 }
               }}
               providers={[]}
@@ -60,7 +68,6 @@ export function Auth() {
           <TabsContent value="signup">
             <SupabaseAuth
               supabaseClient={supabase}
-              view="sign_up"
               appearance={{
                 theme: ThemeSupa,
                 variables: {
@@ -68,8 +75,17 @@ export function Auth() {
                     colors: {
                       brand: '#646cff',
                       brandAccent: '#747bff',
-                    }
+                      inputText: 'white',
+                      inputBackground: 'rgba(255, 255, 255, 0.1)',
+                      inputBorder: 'rgba(255, 255, 255, 0.2)',
+                      inputLabelText: 'white',
+                      inputPlaceholder: 'rgba(255, 255, 255, 0.5)',
+                    },
                   }
+                },
+                className: {
+                  input: 'text-white',
+                  label: 'text-white',
                 }
               }}
               providers={[]}
