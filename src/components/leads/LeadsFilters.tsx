@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ChevronRight, Loader2 } from "lucide-react"
+import { ChevronRight, Loader2, Globe, MapPin, Building } from "lucide-react"
 import { SearchInput } from "./filters/SearchInput"
 import { LocationFilters } from "./filters/LocationFilters"
 import { IndustrySelect } from "./filters/IndustrySelect"
@@ -180,12 +180,33 @@ export function LeadsFilters({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="space-y-4"
+          className="space-y-6"
         >
-          <h3 className="text-xl font-semibold text-primary-light">Rechercher une entreprise</h3>
-          <SearchInput 
-            value={filters.search}
-            onChange={(value) => setFilters({ ...filters, search: value })}
+          <div className="flex items-center gap-2 text-primary-light">
+            <Building className="h-5 w-5" />
+            <h3 className="text-xl font-semibold">Rechercher une entreprise</h3>
+          </div>
+          
+          <div className="p-4 rounded-lg bg-black/40 border border-primary/20">
+            <p className="text-primary-light/70 mb-4">
+              Entrez le nom de l'entreprise pour obtenir toutes les informations détaillées la concernant.
+            </p>
+            <SearchInput 
+              value={filters.search}
+              onChange={(value) => setFilters({ ...filters, search: value })}
+            />
+          </div>
+
+          <div className="flex items-center gap-2 text-primary-light mt-8">
+            <Globe className="h-5 w-5" />
+            <h3 className="text-lg font-semibold">Filtrer par localisation</h3>
+          </div>
+
+          <LocationFilters 
+            country={filters.country}
+            city={filters.city}
+            onCountryChange={(value) => setFilters({ ...filters, country: value, city: "all" })}
+            onCityChange={(value) => setFilters({ ...filters, city: value })}
           />
         </motion.div>
       </TabsContent>

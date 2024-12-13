@@ -11,10 +11,10 @@ export function SearchInput({ value, onChange }: SearchInputProps) {
   return (
     <div className="flex-1 min-w-[200px] relative">
       <Input
-        placeholder="Rechercher une entreprise..."
+        placeholder="Nom de l'entreprise..."
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="bg-transparent border-primary-light text-primary-light placeholder:text-primary-light/70"
+        className="bg-transparent border-primary-light text-primary-light placeholder:text-primary-light/70 pl-4 pr-12 py-6 text-lg"
       />
       <Button 
         variant="ghost" 
@@ -22,7 +22,7 @@ export function SearchInput({ value, onChange }: SearchInputProps) {
         className="absolute right-2 top-1/2 -translate-y-1/2 text-primary-light hover:text-primary hover:bg-transparent"
         onClick={() => console.log("Recherche lancée")}
       >
-        <Search className="h-4 w-4" />
+        <Search className="h-5 w-5" />
       </Button>
     </div>
   )
