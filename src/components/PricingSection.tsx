@@ -21,10 +21,10 @@ export const PricingSection = () => {
     {
       name: "Pro",
       description: "Pour les professionnels qui veulent plus",
-      price: "49€",
+      price: "14,99€",
       features: [
-        "10 leads par jour",
-        "250 leads par mois",
+        "250 leads par jour",
+        "7500 leads par mois",
         "Analyse IA avancée",
         "Export multi-formats",
         "Support prioritaire",
@@ -37,7 +37,7 @@ export const PricingSection = () => {
     {
       name: "Enterprise",
       description: "Solution complète pour les grandes équipes",
-      price: "Sur mesure",
+      price: "199€",
       features: [
         "Génération illimitée",
         "Analyse IA personnalisée",
