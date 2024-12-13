@@ -1,4 +1,5 @@
 import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import {
   Select,
   SelectContent,
@@ -8,6 +9,7 @@ import {
 } from "@/components/ui/select"
 import { Slider } from "@/components/ui/slider"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Search } from "lucide-react"
 
 interface LeadsFiltersProps {
   filters: {
@@ -24,30 +26,39 @@ interface LeadsFiltersProps {
 export function LeadsFilters({ filters, setFilters }: LeadsFiltersProps) {
   return (
     <Tabs defaultValue="filters" className="w-full">
-      <TabsList className="grid w-full grid-cols-3">
-        <TabsTrigger value="filters">Filtres</TabsTrigger>
-        <TabsTrigger value="analytics">Analytiques</TabsTrigger>
-        <TabsTrigger value="export">Export</TabsTrigger>
+      <TabsList className="grid w-full grid-cols-3 bg-black">
+        <TabsTrigger value="filters" className="text-primary-light data-[state=active]:bg-secondary-dark data-[state=active]:text-primary-light">Générer des leads</TabsTrigger>
+        <TabsTrigger value="analytics" className="text-primary-light data-[state=active]:bg-secondary-dark data-[state=active]:text-primary-light">Analytiques</TabsTrigger>
+        <TabsTrigger value="export" className="text-primary-light data-[state=active]:bg-secondary-dark data-[state=active]:text-primary-light">Export</TabsTrigger>
       </TabsList>
 
-      <TabsContent value="filters" className="space-y-4">
+      <TabsContent value="filters" className="space-y-4 bg-black p-4 rounded-lg">
         <div className="flex flex-wrap gap-4">
-          <div className="flex-1 min-w-[200px]">
+          <div className="flex-1 min-w-[200px] relative">
             <Input
               placeholder="Rechercher une entreprise..."
               value={filters.search}
               onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+              className="bg-transparent border-primary-light text-primary-light placeholder:text-primary-light/70"
             />
+            <Button 
+              variant="ghost" 
+              size="icon"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-primary-light hover:text-primary hover:bg-transparent"
+              onClick={() => console.log("Recherche lancée")}
+            >
+              <Search className="h-4 w-4" />
+            </Button>
           </div>
           
           <Select
             value={filters.country}
             onValueChange={(value) => setFilters({ ...filters, country: value })}
           >
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[180px] bg-transparent border-primary-light text-primary-light">
               <SelectValue placeholder="Pays" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-secondary-dark border-primary-light">
               <SelectItem value="all">Tous les pays</SelectItem>
               <SelectItem value="FR">France</SelectItem>
               <SelectItem value="BE">Belgique</SelectItem>
@@ -66,10 +77,10 @@ export function LeadsFilters({ filters, setFilters }: LeadsFiltersProps) {
             value={filters.city}
             onValueChange={(value) => setFilters({ ...filters, city: value })}
           >
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[180px] bg-transparent border-primary-light text-primary-light">
               <SelectValue placeholder="Ville" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-secondary-dark border-primary-light">
               <SelectItem value="all">Toutes les villes</SelectItem>
               <SelectItem value="Paris">Paris</SelectItem>
               <SelectItem value="Lyon">Lyon</SelectItem>
@@ -96,10 +107,10 @@ export function LeadsFilters({ filters, setFilters }: LeadsFiltersProps) {
             value={filters.industry}
             onValueChange={(value) => setFilters({ ...filters, industry: value })}
           >
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[180px] bg-transparent border-primary-light text-primary-light">
               <SelectValue placeholder="Secteur d'activité" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-secondary-dark border-primary-light">
               <SelectItem value="all">Tous les secteurs</SelectItem>
               <SelectItem value="Technology">Technologie</SelectItem>
               <SelectItem value="Environmental">Environnement</SelectItem>
@@ -135,7 +146,7 @@ export function LeadsFilters({ filters, setFilters }: LeadsFiltersProps) {
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium">Score IA (min-max)</label>
+          <label className="text-sm font-medium text-primary-light">Score IA (min-max)</label>
           <div className="px-2">
             <Slider
               defaultValue={[filters.minScore, filters.maxScore]}
@@ -144,28 +155,29 @@ export function LeadsFilters({ filters, setFilters }: LeadsFiltersProps) {
               onValueChange={([min, max]) => 
                 setFilters({ ...filters, minScore: min, maxScore: max })
               }
+              className="[&_[role=slider]]:bg-primary-light [&_[role=slider]]:border-primary-light"
             />
           </div>
-          <div className="flex justify-between text-sm text-muted-foreground">
+          <div className="flex justify-between text-sm text-primary-light">
             <span>{filters.minScore}</span>
             <span>{filters.maxScore}</span>
           </div>
         </div>
       </TabsContent>
 
-      <TabsContent value="analytics" className="space-y-4">
-        <div className="p-4 border rounded-lg">
-          <h3 className="text-lg font-semibold mb-2">Analytiques</h3>
-          <p className="text-muted-foreground">
+      <TabsContent value="analytics" className="space-y-4 bg-black p-4 rounded-lg">
+        <div className="p-4 border border-primary-light rounded-lg">
+          <h3 className="text-lg font-semibold text-primary-light mb-2">Analytiques</h3>
+          <p className="text-primary-light/70">
             Les analyses détaillées seront disponibles prochainement.
           </p>
         </div>
       </TabsContent>
 
-      <TabsContent value="export" className="space-y-4">
-        <div className="p-4 border rounded-lg">
-          <h3 className="text-lg font-semibold mb-2">Export des données</h3>
-          <p className="text-muted-foreground">
+      <TabsContent value="export" className="space-y-4 bg-black p-4 rounded-lg">
+        <div className="p-4 border border-primary-light rounded-lg">
+          <h3 className="text-lg font-semibold text-primary-light mb-2">Export des données</h3>
+          <p className="text-primary-light/70">
             Les options d'export seront disponibles prochainement.
           </p>
         </div>
