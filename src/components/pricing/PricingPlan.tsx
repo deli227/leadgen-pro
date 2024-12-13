@@ -33,7 +33,6 @@ export const PricingPlan = ({
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
-        // Si l'utilisateur n'est pas connecté, on le redirige vers la page d'authentification
         navigate('/auth');
         return;
       }
@@ -63,13 +62,13 @@ export const PricingPlan = ({
 
   return (
     <div
-      className={`flex flex-col justify-between rounded-3xl bg-white p-8 ring-1 ring-gray-200 xl:p-10 ${
-        popular ? "relative shadow-xl" : ""
+      className={`relative flex flex-col justify-between rounded-3xl bg-gradient-to-br from-black/60 to-black/40 backdrop-blur-sm border border-primary/10 hover:border-primary/20 transition-all duration-300 p-8 xl:p-10 transform hover:scale-105 ${
+        popular ? "shadow-[0_0_30px_rgba(155,135,245,0.3)]" : ""
       }`}
     >
       {popular && (
         <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-          <div className="rounded-full bg-primary px-4 py-1 text-sm font-semibold text-white">
+          <div className="rounded-full bg-gradient-to-r from-primary to-accent px-4 py-1 text-sm font-semibold text-white shadow-[0_0_15px_rgba(155,135,245,0.5)]">
             Populaire
           </div>
         </div>
@@ -77,28 +76,28 @@ export const PricingPlan = ({
 
       <div>
         <div className="flex items-center justify-between gap-x-4">
-          <h3 className="text-lg font-semibold leading-8 text-gray-900">
+          <h3 className="text-lg font-semibold leading-8 text-primary-light">
             {name}
           </h3>
         </div>
-        <p className="mt-4 text-sm leading-6 text-gray-600">
+        <p className="mt-4 text-sm leading-6 text-gray-300">
           {description}
         </p>
         <p className="mt-6 flex items-baseline gap-x-1">
-          <span className="text-4xl font-bold tracking-tight text-gray-900">
+          <span className="text-4xl font-bold tracking-tight text-white bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
             {price}
           </span>
           {price !== "Sur mesure" && (
-            <span className="text-sm font-semibold leading-6 text-gray-600">
+            <span className="text-sm font-semibold leading-6 text-gray-300">
               /mois
             </span>
           )}
         </p>
-        <ul role="list" className="mt-8 space-y-3 text-sm leading-6 text-gray-600">
+        <ul role="list" className="mt-8 space-y-3 text-sm leading-6 text-gray-300">
           {features.map((feature) => (
             <li key={feature} className="flex gap-x-3">
               {feature.includes("illimit") ? (
-                <Infinity className="h-6 w-5 flex-none text-primary" />
+                <Infinity className="h-6 w-5 flex-none text-primary animate-pulse" />
               ) : (
                 <Check className="h-6 w-5 flex-none text-primary" />
               )}
@@ -111,9 +110,9 @@ export const PricingPlan = ({
         onClick={handleSubscribe}
         className={`mt-8 w-full ${
           popular
-            ? "bg-primary hover:bg-primary/90"
-            : "bg-primary/10 hover:bg-primary/20 text-primary"
-        }`}
+            ? "bg-gradient-to-r from-primary to-accent hover:from-primary/80 hover:to-accent/80 shadow-[0_0_15px_rgba(155,135,245,0.5)] hover:shadow-[0_0_25px_rgba(155,135,245,0.8)]"
+            : "bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 hover:border-primary/40"
+        } transform transition-all duration-300`}
       >
         {buttonText}
       </Button>

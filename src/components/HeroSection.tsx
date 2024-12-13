@@ -14,7 +14,7 @@ export const HeroSection = () => {
           transition={{ duration: 0.6 }}
           className="mx-auto max-w-3xl text-center"
         >
-          <h1 className="text-6xl font-bold tracking-tight text-white sm:text-7xl mb-4 animate-pulse">
+          <h1 className="text-6xl font-bold tracking-tight text-white sm:text-7xl mb-4">
             LeadGen Pro{" "}
             <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse">
               (Beta)
@@ -77,4 +77,4 @@ export const HeroSection = () => {
       </div>
     </div>
   );
-};
+}
