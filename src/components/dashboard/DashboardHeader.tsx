@@ -5,6 +5,7 @@ import { Lead } from "@/types/leads"
 import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
 import { useNavigate } from "react-router-dom"
+import { useSessionData } from "@/hooks/useSessionData"
 
 interface DashboardHeaderProps {
   exportLeads: Lead[]
@@ -13,10 +14,18 @@ interface DashboardHeaderProps {
 export function DashboardHeader({ exportLeads }: DashboardHeaderProps) {
   const navigate = useNavigate()
   const { toast } = useToast()
+  const { data: session } = useSessionData()
 
   const handleLogout = async () => {
     try {
-      await supabase.auth.signOut()
+      if (!session) {
+        navigate('/auth')
+        return
+      }
+
+      const { error } = await supabase.auth.signOut()
+      if (error) throw error
+
       navigate('/auth')
     } catch (error) {
       console.error('Error logging out:', error)
