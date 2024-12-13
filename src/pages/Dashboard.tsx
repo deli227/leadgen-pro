@@ -41,21 +41,31 @@ export function Dashboard() {
   const [analyticsLeads, setAnalyticsLeads] = useState<Lead[]>([])
   const [exportLeads, setExportLeads] = useState<Lead[]>([])
 
-  const { data: profile } = useQuery({
-    queryKey: ['profile'],
+  // Get the current session
+  const { data: session } = useQuery({
+    queryKey: ['session'],
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('Not authenticated')
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) throw new Error('Not authenticated')
+      return session
+    },
+  })
+
+  const { data: profile } = useQuery({
+    queryKey: ['profile', session?.user?.id],
+    queryFn: async () => {
+      if (!session?.user?.id) throw new Error('No user ID')
 
       const { data, error } = await supabase
         .from('profiles')
         .select('subscription_type, leads_generated_today, leads_generated_this_month, last_lead_generation_date')
-        .eq('id', user.id)
+        .eq('id', session.user.id)
         .single()
       
       if (error) throw error
       return data
-    }
+    },
+    enabled: !!session?.user?.id
   })
 
   const { data: limits } = useQuery({
@@ -75,19 +85,19 @@ export function Dashboard() {
   })
 
   const { data: supabaseLeads = [] } = useQuery({
-    queryKey: ['leads'],
+    queryKey: ['leads', session?.user?.id],
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('Not authenticated')
+      if (!session?.user?.id) throw new Error('No user ID')
 
       const { data, error } = await supabase
         .from('leads')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('user_id', session.user.id)
       
       if (error) throw error
       return data
-    }
+    },
+    enabled: !!session?.user?.id
   })
 
   const leads: Lead[] = supabaseLeads.map(lead => ({
@@ -108,8 +118,17 @@ export function Dashboard() {
   }))
 
   const handleLogout = async () => {
-    await supabase.auth.signOut()
-    navigate('/auth')
+    try {
+      await supabase.auth.signOut()
+      navigate('/auth')
+    } catch (error) {
+      console.error('Error logging out:', error)
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la déconnexion.",
+      })
+    }
   }
 
   const handleAddToAnalytics = (lead: Lead) => {
