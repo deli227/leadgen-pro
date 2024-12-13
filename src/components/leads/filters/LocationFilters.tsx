@@ -39,7 +39,7 @@ export function LocationFilters({
   return (
     <div className="flex gap-4">
       <Select 
-        defaultValue={country}
+        value={country}
         onValueChange={(value) => {
           console.log("Sélection du pays:", value)
           onCountryChange(value)
@@ -67,7 +67,7 @@ export function LocationFilters({
       </Select>
 
       <Select 
-        defaultValue={city}
+        value={city}
         onValueChange={onCityChange}
         disabled={country === "all"}
       >
