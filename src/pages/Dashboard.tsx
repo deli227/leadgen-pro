@@ -179,6 +179,7 @@ export function Dashboard() {
               monthlyLeadsLeft={limits.monthly_leads_limit - profile.leads_generated_this_month}
               totalDailyLeads={limits.daily_leads_limit}
               totalMonthlyLeads={limits.monthly_leads_limit}
+              subscriptionType={profile.subscription_type}
             />
           </div>
         )}
