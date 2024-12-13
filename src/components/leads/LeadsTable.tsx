@@ -112,7 +112,7 @@ export function LeadsTable({ leads, filters }: LeadsTableProps) {
                         onClick={() => setSelectedLead(lead)}
                         variant="outline"
                         size="sm"
-                        className="border-primary-light text-primary-light hover:bg-primary-light/10"
+                        className="bg-primary hover:bg-primary-dark text-white border-none"
                       >
                         <Eye className="h-4 w-4 mr-2" />
                         Détails
@@ -137,7 +137,7 @@ export function LeadsTable({ leads, filters }: LeadsTableProps) {
                         }}
                         variant="outline"
                         size="sm"
-                        className="border-primary-light text-primary-light hover:bg-primary-light/10"
+                        className="bg-primary hover:bg-primary-dark text-white border-none"
                       >
                         <NotebookPen className="h-4 w-4 mr-2" />
                         Notes
@@ -163,7 +163,7 @@ export function LeadsTable({ leads, filters }: LeadsTableProps) {
                     onClick={() => handleAddToExport(lead.id)}
                     variant="outline"
                     size="sm"
-                    className="border-primary-light text-primary-light hover:bg-primary-light/10"
+                    className="bg-primary hover:bg-primary-dark text-white border-none"
                     disabled={exportList.includes(lead.id)}
                   >
                     <PlusCircle className="h-4 w-4 mr-2" />
