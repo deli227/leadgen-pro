@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client"
 import { useState } from "react"
 import { LeadsAnalytics } from "./LeadsAnalytics"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { LeadScoreDisplay } from "./LeadScoreDisplay"
 
 interface LeadsFiltersProps {
   filters: {
@@ -179,6 +180,7 @@ export function LeadsFilters({
                   </div>
                   
                   <div className="space-y-2 text-sm text-primary-light/80">
+                    <LeadScoreDisplay score={lead.score} />
                     <div className="flex items-center gap-2">
                       <Mail className="h-4 w-4" />
                       {lead.email}
