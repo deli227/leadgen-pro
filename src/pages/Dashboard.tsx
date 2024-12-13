@@ -9,26 +9,7 @@ import { LogOut } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 import { useNavigate } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
-import { useToast } from "@/components/ui/use-toast"
-
-interface SupabaseLead {
-  id: string
-  company: string
-  email: string
-  phone: string
-  address: string
-  qualification: number
-  social_media: {
-    linkedin: string
-    twitter: string
-  }
-  score: number
-  industry: string
-  strengths: string[]
-  weaknesses: string[]
-  user_id: string
-  created_at: string
-}
+import { useToast } from "@/hooks/use-toast"
 
 interface Lead {
   id: number
@@ -47,92 +28,68 @@ interface Lead {
   weaknesses: string[]
 }
 
-interface UserProfile {
-  subscription_type: 'free' | 'pro' | 'enterprise'
-  leads_generated_today: number
-  leads_generated_this_month: number
-  last_lead_generation_date: string
-}
-
 export function Dashboard() {
-  const navigate = useNavigate();
-  const { toast } = useToast();
+  const navigate = useNavigate()
+  const { toast } = useToast()
   const [filters, setFilters] = useState({
     search: "",
     leadCount: 10,
     industry: "all",
     country: "all",
     city: "all"
-  });
+  })
+  const [analyticsLeads, setAnalyticsLeads] = useState<Lead[]>([])
+  const [exportLeads, setExportLeads] = useState<Lead[]>([])
 
   const { data: profile } = useQuery({
     queryKey: ['profile'],
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Not authenticated');
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
 
       const { data, error } = await supabase
         .from('profiles')
         .select('subscription_type, leads_generated_today, leads_generated_this_month, last_lead_generation_date')
         .eq('id', user.id)
-        .single();
+        .single()
       
-      if (error) throw error;
-      return data as UserProfile;
+      if (error) throw error
+      return data
     }
-  });
+  })
 
   const { data: limits } = useQuery({
     queryKey: ['subscription_limits', profile?.subscription_type],
     queryFn: async () => {
-      if (!profile) return null;
+      if (!profile) return null
       const { data, error } = await supabase
         .from('subscription_limits')
         .select('daily_leads_limit, monthly_leads_limit')
         .eq('subscription_type', profile.subscription_type)
-        .single();
+        .single()
       
-      if (error) throw error;
-      return data;
+      if (error) throw error
+      return data
     },
     enabled: !!profile
-  });
+  })
 
   const { data: supabaseLeads = [] } = useQuery({
     queryKey: ['leads'],
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Not authenticated');
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
 
       const { data, error } = await supabase
         .from('leads')
         .select('*')
-        .eq('user_id', user.id);
+        .eq('user_id', user.id)
       
-      if (error) throw error;
-      return data as SupabaseLead[];
+      if (error) throw error
+      return data
     }
-  });
+  })
 
-  useEffect(() => {
-    if (profile && limits) {
-      if (profile.leads_generated_today >= limits.daily_leads_limit) {
-        toast({
-          title: "Limite quotidienne atteinte",
-          description: `Vous avez atteint votre limite de ${limits.daily_leads_limit} leads par jour. Passez à un forfait supérieur pour générer plus de leads.`,
-          variant: "destructive",
-        });
-      } else if (profile.leads_generated_this_month >= limits.monthly_leads_limit) {
-        toast({
-          title: "Limite mensuelle atteinte",
-          description: `Vous avez atteint votre limite de ${limits.monthly_leads_limit} leads par mois. Passez à un forfait supérieur pour générer plus de leads.`,
-          variant: "destructive",
-        });
-      }
-    }
-  }, [profile, limits, toast]);
-
-  // Transform Supabase leads to match the expected Lead interface
   const leads: Lead[] = supabaseLeads.map(lead => ({
     id: parseInt(lead.id),
     company: lead.company,
@@ -145,12 +102,32 @@ export function Dashboard() {
     industry: lead.industry || "",
     strengths: lead.strengths || [],
     weaknesses: lead.weaknesses || []
-  }));
+  }))
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate('/auth');
-  };
+    await supabase.auth.signOut()
+    navigate('/auth')
+  }
+
+  const handleAddToAnalytics = (lead: Lead) => {
+    if (!analyticsLeads.find(l => l.id === lead.id)) {
+      setAnalyticsLeads(prev => [...prev, lead])
+      toast({
+        title: "Lead ajouté aux analytiques",
+        description: "Le lead a été ajouté avec succès à la section analytiques."
+      })
+    }
+  }
+
+  const handleAddToExport = (lead: Lead) => {
+    if (!exportLeads.find(l => l.id === lead.id)) {
+      setExportLeads(prev => [...prev, lead])
+      toast({
+        title: "Lead ajouté à l'export",
+        description: "Le lead a été ajouté avec succès à la liste d'export."
+      })
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary-dark via-[#1A1F2C] to-black">
@@ -165,7 +142,7 @@ export function Dashboard() {
             </p>
           </div>
           <div className="flex gap-4 items-center">
-            <LeadsExport leads={leads} />
+            <LeadsExport leads={exportLeads} />
             <Button
               onClick={handleLogout}
               variant="outline"
@@ -190,14 +167,16 @@ export function Dashboard() {
         )}
         
         <div className="grid gap-8 animate-fade-up" style={{ animationDelay: "0.2s" }}>
-          <LeadsFilters filters={filters} setFilters={setFilters} />
-          <ScrollArea className="h-[calc(100vh-24rem)] rounded-xl border border-primary/20 bg-black/40 backdrop-blur-sm shadow-lg shadow-primary/5">
-            <div className="p-1">
-              <LeadsTable leads={leads} filters={filters} />
-            </div>
-          </ScrollArea>
+          <LeadsFilters 
+            filters={filters} 
+            setFilters={setFilters} 
+            leads={leads}
+            analyticsLeads={analyticsLeads}
+            onAddToAnalytics={handleAddToAnalytics}
+            onAddToExport={handleAddToExport}
+          />
         </div>
       </div>
     </div>
-  );
+  )
 }

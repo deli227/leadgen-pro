@@ -5,10 +5,10 @@ import { LocationFilters } from "./filters/LocationFilters"
 import { IndustrySelect } from "./filters/IndustrySelect"
 import { LeadCountSlider } from "./filters/LeadCountSlider"
 import { Button } from "@/components/ui/button"
-import { useToast } from "@/components/ui/use-toast"
+import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
 import { useState } from "react"
-import { Textarea } from "@/components/ui/textarea"
+import { LeadsAnalytics } from "./LeadsAnalytics"
 
 interface LeadsFiltersProps {
   filters: {
@@ -19,12 +19,22 @@ interface LeadsFiltersProps {
     city: string
   }
   setFilters: (filters: any) => void
+  leads: any[]
+  analyticsLeads: any[]
+  onAddToAnalytics: (lead: any) => void
+  onAddToExport: (lead: any) => void
 }
 
-export function LeadsFilters({ filters, setFilters }: LeadsFiltersProps) {
+export function LeadsFilters({ 
+  filters, 
+  setFilters, 
+  leads,
+  analyticsLeads,
+  onAddToAnalytics,
+  onAddToExport
+}: LeadsFiltersProps) {
   const { toast } = useToast()
   const [isGenerating, setIsGenerating] = useState(false)
-  const [aiAnalysis, setAiAnalysis] = useState("")
 
   const handleGenerateLeads = async () => {
     try {
@@ -50,7 +60,6 @@ export function LeadsFilters({ filters, setFilters }: LeadsFiltersProps) {
         description: "Les leads ont été générés avec succès.",
       })
 
-      // Forcer un rechargement des leads
       window.location.reload()
     } catch (error) {
       console.error('Erreur:', error)
@@ -78,21 +87,21 @@ export function LeadsFilters({ filters, setFilters }: LeadsFiltersProps) {
           <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary scale-x-0 group-data-[state=active]:scale-x-100 transition-transform" />
         </TabsTrigger>
         <TabsTrigger 
-          value="search" 
-          className="relative text-primary-light data-[state=active]:bg-black/60 data-[state=active]:text-primary-light group transition-all duration-300"
-        >
-          <span className="flex items-center gap-2">
-            Recherche
-            <ChevronRight className="h-4 w-4 transition-transform group-data-[state=active]:rotate-90" />
-          </span>
-          <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary scale-x-0 group-data-[state=active]:scale-x-100 transition-transform" />
-        </TabsTrigger>
-        <TabsTrigger 
           value="analytics" 
           className="relative text-primary-light data-[state=active]:bg-black/60 data-[state=active]:text-primary-light group transition-all duration-300"
         >
           <span className="flex items-center gap-2">
             Analytiques
+            <ChevronRight className="h-4 w-4 transition-transform group-data-[state=active]:rotate-90" />
+          </span>
+          <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary scale-x-0 group-data-[state=active]:scale-x-100 transition-transform" />
+        </TabsTrigger>
+        <TabsTrigger 
+          value="search" 
+          className="relative text-primary-light data-[state=active]:bg-black/60 data-[state=active]:text-primary-light group transition-all duration-300"
+        >
+          <span className="flex items-center gap-2">
+            Recherche
             <ChevronRight className="h-4 w-4 transition-transform group-data-[state=active]:rotate-90" />
           </span>
           <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary scale-x-0 group-data-[state=active]:scale-x-100 transition-transform" />
@@ -146,6 +155,32 @@ export function LeadsFilters({ filters, setFilters }: LeadsFiltersProps) {
           value={filters.leadCount}
           onChange={(value) => setFilters({ ...filters, leadCount: value })}
         />
+
+        <div className="mt-6">
+          <h3 className="text-lg font-semibold text-primary-light mb-4">Leads générés</h3>
+          <div className="space-y-4">
+            {leads.map(lead => (
+              <div key={lead.id} className="p-4 border border-primary/20 rounded-lg bg-black/40 flex justify-between items-center">
+                <div>
+                  <h4 className="text-primary-light font-medium">{lead.company}</h4>
+                  <p className="text-sm text-primary-light/70">{lead.industry}</p>
+                </div>
+                <Button
+                  onClick={() => onAddToAnalytics(lead)}
+                  variant="outline"
+                  size="sm"
+                  className="bg-gradient-to-r from-primary to-primary-dark text-white border-none hover:opacity-90"
+                >
+                  Ajouter aux analytiques
+                </Button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </TabsContent>
+
+      <TabsContent value="analytics" className="space-y-4 bg-gradient-to-br from-black/80 to-secondary-dark/80 p-6 rounded-lg border border-primary/10">
+        <LeadsAnalytics leads={analyticsLeads} onAddToExport={onAddToExport} />
       </TabsContent>
 
       <TabsContent value="search" className="space-y-4 bg-gradient-to-br from-black/80 to-secondary-dark/80 p-6 rounded-lg border border-primary/10">
@@ -155,26 +190,6 @@ export function LeadsFilters({ filters, setFilters }: LeadsFiltersProps) {
             value={filters.search}
             onChange={(value) => setFilters({ ...filters, search: value })}
           />
-        </div>
-      </TabsContent>
-
-      <TabsContent value="analytics" className="space-y-4 bg-gradient-to-br from-black/80 to-secondary-dark/80 p-6 rounded-lg border border-primary/10">
-        <div className="grid grid-cols-2 gap-6">
-          <div className="p-6 border border-primary/20 rounded-lg bg-black/40">
-            <h3 className="text-lg font-semibold text-primary-light mb-2">Analytiques</h3>
-            <p className="text-primary-light/70">
-              Les analyses détaillées seront disponibles prochainement.
-            </p>
-          </div>
-          <div className="p-6 border border-primary/20 rounded-lg bg-black/40">
-            <h3 className="text-lg font-semibold text-primary-light mb-2">Analyse IA</h3>
-            <Textarea
-              value={aiAnalysis}
-              onChange={(e) => setAiAnalysis(e.target.value)}
-              placeholder="L'analyse IA des leads apparaîtra ici..."
-              className="w-full h-[200px] bg-transparent border-primary-light/20 text-primary-light placeholder:text-primary-light/50"
-            />
-          </div>
         </div>
       </TabsContent>
 
