@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Check, Infinity } from "lucide-react";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 interface PricingPlanProps {
   name: string;
@@ -10,6 +12,7 @@ interface PricingPlanProps {
   buttonText: string;
   type: string;
   popular?: boolean;
+  priceId?: string;
 }
 
 export const PricingPlan = ({
@@ -20,7 +23,42 @@ export const PricingPlan = ({
   buttonText,
   type,
   popular,
+  priceId,
 }: PricingPlanProps) => {
+  const { toast } = useToast();
+
+  const handleSubscribe = async () => {
+    if (type === 'free') {
+      window.location.href = '/auth';
+      return;
+    }
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        window.location.href = '/auth';
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: { priceId },
+      });
+
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      console.error('Erreur:', error);
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Impossible de créer la session de paiement. Veuillez réessayer.",
+      });
+    }
+  };
+
   return (
     <div
       className={`flex flex-col justify-between rounded-3xl bg-white p-8 ring-1 ring-gray-200 xl:p-10 ${
@@ -67,20 +105,16 @@ export const PricingPlan = ({
           ))}
         </ul>
       </div>
-      <Link
-        to="/auth"
-        className="mt-8 block"
+      <Button
+        onClick={handleSubscribe}
+        className={`mt-8 w-full ${
+          popular
+            ? "bg-primary hover:bg-primary/90"
+            : "bg-primary/10 hover:bg-primary/20 text-primary"
+        }`}
       >
-        <Button
-          className={`w-full ${
-            popular
-              ? "bg-primary hover:bg-primary-dark"
-              : "bg-primary/10 hover:bg-primary/20 text-primary"
-          }`}
-        >
-          {buttonText}
-        </Button>
-      </Link>
+        {buttonText}
+      </Button>
     </div>
   );
 };
