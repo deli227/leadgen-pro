@@ -1,53 +1,40 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { LeadsTable } from "@/components/leads/LeadsTable"
 import { LeadsFilters } from "@/components/leads/LeadsFilters"
 import { LeadsExport } from "@/components/leads/LeadsExport"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Button } from "@/components/ui/button"
+import { LogOut } from "lucide-react"
+import { supabase } from "@/integrations/supabase/client"
+import { useNavigate } from "react-router-dom"
+import { useQuery } from "@tanstack/react-query"
 
 export function Dashboard() {
+  const navigate = useNavigate();
   const [filters, setFilters] = useState({
     search: "",
     leadCount: 10,
     industry: "all",
     country: "all",
     city: "all"
-  })
+  });
 
-  // Données mockées pour la démo
-  const leads = [
-    {
-      id: 1,
-      company: "TechCorp",
-      email: "contact@techcorp.com",
-      phone: "+33 1 23 45 67 89",
-      address: "123 rue de la Tech, 75001 Paris",
-      qualification: 8,
-      socialMedia: {
-        linkedin: "techcorp",
-        twitter: "@techcorp"
-      },
-      score: 8.5,
-      industry: "Technology",
-      strengths: ["Innovation", "Market presence"],
-      weaknesses: ["Customer support"]
-    },
-    {
-      id: 2,
-      company: "EcoSolutions",
-      email: "info@ecosolutions.fr",
-      phone: "+33 1 98 76 54 32",
-      address: "45 avenue Verte, 69002 Lyon",
-      qualification: 7,
-      socialMedia: {
-        linkedin: "ecosolutions",
-        twitter: "@ecosolutions"
-      },
-      score: 7.2,
-      industry: "Environmental",
-      strengths: ["Sustainability", "Brand recognition"],
-      weaknesses: ["Limited product range"]
+  const { data: leads = [] } = useQuery({
+    queryKey: ['leads'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('leads')
+        .select('*')
+      
+      if (error) throw error;
+      return data;
     }
-  ]
+  });
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/auth');
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary-dark to-[#1A1F2C]">
@@ -56,7 +43,17 @@ export function Dashboard() {
           <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-light to-primary bg-clip-text text-transparent">
             Tableau de bord des leads
           </h1>
-          <LeadsExport leads={leads} />
+          <div className="flex gap-4 items-center">
+            <LeadsExport leads={leads} />
+            <Button
+              onClick={handleLogout}
+              variant="outline"
+              className="bg-gradient-to-r from-primary to-primary-dark text-white border-none hover:opacity-90"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Déconnexion
+            </Button>
+          </div>
         </div>
         
         <div className="grid gap-8">
@@ -67,5 +64,5 @@ export function Dashboard() {
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -9,6 +9,80 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      leads: {
+        Row: {
+          address: string | null
+          company: string
+          created_at: string
+          email: string | null
+          id: string
+          industry: string | null
+          phone: string | null
+          qualification: number | null
+          score: number | null
+          social_media: Json | null
+          strengths: string[] | null
+          user_id: string | null
+          weaknesses: string[] | null
+        }
+        Insert: {
+          address?: string | null
+          company: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          industry?: string | null
+          phone?: string | null
+          qualification?: number | null
+          score?: number | null
+          social_media?: Json | null
+          strengths?: string[] | null
+          user_id?: string | null
+          weaknesses?: string[] | null
+        }
+        Update: {
+          address?: string | null
+          company?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          industry?: string | null
+          phone?: string | null
+          qualification?: number | null
+          score?: number | null
+          social_media?: Json | null
+          strengths?: string[] | null
+          user_id?: string | null
+          weaknesses?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leads_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
       secrets: {
         Row: {
           created_at: string
