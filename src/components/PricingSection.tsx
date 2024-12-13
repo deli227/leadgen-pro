@@ -23,8 +23,8 @@ export const PricingSection = () => {
       description: "Pour les professionnels qui veulent plus",
       price: "14,99€",
       features: [
-        "250 leads par jour",
-        "7500 leads par mois",
+        "8 leads par jour",
+        "250 leads par mois",
         "Analyse IA avancée",
         "Export multi-formats",
         "Support prioritaire",
