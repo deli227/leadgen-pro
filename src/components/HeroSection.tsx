@@ -28,19 +28,19 @@ export const HeroSection = () => {
             <Link to="/auth">
               <Button 
                 size="lg" 
-                className="bg-gradient-to-r from-primary to-accent hover:from-primary/80 hover:to-accent/80 transform transition-all hover:scale-105 shadow-[0_0_15px_rgba(155,135,245,0.5)] hover:shadow-[0_0_25px_rgba(155,135,245,0.8)] text-white font-semibold"
+                className="bg-gradient-to-r from-accent to-primary hover:from-accent/90 hover:to-primary/90 text-white font-semibold px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent"
               >
                 Essayer la démo
-                <ArrowRight className="ml-2 h-4 w-4" />
+                <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
             <Link to="/auth">
               <Button 
                 variant="outline" 
                 size="lg" 
-                className="text-white border-primary hover:bg-primary/20 transform transition-all hover:scale-105 shadow-[0_0_10px_rgba(155,135,245,0.3)] hover:shadow-[0_0_20px_rgba(155,135,245,0.6)] font-semibold"
+                className="bg-transparent text-white border-2 border-primary hover:bg-primary/20 font-semibold px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all duration-300"
               >
-                <LogIn className="mr-2 h-4 w-4" />
+                <LogIn className="mr-2 h-5 w-5" />
                 Inscription
               </Button>
             </Link>
