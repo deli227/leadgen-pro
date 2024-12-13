@@ -28,7 +28,7 @@ const citiesByCountry = {
   TN: ["Tunis", "Sfax", "Sousse", "Kairouan", "Bizerte"],
   SN: ["Dakar", "Thiès", "Saint-Louis", "Rufisque", "Kaolack"],
   CI: ["Abidjan", "Yamoussoukro", "Bouaké", "Daloa", "Korhogo"]
-}
+} as const
 
 export function LocationFilters({ 
   country, 
@@ -36,18 +36,23 @@ export function LocationFilters({
   onCountryChange, 
   onCityChange 
 }: LocationFiltersProps) {
-  const handleCountryChange = (value: string) => {
-    onCountryChange(value);
-    onCityChange('all'); // Reset city when country changes
+  const handleCountryChange = (newCountry: string) => {
+    console.log("Changing country to:", newCountry)
+    onCountryChange(newCountry)
+    // Reset city when country changes
+    onCityChange('all')
   }
 
   return (
-    <>
-      <Select value={country} onValueChange={handleCountryChange}>
-        <SelectTrigger className="w-[180px] bg-transparent border-primary-light text-primary-light">
+    <div className="flex gap-4">
+      <Select 
+        value={country} 
+        onValueChange={handleCountryChange}
+      >
+        <SelectTrigger className="w-[180px] bg-transparent border-primary-light/20 text-primary-light">
           <SelectValue placeholder="Pays" />
         </SelectTrigger>
-        <SelectContent className="bg-secondary-dark/95 border-primary-light text-primary-light">
+        <SelectContent className="bg-secondary-dark/95 border-primary-light/20 text-primary-light">
           <SelectItem value="all" className="text-primary-light hover:bg-primary/20">Tous les pays</SelectItem>
           <SelectItem value="FR" className="text-primary-light hover:bg-primary/20">France</SelectItem>
           <SelectItem value="BE" className="text-primary-light hover:bg-primary/20">Belgique</SelectItem>
@@ -62,13 +67,17 @@ export function LocationFilters({
         </SelectContent>
       </Select>
 
-      <Select value={city} onValueChange={onCityChange}>
-        <SelectTrigger className="w-[180px] bg-transparent border-primary-light text-primary-light">
+      <Select 
+        value={city} 
+        onValueChange={onCityChange}
+        disabled={country === 'all'}
+      >
+        <SelectTrigger className="w-[180px] bg-transparent border-primary-light/20 text-primary-light">
           <SelectValue placeholder="Ville" />
         </SelectTrigger>
-        <SelectContent className="bg-secondary-dark/95 border-primary-light text-primary-light">
+        <SelectContent className="bg-secondary-dark/95 border-primary-light/20 text-primary-light">
           <SelectItem value="all" className="text-primary-light hover:bg-primary/20">Toutes les villes</SelectItem>
-          {country !== 'all' && citiesByCountry[country]?.map((cityName) => (
+          {country !== 'all' && citiesByCountry[country as keyof typeof citiesByCountry]?.map((cityName) => (
             <SelectItem 
               key={cityName} 
               value={cityName} 
@@ -79,6 +88,6 @@ export function LocationFilters({
           ))}
         </SelectContent>
       </Select>
-    </>
+    </div>
   )
 }
