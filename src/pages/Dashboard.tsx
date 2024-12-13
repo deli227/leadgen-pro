@@ -153,18 +153,23 @@ export function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-secondary-dark to-[#1A1F2C]">
+    <div className="min-h-screen bg-gradient-to-br from-secondary-dark via-[#1A1F2C] to-black">
       <div className="container mx-auto py-8 px-4 animate-fade-in">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-light to-primary bg-clip-text text-transparent">
-            Tableau de bord des leads
-          </h1>
+          <div className="space-y-2">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary-light via-primary to-accent bg-clip-text text-transparent">
+              Tableau de bord
+            </h1>
+            <p className="text-primary-light/70">
+              Gérez et analysez vos leads en temps réel
+            </p>
+          </div>
           <div className="flex gap-4 items-center">
             <LeadsExport leads={leads} />
             <Button
               onClick={handleLogout}
               variant="outline"
-              className="bg-gradient-to-r from-primary to-primary-dark text-white border-none hover:opacity-90"
+              className="bg-gradient-to-r from-primary/20 to-primary-dark/20 text-primary-light border-primary-light/20 hover:bg-primary/30 hover:text-white transition-all duration-300"
             >
               <LogOut className="h-4 w-4 mr-2" />
               Déconnexion
@@ -173,7 +178,7 @@ export function Dashboard() {
         </div>
 
         {profile && limits && (
-          <div className="mb-8">
+          <div className="mb-8 animate-fade-up">
             <LeadsStats
               dailyLeadsLeft={limits.daily_leads_limit - profile.leads_generated_today}
               monthlyLeadsLeft={limits.monthly_leads_limit - profile.leads_generated_this_month}
@@ -184,10 +189,12 @@ export function Dashboard() {
           </div>
         )}
         
-        <div className="grid gap-8">
+        <div className="grid gap-8 animate-fade-up" style={{ animationDelay: "0.2s" }}>
           <LeadsFilters filters={filters} setFilters={setFilters} />
           <ScrollArea className="h-[calc(100vh-24rem)] rounded-xl border border-primary/20 bg-black/40 backdrop-blur-sm shadow-lg shadow-primary/5">
-            <LeadsTable leads={leads} filters={filters} />
+            <div className="p-1">
+              <LeadsTable leads={leads} filters={filters} />
+            </div>
           </ScrollArea>
         </div>
       </div>

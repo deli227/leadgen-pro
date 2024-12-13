@@ -55,40 +55,40 @@ export function LeadsFilters({ filters, setFilters }: LeadsFiltersProps) {
 
   return (
     <Tabs defaultValue="filters" className="w-full">
-      <TabsList className="grid w-full grid-cols-3 bg-black border border-primary-light rounded-t-lg overflow-hidden">
+      <TabsList className="grid w-full grid-cols-3 bg-gradient-to-r from-black to-secondary-dark border border-primary-light/20 rounded-t-lg overflow-hidden">
         <TabsTrigger 
           value="filters" 
-          className="relative text-primary-light data-[state=active]:bg-secondary-dark data-[state=active]:text-primary-light group transition-all duration-300"
+          className="relative text-primary-light data-[state=active]:bg-black/60 data-[state=active]:text-primary-light group transition-all duration-300"
         >
           <span className="flex items-center gap-2">
             Générer des leads
             <ChevronRight className="h-4 w-4 transition-transform group-data-[state=active]:rotate-90" />
           </span>
-          <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary-light scale-x-0 group-data-[state=active]:scale-x-100 transition-transform" />
+          <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary scale-x-0 group-data-[state=active]:scale-x-100 transition-transform" />
         </TabsTrigger>
         <TabsTrigger 
           value="analytics" 
-          className="relative text-primary-light data-[state=active]:bg-secondary-dark data-[state=active]:text-primary-light group transition-all duration-300"
+          className="relative text-primary-light data-[state=active]:bg-black/60 data-[state=active]:text-primary-light group transition-all duration-300"
         >
           <span className="flex items-center gap-2">
             Analytiques
             <ChevronRight className="h-4 w-4 transition-transform group-data-[state=active]:rotate-90" />
           </span>
-          <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary-light scale-x-0 group-data-[state=active]:scale-x-100 transition-transform" />
+          <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary scale-x-0 group-data-[state=active]:scale-x-100 transition-transform" />
         </TabsTrigger>
         <TabsTrigger 
           value="export" 
-          className="relative text-primary-light data-[state=active]:bg-secondary-dark data-[state=active]:text-primary-light group transition-all duration-300"
+          className="relative text-primary-light data-[state=active]:bg-black/60 data-[state=active]:text-primary-light group transition-all duration-300"
         >
           <span className="flex items-center gap-2">
             Export
             <ChevronRight className="h-4 w-4 transition-transform group-data-[state=active]:rotate-90" />
           </span>
-          <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary-light scale-x-0 group-data-[state=active]:scale-x-100 transition-transform" />
+          <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary scale-x-0 group-data-[state=active]:scale-x-100 transition-transform" />
         </TabsTrigger>
       </TabsList>
 
-      <TabsContent value="filters" className="space-y-4 bg-black p-4 rounded-lg">
+      <TabsContent value="filters" className="space-y-6 bg-gradient-to-br from-black/80 to-secondary-dark/80 p-6 rounded-lg border border-primary/10">
         <div className="flex flex-wrap gap-4">
           <SearchInput 
             value={filters.search}
@@ -110,7 +110,7 @@ export function LeadsFilters({ filters, setFilters }: LeadsFiltersProps) {
           <Button
             onClick={handleGenerateLeads}
             disabled={isGenerating}
-            className="ml-auto bg-primary hover:bg-primary-dark text-white"
+            className="ml-auto bg-gradient-to-r from-primary to-accent hover:from-primary-dark hover:to-accent-dark text-white shadow-lg shadow-primary/20 transition-all duration-300"
           >
             {isGenerating ? (
               <>
@@ -129,8 +129,8 @@ export function LeadsFilters({ filters, setFilters }: LeadsFiltersProps) {
         />
       </TabsContent>
 
-      <TabsContent value="analytics" className="space-y-4 bg-black p-4 rounded-lg">
-        <div className="p-4 border border-primary-light rounded-lg">
+      <TabsContent value="analytics" className="space-y-4 bg-gradient-to-br from-black/80 to-secondary-dark/80 p-6 rounded-lg border border-primary/10">
+        <div className="p-6 border border-primary/20 rounded-lg bg-black/40">
           <h3 className="text-lg font-semibold text-primary-light mb-2">Analytiques</h3>
           <p className="text-primary-light/70">
             Les analyses détaillées seront disponibles prochainement.
@@ -138,8 +138,8 @@ export function LeadsFilters({ filters, setFilters }: LeadsFiltersProps) {
         </div>
       </TabsContent>
 
-      <TabsContent value="export" className="space-y-4 bg-black p-4 rounded-lg">
-        <div className="p-4 border border-primary-light rounded-lg">
+      <TabsContent value="export" className="space-y-4 bg-gradient-to-br from-black/80 to-secondary-dark/80 p-6 rounded-lg border border-primary/10">
+        <div className="p-6 border border-primary/20 rounded-lg bg-black/40">
           <h3 className="text-lg font-semibold text-primary-light mb-2">Export des données</h3>
           <p className="text-primary-light/70">
             Les options d'export seront disponibles prochainement.
