@@ -3,6 +3,8 @@ import { FeaturesSection } from "@/components/FeaturesSection";
 import { TestimonialsSection } from "@/components/TestimonialsSection";
 import { PricingSection } from "@/components/PricingSection";
 import { FooterSection } from "@/components/FooterSection";
+import { HowItWorksSection } from "@/components/HowItWorksSection";
+import { ContactSection } from "@/components/ContactSection";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
@@ -21,8 +23,10 @@ export default function Index() {
       </div>
       <main>
         <HeroSection />
+        <HowItWorksSection />
         <FeaturesSection />
         <TestimonialsSection />
+        <ContactSection />
         <PricingSection />
       </main>
       <FooterSection />

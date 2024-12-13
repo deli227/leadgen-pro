@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Brain, BarChart3, Database, LogIn, Sparkles } from "lucide-react";
+import { ArrowRight, Brain, BarChart3, Database, LogIn, Sparkles, Mail, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
@@ -12,17 +12,17 @@ export const HeroSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mx-auto max-w-2xl text-center"
+          className="mx-auto max-w-3xl text-center"
         >
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-            Optimisez votre prospection avec{" "}
+          <h1 className="text-5xl font-bold tracking-tight text-gray-900 sm:text-7xl mb-4">
+            LeadGen Pro{" "}
             <span className="bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">
-              l'Intelligence Artificielle
+              (Beta)
             </span>
           </h1>
-          <p className="mt-6 text-lg leading-8 text-gray-600">
-            LeadGen Pro Beta révolutionne la gestion de vos leads en utilisant l'IA pour analyser, 
-            qualifier et classer vos prospects automatiquement.
+          <p className="mt-6 text-xl leading-8 text-gray-600">
+            Optimisez votre prospection avec l'Intelligence Artificielle. Notre solution analyse, 
+            qualifie et classe vos prospects automatiquement.
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
             <Link to="/auth">
