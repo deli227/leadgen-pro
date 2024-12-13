@@ -44,6 +44,6 @@ export const plans = [
     ],
     buttonText: "Contacter les ventes",
     type: "enterprise",
-    priceId: "REMPLACEZ_PAR_VOTRE_PRICE_ID_ENTERPRISE",
+    priceId: "price_1QV8FaB0B6nBBCbUFoQrwDwm",
   },
 ];
