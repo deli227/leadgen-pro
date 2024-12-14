@@ -20,6 +20,9 @@ const queryClient = new QueryClient({
   },
 });
 
+// Temporary flag to disable access to dashboard/auth routes
+const ENABLE_FULL_ACCESS = false;
+
 const App = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -72,18 +75,23 @@ const App = () => {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route
-              path="/auth"
-              element={
-                session ? <Navigate to="/dashboard" /> : <Auth />
-              }
-            />
-            <Route
-              path="/dashboard"
-              element={
-                session ? <Dashboard /> : <Navigate to="/auth" />
-              }
-            />
+            {ENABLE_FULL_ACCESS ? (
+              <>
+                <Route
+                  path="/auth"
+                  element={session ? <Navigate to="/dashboard" /> : <Auth />}
+                />
+                <Route
+                  path="/dashboard"
+                  element={session ? <Dashboard /> : <Navigate to="/auth" />}
+                />
+              </>
+            ) : (
+              <>
+                <Route path="/auth" element={<Navigate to="/" />} />
+                <Route path="/dashboard" element={<Navigate to="/" />} />
+              </>
+            )}
           </Routes>
         </BrowserRouter>
       </TooltipProvider>

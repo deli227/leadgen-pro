@@ -58,7 +58,7 @@ export default function Index() {
 
   return (
     <div className="flex flex-col min-h-screen bg-secondary-dark">
-      {/* Popup automatique */}
+      {/* Popup automatique avec délai */}
       <WaitlistDialog />
       
       <main>
@@ -66,26 +66,34 @@ export default function Index() {
           <HeroSection />
           
           {/* Formulaire d'inscription à la liste d'attente */}
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md px-4">
-            <form onSubmit={handleSubmit} className="space-y-4 animate-fade-up">
-              <div className="relative">
-                <Input
-                  type="email"
-                  placeholder="Entrez votre adresse email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="h-14 pl-12 pr-4 w-full bg-black/50 border-2 border-primary/20 text-white placeholder:text-gray-400 text-lg rounded-xl focus:border-primary/40 focus:ring-primary/40"
-                />
-                <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-primary/60 h-5 w-5" />
-              </div>
-              <Button
-                type="submit"
-                disabled={isLoading}
-                className="w-full h-14 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
-              >
-                {isLoading ? "Inscription en cours..." : "Rejoindre la liste d'attente"}
-              </Button>
-            </form>
+          <div className="fixed top-1/3 left-1/2 transform -translate-x-1/2 w-full max-w-md px-4 z-50">
+            <div className="bg-black/80 backdrop-blur-lg rounded-2xl p-8 shadow-2xl border border-primary/20">
+              <h2 className="text-2xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
+                Rejoignez la liste d'attente
+              </h2>
+              <p className="text-gray-300 mb-6">
+                Soyez parmi les premiers à découvrir LeadGen Pro et bénéficiez d'avantages exclusifs.
+              </p>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="relative">
+                  <Input
+                    type="email"
+                    placeholder="Entrez votre adresse email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="h-14 pl-12 pr-4 w-full bg-black/50 border-2 border-primary/20 text-white placeholder:text-gray-400 text-lg rounded-xl focus:border-primary/40 focus:ring-primary/40"
+                  />
+                  <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-primary/60 h-5 w-5" />
+                </div>
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full h-14 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  {isLoading ? "Inscription en cours..." : "Rejoindre la liste d'attente"}
+                </Button>
+              </form>
+            </div>
           </div>
         </div>
 
