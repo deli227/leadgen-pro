@@ -1,8 +1,7 @@
-import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import { toast } from "sonner"
 import { Database } from "@/integrations/supabase/types"
+import { UpgradeButton } from "../buttons/UpgradeButton"
 
 type SubscriptionType = Database["public"]["Enums"]["subscription_type"]
 
@@ -21,10 +20,6 @@ export function LeadsStats({
   totalMonthlyLeads,
   subscriptionType,
 }: LeadsStatsProps) {
-  const handleUpgradeClick = () => {
-    toast.info("La fonctionnalité de paiement sera bientôt disponible")
-  }
-
   return (
     <div className="grid gap-4 md:grid-cols-2">
       <Card className="p-4 md:p-6">
@@ -39,14 +34,7 @@ export function LeadsStats({
             className="h-2"
           />
           {subscriptionType === "free" && (
-            <Button
-              onClick={handleUpgradeClick}
-              className="w-full mt-4 text-sm whitespace-nowrap"
-              variant="outline"
-              disabled
-            >
-              Augmenter la limite (Bientôt disponible)
-            </Button>
+            <UpgradeButton className="w-full mt-4" />
           )}
         </div>
       </Card>
@@ -62,14 +50,7 @@ export function LeadsStats({
             className="h-2"
           />
           {subscriptionType === "free" && (
-            <Button
-              onClick={handleUpgradeClick}
-              className="w-full mt-4 text-sm whitespace-nowrap"
-              variant="outline"
-              disabled
-            >
-              Augmenter la limite (Bientôt disponible)
-            </Button>
+            <UpgradeButton className="w-full mt-4" />
           )}
         </div>
       </Card>
