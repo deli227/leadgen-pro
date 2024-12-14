@@ -1,9 +1,13 @@
 import { motion } from "framer-motion";
 
-export const RobotMascot = () => {
+interface RobotMascotProps {
+  className?: string;
+}
+
+export const RobotMascot = ({ className }: RobotMascotProps) => {
   return (
     <motion.div
-      className="absolute right-[-100px] top-20 lg:right-0 w-[200px] h-[200px] z-10"
+      className={`absolute right-[-100px] top-20 lg:right-0 w-[200px] h-[200px] z-10 ${className || ''}`}
       initial={{ y: 20, rotate: -5 }}
       animate={{ 
         y: [20, -20, 20],
