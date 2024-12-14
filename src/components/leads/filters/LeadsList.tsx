@@ -8,12 +8,12 @@ interface LeadsListProps {
 
 export function LeadsList({ leads, onAddToAnalytics }: LeadsListProps) {
   return (
-    <div className="mt-6">
-      <h3 className="text-xl font-semibold text-primary-light mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+    <div className="mt-4 sm:mt-6">
+      <h3 className="text-lg sm:text-xl font-semibold text-primary-light mb-4 sm:mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
         Leads générés
       </h3>
-      <ScrollArea className="h-[600px] pr-4">
-        <div className="space-y-6">
+      <ScrollArea className="h-[400px] sm:h-[500px] md:h-[600px] pr-2 sm:pr-4">
+        <div className="grid gap-3 sm:gap-4 md:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {leads.map((lead) => (
             <LeadCard
               key={lead.id}
