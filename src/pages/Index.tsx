@@ -17,7 +17,11 @@ export default function Index() {
       {/* Popup automatique */}
       <WaitlistDialog />
       
-      <div className="flex justify-end gap-4 p-4">
+      <div className="flex justify-between items-center p-4">
+        <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+          LeadGen Pro <span className="text-sm font-normal">(beta)</span>
+        </h1>
+        <div className="flex gap-4">
         {/* Bouton pour réouvrir la popup */}
         <WaitlistDialog triggerButton />
         <Button 
@@ -26,6 +30,7 @@ export default function Index() {
         >
           Accéder au tableau de bord
         </Button>
+        </div>
       </div>
       <main>
         <HeroSection />
