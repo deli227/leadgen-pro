@@ -15,10 +15,9 @@ export const plans = [
   },
   {
     name: "Pro",
-    description: "Pour les professionnels qui veulent plus",
+    description: "En seulement 3 minutes, accédez aux meilleurs leads du marché. Nos leads sont minutieusement qualifiés et analysés par notre IA spécialisée, vous donnant accès à toutes les informations essentielles pour proposer des services parfaitement alignés avec leurs besoins d'amélioration.",
     price: "14,99€",
     features: [
-      "8 leads par jour",
       "250 leads par mois",
       "Analyse IA avancée",
       "Export multi-formats",
