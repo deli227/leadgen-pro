@@ -84,14 +84,14 @@ export const PricingPlan = ({
       </div>
       <Button
         onClick={handleSubscribe}
-        className={`mt-8 w-full flex items-center justify-center gap-2 ${
+        className={`mt-8 w-full flex items-center justify-center gap-1.5 ${
           popular
             ? "bg-gradient-to-r from-primary/50 to-accent/50 hover:from-primary/60 hover:to-accent/60 shadow-[0_0_15px_rgba(155,135,245,0.3)] hover:shadow-[0_0_25px_rgba(155,135,245,0.5)]"
             : "bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 hover:border-primary/30"
-        } transform transition-all duration-300 opacity-75 px-3 py-2 h-auto min-h-[44px]`}
+        } transform transition-all duration-300 opacity-75 px-2 py-1.5 h-auto min-h-[44px]`}
       >
-        <span className="text-sm sm:text-base whitespace-nowrap">{buttonText}</span>
-        <span className="text-xs sm:text-sm whitespace-nowrap opacity-75">(Bientôt disponible)</span>
+        <span className="text-xs sm:text-sm font-medium whitespace-nowrap">{buttonText}</span>
+        <span className="text-[10px] sm:text-xs whitespace-nowrap opacity-75">(Bientôt disponible)</span>
       </Button>
     </div>
   );
