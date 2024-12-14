@@ -16,6 +16,8 @@ import { toast } from "sonner";
 
 const emailSchema = z.string().email("Veuillez entrer une adresse email valide");
 
+const ENABLE_FULL_ACCESS = false;
+
 export default function Index() {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -58,15 +60,12 @@ export default function Index() {
 
   return (
     <div className="flex flex-col min-h-screen bg-secondary-dark">
-      {/* Popup automatique avec délai */}
-      <WaitlistDialog />
-      
       <main>
         <div className="relative">
           <HeroSection />
           
           {/* Formulaire d'inscription à la liste d'attente */}
-          <div className="absolute top-1/3 left-1/2 transform -translate-x-1/2 w-full max-w-md px-4">
+          <div className="absolute bottom-32 left-1/2 transform -translate-x-1/2 w-full max-w-md px-4">
             <div className="bg-black/80 backdrop-blur-lg rounded-2xl p-8 shadow-2xl border border-primary/20">
               <h2 className="text-2xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
                 Rejoignez la liste d'attente
@@ -95,13 +94,17 @@ export default function Index() {
               </form>
             </div>
           </div>
-        </div>
 
-        <HowItWorksSection />
-        <PricingSection />
-        <FeaturesSection />
-        <TestimonialsSection />
-        <ContactSection />
+          {ENABLE_FULL_ACCESS && (
+            <>
+              <HowItWorksSection />
+              <PricingSection />
+              <FeaturesSection />
+              <TestimonialsSection />
+              <ContactSection />
+            </>
+          )}
+        </div>
       </main>
       <FooterSection />
     </div>
