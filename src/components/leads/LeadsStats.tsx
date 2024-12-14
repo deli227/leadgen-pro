@@ -2,7 +2,9 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { toast } from "sonner"
-import { SubscriptionType } from "@/integrations/supabase/types"
+import { Database } from "@/integrations/supabase/types"
+
+type SubscriptionType = Database["public"]["Enums"]["subscription_type"]
 
 interface LeadsStatsProps {
   dailyLeadsLeft: number
