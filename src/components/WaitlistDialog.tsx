@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,10 +8,20 @@ import { z } from "zod";
 
 const emailSchema = z.string().email("Veuillez entrer une adresse email valide");
 
-export function WaitlistDialog() {
-  const [open, setOpen] = useState(true);
+export function WaitlistDialog({ triggerButton = false }: { triggerButton?: boolean }) {
+  const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (!triggerButton) {
+      const timer = setTimeout(() => {
+        setOpen(true);
+      }, 2000); // Délai de 2 secondes
+
+      return () => clearTimeout(timer);
+    }
+  }, [triggerButton]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,6 +59,52 @@ export function WaitlistDialog() {
       setIsLoading(false);
     }
   };
+
+  if (triggerButton) {
+    return (
+      <>
+        <Button 
+          onClick={() => setOpen(true)}
+          variant="outline"
+          className="bg-gradient-to-r from-primary/10 to-accent/10 hover:from-primary/20 hover:to-accent/20 border-primary/20 text-white"
+        >
+          Rejoindre la liste d'attente
+        </Button>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogContent className="sm:max-w-md bg-gradient-to-br from-secondary-dark to-black border border-primary/20">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
+                LeadGen Pro arrive bientôt !
+              </DialogTitle>
+              <DialogDescription className="text-gray-300 mt-2">
+                Soyez parmi les premiers à découvrir notre solution de génération de leads B2B. Inscrivez-vous pour être notifié dès le lancement !
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+              <div className="space-y-2">
+                <Input
+                  type="email"
+                  placeholder="Votre adresse email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="bg-black/50 border-primary/20 text-white placeholder:text-gray-400"
+                />
+              </div>
+              <div className="flex justify-end">
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white"
+                >
+                  {isLoading ? "Inscription en cours..." : "M'inscrire"}
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </>
+    );
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

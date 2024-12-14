@@ -14,8 +14,12 @@ export default function Index() {
 
   return (
     <div className="flex flex-col min-h-screen bg-secondary-dark">
+      {/* Popup automatique */}
       <WaitlistDialog />
-      <div className="flex justify-end p-4">
+      
+      <div className="flex justify-end gap-4 p-4">
+        {/* Bouton pour réouvrir la popup */}
+        <WaitlistDialog triggerButton />
         <Button 
           onClick={() => navigate("/dashboard")}
           className="bg-gradient-to-r from-primary to-accent hover:from-primary/80 hover:to-accent/80 text-white shadow-[0_0_15px_rgba(155,135,245,0.5)] hover:shadow-[0_0_25px_rgba(155,135,245,0.8)] transition-all duration-300"
