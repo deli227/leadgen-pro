@@ -1,3 +1,76 @@
-I don't have access to the original content of `src/components/leads/LeadsStats.tsx` in the code you shared. Without seeing the original file, I cannot reconstruct the complete code by replacing the `// ... keep existing code` comments with the actual code that was there before.
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
+import { Progress } from "@/components/ui/progress"
+import { toast } from "sonner"
+import { SubscriptionType } from "@/integrations/supabase/types"
 
-To help you with this task, please share the current content of `src/components/leads/LeadsStats.tsx` and I'll help you integrate the button changes while preserving all the existing functionality.
+interface LeadsStatsProps {
+  dailyLeadsLeft: number
+  monthlyLeadsLeft: number
+  totalDailyLeads: number
+  totalMonthlyLeads: number
+  subscriptionType: SubscriptionType
+}
+
+export function LeadsStats({
+  dailyLeadsLeft,
+  monthlyLeadsLeft,
+  totalDailyLeads,
+  totalMonthlyLeads,
+  subscriptionType,
+}: LeadsStatsProps) {
+  const handleUpgradeClick = () => {
+    toast.info("La fonctionnalité de paiement sera bientôt disponible")
+  }
+
+  return (
+    <div className="grid gap-4 md:grid-cols-2">
+      <Card className="p-4 md:p-6">
+        <div className="space-y-2">
+          <h3 className="text-lg font-medium">Leads quotidiens restants</h3>
+          <div className="flex items-center justify-between text-sm text-muted-foreground">
+            <span>{dailyLeadsLeft} leads restants</span>
+            <span>{totalDailyLeads} leads au total</span>
+          </div>
+          <Progress
+            value={(dailyLeadsLeft / totalDailyLeads) * 100}
+            className="h-2"
+          />
+          {subscriptionType === "free" && (
+            <Button
+              onClick={handleUpgradeClick}
+              className="w-full mt-4 text-sm whitespace-nowrap"
+              variant="outline"
+              disabled
+            >
+              Augmenter la limite (Bientôt disponible)
+            </Button>
+          )}
+        </div>
+      </Card>
+      <Card className="p-4 md:p-6">
+        <div className="space-y-2">
+          <h3 className="text-lg font-medium">Leads mensuels restants</h3>
+          <div className="flex items-center justify-between text-sm text-muted-foreground">
+            <span>{monthlyLeadsLeft} leads restants</span>
+            <span>{totalMonthlyLeads} leads au total</span>
+          </div>
+          <Progress
+            value={(monthlyLeadsLeft / totalMonthlyLeads) * 100}
+            className="h-2"
+          />
+          {subscriptionType === "free" && (
+            <Button
+              onClick={handleUpgradeClick}
+              className="w-full mt-4 text-sm whitespace-nowrap"
+              variant="outline"
+              disabled
+            >
+              Augmenter la limite (Bientôt disponible)
+            </Button>
+          )}
+        </div>
+      </Card>
+    </div>
+  )
+}
