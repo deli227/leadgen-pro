@@ -16,6 +16,16 @@ export function DashboardHeader({ exportLeads }: DashboardHeaderProps) {
 
   const handleLogout = async () => {
     try {
+      // First check if we have a session
+      const { data: { session } } = await supabase.auth.getSession()
+      
+      if (!session) {
+        // If no session, just redirect to auth
+        navigate('/auth')
+        return
+      }
+
+      // Attempt to sign out
       const { error } = await supabase.auth.signOut()
       if (error) throw error
       

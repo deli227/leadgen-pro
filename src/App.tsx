@@ -34,10 +34,14 @@ const App = () => {
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       console.log("Auth state changed:", _event, session);
       setSession(session);
-      queryClient.invalidateQueries();
+      if (_event === 'SIGNED_OUT') {
+        queryClient.clear(); // Clear all queries on logout
+      } else {
+        queryClient.invalidateQueries();
+      }
     });
 
     return () => {
