@@ -1,187 +1,45 @@
-import { useState } from "react"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import { MapPin, Star } from "lucide-react"
-import { LeadsTableActions } from "./LeadsTableActions"
-import { Dialog, DialogContent } from "@/components/ui/dialog"
-import { useToast } from "@/components/ui/use-toast"
-import { LeadNotes } from "./LeadNotes"
+import { Lead } from "@/types/leads";
+import { useLeadsData } from "@/hooks/useLeadsData";
+import { useSessionData } from "@/hooks/useSessionData";
+import { Button } from "@/components/ui/button";
+import { LeadsList } from "./filters/LeadsList";
+import { ExportTabContent } from "./filters/ExportTabContent";
+import { LeadCountSlider } from "./filters/LeadCountSlider";
+import { SearchInput } from "./filters/SearchInput";
+import { useEffect, useState } from "react";
 
-interface Lead {
-  id: number
-  company: string
-  email: string
-  phone: string
-  address?: string
-  qualification: number
-  socialMedia: {
-    linkedin: string
-    twitter: string
-  }
-  score: number
-  industry: string
-  strengths: string[]
-  weaknesses: string[]
-}
+export function LeadsTable() {
+  const session = useSessionData();
+  const leads = useLeadsData(session.data);
+  const [exportLeads, setExportLeads] = useState<any[]>([]);
+  const [leadCount, setLeadCount] = useState(10);
+  const [searchTerm, setSearchTerm] = useState("");
 
-interface LeadsTableProps {
-  leads: Lead[]
-  filters: {
-    search: string
-    leadCount: number
-    industry: string
-    country: string
-    city: string
-  }
-}
+  const filteredLeads = leads.filter(lead =>
+    lead.company.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-const calculateLeadScore = (lead: Lead): number => {
-  let score = 0;
-  
-  // Qualification (2 points)
-  if (lead.qualification > 0) {
-    score += (lead.qualification / 10) * 2;
-  }
-  
-  // Social Media (2 points)
-  if (lead.socialMedia) {
-    if (lead.socialMedia.linkedin) score += 1;
-    if (lead.socialMedia.twitter) score += 1;
-  }
-  
-  // Address (2 points)
-  if (lead.address && lead.address.length > 5) score += 2;
-  
-  // Phone (2 points)
-  if (lead.phone && lead.phone.length > 8) score += 2;
-  
-  // Email (2 points)
-  if (lead.email && lead.email.includes('@') && lead.email.includes('.')) score += 2;
-  
-  return Math.round(score * 10) / 10;
-};
+  const handleAddToExport = (lead: any) => {
+    setExportLeads(prev => [...prev, lead]);
+  };
 
-export function LeadsTable({ leads, filters }: LeadsTableProps) {
-  const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
-  const [showNotes, setShowNotes] = useState(false)
-  const [exportList, setExportList] = useState<number[]>([])
-  const { toast } = useToast()
+  const handleRemoveFromExport = (leadId: number) => {
+    setExportLeads(prev => prev.filter(lead => lead.id !== leadId));
+  };
 
-  const handleAddToExport = (leadId: number) => {
-    if (!exportList.includes(leadId)) {
-      setExportList([...exportList, leadId])
-      toast({
-        title: "Lead ajouté à la liste d'export",
-        description: "Le lead a été ajouté avec succès à votre liste d'export."
-      })
+  useEffect(() => {
+    if (exportLeads.length > leadCount) {
+      setExportLeads(prev => prev.slice(0, leadCount));
     }
-  }
-
-  const filteredLeads = leads.filter(lead => {
-    const matchesSearch = lead.company.toLowerCase().includes(filters.search.toLowerCase()) ||
-      lead.email.toLowerCase().includes(filters.search.toLowerCase())
-    const matchesIndustry = filters.industry === "all" || lead.industry === filters.industry
-    const matchesCountry = filters.country === "all"
-    const matchesCity = filters.city === "all"
-
-    return matchesSearch && matchesIndustry && matchesCountry && matchesCity
-  }).slice(0, filters.leadCount)
+  }, [leadCount]);
 
   return (
-    <div className="space-y-4">
-      <Table>
-        <TableHeader>
-          <TableRow className="border-primary/10 hover:bg-transparent">
-            <TableHead className="text-xs text-primary-light/70 font-medium">Entreprise</TableHead>
-            <TableHead className="text-xs text-primary-light/70 font-medium">Contact</TableHead>
-            <TableHead className="text-xs text-primary-light/70 font-medium">Réseaux Sociaux</TableHead>
-            <TableHead className="text-xs text-primary-light/70 font-medium">Score</TableHead>
-            <TableHead className="text-xs text-primary-light/70 font-medium">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {filteredLeads.map((lead) => {
-            const leadScore = calculateLeadScore(lead);
-            return (
-              <TableRow key={lead.id} className="border-primary/5 hover:bg-black/20 transition-colors duration-200">
-                <TableCell className="py-2">
-                  <span className="font-medium text-sm text-primary-light">{lead.company}</span>
-                </TableCell>
-                <TableCell className="py-2">
-                  <div className="space-y-0.5">
-                    <div className="text-sm text-primary-light">{lead.email}</div>
-                    <div className="text-xs text-primary-light/70">{lead.phone}</div>
-                  </div>
-                </TableCell>
-                <TableCell className="py-2">
-                  <div className="flex items-center gap-2">
-                    {lead.socialMedia.linkedin && (
-                      <a href={lead.socialMedia.linkedin} target="_blank" rel="noopener noreferrer" 
-                         className="text-primary-light/70 hover:text-primary-light">
-                        LinkedIn
-                      </a>
-                    )}
-                    {lead.socialMedia.twitter && (
-                      <a href={lead.socialMedia.twitter} target="_blank" rel="noopener noreferrer"
-                         className="text-primary-light/70 hover:text-primary-light">
-                        Twitter
-                      </a>
-                    )}
-                  </div>
-                </TableCell>
-                <TableCell className="py-2">
-                  <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-1">
-                      <Star className="h-4 w-4 text-yellow-500" fill="currentColor" />
-                      <span className="text-sm font-medium text-primary-light">{leadScore}/10</span>
-                    </div>
-                    {leadScore >= 7 && (
-                      <div className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs">
-                        Lead qualifié
-                      </div>
-                    )}
-                  </div>
-                </TableCell>
-                <TableCell className="py-2">
-                  <LeadsTableActions
-                    lead={lead}
-                    onShowDetails={setSelectedLead}
-                    onShowNotes={(lead) => {
-                      setSelectedLead(lead)
-                      setShowNotes(true)
-                    }}
-                    onAddToExport={handleAddToExport}
-                    exportList={exportList}
-                  />
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
-
-      <Dialog open={showNotes} onOpenChange={setShowNotes}>
-        <DialogContent className="bg-secondary-dark border-primary-light backdrop-blur-lg bg-opacity-95">
-          {selectedLead && (
-            <LeadNotes
-              lead={selectedLead}
-              onClose={() => {
-                setShowNotes(false)
-                toast({
-                  title: "Note enregistrée",
-                  description: "Votre note a été sauvegardée avec succès.",
-                })
-              }}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
+    <div className="p-4">
+      <h2 className="text-xl font-semibold text-primary-light">Leads</h2>
+      <SearchInput value={searchTerm} onChange={setSearchTerm} />
+      <LeadCountSlider value={leadCount} onChange={setLeadCount} />
+      <LeadsList leads={filteredLeads} onAddToAnalytics={handleAddToExport} />
+      <ExportTabContent exportLeads={exportLeads} onRemoveFromExport={handleRemoveFromExport} />
     </div>
-  )
+  );
 }

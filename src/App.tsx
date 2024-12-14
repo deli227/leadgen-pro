@@ -9,6 +9,7 @@ import { Auth } from "./pages/Auth";
 import { useEffect, useState } from "react";
 import { supabase } from "./integrations/supabase/client";
 import { Session } from "@supabase/supabase-js";
+import { toast } from "sonner";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,7 +26,11 @@ const App = () => {
 
   useEffect(() => {
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) {
+        console.error("Error getting session:", error);
+        toast.error("Erreur de connexion");
+      }
       console.log("Initial session:", session);
       setSession(session);
       setIsLoading(false);
@@ -39,8 +44,10 @@ const App = () => {
       setSession(session);
       if (_event === 'SIGNED_OUT') {
         queryClient.clear(); // Clear all queries on logout
-      } else {
+        toast.success("Déconnexion réussie");
+      } else if (_event === 'SIGNED_IN') {
         queryClient.invalidateQueries();
+        toast.success("Connexion réussie");
       }
     });
 
