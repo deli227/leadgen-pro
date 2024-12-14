@@ -66,7 +66,7 @@ export default function Index() {
           <HeroSection />
           
           {/* Formulaire d'inscription à la liste d'attente */}
-          <div className="fixed top-1/3 left-1/2 transform -translate-x-1/2 w-full max-w-md px-4 z-50">
+          <div className="absolute top-1/3 left-1/2 transform -translate-x-1/2 w-full max-w-md px-4">
             <div className="bg-black/80 backdrop-blur-lg rounded-2xl p-8 shadow-2xl border border-primary/20">
               <h2 className="text-2xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
                 Rejoignez la liste d'attente
