@@ -23,24 +23,12 @@ export function LeadsStats({
 }: LeadsStatsProps) {
   const { toast } = useToast()
 
-  const handleUpgrade = async (priceId: string) => {
-    try {
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { priceId },
-      })
-
-      if (error) throw error
-      if (data?.url) {
-        window.location.href = data.url
-      }
-    } catch (error) {
-      console.error('Erreur:', error)
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Impossible de créer la session de paiement. Veuillez réessayer.",
-      })
-    }
+  const handleUpgrade = async () => {
+    toast({
+      title: "Fonctionnalité temporairement indisponible",
+      description: "Le système de paiement sera bientôt disponible.",
+      variant: "default",
+    })
   }
 
   const upgradeOptions = plans.filter(plan => plan.type !== 'free')
@@ -84,11 +72,11 @@ export function LeadsStats({
                     <p className="text-xs text-primary-light/70 mt-1">{plan.price}</p>
                   </div>
                   <Button
-                    onClick={() => handleUpgrade(plan.priceId!)}
-                    className="bg-primary/20 hover:bg-primary/30 text-primary-light text-xs px-3 py-1.5 h-auto"
+                    onClick={handleUpgrade}
+                    className="bg-primary/20 hover:bg-primary/30 text-primary-light text-xs px-3 py-1.5 h-auto opacity-75"
                   >
                     <ArrowUpCircle className="mr-2 h-3 w-3" />
-                    Upgrade
+                    Bientôt
                   </Button>
                 </div>
               ))}

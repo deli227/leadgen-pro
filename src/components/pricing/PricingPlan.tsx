@@ -29,35 +29,11 @@ export const PricingPlan = ({
   const navigate = useNavigate();
 
   const handleSubscribe = async () => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        navigate('/auth');
-        return;
-      }
-
-      if (type === 'free') {
-        navigate('/dashboard');
-        return;
-      }
-
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { priceId },
-      });
-
-      if (error) throw error;
-      if (data?.url) {
-        window.location.href = data.url;
-      }
-    } catch (error) {
-      console.error('Erreur:', error);
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Impossible de créer la session de paiement. Veuillez réessayer.",
-      });
-    }
+    toast({
+      title: "Fonctionnalité temporairement indisponible",
+      description: "Le système de paiement sera bientôt disponible.",
+      variant: "default",
+    });
   };
 
   return (
@@ -110,11 +86,12 @@ export const PricingPlan = ({
         onClick={handleSubscribe}
         className={`mt-8 w-full ${
           popular
-            ? "bg-gradient-to-r from-primary to-accent hover:from-primary/80 hover:to-accent/80 shadow-[0_0_15px_rgba(155,135,245,0.5)] hover:shadow-[0_0_25px_rgba(155,135,245,0.8)]"
-            : "bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 hover:border-primary/40"
-        } transform transition-all duration-300`}
+            ? "bg-gradient-to-r from-primary/50 to-accent/50 hover:from-primary/60 hover:to-accent/60 shadow-[0_0_15px_rgba(155,135,245,0.3)] hover:shadow-[0_0_25px_rgba(155,135,245,0.5)]"
+            : "bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 hover:border-primary/30"
+        } transform transition-all duration-300 opacity-75`}
       >
         {buttonText}
+        <span className="text-xs ml-2">(Bientôt disponible)</span>
       </Button>
     </div>
   );
