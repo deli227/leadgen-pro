@@ -6,8 +6,8 @@ import { RobotMascot } from "./RobotMascot";
 export const HeroSection = () => {
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-secondary-dark via-[#1A1F2C] to-black overflow-hidden">
-      <div className="relative pt-16 pb-20 sm:pt-24 lg:pt-32 lg:pb-28">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="relative flex items-center justify-center min-h-screen">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
@@ -15,59 +15,59 @@ export const HeroSection = () => {
               transition={{ duration: 0.6 }}
               className="text-center lg:text-left space-y-8"
             >
-              <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold tracking-tight text-white bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary via-accent to-primary animate-gradient">
                 Une première mondiale en prospection B2B
               </h1>
-              <p className="mt-4 text-base sm:text-lg leading-8 text-gray-300">
+              <p className="mt-6 text-lg sm:text-xl leading-8 text-gray-300 max-w-2xl mx-auto lg:mx-0">
                 Générez des leads qualifiés du monde entier et obtenez instantanément une analyse complète de leur potentiel grâce à notre IA avancée.
               </p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mt-8">
-                <div className="flex items-start gap-3 p-4 rounded-lg bg-white/5 backdrop-blur-sm">
-                  <div className="rounded-lg bg-primary/10 p-2 shadow-[0_0_15px_rgba(155,135,245,0.3)]">
-                    <Globe className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-12">
+                <div className="flex items-start gap-4 p-6 rounded-xl bg-white/5 backdrop-blur-sm transform hover:scale-105 transition-all duration-300">
+                  <div className="rounded-lg bg-primary/10 p-3 shadow-[0_0_20px_rgba(155,135,245,0.3)]">
+                    <Globe className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
                   </div>
                   <div className="text-left">
-                    <h3 className="font-semibold text-white text-sm sm:text-base">Couverture mondiale</h3>
-                    <p className="text-xs sm:text-sm text-gray-300">Accédez à des leads qualifiés partout</p>
+                    <h3 className="font-semibold text-white text-lg">Couverture mondiale</h3>
+                    <p className="text-sm sm:text-base text-gray-300">Accédez à des leads qualifiés partout</p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-4 rounded-lg bg-white/5 backdrop-blur-sm">
-                  <div className="rounded-lg bg-primary/10 p-2 shadow-[0_0_15px_rgba(155,135,245,0.3)]">
-                    <Zap className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+                <div className="flex items-start gap-4 p-6 rounded-xl bg-white/5 backdrop-blur-sm transform hover:scale-105 transition-all duration-300">
+                  <div className="rounded-lg bg-primary/10 p-3 shadow-[0_0_20px_rgba(155,135,245,0.3)]">
+                    <Zap className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
                   </div>
                   <div className="text-left">
-                    <h3 className="font-semibold text-white text-sm sm:text-base">Analyse instantanée</h3>
-                    <p className="text-xs sm:text-sm text-gray-300">Tout savoir en quelques secondes</p>
+                    <h3 className="font-semibold text-white text-lg">Analyse instantanée</h3>
+                    <p className="text-sm sm:text-base text-gray-300">Tout savoir en quelques secondes</p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-4 rounded-lg bg-white/5 backdrop-blur-sm">
-                  <div className="rounded-lg bg-primary/10 p-2 shadow-[0_0_15px_rgba(155,135,245,0.3)]">
-                    <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+                <div className="flex items-start gap-4 p-6 rounded-xl bg-white/5 backdrop-blur-sm transform hover:scale-105 transition-all duration-300">
+                  <div className="rounded-lg bg-primary/10 p-3 shadow-[0_0_20px_rgba(155,135,245,0.3)]">
+                    <TrendingUp className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
                   </div>
                   <div className="text-left">
-                    <h3 className="font-semibold text-white text-sm sm:text-base">Taux de conversion élevé</h3>
-                    <p className="text-xs sm:text-sm text-gray-300">Augmentez vos conversions</p>
+                    <h3 className="font-semibold text-white text-lg">Taux de conversion élevé</h3>
+                    <p className="text-sm sm:text-base text-gray-300">Augmentez vos conversions</p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-4 rounded-lg bg-white/5 backdrop-blur-sm">
-                  <div className="rounded-lg bg-primary/10 p-2 shadow-[0_0_15px_rgba(155,135,245,0.3)]">
-                    <Brain className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+                <div className="flex items-start gap-4 p-6 rounded-xl bg-white/5 backdrop-blur-sm transform hover:scale-105 transition-all duration-300">
+                  <div className="rounded-lg bg-primary/10 p-3 shadow-[0_0_20px_rgba(155,135,245,0.3)]">
+                    <Brain className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
                   </div>
                   <div className="text-left">
-                    <h3 className="font-semibold text-white text-sm sm:text-base">Un temps d'avance</h3>
-                    <p className="text-xs sm:text-sm text-gray-300">Anticipez le potentiel</p>
+                    <h3 className="font-semibold text-white text-lg">Un temps d'avance</h3>
+                    <p className="text-sm sm:text-base text-gray-300">Anticipez le potentiel</p>
                   </div>
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mt-8">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mt-12">
                 <Button
                   size="lg"
-                  className="w-full sm:w-auto bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="w-full sm:w-auto text-lg px-8 py-6 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   Commencer gratuitement
                   <ArrowRight className="ml-2 h-5 w-5" />
@@ -75,7 +75,7 @@ export const HeroSection = () => {
                 <Button
                   variant="outline"
                   size="lg"
-                  className="w-full sm:w-auto bg-gradient-to-r from-primary/20 to-primary-dark/20 text-primary-light border-primary-light/20 hover:bg-primary/30 hover:text-white transition-all duration-300"
+                  className="w-full sm:w-auto text-lg px-8 py-6 bg-gradient-to-r from-primary/20 to-primary-dark/20 text-primary-light border-primary-light/20 hover:bg-primary/30 hover:text-white transition-all duration-300"
                 >
                   Voir la démo
                 </Button>
