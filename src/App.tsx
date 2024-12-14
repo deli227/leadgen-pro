@@ -26,6 +26,7 @@ const App = () => {
   useEffect(() => {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log("Initial session:", session);
       setSession(session);
       setIsLoading(false);
     });
@@ -36,7 +37,6 @@ const App = () => {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       console.log("Auth state changed:", _event, session);
       setSession(session);
-      // Invalidate and refetch queries when session changes
       queryClient.invalidateQueries();
     });
 

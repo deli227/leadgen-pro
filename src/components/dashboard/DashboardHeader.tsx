@@ -16,7 +16,10 @@ export function DashboardHeader({ exportLeads }: DashboardHeaderProps) {
 
   const handleLogout = async () => {
     try {
-      await supabase.auth.signOut()
+      const { error } = await supabase.auth.signOut()
+      if (error) throw error
+      
+      // Only navigate after successful logout
       navigate('/auth')
     } catch (error) {
       console.error('Error logging out:', error)
