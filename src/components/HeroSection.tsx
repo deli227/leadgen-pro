@@ -12,9 +12,9 @@ export const HeroSection = () => {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
-            className="flex flex-col items-center justify-center space-y-8 lg:order-1"
+            className="flex flex-col items-center justify-center space-y-8 text-center lg:order-1"
           >
-            <div className="text-center">
+            <div className="max-w-2xl mx-auto">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary via-accent to-primary animate-gradient">
                 Une première mondiale en prospection B2B
               </h1>
@@ -87,9 +87,9 @@ export const HeroSection = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="relative lg:order-2 hidden lg:block"
+            className="relative lg:order-2 hidden lg:flex items-center justify-center"
           >
-            <RobotMascot className="w-full max-w-md mx-auto" />
+            <RobotMascot className="w-full" />
             <div className="absolute inset-0 bg-gradient-to-t from-secondary-dark via-transparent to-transparent" />
           </motion.div>
         </div>
