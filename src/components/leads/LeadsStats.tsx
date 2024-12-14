@@ -73,10 +73,10 @@ export function LeadsStats({
                   </div>
                   <Button
                     onClick={handleUpgrade}
-                    className="bg-primary/20 hover:bg-primary/30 text-primary-light text-xs px-3 py-1.5 h-auto opacity-75"
+                    className="bg-primary/20 hover:bg-primary/30 text-primary-light flex items-center gap-1.5 px-2 py-1.5 h-auto opacity-75"
                   >
-                    <ArrowUpCircle className="mr-2 h-3 w-3" />
-                    Bientôt
+                    <ArrowUpCircle className="h-3 w-3 flex-shrink-0" />
+                    <span className="text-xs whitespace-nowrap">Bientôt</span>
                   </Button>
                 </div>
               ))}
