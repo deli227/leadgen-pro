@@ -17,7 +17,7 @@ export function WaitlistDialog({ triggerButton = false }: { triggerButton?: bool
     if (!triggerButton) {
       const timer = setTimeout(() => {
         setOpen(true);
-      }, 2000); // Délai de 2 secondes
+      }, 2000);
 
       return () => clearTimeout(timer);
     }
@@ -27,7 +27,6 @@ export function WaitlistDialog({ triggerButton = false }: { triggerButton?: bool
     e.preventDefault();
     
     try {
-      // Validate email
       emailSchema.parse(email);
       
       setIsLoading(true);
@@ -71,30 +70,30 @@ export function WaitlistDialog({ triggerButton = false }: { triggerButton?: bool
           Rejoindre la liste d'attente
         </Button>
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogContent className="sm:max-w-md bg-gradient-to-br from-secondary-dark to-black border border-primary/20">
+          <DialogContent className="sm:max-w-[400px] bg-gradient-to-br from-secondary-dark to-black border border-primary/20">
             <DialogHeader>
-              <DialogTitle className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
+              <DialogTitle className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
                 LeadGen Pro arrive bientôt !
               </DialogTitle>
-              <DialogDescription className="text-gray-300 mt-2">
+              <DialogDescription className="text-gray-300 mt-2 text-sm">
                 Soyez parmi les premiers à découvrir notre solution de génération de leads B2B. Inscrivez-vous pour être notifié dès le lancement !
               </DialogDescription>
             </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+            <form onSubmit={handleSubmit} className="space-y-3 mt-2">
               <div className="space-y-2">
                 <Input
                   type="email"
                   placeholder="Votre adresse email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="bg-black/50 border-primary/20 text-white placeholder:text-gray-400"
+                  className="bg-black/50 border-primary/20 text-white placeholder:text-gray-400 text-sm"
                 />
               </div>
               <div className="flex justify-end">
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white"
+                  className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white text-sm"
                 >
                   {isLoading ? "Inscription en cours..." : "M'inscrire"}
                 </Button>
@@ -108,30 +107,30 @@ export function WaitlistDialog({ triggerButton = false }: { triggerButton?: bool
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-md bg-gradient-to-br from-secondary-dark to-black border border-primary/20">
+      <DialogContent className="sm:max-w-[400px] bg-gradient-to-br from-secondary-dark to-black border border-primary/20">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
+          <DialogTitle className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
             LeadGen Pro arrive bientôt !
           </DialogTitle>
-          <DialogDescription className="text-gray-300 mt-2">
+          <DialogDescription className="text-gray-300 mt-2 text-sm">
             Soyez parmi les premiers à découvrir notre solution de génération de leads B2B. Inscrivez-vous pour être notifié dès le lancement !
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+        <form onSubmit={handleSubmit} className="space-y-3 mt-2">
           <div className="space-y-2">
             <Input
               type="email"
               placeholder="Votre adresse email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="bg-black/50 border-primary/20 text-white placeholder:text-gray-400"
+              className="bg-black/50 border-primary/20 text-white placeholder:text-gray-400 text-sm"
             />
           </div>
           <div className="flex justify-end">
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white"
+              className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white text-sm"
             >
               {isLoading ? "Inscription en cours..." : "M'inscrire"}
             </Button>
