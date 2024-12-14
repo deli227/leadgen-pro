@@ -7,7 +7,7 @@ interface RobotMascotProps {
 export const RobotMascot = ({ className }: RobotMascotProps) => {
   return (
     <motion.div
-      className={`absolute right-[-100px] top-20 lg:right-0 w-[200px] h-[200px] z-10 ${className || ''}`}
+      className={`relative w-full h-full ${className || ''}`}
       initial={{ y: 20, rotate: -5 }}
       animate={{ 
         y: [20, -20, 20],
@@ -22,7 +22,7 @@ export const RobotMascot = ({ className }: RobotMascotProps) => {
       <img 
         src="/lovable-uploads/2ad32f21-c100-4971-b366-231debdb7ab2.png"
         alt="Robot mascot"
-        className="w-full h-full object-contain"
+        className="w-full h-full object-contain max-w-[300px] mx-auto"
       />
     </motion.div>
   );
