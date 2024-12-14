@@ -31,24 +31,24 @@ export const QualitySection = () => {
   ];
 
   return (
-    <div className="bg-secondary-dark py-24">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+    <div className="bg-secondary-dark py-16 sm:py-24">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="mx-auto max-w-2xl text-center"
         >
-          <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent mb-6">
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white sm:text-4xl bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent mb-6">
             Qualité exceptionnelle des leads
           </h2>
-          <p className="text-lg leading-8 text-gray-300 mb-12">
+          <p className="text-base sm:text-lg leading-8 text-gray-300 mb-12 px-4">
             En seulement 3 minutes, accédez aux meilleurs leads du marché. Nos leads sont minutieusement qualifiés et analysés par notre IA spécialisée, vous donnant accès à toutes les informations essentielles pour proposer des services parfaitement alignés avec leurs besoins d'amélioration.
           </p>
         </motion.div>
 
-        <div className="mx-auto mt-16 max-w-7xl">
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mx-auto mt-8 sm:mt-16 max-w-7xl">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {features.map((feature, index) => (
               <motion.div
                 key={index}
@@ -61,7 +61,7 @@ export const QualitySection = () => {
                   <div className="rounded-full p-3 bg-primary/10 group-hover:bg-primary/20 transition-colors mb-4 shadow-[0_0_15px_rgba(155,135,245,0.3)] group-hover:shadow-[0_0_25px_rgba(155,135,245,0.5)]">
                     <feature.icon className="w-6 h-6 text-primary animate-pulse" />
                   </div>
-                  <h3 className="text-lg font-semibold text-white mb-2">{feature.title}</h3>
+                  <h3 className="text-lg font-semibold text-white mb-2 text-center">{feature.title}</h3>
                   <p className="text-sm text-gray-300 text-center">{feature.description}</p>
                 </div>
               </motion.div>

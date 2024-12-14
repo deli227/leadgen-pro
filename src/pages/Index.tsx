@@ -18,16 +18,16 @@ export default function Index() {
       {/* Popup automatique */}
       <WaitlistDialog />
       
-      <div className="flex justify-between items-center p-4">
-        <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-          LeadGen Pro <span className="text-sm font-normal">(beta)</span>
+      <div className="flex flex-col sm:flex-row justify-between items-center p-4 gap-4">
+        <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+          LeadGen Pro <span className="text-xs sm:text-sm font-normal">(beta)</span>
         </h1>
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
           {/* Bouton pour réouvrir la popup */}
           <WaitlistDialog triggerButton />
           <Button 
             onClick={() => navigate("/dashboard")}
-            className="bg-gradient-to-r from-primary to-accent hover:from-primary/80 hover:to-accent/80 text-white shadow-[0_0_15px_rgba(155,135,245,0.5)] hover:shadow-[0_0_25px_rgba(155,135,245,0.8)] transition-all duration-300"
+            className="w-full sm:w-auto bg-gradient-to-r from-primary to-accent hover:from-primary/80 hover:to-accent/80 text-white shadow-[0_0_15px_rgba(155,135,245,0.5)] hover:shadow-[0_0_25px_rgba(155,135,245,0.8)] transition-all duration-300"
           >
             Accéder au tableau de bord
           </Button>
@@ -45,4 +45,4 @@ export default function Index() {
       <FooterSection />
     </div>
   );
-}
+};
