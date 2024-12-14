@@ -7,12 +7,14 @@ import { HowItWorksSection } from "@/components/HowItWorksSection";
 import { ContactSection } from "@/components/ContactSection";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { WaitlistDialog } from "@/components/WaitlistDialog";
 
 export default function Index() {
   const navigate = useNavigate();
 
   return (
     <div className="flex flex-col min-h-screen bg-secondary-dark">
+      <WaitlistDialog />
       <div className="flex justify-end p-4">
         <Button 
           onClick={() => navigate("/dashboard")}

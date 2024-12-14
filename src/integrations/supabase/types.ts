@@ -134,6 +134,27 @@ export type Database = {
         }
         Relationships: []
       }
+      waitlist: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          status: Database["public"]["Enums"]["waitlist_status"]
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          status?: Database["public"]["Enums"]["waitlist_status"]
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          status?: Database["public"]["Enums"]["waitlist_status"]
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -143,6 +164,7 @@ export type Database = {
     }
     Enums: {
       subscription_type: "free" | "pro" | "enterprise"
+      waitlist_status: "pending" | "notified"
     }
     CompositeTypes: {
       [_ in never]: never
