@@ -14,65 +14,55 @@ export function LeadCard({ lead, onAddToAnalytics }: LeadCardProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="p-3 sm:p-4 md:p-6 border border-primary/20 rounded-xl bg-gradient-to-br from-black/40 to-secondary-dark/40 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 group flex flex-col h-full"
+      className="p-4 border border-primary/20 rounded-xl bg-gradient-to-br from-black/40 to-secondary-dark/40 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 group"
     >
-      <div className="flex flex-col sm:flex-row justify-between items-start gap-2 sm:gap-4 mb-3 sm:mb-4">
-        <div className="w-full sm:w-auto">
-          <h4 className="text-base sm:text-lg font-semibold text-primary-light group-hover:text-white transition-colors truncate">
+      <div className="flex flex-col gap-3">
+        <div className="space-y-1">
+          <h4 className="text-base font-semibold text-primary-light group-hover:text-white transition-colors line-clamp-1">
             {lead.company}
           </h4>
-          <p className="text-xs sm:text-sm text-primary-light/70 truncate">
+          <p className="text-sm text-primary-light/70 line-clamp-1">
             {lead.industry}
           </p>
         </div>
-        <Button
-          onClick={() => onAddToAnalytics(lead)}
-          variant="outline"
-          size="sm"
-          className="w-full sm:w-auto bg-gradient-to-r from-primary to-primary-dark text-white border-none hover:opacity-90 shadow-lg hover:shadow-xl transition-all duration-300 text-xs sm:text-sm whitespace-nowrap"
-        >
-          Ajouter aux analytiques
-        </Button>
-      </div>
-      
-      <div className="space-y-2 sm:space-y-3 flex-grow">
+
         <LeadScoreDisplay score={lead.score} />
         
-        <div className="flex flex-col gap-1.5 sm:gap-2 mt-3 sm:mt-4">
+        <div className="space-y-2">
           {lead.email && (
-            <div className="flex items-center gap-1.5 sm:gap-2 text-primary-light/80 hover:text-primary-light transition-colors">
-              <Mail className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-              <a href={`mailto:${lead.email}`} className="hover:underline text-xs sm:text-sm truncate">
+            <div className="flex items-center gap-2 text-primary-light/80 hover:text-primary-light transition-colors">
+              <Mail className="h-4 w-4 flex-shrink-0" />
+              <a href={`mailto:${lead.email}`} className="text-sm hover:underline line-clamp-1 break-all">
                 {lead.email}
               </a>
             </div>
           )}
           
           {lead.phone && (
-            <div className="flex items-center gap-1.5 sm:gap-2 text-primary-light/80 hover:text-primary-light transition-colors">
-              <Phone className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-              <a href={`tel:${lead.phone}`} className="hover:underline text-xs sm:text-sm truncate">
+            <div className="flex items-center gap-2 text-primary-light/80 hover:text-primary-light transition-colors">
+              <Phone className="h-4 w-4 flex-shrink-0" />
+              <a href={`tel:${lead.phone}`} className="text-sm hover:underline line-clamp-1">
                 {lead.phone}
               </a>
             </div>
           )}
           
           {lead.address && (
-            <div className="flex items-center gap-1.5 sm:gap-2 text-primary-light/80 hover:text-primary-light transition-colors">
-              <MapPin className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-              <span className="text-xs sm:text-sm truncate">{lead.address}</span>
+            <div className="flex items-center gap-2 text-primary-light/80 hover:text-primary-light transition-colors">
+              <MapPin className="h-4 w-4 flex-shrink-0" />
+              <span className="text-sm line-clamp-1">{lead.address}</span>
             </div>
           )}
         </div>
 
         {(lead.socialMedia?.linkedin || lead.socialMedia?.twitter) && (
-          <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-primary/10 flex gap-3 sm:gap-4">
+          <div className="pt-3 border-t border-primary/10 flex gap-3">
             {lead.socialMedia.linkedin && (
               <a 
                 href={lead.socialMedia.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[10px] sm:text-xs text-primary-light/70 hover:text-primary hover:underline transition-colors"
+                className="text-xs text-primary-light/70 hover:text-primary hover:underline transition-colors"
               >
                 LinkedIn
               </a>
@@ -82,13 +72,22 @@ export function LeadCard({ lead, onAddToAnalytics }: LeadCardProps) {
                 href={lead.socialMedia.twitter}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[10px] sm:text-xs text-primary-light/70 hover:text-primary hover:underline transition-colors"
+                className="text-xs text-primary-light/70 hover:text-primary hover:underline transition-colors"
               >
                 Twitter
               </a>
             )}
           </div>
         )}
+
+        <Button
+          onClick={() => onAddToAnalytics(lead)}
+          variant="outline"
+          size="sm"
+          className="w-full bg-gradient-to-r from-primary to-primary-dark text-white border-none hover:opacity-90 shadow-lg hover:shadow-xl transition-all duration-300 text-sm"
+        >
+          Ajouter aux analytiques
+        </Button>
       </div>
     </motion.div>
   )
