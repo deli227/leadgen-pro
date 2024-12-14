@@ -4,6 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 
 export function Auth() {
   const navigate = useNavigate();
@@ -17,7 +19,15 @@ export function Auth() {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-secondary-dark to-[#1A1F2C] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-secondary-dark to-[#1A1F2C] flex flex-col items-center justify-center p-4">
+      <Button 
+        onClick={() => navigate("/")}
+        className="absolute top-4 left-4 text-lg font-semibold flex items-center gap-2 bg-black/30 hover:bg-black/40 text-white"
+      >
+        <ArrowLeft className="w-6 h-6" />
+        Retour
+      </Button>
+
       <div className="w-full max-w-md bg-black/40 backdrop-blur-lg p-8 rounded-xl border border-primary/20">
         <h1 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-primary-light to-primary bg-clip-text text-transparent">
           Bienvenue
