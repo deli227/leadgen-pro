@@ -1,4 +1,4 @@
-import { Star, Bolt, ChartBarHorizontal, Brain, CheckCircle } from "lucide-react";
+import { Star, Bolt, BarChartHorizontal, Brain, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
 
 export const QualitySection = () => {
@@ -19,7 +19,7 @@ export const QualitySection = () => {
       description: "Les meilleurs leads du marché",
     },
     {
-      icon: ChartBarHorizontal,
+      icon: BarChartHorizontal,
       title: "Analyse complète",
       description: "Toutes les informations essentielles",
     },

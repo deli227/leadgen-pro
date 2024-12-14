@@ -1,4 +1,4 @@
-export const pricingData = [
+export const plans = [
   {
     name: "Gratuit",
     description: "Pour tester notre solution",
