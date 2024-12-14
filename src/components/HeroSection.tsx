@@ -5,7 +5,19 @@ import { Button } from "./ui/button";
 export const HeroSection = () => {
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-secondary-dark via-[#1A1F2C] to-black overflow-hidden flex items-center justify-center">
-      <div className="w-full max-w-6xl px-4 sm:px-6 lg:px-8 py-12">
+      {/* Background Image */}
+      <div 
+        className="absolute inset-0 opacity-10"
+        style={{
+          backgroundImage: "url('/lovable-uploads/5a3ee816-003e-48ec-a91c-424c279360e5.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          filter: "blur(5px)",
+        }}
+      />
+      
+      <div className="w-full max-w-6xl px-4 sm:px-6 lg:px-8 py-12 relative z-10">
         <div className="grid grid-cols-1 gap-8 items-center">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
