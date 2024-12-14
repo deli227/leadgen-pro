@@ -56,11 +56,11 @@ export function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary-dark via-[#1A1F2C] to-black">
-      <div className="container mx-auto py-8 px-4 animate-fade-in">
+      <div className="container mx-auto py-4 md:py-8 px-2 md:px-4 animate-fade-in max-w-[95%] lg:max-w-[90%] xl:max-w-[1400px]">
         <DashboardHeader exportLeads={exportLeads} />
 
         {profile && limits && (
-          <div className="mb-8 animate-fade-up">
+          <div className="mb-4 md:mb-8 animate-fade-up">
             <LeadsStats
               dailyLeadsLeft={limits.daily_leads_limit - profile.leads_generated_today}
               monthlyLeadsLeft={limits.monthly_leads_limit - profile.leads_generated_this_month}
@@ -71,7 +71,7 @@ export function Dashboard() {
           </div>
         )}
         
-        <div className="grid gap-8 animate-fade-up" style={{ animationDelay: "0.2s" }}>
+        <div className="grid gap-4 md:gap-8 animate-fade-up" style={{ animationDelay: "0.2s" }}>
           <LeadsFilters 
             filters={filters} 
             setFilters={setFilters} 

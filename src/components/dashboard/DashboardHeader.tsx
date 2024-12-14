@@ -42,24 +42,25 @@ export function DashboardHeader({ exportLeads }: DashboardHeaderProps) {
   }
 
   return (
-    <div className="flex justify-between items-center mb-8">
-      <div className="space-y-2">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-primary-light via-primary to-accent bg-clip-text text-transparent">
+    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 md:mb-8">
+      <div className="space-y-2 w-full md:w-auto">
+        <h1 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-primary-light via-primary to-accent bg-clip-text text-transparent">
           Tableau de bord
         </h1>
-        <p className="text-primary-light/70">
+        <p className="text-sm md:text-base text-primary-light/70">
           Gérez et analysez vos leads en temps réel
         </p>
       </div>
-      <div className="flex gap-4 items-center">
+      <div className="flex gap-2 md:gap-4 items-center w-full md:w-auto justify-end">
         <LeadsExport leads={exportLeads} />
         <Button
           onClick={handleLogout}
           variant="outline"
+          size="sm"
           className="bg-gradient-to-r from-primary/20 to-primary-dark/20 text-primary-light border-primary-light/20 hover:bg-primary/30 hover:text-white transition-all duration-300"
         >
           <LogOut className="h-4 w-4 mr-2" />
-          Déconnexion
+          <span className="hidden sm:inline">Déconnexion</span>
         </Button>
       </div>
     </div>
