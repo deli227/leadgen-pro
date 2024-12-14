@@ -7,13 +7,13 @@ export const HeroSection = () => {
     <div className="relative min-h-screen bg-gradient-to-br from-secondary-dark via-[#1A1F2C] to-black overflow-hidden flex items-center justify-center">
       {/* Background Image */}
       <div 
-        className="absolute inset-0 opacity-10"
+        className="absolute inset-0 opacity-20 animate-float"
         style={{
           backgroundImage: "url('/lovable-uploads/5a3ee816-003e-48ec-a91c-424c279360e5.png')",
-          backgroundSize: "cover",
+          backgroundSize: "40%",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
-          filter: "blur(5px)",
+          filter: "blur(2px)",
         }}
       />
       
