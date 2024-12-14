@@ -36,7 +36,6 @@ export function LeadsAnalytics({ leads, onAddToExport }: LeadsAnalyticsProps) {
 
   const handleAnalyze = async (lead: Lead) => {
     try {
-      // Simulate AI analysis for now
       const analysis = `Analyse IA pour ${lead.company}:\n- Force principale: ${lead.strengths[0]}\n- Point d'amélioration: ${lead.weaknesses[0]}`
       setAiAnalysis(prev => ({ ...prev, [lead.id]: analysis }))
       setSelectedLead(lead)
@@ -55,23 +54,23 @@ export function LeadsAnalytics({ leads, onAddToExport }: LeadsAnalyticsProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div className="space-y-4">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+      <div className="space-y-3 sm:space-y-4">
         {leads.map(lead => (
-          <div key={lead.id} className="p-4 border border-primary/20 rounded-lg bg-black/40">
-            <div className="flex justify-between items-start">
+          <div key={lead.id} className="p-3 sm:p-4 border border-primary/20 rounded-lg bg-black/40">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
               <div>
-                <h3 className="text-lg font-semibold text-primary-light">{lead.company}</h3>
-                <p className="text-sm text-primary-light/70">{lead.industry}</p>
+                <h3 className="text-base sm:text-lg font-semibold text-primary-light">{lead.company}</h3>
+                <p className="text-xs sm:text-sm text-primary-light/70">{lead.industry}</p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2 w-full sm:w-auto">
                 <Button
                   onClick={() => handleAnalyze(lead)}
                   variant="outline"
                   size="sm"
-                  className="bg-gradient-to-r from-primary to-primary-dark text-white border-none hover:opacity-90"
+                  className="flex-1 sm:flex-none bg-gradient-to-r from-primary to-primary-dark text-white border-none hover:opacity-90 text-xs sm:text-sm"
                 >
-                  <Brain className="h-4 w-4 mr-2" />
+                  <Brain className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                   Analyser
                 </Button>
                 <Button
@@ -81,18 +80,18 @@ export function LeadsAnalytics({ leads, onAddToExport }: LeadsAnalyticsProps) {
                   }}
                   variant="outline"
                   size="sm"
-                  className="bg-gradient-to-r from-primary to-primary-dark text-white border-none hover:opacity-90"
+                  className="flex-1 sm:flex-none bg-gradient-to-r from-primary to-primary-dark text-white border-none hover:opacity-90 text-xs sm:text-sm"
                 >
-                  <NotebookPen className="h-4 w-4 mr-2" />
+                  <NotebookPen className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                   Notes
                 </Button>
                 <Button
                   onClick={() => onAddToExport(lead)}
                   variant="outline"
                   size="sm"
-                  className="bg-gradient-to-r from-primary to-primary-dark text-white border-none hover:opacity-90"
+                  className="flex-1 sm:flex-none bg-gradient-to-r from-primary to-primary-dark text-white border-none hover:opacity-90 text-xs sm:text-sm"
                 >
-                  <FileDown className="h-4 w-4 mr-2" />
+                  <FileDown className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                   Exporter
                 </Button>
               </div>
@@ -101,34 +100,33 @@ export function LeadsAnalytics({ leads, onAddToExport }: LeadsAnalyticsProps) {
         ))}
       </div>
 
-      {/* Fenêtre d'analyse IA */}
       <div className="lg:sticky lg:top-4 space-y-4">
-        <div className="p-6 border border-primary/20 rounded-lg bg-black/40 min-h-[300px]">
-          <h3 className="text-xl font-semibold text-primary-light mb-4">
+        <div className="p-4 sm:p-6 border border-primary/20 rounded-lg bg-black/40 min-h-[300px]">
+          <h3 className="text-lg sm:text-xl font-semibold text-primary-light mb-4">
             {selectedLead ? "Analyse IA" : "Sélectionnez un lead à analyser"}
           </h3>
           {selectedLead && aiAnalysis[selectedLead.id] ? (
             <div className="space-y-4 animate-fade-in">
-              <div className="p-4 bg-black/20 rounded-lg border border-primary/10">
-                <h4 className="text-lg font-medium text-primary-light mb-2">{selectedLead.company}</h4>
+              <div className="p-3 sm:p-4 bg-black/20 rounded-lg border border-primary/10">
+                <h4 className="text-base sm:text-lg font-medium text-primary-light mb-2">{selectedLead.company}</h4>
                 <Textarea
                   value={aiAnalysis[selectedLead.id]}
                   readOnly
-                  className="w-full min-h-[200px] bg-black/20 border-primary-light/20 text-primary-light"
+                  className="w-full min-h-[200px] bg-black/20 border-primary-light/20 text-primary-light text-xs sm:text-sm"
                 />
               </div>
             </div>
           ) : (
             <div className="flex items-center justify-center h-[200px] text-primary-light/50">
-              <Brain className="h-12 w-12 mr-2" />
-              <span>Cliquez sur "Analyser" pour lancer l'analyse IA</span>
+              <Brain className="h-8 w-8 sm:h-12 sm:w-12 mr-2" />
+              <span className="text-xs sm:text-base">Cliquez sur "Analyser" pour lancer l'analyse IA</span>
             </div>
           )}
         </div>
       </div>
 
       <Dialog open={showNotes} onOpenChange={setShowNotes}>
-        <DialogContent className="bg-secondary-dark border-primary-light backdrop-blur-lg bg-opacity-95">
+        <DialogContent className="bg-secondary-dark border-primary-light backdrop-blur-lg bg-opacity-95 w-[95vw] max-w-[500px] sm:w-full">
           {selectedLead && (
             <LeadNotes
               lead={selectedLead}
