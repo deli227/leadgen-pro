@@ -12,7 +12,7 @@ export const SocialMediaSection = () => {
           className="text-center"
         >
           <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-gradient mb-8">
-            En quelques minutes, parcourez le monde
+            En quelques secondes, parcourez le monde
           </h2>
           <p className="text-xl text-gray-300 mb-12 max-w-3xl mx-auto">
             Analyse complète des réseaux sociaux et de tous les navigateurs
