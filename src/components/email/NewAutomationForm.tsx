@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
-import { Plus, Clock, Mail, Target } from "lucide-react"
+import { Plus, Clock, Mail, Target, AtSign } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { toast } from "sonner"
 import { supabase } from "@/integrations/supabase/client"
@@ -17,6 +17,7 @@ interface NewAutomation {
   is_active: boolean
   send_time: string
   follow_up_days: number
+  sender_email: string
 }
 
 interface NewAutomationFormProps {
@@ -31,17 +32,27 @@ export function NewAutomationForm({ onSuccess }: NewAutomationFormProps) {
     trigger_score: 7,
     is_active: true,
     send_time: "09:00",
-    follow_up_days: 3
+    follow_up_days: 3,
+    sender_email: ""
   })
 
   const handleCreateAutomation = async () => {
+    if (!newAutomation.sender_email) {
+      toast.error("L'email d'expédition est requis")
+      return
+    }
+
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('User not authenticated')
 
       const { error } = await supabase
         .from('email_automations')
-        .insert([{ ...newAutomation, user_id: user.id }])
+        .insert([{ 
+          ...newAutomation, 
+          user_id: user.id,
+          sender_email: newAutomation.sender_email 
+        }])
 
       if (error) throw error
 
@@ -54,7 +65,8 @@ export function NewAutomationForm({ onSuccess }: NewAutomationFormProps) {
         trigger_score: 7,
         is_active: true,
         send_time: "09:00",
-        follow_up_days: 3
+        follow_up_days: 3,
+        sender_email: ""
       })
     } catch (error) {
       console.error('Error:', error)
@@ -84,18 +96,33 @@ export function NewAutomationForm({ onSuccess }: NewAutomationFormProps) {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="subject" className="text-primary-light flex items-center gap-2">
-              <Mail className="h-4 w-4" />
-              Sujet de l'email
+            <Label htmlFor="sender_email" className="text-primary-light flex items-center gap-2">
+              <AtSign className="h-4 w-4" />
+              Email d'expédition
             </Label>
             <Input
-              id="subject"
-              value={newAutomation.subject}
-              onChange={(e) => setNewAutomation(prev => ({ ...prev, subject: e.target.value }))}
-              placeholder="Ex: Découvrez nos services"
+              id="sender_email"
+              type="email"
+              value={newAutomation.sender_email}
+              onChange={(e) => setNewAutomation(prev => ({ ...prev, sender_email: e.target.value }))}
+              placeholder="votre@email.com"
               className="bg-black/20 border-primary/20 text-primary-light placeholder:text-primary-light/50"
             />
           </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="subject" className="text-primary-light flex items-center gap-2">
+            <Mail className="h-4 w-4" />
+            Sujet de l'email
+          </Label>
+          <Input
+            id="subject"
+            value={newAutomation.subject}
+            onChange={(e) => setNewAutomation(prev => ({ ...prev, subject: e.target.value }))}
+            placeholder="Ex: Découvrez nos services"
+            className="bg-black/20 border-primary/20 text-primary-light placeholder:text-primary-light/50"
+          />
         </div>
         
         <div className="space-y-2">
