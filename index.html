@@ -6,11 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>LeadGen Pro - La Première Plateforme IA de Génération de Leads B2B en France | Prospection Commerciale</title>
     <meta name="description" content="✓ Leader français de la génération de leads B2B ✓ IA avancée pour l'analyse de prospects ✓ +25% de taux de conversion ✓ Essai gratuit. Optimisez votre prospection commerciale avec notre intelligence artificielle qui analyse et qualifie vos prospects en temps réel." />
-    <meta name="keywords" content="génération leads B2B, prospection commerciale, leads qualifiés, analyse prospects, IA B2B, intelligence artificielle prospection, lead generation, B2B France, qualification leads, prospection automatisée, CRM intelligent" />
+    <meta name="keywords" content="génération leads B2B, prospection commerciale, leads qualifiés, analyse prospects, IA B2B, intelligence artificielle prospection, lead generation, B2B France, qualification leads, prospection automatisée, CRM intelligent, leads B2B France, génération leads automatique, prospection B2B, logiciel prospection" />
     <meta name="author" content="LeadGen Pro" />
-    <meta name="robots" content="index, follow" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="googlebot" content="index, follow" />
     <link rel="canonical" href="https://leadgenpro.io/" />
+    <meta name="theme-color" content="#9B87F5" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
@@ -20,6 +23,9 @@
     <meta property="og:image" content="/og-image.png" />
     <meta property="og:site_name" content="LeadGen Pro" />
     <meta property="og:locale" content="fr_FR" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/png" />
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
@@ -28,8 +34,37 @@
     <meta property="twitter:description" content="Leader français de la génération de leads B2B. Notre IA analyse et qualifie vos prospects en temps réel pour une prospection commerciale optimale. Essayez gratuitement !" />
     <meta property="twitter:image" content="/og-image.png" />
     <meta name="twitter:creator" content="@LeadGenPro" />
+    <meta name="twitter:site" content="@LeadGenPro" />
 
-    <!-- Structured Data -->
+    <!-- Structured Data - Organization -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "LeadGen Pro",
+        "url": "https://leadgenpro.io",
+        "logo": "https://leadgenpro.io/logo.png",
+        "description": "Leader français de la génération de leads B2B avec IA",
+        "foundingDate": "2024",
+        "address": {
+          "@type": "PostalAddress",
+          "addressCountry": "FR"
+        },
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": "customer service",
+          "email": "contact@leadgenpro.io",
+          "availableLanguage": ["French", "English"]
+        },
+        "sameAs": [
+          "https://twitter.com/LeadGenPro",
+          "https://www.linkedin.com/company/leadgenpro",
+          "https://www.facebook.com/LeadGenPro"
+        ]
+      }
+    </script>
+
+    <!-- Structured Data - Software Application -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -41,12 +76,29 @@
         "offers": {
           "@type": "Offer",
           "price": "0",
-          "priceCurrency": "EUR"
+          "priceCurrency": "EUR",
+          "priceValidUntil": "2025-12-31",
+          "availability": "https://schema.org/InStock"
         },
         "aggregateRating": {
           "@type": "AggregateRating",
           "ratingValue": "4.8",
-          "ratingCount": "127"
+          "ratingCount": "127",
+          "bestRating": "5",
+          "worstRating": "1"
+        },
+        "review": {
+          "@type": "Review",
+          "reviewRating": {
+            "@type": "Rating",
+            "ratingValue": "5",
+            "bestRating": "5"
+          },
+          "author": {
+            "@type": "Person",
+            "name": "Marie D."
+          },
+          "reviewBody": "Grâce à LeadGen Pro Beta, nous avons augmenté notre taux de conversion de 25% en 3 mois."
         },
         "provider": {
           "@type": "Organization",
@@ -82,7 +134,55 @@
             "@type": "Answer",
             "text": "Oui, nous proposons un essai gratuit qui vous permet de tester toutes les fonctionnalités de notre plateforme et de générer vos premiers leads qualifiés."
           }
+        }, {
+          "@type": "Question",
+          "name": "Comment fonctionne l'analyse des prospects par l'IA ?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Notre IA analyse en temps réel les données publiques de l'entreprise, ses réseaux sociaux et son activité digitale pour établir un score de qualification précis et identifier les meilleures opportunités commerciales."
+          }
+        }, {
+          "@type": "Question",
+          "name": "Quels sont les avantages de LeadGen Pro pour mon entreprise ?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "LeadGen Pro vous permet d'optimiser votre prospection commerciale avec une analyse approfondie des prospects, un scoring intelligent et des recommandations personnalisées, le tout en automatisant vos processus de génération de leads."
+          }
         }]
+      }
+    </script>
+
+    <!-- BreadcrumbList Structured Data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [{
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Accueil",
+          "item": "https://leadgenpro.io"
+        }, {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Génération de Leads B2B",
+          "item": "https://leadgenpro.io/generation-leads"
+        }]
+      }
+    </script>
+
+    <!-- WebSite Structured Data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "LeadGen Pro",
+        "url": "https://leadgenpro.io",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://leadgenpro.io/search?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
       }
     </script>
   </head>

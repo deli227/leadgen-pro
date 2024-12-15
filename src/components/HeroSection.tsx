@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 
 export const HeroSection = () => {
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-secondary-dark via-[#1A1F2C] to-black overflow-hidden flex items-center justify-center px-4 sm:px-6 py-12 sm:py-24">
+    <section className="relative min-h-screen bg-gradient-to-br from-secondary-dark via-[#1A1F2C] to-black overflow-hidden flex items-center justify-center px-4 sm:px-6 py-12 sm:py-24">
       {/* Background Image */}
       <div 
         className="absolute inset-0 opacity-20 animate-float"
@@ -15,6 +15,8 @@ export const HeroSection = () => {
           backgroundRepeat: "no-repeat",
           filter: "blur(2px)",
         }}
+        role="presentation"
+        aria-hidden="true"
       />
       
       <div className="w-full max-w-6xl relative z-10">
@@ -26,7 +28,7 @@ export const HeroSection = () => {
             className="flex flex-col items-center justify-center space-y-8 text-center"
           >
             <div className="max-w-2xl mx-auto px-4">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary via-accent to-primary animate-gradient">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary via-accent to-primary animate-gradient" id="main-heading">
                 Une première mondiale en prospection B2B
               </h1>
               <p className="mt-6 text-base sm:text-lg md:text-xl leading-8 text-gray-300">
@@ -34,10 +36,10 @@ export const HeroSection = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-2xl mx-auto px-4">
-              <div className="flex items-start gap-4 p-4 rounded-xl bg-white/5 backdrop-blur-sm transform hover:scale-105 transition-all duration-300">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-2xl mx-auto px-4" role="list" aria-label="Caractéristiques principales">
+              <div className="flex items-start gap-4 p-4 rounded-xl bg-white/5 backdrop-blur-sm transform hover:scale-105 transition-all duration-300" role="listitem">
                 <div className="rounded-lg bg-primary/10 p-3 shadow-[0_0_20px_rgba(155,135,245,0.3)] flex-shrink-0">
-                  <Globe className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+                  <Globe className="h-5 w-5 sm:h-6 sm:w-6 text-primary" aria-hidden="true" />
                 </div>
                 <div className="text-left min-w-0">
                   <h3 className="font-semibold text-white text-sm sm:text-base">Couverture mondiale</h3>
@@ -45,9 +47,9 @@ export const HeroSection = () => {
                 </div>
               </div>
 
-              <div className="flex items-start gap-4 p-4 rounded-xl bg-white/5 backdrop-blur-sm transform hover:scale-105 transition-all duration-300">
+              <div className="flex items-start gap-4 p-4 rounded-xl bg-white/5 backdrop-blur-sm transform hover:scale-105 transition-all duration-300" role="listitem">
                 <div className="rounded-lg bg-primary/10 p-3 shadow-[0_0_20px_rgba(155,135,245,0.3)] flex-shrink-0">
-                  <Zap className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+                  <Zap className="h-5 w-5 sm:h-6 sm:w-6 text-primary" aria-hidden="true" />
                 </div>
                 <div className="text-left min-w-0">
                   <h3 className="font-semibold text-white text-sm sm:text-base">Analyse instantanée</h3>
@@ -55,9 +57,9 @@ export const HeroSection = () => {
                 </div>
               </div>
 
-              <div className="flex items-start gap-4 p-4 rounded-xl bg-white/5 backdrop-blur-sm transform hover:scale-105 transition-all duration-300">
+              <div className="flex items-start gap-4 p-4 rounded-xl bg-white/5 backdrop-blur-sm transform hover:scale-105 transition-all duration-300" role="listitem">
                 <div className="rounded-lg bg-primary/10 p-3 shadow-[0_0_20px_rgba(155,135,245,0.3)] flex-shrink-0">
-                  <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+                  <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-primary" aria-hidden="true" />
                 </div>
                 <div className="text-left min-w-0">
                   <h3 className="font-semibold text-white text-sm sm:text-base">Taux de conversion élevé</h3>
@@ -65,9 +67,9 @@ export const HeroSection = () => {
                 </div>
               </div>
 
-              <div className="flex items-start gap-4 p-4 rounded-xl bg-white/5 backdrop-blur-sm transform hover:scale-105 transition-all duration-300">
+              <div className="flex items-start gap-4 p-4 rounded-xl bg-white/5 backdrop-blur-sm transform hover:scale-105 transition-all duration-300" role="listitem">
                 <div className="rounded-lg bg-primary/10 p-3 shadow-[0_0_20px_rgba(155,135,245,0.3)] flex-shrink-0">
-                  <Brain className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+                  <Brain className="h-5 w-5 sm:h-6 sm:w-6 text-primary" aria-hidden="true" />
                 </div>
                 <div className="text-left min-w-0">
                   <h3 className="font-semibold text-white text-sm sm:text-base">Un temps d'avance</h3>
@@ -80,14 +82,16 @@ export const HeroSection = () => {
               <Button
                 size="lg"
                 className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                aria-label="Commencer l'essai gratuit"
               >
                 Commencer gratuitement
-                <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
+                <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
               </Button>
               <Button
                 variant="outline"
                 size="lg"
                 className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-gradient-to-r from-primary/20 to-primary-dark/20 text-primary-light border-primary-light/20 hover:bg-primary/30 hover:text-white transition-all duration-300"
+                aria-label="Voir la démonstration"
               >
                 Voir la démo
               </Button>
@@ -95,6 +99,6 @@ export const HeroSection = () => {
           </motion.div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
