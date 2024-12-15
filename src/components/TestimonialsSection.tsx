@@ -8,21 +8,21 @@ export const TestimonialsSection = () => {
       author: "Marie D.",
       role: "Directrice Commerciale",
       company: "TechStart SAS",
-      avatar: "/placeholder.svg"
+      avatar: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?auto=format&fit=crop&w=100&h=100"
     },
     {
       content: "L'analyse IA nous permet d'identifier rapidement les leads les plus prometteurs. Un gain de temps considérable dans notre processus de prospection.",
       author: "Thomas L.",
       role: "Business Developer",
       company: "InnovCorp",
-      avatar: "/placeholder.svg"
+      avatar: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=100&h=100"
     },
     {
       content: "Interface intuitive et résultats pertinents. LeadGen Pro Beta a transformé notre approche de la prospection commerciale.",
       author: "Sophie M.",
       role: "Sales Manager",
       company: "DigitalFirst",
-      avatar: "/placeholder.svg"
+      avatar: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=100&h=100"
     }
   ];
 
@@ -36,10 +36,10 @@ export const TestimonialsSection = () => {
           className="mx-auto max-w-xl text-center"
         >
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            Ils nous font confiance
+            Ils l'ont déjà testé en avant-première
           </h2>
           <p className="mt-4 text-lg text-gray-600">
-            Découvrez ce que nos clients disent de LeadGen Pro Beta
+            Découvrez les retours de nos premiers utilisateurs
           </p>
         </motion.div>
         <div className="mx-auto mt-16 flow-root max-w-2xl sm:mt-20 lg:mx-0 lg:max-w-none">

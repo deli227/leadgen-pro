@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Mail, Phone } from "lucide-react";
+import { Mail } from "lucide-react";
 import { Button } from "./ui/button";
 
 export const ContactSection = () => {
@@ -35,14 +35,6 @@ export const ContactSection = () => {
               >
                 <Mail className="h-5 w-5" />
                 <span>contact@leadgenpro.fr</span>
-              </Button>
-              <Button
-                variant="outline"
-                className="flex items-center justify-center space-x-2 text-lg"
-                onClick={() => window.location.href = "tel:+33123456789"}
-              >
-                <Phone className="h-5 w-5" />
-                <span>+33 1 23 45 67 89</span>
               </Button>
             </div>
             <p className="mt-6 text-sm text-gray-500">

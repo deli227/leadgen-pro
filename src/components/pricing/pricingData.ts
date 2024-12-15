@@ -23,7 +23,7 @@ export const plans = [
       "Accès API",
       "Support prioritaire",
     ],
-    buttonText: "Commencer l'essai gratuit",
+    buttonText: "Commencer (bientôt disponible)",
     type: "pro",
     popular: true,
     priceId: "price_1OqKHyKez0igoNdCnewVaA8M",
@@ -39,7 +39,7 @@ export const plans = [
       "Account manager dédié",
       "Formation personnalisée",
     ],
-    buttonText: "Contacter l'équipe commerciale",
+    buttonText: "Commencer (bientôt disponible)",
     type: "enterprise",
   },
 ];
