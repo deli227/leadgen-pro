@@ -15,11 +15,12 @@ interface StatsGridProps {
 
 export function StatsGrid({ stats }: StatsGridProps) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7 gap-4 mb-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-7 gap-4 mb-8">
       <StatsCard
         icon={Users}
         label="Utilisateurs totaux"
         value={stats.totalUsers}
+        className="sm:col-span-2 lg:col-span-1"
       />
       <StatsCard
         icon={UserPlus}
