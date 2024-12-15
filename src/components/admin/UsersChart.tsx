@@ -12,6 +12,20 @@ interface UsersChartProps {
 }
 
 export function UsersChart({ data }: UsersChartProps) {
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        console.error('Invalid date:', dateString);
+        return 'Date invalide';
+      }
+      return `${date.toLocaleDateString('fr-FR')} (${new Intl.DateTimeFormat('fr-FR', { weekday: 'short' }).format(date)})`;
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return 'Date invalide';
+    }
+  };
+
   return (
     <div className="h-[400px] w-full p-6 bg-black/40 rounded-lg border border-primary/20">
       <h2 className="text-xl font-semibold text-primary-light mb-4">Évolution des inscriptions</h2>
@@ -47,10 +61,7 @@ export function UsersChart({ data }: UsersChartProps) {
             <XAxis
               dataKey="date"
               stroke="hsl(var(--primary-light) / 0.5)"
-              tickFormatter={(value) => {
-                const date = new Date(value);
-                return `${date.toLocaleDateString()} (${new Intl.DateTimeFormat('fr-FR', { weekday: 'short' }).format(date)})`;
-              }}
+              tickFormatter={formatDate}
               tick={{ fill: 'hsl(var(--primary-light) / 0.7)' }}
             />
             <YAxis 
@@ -65,10 +76,7 @@ export function UsersChart({ data }: UsersChartProps) {
                     payload={payload}
                     nameKey="name"
                     labelKey="date"
-                    labelFormatter={(value) => {
-                      const date = new Date(value as string);
-                      return `${date.toLocaleDateString()} (${new Intl.DateTimeFormat('fr-FR', { weekday: 'short' }).format(date)})`;
-                    }}
+                    labelFormatter={formatDate}
                   />
                 );
               }}
