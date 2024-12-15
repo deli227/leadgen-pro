@@ -16,16 +16,26 @@ export const ExplanationSection = () => {
             Comprendre les leads B2B
           </h2>
           <div className="bg-white/5 p-8 rounded-2xl backdrop-blur-sm shadow-[0_0_15px_rgba(155,135,245,0.1)]">
-            <div className="flex items-start gap-4 mb-6">
-              <div className="rounded-lg bg-primary/10 p-3 shadow-[0_0_20px_rgba(155,135,245,0.3)]">
-                <Target className="h-6 w-6 text-primary" />
+            <div className="flex flex-col items-center gap-8">
+              <motion.img
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6 }}
+                src="/lovable-uploads/2f694157-82b3-498c-b393-3f45cd2cc1a6.png"
+                alt="Cycle des leads B2B"
+                className="w-full max-w-md mx-auto rounded-lg mb-6"
+              />
+              <div className="flex items-start gap-4">
+                <div className="rounded-lg bg-primary/10 p-3 shadow-[0_0_20px_rgba(155,135,245,0.3)]">
+                  <Target className="h-6 w-6 text-primary" />
+                </div>
+                <p className="text-left text-gray-300 leading-relaxed">
+                  Un lead B2B est une entreprise qui pourrait être intéressée par vos produits ou services. 
+                  C'est un prospect qualifié qui correspond à votre cible idéale et présente un potentiel 
+                  de conversion en client. La qualification des leads est essentielle pour concentrer vos 
+                  efforts commerciaux sur les opportunités les plus prometteuses.
+                </p>
               </div>
-              <p className="text-left text-gray-300 leading-relaxed">
-                Un lead B2B est une entreprise qui pourrait être intéressée par vos produits ou services. 
-                C'est un prospect qualifié qui correspond à votre cible idéale et présente un potentiel 
-                de conversion en client. La qualification des leads est essentielle pour concentrer vos 
-                efforts commerciaux sur les opportunités les plus prometteuses.
-              </p>
             </div>
           </div>
         </motion.div>
