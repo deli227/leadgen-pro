@@ -15,7 +15,7 @@ export const SocialMediaSection = () => {
             En quelques minutes, parcourez le monde
           </h2>
           <p className="text-xl text-gray-300 mb-12 max-w-3xl mx-auto">
-            Découvrez tout ce que vous devez savoir sur vos leads grâce à une analyse complète des réseaux sociaux
+            Analyse complète des réseaux sociaux et de tous les navigateurs
           </p>
           
           {/* Browser Image */}
@@ -30,7 +30,7 @@ export const SocialMediaSection = () => {
               <img
                 src="/lovable-uploads/568b4c64-7f80-4e9d-b0ea-73d465bdafc3.png"
                 alt="Navigateurs Internet"
-                className="relative w-full h-auto rounded-lg shadow-2xl"
+                className="relative w-full h-auto rounded-lg shadow-2xl mix-blend-screen"
               />
             </div>
           </motion.div>
