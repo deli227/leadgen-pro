@@ -62,7 +62,7 @@ export function AutomationList({ automations, onUpdate }: AutomationListProps) {
     return (
       <div className="text-center py-8 text-primary-light">
         <Mail className="h-12 w-12 mx-auto mb-4 opacity-50" />
-        <p>Aucune automatisation créée pour le moment</p>
+        <p className="text-primary-light">Aucune automatisation créée pour le moment</p>
       </div>
     )
   }
