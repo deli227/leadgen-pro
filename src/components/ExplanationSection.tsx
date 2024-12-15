@@ -23,7 +23,7 @@ export const ExplanationSection = () => {
                 transition={{ duration: 0.6 }}
                 src="/lovable-uploads/6f6bc4f7-0eff-4bc3-86b9-acef257858f4.png"
                 alt="Cycle des leads B2B"
-                className="w-full max-w-md mx-auto rounded-lg mb-6"
+                className="w-full max-w-md mx-auto rounded-lg mb-6 shadow-[0_0_30px_rgba(155,135,245,0.5),0_0_60px_rgba(155,135,245,0.3),0_0_90px_rgba(155,135,245,0.2)]"
               />
               <div className="flex items-start gap-4">
                 <div className="rounded-lg bg-primary/10 p-3 shadow-[0_0_20px_rgba(155,135,245,0.3)]">
