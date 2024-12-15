@@ -1,93 +1,120 @@
-import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.7";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const SENDGRID_API_KEY = Deno.env.get('SENDGRID_API_KEY')
+const SUPABASE_URL = Deno.env.get('SUPABASE_URL')
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-};
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
 
-const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
-const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+interface EmailRequest {
+  to: string
+  from: string
+  subject: string
+  html: string
+}
 
-const supabase = createClient(
-  SUPABASE_URL!,
-  SUPABASE_SERVICE_ROLE_KEY!
-);
-
-const handler = async (req: Request): Promise<Response> => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    // Get all active automations
-    const { data: automations, error: automationsError } = await supabase
-      .from("email_automations")
-      .select("*")
-      .eq("is_active", true);
+    const supabase = createClient(
+      SUPABASE_URL!,
+      SUPABASE_SERVICE_ROLE_KEY!
+    )
 
-    if (automationsError) throw automationsError;
+    const { automation_id } = await req.json()
 
-    // Process each automation
-    for (const automation of automations) {
-      // Get leads that match the trigger score
-      const { data: leads, error: leadsError } = await supabase
-        .from("leads")
-        .select("*")
-        .eq("user_id", automation.user_id)
-        .gte("score", automation.trigger_score);
+    // Fetch the automation details
+    const { data: automation, error: automationError } = await supabase
+      .from('email_automations')
+      .select('*')
+      .eq('id', automation_id)
+      .single()
 
-      if (leadsError) throw leadsError;
+    if (automationError) throw new Error(`Error fetching automation: ${automationError.message}`)
+    if (!automation) throw new Error('Automation not found')
 
-      // Send emails to matching leads
-      for (const lead of leads) {
-        if (!lead.email) continue;
+    // Get leads for this automation based on score
+    const { data: leads, error: leadsError } = await supabase
+      .from('leads')
+      .select('email')
+      .eq('user_id', automation.user_id)
+      .gte('score', automation.trigger_score)
+      .not('email', 'is', null)
 
-        try {
-          const emailResponse = await fetch("https://api.resend.com/emails", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${RESEND_API_KEY}`,
-            },
-            body: JSON.stringify({
-              from: "LeadGen Pro <onboarding@resend.dev>",
-              to: [lead.email],
-              subject: automation.subject,
-              html: automation.template
-                .replace("{{company}}", lead.company)
-                .replace("{{score}}", lead.score.toString()),
-            }),
-          });
+    if (leadsError) throw new Error(`Error fetching leads: ${leadsError.message}`)
+    if (!leads?.length) return new Response(
+      JSON.stringify({ message: 'No leads match the criteria' }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
 
-          if (!emailResponse.ok) {
-            console.error(`Failed to send email to ${lead.email}:`, await emailResponse.text());
-          }
-        } catch (error) {
-          console.error(`Error sending email to ${lead.email}:`, error);
-        }
+    // Send email to each lead
+    const emailPromises = leads.map(async (lead) => {
+      const emailRequest: EmailRequest = {
+        to: lead.email,
+        from: automation.sender_email,
+        subject: automation.subject,
+        html: automation.template,
       }
-    }
+
+      const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${SENDGRID_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          personalizations: [{
+            to: [{ email: emailRequest.to }],
+          }],
+          from: { email: emailRequest.from },
+          subject: emailRequest.subject,
+          content: [{
+            type: 'text/html',
+            value: emailRequest.html,
+          }],
+        }),
+      })
+
+      if (!response.ok) {
+        const error = await response.text()
+        throw new Error(`SendGrid API error: ${error}`)
+      }
+
+      return response
+    })
+
+    await Promise.all(emailPromises)
+
+    // Update last_sent_at timestamp
+    const { error: updateError } = await supabase
+      .from('email_automations')
+      .update({ last_sent_at: new Date().toISOString() })
+      .eq('id', automation_id)
+
+    if (updateError) throw new Error(`Error updating automation: ${updateError.message}`)
 
     return new Response(
-      JSON.stringify({ message: "Automated emails processed successfully" }),
-      {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200,
-      }
-    );
+      JSON.stringify({ 
+        success: true, 
+        message: `Emails sent to ${leads.length} leads` 
+      }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+
   } catch (error) {
-    console.error("Error in send-automated-emails function:", error);
     return new Response(
       JSON.stringify({ error: error.message }),
-      {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      { 
         status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
-    );
+    )
   }
-};
-
-serve(handler);
+})
