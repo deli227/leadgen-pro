@@ -8,6 +8,7 @@ import { ContactSection } from "@/components/ContactSection";
 import { QualitySection } from "@/components/QualitySection";
 import { WaitlistDialog } from "@/components/WaitlistDialog";
 import { SocialMediaSection } from "@/components/SocialMediaSection";
+import { ExplanationSection } from "@/components/ExplanationSection";
 
 export default function Index() {
   return (
@@ -26,6 +27,7 @@ export default function Index() {
       <main>
         <HeroSection />
         <SocialMediaSection />
+        <ExplanationSection />
         <QualitySection />
         <HowItWorksSection />
         <PricingSection />
