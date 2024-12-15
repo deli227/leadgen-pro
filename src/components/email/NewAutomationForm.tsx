@@ -37,24 +37,55 @@ export function NewAutomationForm({ onSuccess }: NewAutomationFormProps) {
   })
 
   const handleCreateAutomation = async () => {
+    // Validation des champs requis
+    if (!newAutomation.name) {
+      toast.error("Le nom de l'automatisation est requis")
+      return
+    }
+
+    if (!newAutomation.subject) {
+      toast.error("Le sujet de l'email est requis")
+      return
+    }
+
+    if (!newAutomation.template) {
+      toast.error("Le template de l'email est requis")
+      return
+    }
+
     if (!newAutomation.sender_email) {
       toast.error("L'email d'expédition est requis")
       return
     }
 
     try {
+      console.log("Début de la création de l'automatisation...")
+      
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('User not authenticated')
+      if (!user) {
+        toast.error("Vous devez être connecté pour créer une automatisation")
+        return
+      }
 
-      const { error } = await supabase
+      console.log("Utilisateur authentifié:", user.id)
+      console.log("Données de l'automatisation:", newAutomation)
+
+      const { data, error } = await supabase
         .from('email_automations')
         .insert([{ 
           ...newAutomation, 
           user_id: user.id,
+          selected_leads: [],
           sender_email: newAutomation.sender_email 
         }])
+        .select()
 
-      if (error) throw error
+      console.log("Réponse de Supabase:", { data, error })
+
+      if (error) {
+        console.error("Erreur détaillée:", error)
+        throw error
+      }
 
       toast.success("Automatisation créée avec succès")
       onSuccess()
@@ -69,8 +100,8 @@ export function NewAutomationForm({ onSuccess }: NewAutomationFormProps) {
         sender_email: ""
       })
     } catch (error) {
-      console.error('Error:', error)
-      toast.error("Erreur lors de la création de l'automatisation")
+      console.error('Erreur détaillée:', error)
+      toast.error("Erreur lors de la création de l'automatisation. Vérifiez la console pour plus de détails.")
     }
   }
 
