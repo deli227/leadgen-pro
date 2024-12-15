@@ -22,7 +22,7 @@ export function EmailAutomationTab() {
   })
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4 bg-gradient-to-br from-black/80 to-secondary-dark/80 rounded-xl border border-primary/10">
       <NewAutomationForm onSuccess={refetch} />
       
       <div className="space-y-4">

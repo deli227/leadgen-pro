@@ -27,9 +27,13 @@ export type Database = {
       email_automations: {
         Row: {
           created_at: string
+          follow_up_days: number | null
           id: string
           is_active: boolean
+          last_sent_at: string | null
           name: string
+          selected_leads: string[] | null
+          send_time: string | null
           subject: string
           template: string
           trigger_score: number
@@ -37,9 +41,13 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          follow_up_days?: number | null
           id?: string
           is_active?: boolean
+          last_sent_at?: string | null
           name: string
+          selected_leads?: string[] | null
+          send_time?: string | null
           subject: string
           template: string
           trigger_score?: number
@@ -47,9 +55,13 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          follow_up_days?: number | null
           id?: string
           is_active?: boolean
+          last_sent_at?: string | null
           name?: string
+          selected_leads?: string[] | null
+          send_time?: string | null
           subject?: string
           template?: string
           trigger_score?: number
