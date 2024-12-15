@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
-import { Trash2, Mail, Clock, Users } from "lucide-react"
+import { Trash2, Mail, Clock, Users, Send } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { toast } from "sonner"
 import { supabase } from "@/integrations/supabase/client"
@@ -21,9 +21,10 @@ interface EmailAutomation {
 interface AutomationListProps {
   automations: EmailAutomation[] | null
   onUpdate: () => void
+  onSend: (automation: EmailAutomation) => void
 }
 
-export function AutomationList({ automations, onUpdate }: AutomationListProps) {
+export function AutomationList({ automations, onUpdate, onSend }: AutomationListProps) {
   const handleDeleteAutomation = async (id: string) => {
     try {
       const { error } = await supabase
@@ -116,6 +117,16 @@ export function AutomationList({ automations, onUpdate }: AutomationListProps) {
                   {automation.selected_leads?.length || 0} leads sélectionnés
                 </span>
               </div>
+            </div>
+
+            <div className="pt-2 border-t border-primary/10">
+              <Button
+                onClick={() => onSend(automation)}
+                className="w-full bg-primary/20 hover:bg-primary/30 text-primary-light"
+              >
+                <Send className="h-4 w-4 mr-2" />
+                Envoyer maintenant
+              </Button>
             </div>
           </div>
         </Card>
