@@ -28,7 +28,7 @@ export const SocialMediaSection = () => {
             <div className="relative w-full max-w-2xl mx-auto">
               <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-accent/20 to-primary/20 blur-xl rounded-full" />
               <img
-                src="/lovable-uploads/19f38243-dc82-47b2-8f10-f92cbb6edc7d.png"
+                src="/lovable-uploads/568b4c64-7f80-4e9d-b0ea-73d465bdafc3.png"
                 alt="Navigateurs Internet"
                 className="relative w-full h-auto rounded-lg shadow-2xl"
               />
