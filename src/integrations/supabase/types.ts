@@ -24,6 +24,47 @@ export type Database = {
         }
         Relationships: []
       }
+      email_automations: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          subject: string
+          template: string
+          trigger_score: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          subject: string
+          template: string
+          trigger_score?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          subject?: string
+          template?: string
+          trigger_score?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_automations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leads: {
         Row: {
           address: string | null
