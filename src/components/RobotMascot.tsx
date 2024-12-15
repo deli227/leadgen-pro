@@ -8,13 +8,13 @@ export const RobotMascot = ({ className }: RobotMascotProps) => {
   return (
     <motion.div
       className={`relative ${className || ''}`}
-      initial={{ y: 20, rotate: -5 }}
+      initial={{ y: 0, rotate: -5 }}
       animate={{ 
-        y: [20, -20, 20],
+        y: [0, -5, 0],
         rotate: [-5, 5, -5]
       }}
       transition={{ 
-        duration: 4,
+        duration: 2,
         repeat: Infinity,
         ease: "easeInOut"
       }}
@@ -22,7 +22,7 @@ export const RobotMascot = ({ className }: RobotMascotProps) => {
       <img 
         src="/lovable-uploads/2ad32f21-c100-4971-b366-231debdb7ab2.png"
         alt="Robot mascot"
-        className="w-full h-full object-contain max-w-[80px] mx-auto" // Reduced from 120px to 80px
+        className="w-full h-full object-contain max-w-[30px] mx-auto" // Réduit à 30px
       />
     </motion.div>
   );
