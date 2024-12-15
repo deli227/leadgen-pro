@@ -34,8 +34,10 @@ export function LeadsTable() {
   }, [leadCount]);
 
   return (
-    <div className="p-4 text-primary-light">
-      <h2 className="text-xl font-semibold text-primary-light mb-4">Leads</h2>
+    <div className="p-4 bg-secondary-dark/80 rounded-lg border border-primary-light/20">
+      <h2 className="text-xl font-semibold mb-4 bg-gradient-to-r from-primary-light to-accent bg-clip-text text-transparent">
+        Leads
+      </h2>
       <div className="space-y-4">
         <SearchInput value={searchTerm} onChange={setSearchTerm} />
         <LeadCountSlider value={leadCount} onChange={setLeadCount} />
