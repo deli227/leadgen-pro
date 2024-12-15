@@ -30,7 +30,7 @@ export const HeroSection = () => {
                 Une première mondiale en prospection B2B
               </h1>
               <p className="mt-6 text-base sm:text-lg md:text-xl leading-8 text-gray-300">
-                Générez des leads qualifiés du monde entier et obtenez instantanément une analyse complète de leur potentiel grâce à notre IA avancée.
+                Recherchez vos leads qualifiés et lancez une analyse approfondie grâce à notre IA innovante. Obtenez instantanément une vision à 360° : points forts, points faibles, opportunités d'amélioration... Tout ce dont vous avez besoin pour comprendre et conquérir vos prospects est à portée de clic.
               </p>
             </div>
 
