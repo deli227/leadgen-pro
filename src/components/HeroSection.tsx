@@ -5,17 +5,24 @@ import { Button } from "./ui/button";
 export const HeroSection = () => {
   return (
     <section className="relative min-h-screen bg-gradient-to-br from-secondary-dark via-[#1A1F2C] to-black overflow-hidden flex items-center justify-center px-4 sm:px-6 py-12 sm:py-24">
-      {/* Background Image */}
+      {/* Video Background */}
+      <div className="absolute inset-0 z-0">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="object-cover w-full h-full opacity-30"
+          poster="/lovable-uploads/5a3ee816-003e-48ec-a91c-424c279360e5.png"
+        >
+          <source src="/path-to-your-video.mp4" type="video/mp4" />
+          Votre navigateur ne supporte pas la lecture de vidéos.
+        </video>
+      </div>
+
+      {/* Overlay gradient */}
       <div 
-        className="absolute inset-0 opacity-20 animate-float"
-        style={{
-          backgroundImage: "url('/lovable-uploads/5a3ee816-003e-48ec-a91c-424c279360e5.png')",
-          backgroundSize: "contain",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-          filter: "blur(2px)",
-        }}
-        role="presentation"
+        className="absolute inset-0 bg-gradient-to-b from-transparent via-secondary-dark/80 to-black z-[1]"
         aria-hidden="true"
       />
       
