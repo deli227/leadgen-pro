@@ -9,7 +9,6 @@ import { QualitySection } from "@/components/QualitySection";
 import { WaitlistDialog } from "@/components/WaitlistDialog";
 import { SocialMediaSection } from "@/components/SocialMediaSection";
 import { ExplanationSection } from "@/components/ExplanationSection";
-import { VideoUploadDialog } from "@/components/VideoUploadDialog";
 
 export default function Index() {
   return (
@@ -22,7 +21,6 @@ export default function Index() {
           LeadGen Pro <span className="text-xs sm:text-sm font-normal">(beta)</span>
         </h1>
         <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-          <VideoUploadDialog />
           <WaitlistDialog triggerButton />
         </div>
       </div>

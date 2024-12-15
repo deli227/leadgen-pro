@@ -15,7 +15,7 @@ export const HeroSection = () => {
           className="object-cover w-full h-full opacity-30"
           poster="/lovable-uploads/5a3ee816-003e-48ec-a91c-424c279360e5.png"
         >
-          <source src="/videos/background.mp4" type="video/mp4" />
+          <source src="/path-to-your-video.mp4" type="video/mp4" />
           Votre navigateur ne supporte pas la lecture de vidéos.
         </video>
       </div>
