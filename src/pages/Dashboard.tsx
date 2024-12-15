@@ -2,12 +2,16 @@ import { useState } from "react"
 import { LeadsFilters } from "@/components/leads/LeadsFilters"
 import { LeadsStats } from "@/components/leads/LeadsStats"
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader"
+import { EmailAutomationTab } from "@/components/email/EmailAutomationTab"
 import { useSessionData } from "@/hooks/useSessionData"
 import { useProfileData } from "@/hooks/useProfileData"
 import { useSubscriptionLimits } from "@/hooks/useSubscriptionLimits"
 import { useLeadsData } from "@/hooks/useLeadsData"
 import { useToast } from "@/hooks/use-toast"
 import { Lead } from "@/types/leads"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { motion } from "framer-motion"
+import { Database, Mail, PieChart } from "lucide-react"
 
 export function Dashboard() {
   const { toast } = useToast()
@@ -60,7 +64,11 @@ export function Dashboard() {
         <DashboardHeader exportLeads={exportLeads} />
 
         {profile && limits && (
-          <div className="mb-2 sm:mb-4 md:mb-8 animate-fade-up">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-2 sm:mb-4 md:mb-8"
+          >
             <LeadsStats
               dailyLeadsLeft={limits.daily_leads_limit - profile.leads_generated_today}
               monthlyLeadsLeft={limits.monthly_leads_limit - profile.leads_generated_this_month}
@@ -68,21 +76,82 @@ export function Dashboard() {
               totalMonthlyLeads={limits.monthly_leads_limit}
               subscriptionType={profile.subscription_type}
             />
-          </div>
+          </motion.div>
         )}
         
-        <div className="grid gap-2 sm:gap-4 md:gap-8 animate-fade-up" style={{ animationDelay: "0.2s" }}>
-          <LeadsFilters 
-            filters={filters} 
-            setFilters={setFilters} 
-            leads={leads}
-            analyticsLeads={analyticsLeads}
-            onAddToAnalytics={handleAddToAnalytics}
-            onAddToExport={handleAddToExport}
-            exportLeads={exportLeads}
-            onRemoveFromExport={handleRemoveFromExport}
-          />
-        </div>
+        <Tabs defaultValue="leads" className="space-y-4">
+          <TabsList className="grid w-full grid-cols-3 bg-black/40 border border-primary/20 rounded-xl overflow-hidden">
+            <TabsTrigger 
+              value="leads" 
+              className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary-light"
+            >
+              <Database className="h-4 w-4 mr-2" />
+              Leads
+            </TabsTrigger>
+            <TabsTrigger 
+              value="analytics" 
+              className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary-light"
+            >
+              <PieChart className="h-4 w-4 mr-2" />
+              Analytiques
+            </TabsTrigger>
+            <TabsTrigger 
+              value="automation" 
+              className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary-light"
+            >
+              <Mail className="h-4 w-4 mr-2" />
+              Automatisation
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="leads">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <LeadsFilters 
+                filters={filters} 
+                setFilters={setFilters} 
+                leads={leads}
+                analyticsLeads={analyticsLeads}
+                onAddToAnalytics={handleAddToAnalytics}
+                onAddToExport={handleAddToExport}
+                exportLeads={exportLeads}
+                onRemoveFromExport={handleRemoveFromExport}
+              />
+            </motion.div>
+          </TabsContent>
+
+          <TabsContent value="analytics">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <LeadsFilters 
+                filters={filters} 
+                setFilters={setFilters} 
+                leads={analyticsLeads}
+                analyticsLeads={analyticsLeads}
+                onAddToAnalytics={handleAddToAnalytics}
+                onAddToExport={handleAddToExport}
+                exportLeads={exportLeads}
+                onRemoveFromExport={handleRemoveFromExport}
+              />
+            </motion.div>
+          </TabsContent>
+
+          <TabsContent value="automation">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <EmailAutomationTab />
+            </motion.div>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   )

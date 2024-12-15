@@ -1,4 +1,42 @@
 project_id = "rbsuobpaqwtmiesxwcaw"
 
-[functions.create-checkout]
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage", "graphql_public"]
+
+[db]
+port = 54322
+
+[studio]
+enabled = true
+port = 54323
+
+[inbucket]
+enabled = true
+port = 54324
+
+[storage]
+enabled = true
+
+[auth]
+enabled = true
+
+[realtime]
+enabled = true
+
+[[functions]]
+name = "create-checkout"
+verify_jwt = true
+
+[[functions]]
+name = "generate-leads"
+verify_jwt = true
+
+[[functions]]
+name = "stripe-webhook"
+verify_jwt = false
+
+[[functions]]
+name = "send-automated-emails"
 verify_jwt = true
