@@ -7,6 +7,7 @@ import { HowItWorksSection } from "@/components/HowItWorksSection";
 import { ContactSection } from "@/components/ContactSection";
 import { QualitySection } from "@/components/QualitySection";
 import { WaitlistDialog } from "@/components/WaitlistDialog";
+import { SocialMediaSection } from "@/components/SocialMediaSection";
 
 export default function Index() {
   return (
@@ -19,13 +20,12 @@ export default function Index() {
           LeadGen Pro <span className="text-xs sm:text-sm font-normal">(beta)</span>
         </h1>
         <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-          {/* Bouton pour réouvrir la popup */}
           <WaitlistDialog triggerButton />
-          {/* Dashboard button temporarily removed */}
         </div>
       </div>
       <main>
         <HeroSection />
+        <SocialMediaSection />
         <QualitySection />
         <HowItWorksSection />
         <PricingSection />
@@ -36,4 +36,4 @@ export default function Index() {
       <FooterSection />
     </div>
   );
-}
+};
