@@ -31,7 +31,7 @@ export const plans = [
   {
     name: "Entreprise",
     description: "Pour les grandes équipes",
-    price: "Sur mesure",
+    price: "199€",
     features: [
       "Leads illimités",
       "Analyse IA personnalisée",
