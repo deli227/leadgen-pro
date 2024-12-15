@@ -3,6 +3,9 @@ import { Card } from "@/components/ui/card"
 import { supabase } from "@/integrations/supabase/client"
 import { StatsGrid } from "@/components/admin/StatsGrid"
 import { UsersChart } from "@/components/admin/UsersChart"
+import { useAdminCheck } from "@/hooks/useAdminCheck"
+import { Navigate } from "react-router-dom"
+import { toast } from "sonner"
 
 interface ChartData {
   date: string
@@ -11,6 +14,7 @@ interface ChartData {
 }
 
 export function AdminDashboard() {
+  const { data: isAdmin, isLoading: isCheckingAdmin } = useAdminCheck();
   const [stats, setStats] = useState({
     totalUsers: 0,
     newUsersToday: 0,
@@ -120,16 +124,29 @@ export function AdminDashboard() {
       setIsLoading(false)
     } catch (error) {
       console.error('Erreur lors de la récupération des statistiques:', error)
+      toast.error("Erreur lors du chargement des statistiques")
       setIsLoading(false)
     }
   }
 
   useEffect(() => {
     fetchStats()
-    // Mettre à jour les données toutes les 24 heures
     const interval = setInterval(fetchStats, 24 * 60 * 60 * 1000)
     return () => clearInterval(interval)
   }, [])
+
+  if (isCheckingAdmin) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    )
+  }
+
+  if (!isAdmin) {
+    toast.error("Accès non autorisé")
+    return <Navigate to="/" replace />
+  }
 
   if (isLoading) {
     return (
@@ -142,14 +159,21 @@ export function AdminDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary-dark via-[#1A1F2C] to-black">
       <div className="container mx-auto py-8 px-4">
-        <h1 className="text-2xl font-bold mb-8 text-primary-light">Tableau de bord administrateur</h1>
-        
-        <StatsGrid stats={stats} />
+        <div className="flex flex-col gap-8">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <h1 className="text-3xl font-bold text-primary-light">Tableau de bord administrateur</h1>
+            <p className="text-sm text-primary-light/70">Dernière mise à jour: {new Date().toLocaleString()}</p>
+          </div>
+          
+          <StatsGrid stats={stats} />
 
-        <Card className="p-6 bg-black/40 border-primary/20">
-          <h2 className="text-xl font-semibold mb-4 text-primary-light">Évolution des inscriptions</h2>
-          <UsersChart data={chartData} />
-        </Card>
+          <Card className="p-6 bg-black/40 border-primary/20">
+            <div className="space-y-4">
+              <h2 className="text-xl font-semibold text-primary-light">Évolution des inscriptions</h2>
+              <UsersChart data={chartData} />
+            </div>
+          </Card>
+        </div>
       </div>
     </div>
   )
