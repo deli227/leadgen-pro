@@ -38,7 +38,7 @@ export function LeadsTable() {
       <h2 className="text-xl font-semibold mb-4 bg-gradient-to-r from-primary-light to-accent bg-clip-text text-transparent">
         Leads
       </h2>
-      <div className="space-y-4">
+      <div className="space-y-4 text-primary-light">
         <SearchInput value={searchTerm} onChange={setSearchTerm} />
         <LeadCountSlider value={leadCount} onChange={setLeadCount} />
         <LeadsList leads={filteredLeads} onAddToAnalytics={handleAddToExport} />

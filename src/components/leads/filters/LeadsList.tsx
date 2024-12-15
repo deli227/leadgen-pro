@@ -9,7 +9,7 @@ interface LeadsListProps {
 export function LeadsList({ leads, onAddToAnalytics }: LeadsListProps) {
   return (
     <div className="mt-4">
-      <h3 className="text-lg font-semibold text-primary-light mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+      <h3 className="text-lg font-semibold mb-4 bg-gradient-to-r from-primary-light to-accent bg-clip-text text-transparent">
         Leads générés
       </h3>
       <ScrollArea className="h-[calc(100vh-20rem)] pr-2">
