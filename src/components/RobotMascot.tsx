@@ -22,7 +22,7 @@ export const RobotMascot = ({ className }: RobotMascotProps) => {
       <img 
         src="/lovable-uploads/2ad32f21-c100-4971-b366-231debdb7ab2.png"
         alt="Robot mascot"
-        className="w-full h-full object-contain max-w-[120px] mx-auto" // Reduced from 250px to 180px
+        className="w-full h-full object-contain max-w-[80px] mx-auto" // Reduced from 120px to 80px
       />
     </motion.div>
   );
