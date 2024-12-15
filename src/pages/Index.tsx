@@ -16,10 +16,7 @@ export default function Index() {
       {/* Popup automatique */}
       <WaitlistDialog />
       
-      <div className="flex flex-col sm:flex-row justify-between items-center p-4 gap-4">
-        <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-          LeadGen Pro <span className="text-xs sm:text-sm font-normal">(beta)</span>
-        </h1>
+      <div className="flex flex-col sm:flex-row justify-end items-center p-4 gap-4">
         <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
           <WaitlistDialog triggerButton />
         </div>
@@ -38,4 +35,4 @@ export default function Index() {
       <FooterSection />
     </div>
   );
-};
+}
