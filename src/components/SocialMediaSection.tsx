@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Facebook, Instagram, Linkedin } from "lucide-react";
+import { Facebook, Instagram, Linkedin, Globe } from "lucide-react";
 
 export const SocialMediaSection = () => {
   return (
@@ -17,6 +17,23 @@ export const SocialMediaSection = () => {
           <p className="text-xl text-gray-300 mb-12 max-w-3xl mx-auto">
             Découvrez tout ce que vous devez savoir sur vos leads grâce à une analyse complète des réseaux sociaux
           </p>
+          
+          {/* Browser Image */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="mb-16"
+          >
+            <div className="relative w-full max-w-2xl mx-auto">
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-accent/20 to-primary/20 blur-xl rounded-full" />
+              <img
+                src="/lovable-uploads/2ad32f21-c100-4971-b366-231debdb7ab2.png"
+                alt="Navigateurs Internet"
+                className="relative w-full h-auto rounded-lg shadow-2xl"
+              />
+            </div>
+          </motion.div>
           
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-4xl mx-auto">
             {/* Facebook */}
