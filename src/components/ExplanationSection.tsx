@@ -21,7 +21,7 @@ export const ExplanationSection = () => {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6 }}
-                src="/lovable-uploads/2f694157-82b3-498c-b393-3f45cd2cc1a6.png"
+                src="/lovable-uploads/7e33b496-6e9d-4d95-a058-ac4bb3cdcd98.png"
                 alt="Cycle des leads B2B"
                 className="w-full max-w-md mx-auto rounded-lg mb-6"
               />
