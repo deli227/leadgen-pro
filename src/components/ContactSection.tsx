@@ -31,10 +31,10 @@ export const ContactSection = () => {
               <Button
                 variant="outline"
                 className="flex items-center justify-center space-x-2 text-lg"
-                onClick={() => window.location.href = "mailto:contact@leadgenpro.fr"}
+                onClick={() => window.location.href = "mailto:contact@leadgen-pro.fr"}
               >
                 <Mail className="h-5 w-5" />
-                <span>contact@leadgenpro.fr</span>
+                <span>contact@leadgen-pro.fr</span>
               </Button>
             </div>
             <p className="mt-6 text-sm text-gray-500">
