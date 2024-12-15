@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import { Dashboard } from "./pages/Dashboard";
+import { AdminDashboard } from "./pages/AdminDashboard";
 import { Auth } from "./pages/Auth";
 import { useEffect, useState } from "react";
 import { supabase } from "./integrations/supabase/client";
@@ -84,10 +85,9 @@ const App = () => {
                 session ? <Dashboard /> : <Navigate to="/auth" />
               }
             />
-            {/* Add a secret route for admin access */}
             <Route
               path="/admin-dashboard"
-              element={<Dashboard />}
+              element={<AdminDashboard />}
             />
           </Routes>
         </BrowserRouter>
