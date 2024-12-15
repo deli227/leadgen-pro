@@ -1,5 +1,12 @@
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer } from 'recharts'
+import { Card } from "@/components/ui/card"
+import {
+  Area,
+  AreaChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts"
 
 interface ChartData {
   date: string
@@ -14,14 +21,21 @@ interface UsersChartProps {
 export function UsersChart({ data }: UsersChartProps) {
   const formatDate = (dateString: string) => {
     try {
+      // S'assurer que la date est valide
       const date = new Date(dateString);
       if (isNaN(date.getTime())) {
-        console.error('Invalid date:', dateString);
+        console.error('Date invalide:', dateString);
         return 'Date invalide';
       }
-      return `${date.toLocaleDateString('fr-FR')} (${new Intl.DateTimeFormat('fr-FR', { weekday: 'short' }).format(date)})`;
+      
+      // Formater la date en français
+      return new Intl.DateTimeFormat('fr-FR', {
+        day: 'numeric',
+        month: 'short',
+        weekday: 'short'
+      }).format(date);
     } catch (error) {
-      console.error('Error formatting date:', error);
+      console.error('Erreur lors du formatage de la date:', error);
       return 'Date invalide';
     }
   };
@@ -30,81 +44,105 @@ export function UsersChart({ data }: UsersChartProps) {
     <div className="h-[400px] w-full p-6 bg-black/40 rounded-lg border border-primary/20">
       <h2 className="text-xl font-semibold text-primary-light mb-4">Évolution des inscriptions</h2>
       <ResponsiveContainer width="100%" height="100%">
-        <ChartContainer
-          config={{
-            users: {
-              theme: {
-                light: "hsl(var(--primary))",
-                dark: "hsl(var(--primary))",
-              },
-            },
-            waitlist: {
-              theme: {
-                light: "hsl(var(--accent))",
-                dark: "hsl(var(--accent))",
-              },
-            },
+        <AreaChart
+          data={data}
+          margin={{
+            top: 5,
+            right: 10,
+            left: 10,
+            bottom: 0,
           }}
         >
-          <AreaChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-            <defs>
-              <linearGradient id="usersGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
-                <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
-              </linearGradient>
-              <linearGradient id="waitlistGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="hsl(var(--accent))" stopOpacity={0.3}/>
-                <stop offset="95%" stopColor="hsl(var(--accent))" stopOpacity={0}/>
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--primary) / 0.1)" />
-            <XAxis
-              dataKey="date"
-              stroke="hsl(var(--primary-light) / 0.5)"
-              tickFormatter={formatDate}
-              tick={{ fill: 'hsl(var(--primary-light) / 0.7)' }}
-            />
-            <YAxis 
-              stroke="hsl(var(--primary-light) / 0.5)"
-              tick={{ fill: 'hsl(var(--primary-light) / 0.7)' }}
-            />
-            <ChartTooltip
-              content={({ active, payload }) => {
-                if (!active || !payload?.length) return null;
+          <defs>
+            <linearGradient id="users" x1="0" y1="0" x2="0" y2="1">
+              <stop
+                offset="0%"
+                stopColor="hsl(var(--primary))"
+                stopOpacity={0.5}
+              />
+              <stop
+                offset="100%"
+                stopColor="hsl(var(--primary))"
+                stopOpacity={0}
+              />
+            </linearGradient>
+            <linearGradient id="waitlist" x1="0" y1="0" x2="0" y2="1">
+              <stop
+                offset="0%"
+                stopColor="hsl(var(--accent))"
+                stopOpacity={0.5}
+              />
+              <stop
+                offset="100%"
+                stopColor="hsl(var(--accent))"
+                stopOpacity={0}
+              />
+            </linearGradient>
+          </defs>
+          <XAxis
+            dataKey="date"
+            stroke="hsl(var(--primary-light) / 0.5)"
+            tickFormatter={formatDate}
+            tick={{ fill: 'hsl(var(--primary-light) / 0.7)' }}
+          />
+          <YAxis
+            stroke="hsl(var(--primary-light) / 0.5)"
+            tick={{ fill: 'hsl(var(--primary-light) / 0.7)' }}
+          />
+          <Tooltip
+            content={({ active, payload }) => {
+              if (active && payload && payload.length) {
                 return (
-                  <ChartTooltipContent
-                    payload={payload}
-                    nameKey="name"
-                    labelKey="date"
-                    labelFormatter={formatDate}
-                  />
-                );
-              }}
-            />
-            <Legend 
-              wrapperStyle={{ 
-                paddingTop: '20px',
-                color: 'hsl(var(--primary-light))'
-              }}
-            />
-            <Area
-              type="monotone"
-              dataKey="users"
-              name="Utilisateurs"
-              stroke="hsl(var(--primary))"
-              fill="url(#usersGradient)"
-              strokeWidth={2}
-            />
-            <Area
-              type="monotone"
-              dataKey="waitlist"
-              name="Waitlist"
-              stroke="hsl(var(--accent))"
-              fill="url(#waitlistGradient)"
-              strokeWidth={2}
-            />
-          </AreaChart>
-        </ChartContainer>
+                  <div className="rounded-lg border bg-background p-2 shadow-sm">
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="flex flex-col">
+                        <span className="text-[0.70rem] uppercase text-muted-foreground">
+                          Date
+                        </span>
+                        <span className="font-bold text-muted-foreground">
+                          {formatDate(payload[0].payload.date)}
+                        </span>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-[0.70rem] uppercase text-muted-foreground">
+                          Utilisateurs
+                        </span>
+                        <span className="font-bold">
+                          {payload[0].value}
+                        </span>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-[0.70rem] uppercase text-muted-foreground">
+                          Liste d'attente
+                        </span>
+                        <span className="font-bold">
+                          {payload[1].value}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )
+              }
+              return null
+            }}
+          />
+          <Area
+            type="monotone"
+            dataKey="users"
+            stroke="hsl(var(--primary))"
+            fillOpacity={1}
+            fill="url(#users)"
+            strokeWidth={2}
+          />
+          <Area
+            type="monotone"
+            dataKey="waitlist"
+            stroke="hsl(var(--accent))"
+            fillOpacity={1}
+            fill="url(#waitlist)"
+            strokeWidth={2}
+          />
+        </AreaChart>
       </ResponsiveContainer>
     </div>
   )
