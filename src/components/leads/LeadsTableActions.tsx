@@ -47,7 +47,7 @@ export function LeadsTableActions({
             onClick={() => onShowDetails(lead)}
             variant="outline"
             size="sm"
-            className="bg-gradient-to-r from-primary to-primary-dark text-white border-none hover:opacity-90 transition-all duration-300"
+            className="bg-gradient-to-r from-primary to-primary-dark text-primary-light border-none hover:opacity-90 transition-all duration-300"
           >
             <Eye className="h-4 w-4 mr-2" />
             Détails
@@ -62,7 +62,7 @@ export function LeadsTableActions({
         onClick={() => onShowNotes(lead)}
         variant="outline"
         size="sm"
-        className="bg-gradient-to-r from-primary to-primary-dark text-white border-none hover:opacity-90 transition-all duration-300"
+        className="bg-gradient-to-r from-primary to-primary-dark text-primary-light border-none hover:opacity-90 transition-all duration-300"
       >
         <NotebookPen className="h-4 w-4 mr-2" />
         Notes
@@ -72,7 +72,7 @@ export function LeadsTableActions({
         onClick={() => onAddToExport(lead.id)}
         variant="outline"
         size="sm"
-        className="bg-gradient-to-r from-primary to-primary-dark text-white border-none hover:opacity-90 transition-all duration-300"
+        className="bg-gradient-to-r from-primary to-primary-dark text-primary-light border-none hover:opacity-90 transition-all duration-300"
         disabled={exportList.includes(lead.id)}
       >
         <PlusCircle className="h-4 w-4 mr-2" />

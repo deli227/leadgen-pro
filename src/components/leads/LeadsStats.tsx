@@ -22,10 +22,10 @@ export function LeadsStats({
 }: LeadsStatsProps) {
   return (
     <div className="grid gap-4 md:grid-cols-2">
-      <Card className="p-4 md:p-6">
+      <Card className="p-4 md:p-6 bg-secondary-dark/80 border-primary/10">
         <div className="space-y-2">
-          <h3 className="text-lg font-medium">Leads quotidiens restants</h3>
-          <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <h3 className="text-lg font-medium text-primary-light">Leads quotidiens restants</h3>
+          <div className="flex items-center justify-between text-sm text-primary-light/70">
             <span>{dailyLeadsLeft} leads restants</span>
             <span>{totalDailyLeads} leads au total</span>
           </div>
@@ -38,10 +38,10 @@ export function LeadsStats({
           )}
         </div>
       </Card>
-      <Card className="p-4 md:p-6">
+      <Card className="p-4 md:p-6 bg-secondary-dark/80 border-primary/10">
         <div className="space-y-2">
-          <h3 className="text-lg font-medium">Leads mensuels restants</h3>
-          <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <h3 className="text-lg font-medium text-primary-light">Leads mensuels restants</h3>
+          <div className="flex items-center justify-between text-sm text-primary-light/70">
             <span>{monthlyLeadsLeft} leads restants</span>
             <span>{totalMonthlyLeads} leads au total</span>
           </div>

@@ -41,7 +41,7 @@ export function LeadsFilters({
           value="filters" 
           className="relative text-primary-light data-[state=active]:bg-black/60 data-[state=active]:text-primary-light group transition-all duration-300"
         >
-          <span className="flex items-center gap-2">
+          <span className="flex items-center gap-2 text-primary-light">
             Filtres
             <ChevronRight className="h-4 w-4 transition-transform group-data-[state=active]:rotate-90" />
           </span>
@@ -56,7 +56,7 @@ export function LeadsFilters({
           value="analytics" 
           className="relative text-primary-light data-[state=active]:bg-black/60 data-[state=active]:text-primary-light group transition-all duration-300"
         >
-          <span className="flex items-center gap-2">
+          <span className="flex items-center gap-2 text-primary-light">
             Analytiques
             <ChevronRight className="h-4 w-4 transition-transform group-data-[state=active]:rotate-90" />
           </span>
@@ -66,7 +66,7 @@ export function LeadsFilters({
           value="search" 
           className="relative text-primary-light data-[state=active]:bg-black/60 data-[state=active]:text-primary-light group transition-all duration-300"
         >
-          <span className="flex items-center gap-2">
+          <span className="flex items-center gap-2 text-primary-light">
             Recherche
             <ChevronRight className="h-4 w-4 transition-transform group-data-[state=active]:rotate-90" />
           </span>
@@ -76,7 +76,7 @@ export function LeadsFilters({
           value="export" 
           className="relative text-primary-light data-[state=active]:bg-black/60 data-[state=active]:text-primary-light group transition-all duration-300"
         >
-          <span className="flex items-center gap-2">
+          <span className="flex items-center gap-2 text-primary-light">
             Export
             <ChevronRight className="h-4 w-4 transition-transform group-data-[state=active]:rotate-90" />
           </span>

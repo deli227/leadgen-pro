@@ -34,12 +34,14 @@ export function LeadsTable() {
   }, [leadCount]);
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-semibold text-primary-light">Leads</h2>
-      <SearchInput value={searchTerm} onChange={setSearchTerm} />
-      <LeadCountSlider value={leadCount} onChange={setLeadCount} />
-      <LeadsList leads={filteredLeads} onAddToAnalytics={handleAddToExport} />
-      <ExportTabContent exportLeads={exportLeads} onRemoveFromExport={handleRemoveFromExport} />
+    <div className="p-4 text-primary-light">
+      <h2 className="text-xl font-semibold text-primary-light mb-4">Leads</h2>
+      <div className="space-y-4">
+        <SearchInput value={searchTerm} onChange={setSearchTerm} />
+        <LeadCountSlider value={leadCount} onChange={setLeadCount} />
+        <LeadsList leads={filteredLeads} onAddToAnalytics={handleAddToExport} />
+        <ExportTabContent exportLeads={exportLeads} onRemoveFromExport={handleRemoveFromExport} />
+      </div>
     </div>
   );
 }
