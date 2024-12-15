@@ -83,21 +83,21 @@ export function Dashboard() {
           <TabsList className="grid w-full grid-cols-3 bg-black/40 border border-primary/20 rounded-xl overflow-hidden">
             <TabsTrigger 
               value="leads" 
-              className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary-light"
+              className="text-primary-light data-[state=active]:bg-primary/20"
             >
               <Database className="h-4 w-4 mr-2" />
               Leads
             </TabsTrigger>
             <TabsTrigger 
               value="analytics" 
-              className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary-light"
+              className="text-primary-light data-[state=active]:bg-primary/20"
             >
               <PieChart className="h-4 w-4 mr-2" />
               Analytiques
             </TabsTrigger>
             <TabsTrigger 
               value="automation" 
-              className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary-light"
+              className="text-primary-light data-[state=active]:bg-primary/20"
             >
               <Mail className="h-4 w-4 mr-2" />
               Automatisation
