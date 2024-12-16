@@ -60,7 +60,7 @@ export function Auth() {
                   label: 'text-white',
                 }
               }}
-              providers={[]}
+              providers={["google"]}
               localization={{
                 variables: {
                   sign_in: {
@@ -98,7 +98,7 @@ export function Auth() {
                   label: 'text-white',
                 }
               }}
-              providers={[]}
+              providers={["google"]}
               localization={{
                 variables: {
                   sign_up: {
