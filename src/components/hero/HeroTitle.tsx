@@ -4,9 +4,9 @@ import { CountdownTimer } from "./CountdownTimer";
 export const HeroTitle = () => {
   return (
     <div className="max-w-2xl mx-auto px-4">
-      <div className="flex items-center justify-center gap-3 mb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-          LeadGen Pro <span className="text-sm sm:text-base font-normal">(beta)</span>
+      <div className="flex items-center justify-center gap-3 mb-8">
+        <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+          LeadGen Pro <span className="text-base sm:text-lg font-normal">(beta)</span>
         </h1>
         <RobotMascot className="mt-1" />
       </div>
