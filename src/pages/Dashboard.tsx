@@ -1,21 +1,16 @@
 import { useState } from "react"
-import { LeadsFilters } from "@/components/leads/LeadsFilters"
 import { LeadsStats } from "@/components/leads/LeadsStats"
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader"
-import { EmailAutomationTab } from "@/components/email/EmailAutomationTab"
 import { useSessionData } from "@/hooks/useSessionData"
 import { useProfileData } from "@/hooks/useProfileData"
 import { useSubscriptionLimits } from "@/hooks/useSubscriptionLimits"
 import { useLeadsData } from "@/hooks/useLeadsData"
 import { useToast } from "@/hooks/use-toast"
 import { Lead } from "@/types/leads"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { motion } from "framer-motion"
-import { Database, Mail, PieChart } from "lucide-react"
-import { useTranslation } from "react-i18next"
+import { DashboardTabs } from "@/components/dashboard/DashboardTabs"
 
 export function Dashboard() {
-  const { t } = useTranslation();
   const { toast } = useToast()
   const [filters, setFilters] = useState({
     search: "",
@@ -36,8 +31,8 @@ export function Dashboard() {
     if (!analyticsLeads.find(l => l.id === lead.id)) {
       setAnalyticsLeads(prev => [...prev, lead])
       toast({
-        title: t("leads.addToAnalytics"),
-        description: t("leads.addedToAnalytics")
+        title: "Ajout aux analytiques",
+        description: "Le lead a été ajouté aux analytiques avec succès"
       })
     }
   }
@@ -46,8 +41,8 @@ export function Dashboard() {
     if (!exportLeads.find(l => l.id === lead.id)) {
       setExportLeads(prev => [...prev, lead])
       toast({
-        title: t("leads.addToExport"),
-        description: t("leads.addedToExport")
+        title: "Ajout à l'export",
+        description: "Le lead a été ajouté à l'export avec succès"
       })
     }
   }
@@ -55,8 +50,8 @@ export function Dashboard() {
   const handleRemoveFromExport = (leadId: number) => {
     setExportLeads(prev => prev.filter(lead => lead.id !== leadId))
     toast({
-      title: t("leads.removeFromExport"),
-      description: t("leads.removedFromExport")
+      title: "Retrait de l'export",
+      description: "Le lead a été retiré de l'export avec succès"
     })
   }
 
@@ -81,79 +76,16 @@ export function Dashboard() {
           </motion.div>
         )}
         
-        <Tabs defaultValue="leads" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3 bg-black/40 border border-primary/20 rounded-xl overflow-hidden">
-            <TabsTrigger 
-              value="leads" 
-              className="text-primary-light data-[state=active]:bg-primary/20"
-            >
-              <Database className="h-4 w-4 mr-2" />
-              {t('common.leads')}
-            </TabsTrigger>
-            <TabsTrigger 
-              value="analytics" 
-              className="text-primary-light data-[state=active]:bg-primary/20"
-            >
-              <PieChart className="h-4 w-4 mr-2" />
-              {t('common.analytics')}
-            </TabsTrigger>
-            <TabsTrigger 
-              value="automation" 
-              className="text-primary-light data-[state=active]:bg-primary/20"
-            >
-              <Mail className="h-4 w-4 mr-2" />
-              {t('common.automation')} <span className="text-xs text-primary-light/50">{t('common.comingSoon')}</span>
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="leads">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-            >
-              <LeadsFilters 
-                filters={filters} 
-                setFilters={setFilters} 
-                leads={leads}
-                analyticsLeads={analyticsLeads}
-                onAddToAnalytics={handleAddToAnalytics}
-                onAddToExport={handleAddToExport}
-                exportLeads={exportLeads}
-                onRemoveFromExport={handleRemoveFromExport}
-              />
-            </motion.div>
-          </TabsContent>
-
-          <TabsContent value="analytics">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-            >
-              <LeadsFilters 
-                filters={filters} 
-                setFilters={setFilters} 
-                leads={analyticsLeads}
-                analyticsLeads={analyticsLeads}
-                onAddToAnalytics={handleAddToAnalytics}
-                onAddToExport={handleAddToExport}
-                exportLeads={exportLeads}
-                onRemoveFromExport={handleRemoveFromExport}
-              />
-            </motion.div>
-          </TabsContent>
-
-          <TabsContent value="automation">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-            >
-              <EmailAutomationTab />
-            </motion.div>
-          </TabsContent>
-        </Tabs>
+        <DashboardTabs 
+          filters={filters}
+          setFilters={setFilters}
+          leads={leads}
+          analyticsLeads={analyticsLeads}
+          onAddToAnalytics={handleAddToAnalytics}
+          onAddToExport={handleAddToExport}
+          exportLeads={exportLeads}
+          onRemoveFromExport={handleRemoveFromExport}
+        />
       </div>
     </div>
   )
