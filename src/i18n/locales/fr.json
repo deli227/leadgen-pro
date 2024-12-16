@@ -1,0 +1,26 @@
+{
+  "common": {
+    "leads": "Leads",
+    "analytics": "Analytiques",
+    "automation": "Automatisation",
+    "comingSoon": "Prochainement disponible",
+    "search": "Rechercher",
+    "export": "Exporter",
+    "filters": "Filtres",
+    "dailyLeads": "Leads quotidiens",
+    "monthlyLeads": "Leads mensuels",
+    "remaining": "restants",
+    "upgrade": "Améliorer",
+    "profile": "Profil",
+    "logout": "Déconnexion"
+  },
+  "leads": {
+    "addToAnalytics": "Ajouter aux analytiques",
+    "addToExport": "Ajouter à l'export",
+    "company": "Entreprise",
+    "email": "Email",
+    "phone": "Téléphone",
+    "score": "Score",
+    "industry": "Industrie"
+  }
+}

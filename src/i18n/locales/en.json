@@ -1,0 +1,26 @@
+{
+  "common": {
+    "leads": "Leads",
+    "analytics": "Analytics",
+    "automation": "Automation",
+    "comingSoon": "Coming Soon",
+    "search": "Search",
+    "export": "Export",
+    "filters": "Filters",
+    "dailyLeads": "Daily Leads",
+    "monthlyLeads": "Monthly Leads",
+    "remaining": "remaining",
+    "upgrade": "Upgrade",
+    "profile": "Profile",
+    "logout": "Logout"
+  },
+  "leads": {
+    "addToAnalytics": "Add to Analytics",
+    "addToExport": "Add to Export",
+    "company": "Company",
+    "email": "Email",
+    "phone": "Phone",
+    "score": "Score",
+    "industry": "Industry"
+  }
+}

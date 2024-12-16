@@ -12,8 +12,10 @@ import { Lead } from "@/types/leads"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { motion } from "framer-motion"
 import { Database, Mail, PieChart } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 export function Dashboard() {
+  const { t } = useTranslation();
   const { toast } = useToast()
   const [filters, setFilters] = useState({
     search: "",
@@ -34,8 +36,8 @@ export function Dashboard() {
     if (!analyticsLeads.find(l => l.id === lead.id)) {
       setAnalyticsLeads(prev => [...prev, lead])
       toast({
-        title: "Lead ajouté aux analytiques",
-        description: "Le lead a été ajouté avec succès à la section analytiques."
+        title: t("leads.addToAnalytics"),
+        description: t("leads.addedToAnalytics")
       })
     }
   }
@@ -44,8 +46,8 @@ export function Dashboard() {
     if (!exportLeads.find(l => l.id === lead.id)) {
       setExportLeads(prev => [...prev, lead])
       toast({
-        title: "Lead ajouté à l'export",
-        description: "Le lead a été ajouté avec succès à la liste d'export."
+        title: t("leads.addToExport"),
+        description: t("leads.addedToExport")
       })
     }
   }
@@ -53,8 +55,8 @@ export function Dashboard() {
   const handleRemoveFromExport = (leadId: number) => {
     setExportLeads(prev => prev.filter(lead => lead.id !== leadId))
     toast({
-      title: "Lead retiré de l'export",
-      description: "Le lead a été retiré avec succès de la liste d'export."
+      title: t("leads.removeFromExport"),
+      description: t("leads.removedFromExport")
     })
   }
 
@@ -86,21 +88,21 @@ export function Dashboard() {
               className="text-primary-light data-[state=active]:bg-primary/20"
             >
               <Database className="h-4 w-4 mr-2" />
-              Leads
+              {t('common.leads')}
             </TabsTrigger>
             <TabsTrigger 
               value="analytics" 
               className="text-primary-light data-[state=active]:bg-primary/20"
             >
               <PieChart className="h-4 w-4 mr-2" />
-              Analytiques
+              {t('common.analytics')}
             </TabsTrigger>
             <TabsTrigger 
               value="automation" 
               className="text-primary-light data-[state=active]:bg-primary/20"
             >
               <Mail className="h-4 w-4 mr-2" />
-              Automatisation <span className="text-xs text-primary-light/50">(Prochainement disponible)</span>
+              {t('common.automation')} <span className="text-xs text-primary-light/50">{t('common.comingSoon')}</span>
             </TabsTrigger>
           </TabsList>
 
