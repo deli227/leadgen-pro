@@ -26,9 +26,11 @@ export function AdminDashboard() {
   })
   const [chartData, setChartData] = useState<ChartData[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [lastUpdate, setLastUpdate] = useState<Date>(new Date())
 
   const fetchStats = async () => {
     try {
+      console.log("Fetching admin dashboard stats...")
       // Récupérer le nombre total d'utilisateurs
       const { count: totalUsers } = await supabase
         .from('profiles')
@@ -121,7 +123,9 @@ export function AdminDashboard() {
         setChartData(chartData)
       }
 
+      setLastUpdate(new Date())
       setIsLoading(false)
+      console.log("Admin dashboard stats updated successfully")
     } catch (error) {
       console.error('Erreur lors de la récupération des statistiques:', error)
       toast.error("Erreur lors du chargement des statistiques")
@@ -131,7 +135,8 @@ export function AdminDashboard() {
 
   useEffect(() => {
     fetchStats()
-    const interval = setInterval(fetchStats, 24 * 60 * 60 * 1000)
+    // Mettre à jour toutes les heures (3600000 ms)
+    const interval = setInterval(fetchStats, 3600000)
     return () => clearInterval(interval)
   }, [])
 
@@ -162,7 +167,9 @@ export function AdminDashboard() {
         <div className="flex flex-col gap-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <h1 className="text-3xl font-bold text-primary-light">Tableau de bord administrateur</h1>
-            <p className="text-sm text-primary-light/70">Dernière mise à jour: {new Date().toLocaleString()}</p>
+            <p className="text-sm text-primary-light/70">
+              Dernière mise à jour: {lastUpdate.toLocaleString()}
+            </p>
           </div>
           
           <StatsGrid stats={stats} />
