@@ -10,35 +10,45 @@ export const CountdownTimer = () => {
   });
 
   useEffect(() => {
-    // Définir la date de fin au 22 mars 2024 à 18h00 (heure de Paris)
-    const targetDate = new Date('2024-03-22T18:00:00+01:00').getTime();
-
     const calculateTimeLeft = () => {
-      const now = new Date().getTime();
-      const difference = targetDate - now;
+      // Date cible : 22 mars 2024 à 18h00 (heure de Paris)
+      const targetDate = new Date('2024-03-22T18:00:00+01:00');
+      const now = new Date();
+      
+      console.log('Target date:', targetDate);
+      console.log('Current date:', now);
+      
+      const difference = targetDate.getTime() - now.getTime();
+      console.log('Time difference in ms:', difference);
 
       if (difference > 0) {
+        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+        console.log('Calculated time:', { days, hours, minutes, seconds });
+        
         setTimeLeft({
-          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-          minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
-          seconds: Math.floor((difference % (1000 * 60)) / 1000)
+          days,
+          hours,
+          minutes,
+          seconds
         });
       } else {
-        // Si la date est passée, on met tout à 0
         setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
       }
     };
 
-    // Calculer immédiatement le temps restant
+    // Calculer immédiatement
     calculateTimeLeft();
-
-    // Mettre à jour toutes les secondes
+    
+    // Mettre à jour chaque seconde
     const timer = setInterval(calculateTimeLeft, 1000);
 
-    // Nettoyer l'intervalle quand le composant est démonté
+    // Cleanup
     return () => clearInterval(timer);
-  }, []); // Le tableau vide signifie que cet effet ne s'exécute qu'une fois au montage
+  }, []);
 
   return (
     <motion.div
