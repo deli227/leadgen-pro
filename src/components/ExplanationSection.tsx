@@ -89,7 +89,7 @@ export const ExplanationSection = () => {
               <img
                 src="/lovable-uploads/318f6c2f-2235-41ca-8eee-313fb4283a1c.png"
                 alt="Analyse IA d'entreprise"
-                className="w-full rounded-2xl shadow-[0_0_30px_rgba(155,135,245,0.3)] hover:shadow-[0_0_50px_rgba(155,135,245,0.5)] transition-all duration-500"
+                className="w-3/4 mx-auto rounded-2xl shadow-[0_0_30px_rgba(155,135,245,0.3)] hover:shadow-[0_0_50px_rgba(155,135,245,0.5)] transition-all duration-500"
               />
               <div className="absolute -bottom-6 -right-6 bg-primary/10 backdrop-blur-lg p-6 rounded-2xl border border-primary/20">
                 <Lightbulb className="h-10 w-10 text-primary animate-pulse" />
