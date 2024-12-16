@@ -11,29 +11,34 @@ export const CountdownTimer = () => {
 
   useEffect(() => {
     // Définir la date de fin au 22 mars 2024 à 18h00
-    const targetDate = new Date('2024-03-22T18:00:00');
+    const targetDate = new Date('2024-03-22T18:00:00').getTime();
 
     const calculateTimeLeft = () => {
-      const now = new Date();
-      const difference = targetDate.getTime() - now.getTime();
+      const now = new Date().getTime();
+      const difference = targetDate - now;
 
       if (difference > 0) {
         setTimeLeft({
           days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-          minutes: Math.floor((difference / 1000 / 60) % 60),
-          seconds: Math.floor((difference / 1000) % 60)
+          hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+          minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
+          seconds: Math.floor((difference % (1000 * 60)) / 1000)
         });
       } else {
+        // Si la date est passée, on met tout à 0
         setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
       }
     };
 
+    // Calculer immédiatement le temps restant
     calculateTimeLeft();
+
+    // Mettre à jour toutes les secondes
     const timer = setInterval(calculateTimeLeft, 1000);
 
+    // Nettoyer l'intervalle quand le composant est démonté
     return () => clearInterval(timer);
-  }, []);
+  }, []); // Le tableau vide signifie que cet effet ne s'exécute qu'une fois au montage
 
   return (
     <motion.div
