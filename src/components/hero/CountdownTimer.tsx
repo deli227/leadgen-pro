@@ -10,6 +10,7 @@ export const CountdownTimer = () => {
   });
 
   useEffect(() => {
+    // Définir la date de fin au 22 mars 2024 à 18h00
     const targetDate = new Date('2024-03-22T18:00:00');
 
     const calculateTimeLeft = () => {
@@ -41,29 +42,29 @@ export const CountdownTimer = () => {
       transition={{ duration: 0.6 }}
       className="flex flex-col items-center space-y-2 mt-8"
     >
-      <p className="text-primary font-semibold">Offre limitée - Se termine dans :</p>
-      <div className="flex space-x-4 text-white">
+      <p className="text-primary font-semibold">Lancement de LeadGen Pro - Se termine dans :</p>
+      <div className="flex flex-wrap justify-center gap-4 text-white">
         <div className="flex flex-col items-center">
           <div className="bg-secondary-dark/50 backdrop-blur-sm rounded-lg p-3 min-w-[70px]">
-            <span className="text-2xl font-bold">{timeLeft.days}</span>
+            <span className="text-2xl font-bold">{String(timeLeft.days).padStart(2, '0')}</span>
           </div>
           <span className="text-sm mt-1">Jours</span>
         </div>
         <div className="flex flex-col items-center">
           <div className="bg-secondary-dark/50 backdrop-blur-sm rounded-lg p-3 min-w-[70px]">
-            <span className="text-2xl font-bold">{timeLeft.hours}</span>
+            <span className="text-2xl font-bold">{String(timeLeft.hours).padStart(2, '0')}</span>
           </div>
           <span className="text-sm mt-1">Heures</span>
         </div>
         <div className="flex flex-col items-center">
           <div className="bg-secondary-dark/50 backdrop-blur-sm rounded-lg p-3 min-w-[70px]">
-            <span className="text-2xl font-bold">{timeLeft.minutes}</span>
+            <span className="text-2xl font-bold">{String(timeLeft.minutes).padStart(2, '0')}</span>
           </div>
           <span className="text-sm mt-1">Minutes</span>
         </div>
         <div className="flex flex-col items-center">
           <div className="bg-secondary-dark/50 backdrop-blur-sm rounded-lg p-3 min-w-[70px]">
-            <span className="text-2xl font-bold">{timeLeft.seconds}</span>
+            <span className="text-2xl font-bold">{String(timeLeft.seconds).padStart(2, '0')}</span>
           </div>
           <span className="text-sm mt-1">Secondes</span>
         </div>
