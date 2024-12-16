@@ -9,6 +9,7 @@ import { QualitySection } from "@/components/QualitySection";
 import { WaitlistDialog } from "@/components/WaitlistDialog";
 import { SocialMediaSection } from "@/components/SocialMediaSection";
 import { ExplanationSection } from "@/components/ExplanationSection";
+import { ValuePropositionSection } from "@/components/ValuePropositionSection";
 
 export default function Index() {
   return (
@@ -24,6 +25,7 @@ export default function Index() {
       <main>
         <HeroSection />
         <SocialMediaSection />
+        <ValuePropositionSection />
         <ExplanationSection />
         <QualitySection />
         <HowItWorksSection />
