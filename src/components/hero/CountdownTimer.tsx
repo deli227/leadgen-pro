@@ -10,8 +10,8 @@ export const CountdownTimer = () => {
   });
 
   useEffect(() => {
-    // Définir la date de fin au 22 mars 2024 à 18h00
-    const targetDate = new Date('2024-03-22T18:00:00').getTime();
+    // Définir la date de fin au 22 mars 2024 à 18h00 (heure de Paris)
+    const targetDate = new Date('2024-03-22T18:00:00+01:00').getTime();
 
     const calculateTimeLeft = () => {
       const now = new Date().getTime();
