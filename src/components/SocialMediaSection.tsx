@@ -35,7 +35,7 @@ export const SocialMediaSection = () => {
             </div>
           </motion.div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-8 max-w-4xl mx-auto">
             {/* Facebook */}
             <motion.div
               whileHover={{ scale: 1.05 }}
@@ -56,6 +56,21 @@ export const SocialMediaSection = () => {
                 <Instagram className="w-8 h-8" />
               </div>
               <p className="text-gray-300">Analyse Instagram</p>
+            </motion.div>
+
+            {/* X (Twitter) */}
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              className="flex flex-col items-center space-y-4 p-6 rounded-xl bg-white/5 backdrop-blur-sm"
+            >
+              <div className="w-16 h-16 flex items-center justify-center rounded-full bg-black text-white">
+                <img 
+                  src="/lovable-uploads/0bb44279-b31e-4c63-992c-63ab9ec11838.png"
+                  alt="X (Twitter)"
+                  className="w-8 h-8"
+                />
+              </div>
+              <p className="text-gray-300">Analyse X</p>
             </motion.div>
 
             {/* LinkedIn */}
