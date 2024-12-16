@@ -100,7 +100,7 @@ export function Dashboard() {
               className="text-primary-light data-[state=active]:bg-primary/20"
             >
               <Mail className="h-4 w-4 mr-2" />
-              Automatisation
+              Automatisation <span className="text-xs text-primary-light/50">(Prochainement disponible)</span>
             </TabsTrigger>
           </TabsList>
 
