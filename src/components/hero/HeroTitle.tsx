@@ -1,4 +1,5 @@
 import { RobotMascot } from "../RobotMascot";
+import { CountdownTimer } from "./CountdownTimer";
 
 export const HeroTitle = () => {
   return (
@@ -15,6 +16,7 @@ export const HeroTitle = () => {
       <p className="mt-6 text-base sm:text-lg md:text-xl leading-8 text-gray-300">
         Recherchez vos leads qualifiés et lancez une analyse approfondie grâce à notre IA innovante. Obtenez instantanément une vision à 360° : points forts, points faibles, opportunités d'amélioration... Tout ce dont vous avez besoin pour comprendre et conquérir vos prospects est à portée de clic.
       </p>
+      <CountdownTimer />
     </div>
   );
 };
