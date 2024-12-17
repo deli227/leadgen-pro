@@ -22,12 +22,13 @@ export const NeonCursor = () => {
 
   return (
     <div
-      className="fixed pointer-events-none z-50 w-64 h-64 -translate-x-1/2 -translate-y-1/2 hidden md:block"
+      className="fixed pointer-events-none z-50 w-32 h-32 -translate-x-1/2 -translate-y-1/2 hidden md:block"
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
-        background: 'radial-gradient(circle, rgba(155,135,245,0.15) 0%, rgba(155,135,245,0.05) 40%, transparent 70%)',
-        animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        background: 'radial-gradient(circle, rgba(155,135,245,0.35) 0%, rgba(155,135,245,0.15) 40%, transparent 70%)',
+        filter: 'blur(15px)',
+        boxShadow: '0 0 20px rgba(155,135,245,0.4)',
       }}
     />
   );
