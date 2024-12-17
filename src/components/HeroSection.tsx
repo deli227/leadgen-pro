@@ -57,7 +57,7 @@ export const HeroSection = () => {
         />
 
         {/* Content */}
-        <div className="w-full max-w-6xl relative z-10">
+        <div className="w-full max-w-6xl relative z-10 pt-16 sm:pt-24">
           <div className="grid grid-cols-1 gap-8 items-center">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
