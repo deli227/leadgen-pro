@@ -27,7 +27,7 @@ export const TestimonialsSection = () => {
   ];
 
   return (
-    <div className="bg-gradient-to-b from-black via-gray-50 to-white py-24 sm:py-32">
+    <div className="bg-gradient-to-b from-black via-secondary-dark to-secondary-dark py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -35,10 +35,10 @@ export const TestimonialsSection = () => {
           transition={{ duration: 0.6 }}
           className="mx-auto max-w-xl text-center"
         >
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+          <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
             Ils l'ont déjà testé en avant-première
           </h2>
-          <p className="mt-4 text-lg text-gray-600">
+          <p className="mt-4 text-lg text-gray-300">
             Découvrez les retours de nos premiers utilisateurs
           </p>
         </motion.div>
@@ -50,7 +50,7 @@ export const TestimonialsSection = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.2 }}
-                className="relative flex flex-col justify-between bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300"
+                className="relative flex flex-col justify-between bg-black/40 backdrop-blur-sm p-8 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-800"
               >
                 <Quote className="absolute top-4 right-4 h-8 w-8 text-primary/20" />
                 <div>
@@ -59,7 +59,7 @@ export const TestimonialsSection = () => {
                       <Star key={i} className="h-5 w-5 fill-current" />
                     ))}
                   </div>
-                  <blockquote className="mt-4 text-lg font-medium leading-6 text-gray-900">
+                  <blockquote className="mt-4 text-lg font-medium leading-6 text-gray-300">
                     "{testimonial.content}"
                   </blockquote>
                 </div>
@@ -70,8 +70,8 @@ export const TestimonialsSection = () => {
                     alt={testimonial.author}
                   />
                   <div>
-                    <div className="font-semibold text-gray-900">{testimonial.author}</div>
-                    <div className="text-sm text-gray-600">
+                    <div className="font-semibold text-gray-200">{testimonial.author}</div>
+                    <div className="text-sm text-gray-400">
                       {testimonial.role} - {testimonial.company}
                     </div>
                   </div>
