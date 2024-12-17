@@ -50,10 +50,9 @@ export const HeroSection = () => {
           className="absolute inset-0 z-0"
           style={{
             backgroundImage: "url('/lovable-uploads/78755e93-23d8-47a2-815a-90bfd6291210.png')",
-            backgroundSize: '100% 100%',
+            backgroundSize: 'cover',
             backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            filter: 'brightness(0.2)', // Kept the same brightness
+            filter: 'brightness(0.2)', // Reduced brightness even more for darker background
           }}
         />
 
