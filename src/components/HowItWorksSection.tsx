@@ -3,42 +3,47 @@ import { Target, Search, BarChart3, Download, Zap } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const data = [
-  { name: 'Jour 1', clients: 3 },
-  { name: 'Jour 2', clients: 7 },
-  { name: 'Jour 3', clients: 12 },
-  { name: 'Jour 4', clients: 18 },
-  { name: 'Jour 5', clients: 25 },
+  { name: 'Jour 1', clients: 1 },
+  { name: 'Jour 2', clients: 2 },
+  { name: 'Jour 3', clients: 3 },
+  { name: 'Jour 4', clients: 3 },
+  { name: 'Jour 5', clients: 5 },
+  { name: 'Jour 6', clients: 6 },
+  { name: 'Jour 7', clients: 8 },
+  { name: 'Jour 8', clients: 9 },
+  { name: 'Jour 9', clients: 11 },
+  { name: 'Jour 10', clients: 12 },
+];
+
+const steps = [
+  {
+    icon: Target,
+    title: "Définissez Votre Cible",
+    description: "Entrez le pays et la ville dans laquelle vous souhaitez rechercher des leads, puis précisez le nombre de leads que vous souhaitez obtenir."
+  },
+  {
+    icon: Search,
+    title: "Lancez Votre Recherche",
+    description: "En quelques secondes seulement, LeadGen Pro analyse les données et vous fournit une liste de leads qualifiés, comprenant toutes les informations essentielles sur chaque prospect."
+  },
+  {
+    icon: BarChart3,
+    title: "Analysez Vos Leads",
+    description: "Découvrez les points forts et points faibles de chaque lead, avec des recommandations stratégiques et des insights détaillés pour optimiser vos actions commerciales."
+  },
+  {
+    icon: Download,
+    title: "Exportez Vos Leads",
+    description: "Une fois vos leads soigneusement sélectionnés et analysés, exportez-les facilement au format de votre choix pour les intégrer à vos outils ou campagnes existantes."
+  },
+  {
+    icon: Zap,
+    title: "Automatisation à Venir",
+    description: "Nous travaillons sur une fonctionnalité d'automatisation complète qui vous permettra d'intégrer encore plus rapidement vos leads qualifiés dans vos flux de travail."
+  }
 ];
 
 export const HowItWorksSection = () => {
-  const steps = [
-    {
-      icon: Target,
-      title: "Définissez Votre Cible",
-      description: "Entrez le pays et la ville dans laquelle vous souhaitez rechercher des leads, puis précisez le nombre de leads que vous souhaitez obtenir."
-    },
-    {
-      icon: Search,
-      title: "Lancez Votre Recherche",
-      description: "En quelques secondes seulement, LeadGen Pro analyse les données et vous fournit une liste de leads qualifiés, comprenant toutes les informations essentielles sur chaque prospect."
-    },
-    {
-      icon: BarChart3,
-      title: "Analysez Vos Leads",
-      description: "Découvrez les points forts et points faibles de chaque lead, avec des recommandations stratégiques et des insights détaillés pour optimiser vos actions commerciales."
-    },
-    {
-      icon: Download,
-      title: "Exportez Vos Leads",
-      description: "Une fois vos leads soigneusement sélectionnés et analysés, exportez-les facilement au format de votre choix pour les intégrer à vos outils ou campagnes existantes."
-    },
-    {
-      icon: Zap,
-      title: "Automatisation à Venir",
-      description: "Nous travaillons sur une fonctionnalité d'automatisation complète qui vous permettra d'intégrer encore plus rapidement vos leads qualifiés dans vos flux de travail."
-    }
-  ];
-
   return (
     <div className="bg-secondary-dark py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -89,7 +94,7 @@ export const HowItWorksSection = () => {
               className="relative h-[400px] bg-secondary-dark/50 rounded-xl p-6 ring-2 ring-primary/20"
             >
               <h3 className="text-xl font-semibold text-white mb-6 text-center">
-                Succès d'Acquisition Clients avec LeadGen Pro
+                Progression Moyenne d'Acquisition Clients
               </h3>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={data}>
