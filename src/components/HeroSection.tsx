@@ -36,38 +36,42 @@ export const HeroSection = () => {
   }, []);
 
   return (
-    <section className="relative min-h-screen overflow-hidden flex items-center justify-center px-4 sm:px-6 py-12 sm:py-24">
-      {/* Background image with overlay */}
-      <div 
-        className="absolute inset-0 z-0"
-        style={{
-          backgroundImage: "url('/lovable-uploads/78755e93-23d8-47a2-815a-90bfd6291210.png')",
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          filter: 'brightness(0.4)', // Reduced brightness for darker background
-        }}
-      />
-      
-      {/* Animated stars */}
-      {stars.map((delay, index) => (
-        <Star key={index} delay={delay} />
-      ))}
-
-      {/* Content */}
-      <div className="w-full max-w-6xl relative z-10">
-        <div className="grid grid-cols-1 gap-8 items-center">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            className="flex flex-col items-center justify-center space-y-8 text-center"
-          >
-            <HeroTitle />
-            <HeroFeatures />
-            <HeroButtons />
-          </motion.div>
-        </div>
+    <>
+      {/* Stars container that covers the entire page */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        {stars.map((delay, index) => (
+          <Star key={index} delay={delay} />
+        ))}
       </div>
-    </section>
+
+      <section className="relative min-h-screen overflow-hidden flex items-center justify-center px-4 sm:px-6 py-12 sm:py-24">
+        {/* Background image with overlay */}
+        <div 
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage: "url('/lovable-uploads/78755e93-23d8-47a2-815a-90bfd6291210.png')",
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            filter: 'brightness(0.2)', // Reduced brightness even more for darker background
+          }}
+        />
+
+        {/* Content */}
+        <div className="w-full max-w-6xl relative z-10">
+          <div className="grid grid-cols-1 gap-8 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              className="flex flex-col items-center justify-center space-y-8 text-center"
+            >
+              <HeroTitle />
+              <HeroFeatures />
+              <HeroButtons />
+            </motion.div>
+          </div>
+        </div>
+      </section>
+    </>
   );
 };
