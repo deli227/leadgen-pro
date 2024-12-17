@@ -91,35 +91,49 @@ export const HowItWorksSection = () => {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.5 }}
-              className="relative h-[400px] bg-secondary-dark/50 rounded-xl p-6 ring-2 ring-primary/20"
+              className="relative min-h-[300px] h-full w-full bg-secondary-dark/50 rounded-xl p-4 sm:p-6 ring-2 ring-primary/20"
             >
-              <h3 className="text-xl font-semibold text-white mb-6 text-center">
+              <h3 className="text-xl font-semibold text-white mb-4 sm:mb-6 text-center">
                 Progression Moyenne d'Acquisition Clients
               </h3>
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={data}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                  <XAxis dataKey="name" stroke="#9CA3AF" />
-                  <YAxis stroke="#9CA3AF" />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#1F2937',
-                      border: '1px solid #374151',
-                      borderRadius: '0.5rem',
-                    }}
-                    labelStyle={{ color: '#9CA3AF' }}
-                    formatter={(value) => [`${value} clients acquis`, 'Clients']}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="clients"
-                    name="Clients Acquis"
-                    stroke="#9b87f5"
-                    strokeWidth={3}
-                    dot={{ fill: '#9b87f5', strokeWidth: 2 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+              <div className="w-full h-[calc(100%-4rem)] min-h-[250px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={data} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                    <XAxis 
+                      dataKey="name" 
+                      stroke="#9CA3AF"
+                      tick={{ fontSize: 12 }}
+                      angle={-45}
+                      textAnchor="end"
+                      height={60}
+                    />
+                    <YAxis 
+                      stroke="#9CA3AF"
+                      tick={{ fontSize: 12 }}
+                      width={30}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#1F2937',
+                        border: '1px solid #374151',
+                        borderRadius: '0.5rem',
+                        fontSize: '12px',
+                      }}
+                      labelStyle={{ color: '#9CA3AF' }}
+                      formatter={(value) => [`${value} clients acquis`, 'Clients']}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="clients"
+                      name="Clients Acquis"
+                      stroke="#9b87f5"
+                      strokeWidth={3}
+                      dot={{ fill: '#9b87f5', strokeWidth: 2 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
             </motion.div>
           </div>
         </div>
