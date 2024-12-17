@@ -11,7 +11,7 @@ export const HeroSection = () => {
     // Listen for the Spline viewer load event
     const handleSplineLoad = () => {
       setIsSplineLoaded(true);
-      console.log("Spline scene loaded");
+      console.log("Spline scene loaded successfully");
     };
 
     // Add event listener to the spline-viewer element
@@ -24,7 +24,7 @@ export const HeroSection = () => {
   }, []);
 
   return (
-    <section className="relative min-h-screen overflow-hidden">
+    <section className="relative min-h-screen overflow-hidden bg-secondary-dark">
       {/* Loading overlay */}
       {!isSplineLoaded && (
         <div className="absolute inset-0 z-20 flex items-center justify-center bg-secondary-dark">
@@ -38,28 +38,28 @@ export const HeroSection = () => {
           url="https://prod.spline.design/4a0Qe8fhhRCudmRe/scene.splinecode"
           loading-anim
           events-target="global"
+          autoplay
+          loop
         ></spline-viewer>
       </div>
 
-      {/* Content Overlay */}
+      {/* Content Overlay with gradient */}
       <div 
-        className={`relative z-10 flex items-center justify-center px-4 sm:px-6 py-12 sm:py-24 min-h-screen bg-gradient-to-b from-transparent via-black/50 to-black/80 transition-opacity duration-500 ${
+        className={`relative z-10 flex items-center justify-center min-h-screen px-4 sm:px-6 py-12 sm:py-24 bg-gradient-to-b from-transparent via-black/50 to-black/80 transition-opacity duration-500 ${
           isSplineLoaded ? 'opacity-100' : 'opacity-0'
         }`}
       >
-        <div className="w-full max-w-6xl">
-          <div className="grid grid-cols-1 gap-8 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: isSplineLoaded ? 1 : 0, x: isSplineLoaded ? 0 : -20 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="flex flex-col items-center justify-center space-y-8 text-center"
-            >
-              <HeroTitle />
-              <HeroFeatures />
-              <HeroButtons />
-            </motion.div>
-          </div>
+        <div className="w-full max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: isSplineLoaded ? 1 : 0, y: isSplineLoaded ? 0 : 20 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="flex flex-col items-center justify-center space-y-8 text-center"
+          >
+            <HeroTitle />
+            <HeroFeatures />
+            <HeroButtons />
+          </motion.div>
         </div>
       </div>
     </section>
