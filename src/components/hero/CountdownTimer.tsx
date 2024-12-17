@@ -57,7 +57,7 @@ export const CountdownTimer = () => {
       transition={{ duration: 0.6 }}
       className="flex flex-col items-center space-y-2 mt-8"
     >
-      <p className="text-primary font-semibold">Lancement de LeadGen Pro - Se termine dans :</p>
+      <p className="text-primary font-semibold">Lancement de LeadGen Pro</p>
       <div className="flex flex-wrap justify-center gap-4 text-white">
         <div className="flex flex-col items-center">
           <div className="bg-secondary-dark/50 backdrop-blur-sm rounded-lg p-3 min-w-[70px]">
