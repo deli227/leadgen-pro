@@ -31,117 +31,135 @@ export function AdminDashboard() {
   const fetchStats = async () => {
     try {
       console.log("Fetching admin dashboard stats...")
+      
       // Récupérer le nombre total d'utilisateurs
-      const { count: totalUsers } = await supabase
+      const { data: profilesData, error: profilesError } = await supabase
         .from('profiles')
-        .select('*', { count: 'exact' })
+        .select('*')
+
+      if (profilesError) throw profilesError
 
       // Récupérer les nouveaux utilisateurs d'aujourd'hui
-      const today = new Date().toISOString().split('T')[0]
-      const { count: newUsersToday } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact' })
-        .gte('created_at', today)
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+      const todayISOString = today.toISOString()
+
+      const newUsers = profilesData.filter(profile => 
+        new Date(profile.created_at) >= today
+      )
 
       // Récupérer le nombre total de leads
       const { count: totalLeads } = await supabase
         .from('leads')
         .select('*', { count: 'exact' })
 
-      // Récupérer les utilisateurs actifs
-      const { count: activeUsers } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact' })
-        .gt('leads_generated_this_month', 0)
+      // Récupérer les utilisateurs actifs (ceux qui ont généré des leads ce mois)
+      const activeUsers = profilesData.filter(profile => 
+        profile.leads_generated_this_month > 0
+      )
 
-      // Calculer le revenu total
-      const { count: proUsers } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact' })
-        .eq('subscription_type', 'pro')
+      // Calculer le revenu total (utilisateurs pro)
+      const proUsers = profilesData.filter(profile => 
+        profile.subscription_type === 'pro'
+      )
+      const monthlyRevenue = proUsers.length * 14.99
 
-      const monthlyRevenue = proUsers ? proUsers * 14.99 : 0
-
-      // Récupérer le nombre total de vues (estimation basée sur les utilisateurs)
-      const { count: totalViews } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact' })
-
-      // Récupérer le nombre d'inscrits sur la waitlist avec le bon rôle
+      // Récupérer la liste d'attente
       const { data: waitlistData, error: waitlistError } = await supabase
         .from('waitlist')
         .select('*')
         .order('created_at', { ascending: false })
 
-      if (waitlistError) {
-        console.error('Erreur lors de la récupération de la waitlist:', waitlistError)
-        throw waitlistError
-      }
+      if (waitlistError) throw waitlistError
 
+      // Mettre à jour les stats
       setStats({
-        totalUsers: totalUsers || 0,
-        newUsersToday: newUsersToday || 0,
+        totalUsers: profilesData.length,
+        newUsersToday: newUsers.length,
         totalLeads: totalLeads || 0,
-        activeUsers: activeUsers || 0,
+        activeUsers: activeUsers.length,
         totalRevenue: monthlyRevenue,
-        totalViews: (totalViews || 0) * 3,
+        totalViews: profilesData.length * 3, // Estimation basée sur les profils
         waitlistCount: waitlistData?.length || 0
       })
 
-      // Données pour le graphique
-      const { data: userData } = await supabase
-        .from('profiles')
-        .select('created_at')
-        .order('created_at')
+      // Préparer les données pour le graphique
+      const groupedData: Record<string, { users: number; waitlist: number }> = {}
 
-      if (userData && waitlistData) {
-        const groupedData: Record<string, { users: number; waitlist: number }> = {}
+      // Grouper les données des utilisateurs par date
+      profilesData.forEach(profile => {
+        const date = new Date(profile.created_at).toISOString().split('T')[0]
+        if (!groupedData[date]) {
+          groupedData[date] = { users: 0, waitlist: 0 }
+        }
+        groupedData[date].users++
+      })
 
-        // Regrouper les données des utilisateurs par date
-        userData.forEach(user => {
-          const date = new Date(user.created_at).toISOString().split('T')[0]
-          if (!groupedData[date]) {
-            groupedData[date] = { users: 0, waitlist: 0 }
-          }
-          groupedData[date].users++
-        })
+      // Grouper les données de la waitlist par date
+      waitlistData?.forEach(entry => {
+        const date = new Date(entry.created_at).toISOString().split('T')[0]
+        if (!groupedData[date]) {
+          groupedData[date] = { users: 0, waitlist: 0 }
+        }
+        groupedData[date].waitlist++
+      })
 
-        // Regrouper les données de la waitlist par date
-        waitlistData.forEach(entry => {
-          const date = new Date(entry.created_at).toISOString().split('T')[0]
-          if (!groupedData[date]) {
-            groupedData[date] = { users: 0, waitlist: 0 }
-          }
-          groupedData[date].waitlist++
-        })
+      // Convertir en format pour le graphique et trier par date
+      const chartData = Object.entries(groupedData)
+        .sort(([dateA], [dateB]) => dateA.localeCompare(dateB))
+        .map(([date, data]) => ({
+          date,
+          users: data.users,
+          waitlist: data.waitlist
+        }))
 
-        // Convertir les données groupées en format pour le graphique
-        const chartData = Object.entries(groupedData)
-          .sort(([dateA], [dateB]) => dateA.localeCompare(dateB))
-          .map(([date, data]) => ({
-            date,
-            users: data.users,
-            waitlist: data.waitlist
-          }))
-
-        setChartData(chartData)
-      }
-
+      setChartData(chartData)
       setLastUpdate(new Date())
-      setIsLoading(false)
       console.log("Admin dashboard stats updated successfully")
     } catch (error) {
       console.error('Erreur lors de la récupération des statistiques:', error)
       toast.error("Erreur lors du chargement des statistiques")
+    } finally {
       setIsLoading(false)
     }
   }
 
+  // Configuration des mises à jour en temps réel
   useEffect(() => {
     fetchStats()
-    // Mettre à jour toutes les heures (3600000 ms)
-    const interval = setInterval(fetchStats, 3600000)
-    return () => clearInterval(interval)
+
+    // Écouter les changements sur la table waitlist
+    const waitlistChannel = supabase
+      .channel('public:waitlist')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'waitlist' }, 
+        () => {
+          console.log('Waitlist updated, refreshing stats...')
+          fetchStats()
+        }
+      )
+      .subscribe()
+
+    // Écouter les changements sur la table profiles
+    const profilesChannel = supabase
+      .channel('public:profiles')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'profiles' }, 
+        () => {
+          console.log('Profiles updated, refreshing stats...')
+          fetchStats()
+        }
+      )
+      .subscribe()
+
+    // Mettre à jour toutes les minutes pour les vues
+    const interval = setInterval(fetchStats, 60000)
+
+    return () => {
+      clearInterval(interval)
+      supabase.removeChannel(waitlistChannel)
+      supabase.removeChannel(profilesChannel)
+    }
   }, [])
 
   if (isCheckingAdmin) {
