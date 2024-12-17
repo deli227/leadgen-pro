@@ -2,10 +2,55 @@ import { motion } from "framer-motion";
 import { HeroTitle } from "./hero/HeroTitle";
 import { HeroFeatures } from "./hero/HeroFeatures";
 import { HeroButtons } from "./hero/HeroButtons";
+import { useEffect, useState } from "react";
+
+// Star component for the animated background
+const Star = ({ delay }: { delay: number }) => (
+  <motion.div
+    className="absolute w-1 h-1 bg-primary rounded-full"
+    animate={{
+      scale: [1, 1.2, 1],
+      opacity: [0.7, 1, 0.7],
+    }}
+    transition={{
+      duration: 3,
+      delay: delay,
+      repeat: Infinity,
+    }}
+    style={{
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+    }}
+  />
+);
 
 export const HeroSection = () => {
+  const [stars, setStars] = useState<number[]>([]);
+
+  useEffect(() => {
+    // Create 50 stars with random delays
+    setStars(Array.from({ length: 50 }, (_, i) => Math.random() * 3));
+  }, []);
+
   return (
-    <section className="relative min-h-screen bg-gradient-to-br from-secondary-dark via-[#1A1F2C] to-black overflow-hidden flex items-center justify-center px-4 sm:px-6 py-12 sm:py-24">
+    <section className="relative min-h-screen overflow-hidden flex items-center justify-center px-4 sm:px-6 py-12 sm:py-24">
+      {/* Background image with overlay */}
+      <div 
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundImage: "url('/lovable-uploads/78755e93-23d8-47a2-815a-90bfd6291210.png')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          filter: 'brightness(0.7)',
+        }}
+      />
+      
+      {/* Animated stars */}
+      {stars.map((delay, index) => (
+        <Star key={index} delay={delay} />
+      ))}
+
+      {/* Content */}
       <div className="w-full max-w-6xl relative z-10">
         <div className="grid grid-cols-1 gap-8 items-center">
           <motion.div
