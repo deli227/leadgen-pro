@@ -3,11 +3,11 @@ import { Target, Search, BarChart3, Download, Zap } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const data = [
-  { name: 'Jour 1', leads: 4 },
-  { name: 'Jour 2', leads: 8 },
-  { name: 'Jour 3', leads: 15 },
-  { name: 'Jour 4', leads: 25 },
-  { name: 'Jour 5', leads: 35 },
+  { name: 'Jour 1', clients: 3 },
+  { name: 'Jour 2', clients: 7 },
+  { name: 'Jour 3', clients: 12 },
+  { name: 'Jour 4', clients: 18 },
+  { name: 'Jour 5', clients: 25 },
 ];
 
 export const HowItWorksSection = () => {
@@ -89,7 +89,7 @@ export const HowItWorksSection = () => {
               className="relative h-[400px] bg-secondary-dark/50 rounded-xl p-6 ring-2 ring-primary/20"
             >
               <h3 className="text-xl font-semibold text-white mb-6 text-center">
-                Croissance des Leads Générés
+                Succès d'Acquisition Clients avec LeadGen Pro
               </h3>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={data}>
@@ -103,10 +103,12 @@ export const HowItWorksSection = () => {
                       borderRadius: '0.5rem',
                     }}
                     labelStyle={{ color: '#9CA3AF' }}
+                    formatter={(value) => [`${value} clients acquis`, 'Clients']}
                   />
                   <Line
                     type="monotone"
-                    dataKey="leads"
+                    dataKey="clients"
+                    name="Clients Acquis"
                     stroke="#9b87f5"
                     strokeWidth={3}
                     dot={{ fill: '#9b87f5', strokeWidth: 2 }}
