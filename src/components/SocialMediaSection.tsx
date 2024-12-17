@@ -3,11 +3,14 @@ import { Facebook, Instagram, Linkedin, Globe } from "lucide-react";
 
 export const SocialMediaSection = () => {
   return (
-    <div className="relative pt-8 sm:pt-16 pb-16 sm:pb-24 bg-gradient-to-b from-black via-secondary-dark to-black overflow-hidden">
-      {/* Add a dark gradient overlay at the top */}
-      <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-black to-transparent"></div>
+    <div className="relative pt-8 sm:pt-16 pb-16 sm:pb-24 overflow-hidden">
+      {/* Background with gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black via-secondary-dark to-black" />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Dark gradient overlay at the top */}
+      <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-black to-transparent" />
+      
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
