@@ -4,6 +4,8 @@ declare namespace JSX {
       url?: string;
       'loading-anim'?: boolean;
       'events-target'?: string;
+      autoplay?: boolean;
+      loop?: boolean;
     }, HTMLElement>;
   }
 }
