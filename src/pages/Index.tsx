@@ -1,15 +1,23 @@
+import { Suspense, lazy } from "react";
 import { HeroSection } from "@/components/HeroSection";
+import { NeonCursor } from "@/components/NeonCursor";
+import { WaitlistDialog } from "@/components/WaitlistDialog";
+import { SocialMediaSection } from "@/components/SocialMediaSection";
+import { ValuePropositionSection } from "@/components/ValuePropositionSection";
+import { ExplanationSection } from "@/components/ExplanationSection";
+import { LeadExplanationSection } from "@/components/LeadExplanationSection";
+import { HowItWorksSection } from "@/components/HowItWorksSection";
 import { TestimonialsSection } from "@/components/TestimonialsSection";
 import { PricingSection } from "@/components/PricingSection";
 import { FooterSection } from "@/components/FooterSection";
-import { HowItWorksSection } from "@/components/HowItWorksSection";
 import { ContactSection } from "@/components/ContactSection";
-import { LeadExplanationSection } from "@/components/LeadExplanationSection";
-import { WaitlistDialog } from "@/components/WaitlistDialog";
-import { SocialMediaSection } from "@/components/SocialMediaSection";
-import { ExplanationSection } from "@/components/ExplanationSection";
-import { ValuePropositionSection } from "@/components/ValuePropositionSection";
-import { NeonCursor } from "@/components/NeonCursor";
+
+// Loading component
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center min-h-[200px]">
+    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+  </div>
+);
 
 export default function Index() {
   return (
@@ -22,18 +30,24 @@ export default function Index() {
           <WaitlistDialog triggerButton />
         </div>
       </div>
+
       <main>
         <HeroSection />
-        <SocialMediaSection />
-        <ValuePropositionSection />
-        <ExplanationSection />
-        <LeadExplanationSection />
-        <HowItWorksSection />
-        <PricingSection />
-        <TestimonialsSection />
-        <ContactSection />
+        <Suspense fallback={<LoadingSpinner />}>
+          <SocialMediaSection />
+          <ValuePropositionSection />
+          <ExplanationSection />
+          <LeadExplanationSection />
+          <HowItWorksSection />
+          <PricingSection />
+          <TestimonialsSection />
+          <ContactSection />
+        </Suspense>
       </main>
-      <FooterSection />
+
+      <Suspense fallback={<LoadingSpinner />}>
+        <FooterSection />
+      </Suspense>
     </div>
   );
 }
