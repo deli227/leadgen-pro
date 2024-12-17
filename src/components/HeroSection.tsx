@@ -7,15 +7,18 @@ import { useEffect, useState } from "react";
 // Star component for the animated background
 const Star = ({ delay }: { delay: number }) => (
   <motion.div
-    className="absolute w-1 h-1 bg-primary rounded-full"
+    className="absolute w-0.5 h-0.5 bg-primary rounded-full"
     animate={{
       scale: [1, 1.2, 1],
       opacity: [0.7, 1, 0.7],
+      y: [0, -20, 0],
+      x: [0, 10, 0],
     }}
     transition={{
-      duration: 3,
+      duration: 4,
       delay: delay,
       repeat: Infinity,
+      ease: "easeInOut"
     }}
     style={{
       left: `${Math.random() * 100}%`,
@@ -41,7 +44,7 @@ export const HeroSection = () => {
           backgroundImage: "url('/lovable-uploads/78755e93-23d8-47a2-815a-90bfd6291210.png')",
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          filter: 'brightness(0.7)',
+          filter: 'brightness(0.4)', // Reduced brightness for darker background
         }}
       />
       
