@@ -10,10 +10,12 @@ import { WaitlistDialog } from "@/components/WaitlistDialog";
 import { SocialMediaSection } from "@/components/SocialMediaSection";
 import { ExplanationSection } from "@/components/ExplanationSection";
 import { ValuePropositionSection } from "@/components/ValuePropositionSection";
+import { NeonCursor } from "@/components/NeonCursor";
 
 export default function Index() {
   return (
     <div className="flex flex-col min-h-screen bg-secondary-dark">
+      <NeonCursor />
       {/* Popup automatique */}
       <WaitlistDialog />
       
