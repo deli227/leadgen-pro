@@ -4,15 +4,15 @@ import { NeonCursor } from "@/components/NeonCursor";
 import { WaitlistDialog } from "@/components/WaitlistDialog";
 
 // Lazy load non-critical components
-const TestimonialsSection = lazy(() => import("@/components/TestimonialsSection"));
-const PricingSection = lazy(() => import("@/components/PricingSection"));
-const FooterSection = lazy(() => import("@/components/FooterSection"));
-const HowItWorksSection = lazy(() => import("@/components/HowItWorksSection"));
-const ContactSection = lazy(() => import("@/components/ContactSection"));
-const LeadExplanationSection = lazy(() => import("@/components/LeadExplanationSection"));
-const SocialMediaSection = lazy(() => import("@/components/SocialMediaSection"));
-const ExplanationSection = lazy(() => import("@/components/ExplanationSection"));
-const ValuePropositionSection = lazy(() => import("@/components/ValuePropositionSection"));
+const TestimonialsSection = lazy(() => import("@/components/TestimonialsSection").then(module => ({ default: module.TestimonialsSection })));
+const PricingSection = lazy(() => import("@/components/PricingSection").then(module => ({ default: module.PricingSection })));
+const FooterSection = lazy(() => import("@/components/FooterSection").then(module => ({ default: module.FooterSection })));
+const HowItWorksSection = lazy(() => import("@/components/HowItWorksSection").then(module => ({ default: module.HowItWorksSection })));
+const ContactSection = lazy(() => import("@/components/ContactSection").then(module => ({ default: module.ContactSection })));
+const LeadExplanationSection = lazy(() => import("@/components/LeadExplanationSection").then(module => ({ default: module.LeadExplanationSection })));
+const SocialMediaSection = lazy(() => import("@/components/SocialMediaSection").then(module => ({ default: module.SocialMediaSection })));
+const ExplanationSection = lazy(() => import("@/components/ExplanationSection").then(module => ({ default: module.ExplanationSection })));
+const ValuePropositionSection = lazy(() => import("@/components/ValuePropositionSection").then(module => ({ default: module.ValuePropositionSection })));
 
 // Loading component
 const LoadingSpinner = () => (
