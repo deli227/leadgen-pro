@@ -38,26 +38,26 @@ export const HeroSection = () => {
   return (
     <>
       {/* Stars container that covers the entire page */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-10">
         {stars.map((delay, index) => (
           <Star key={index} delay={delay} />
         ))}
       </div>
 
-      <section className="relative min-h-screen overflow-hidden flex items-center justify-center px-4 sm:px-6 py-12 sm:py-24">
+      <section className="relative min-h-screen w-full overflow-hidden flex items-center justify-center">
         {/* Background image with overlay */}
         <div 
-          className="absolute inset-0 z-0"
+          className="fixed inset-0 z-0"
           style={{
             backgroundImage: "url('/lovable-uploads/78755e93-23d8-47a2-815a-90bfd6291210.png')",
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            filter: 'brightness(0.2)', // Reduced brightness even more for darker background
+            filter: 'brightness(0.2)',
           }}
         />
 
         {/* Content */}
-        <div className="w-full max-w-6xl relative z-10">
+        <div className="relative z-20 w-full max-w-6xl px-4 sm:px-6">
           <div className="grid grid-cols-1 gap-8 items-center">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
