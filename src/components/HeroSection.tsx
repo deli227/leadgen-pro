@@ -47,9 +47,12 @@ export const HeroSection = () => {
       <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 -mt-[2rem]">
         {/* Background image with overlay */}
         <div 
-          className="absolute inset-0 z-0 bg-no-repeat bg-center bg-contain sm:bg-cover"
+          className="absolute inset-0 z-0"
           style={{
             backgroundImage: "url('/lovable-uploads/78755e93-23d8-47a2-815a-90bfd6291210.png')",
+            backgroundSize: '100% 100%',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
             filter: 'brightness(0.2)', // Kept the same brightness
           }}
         />
