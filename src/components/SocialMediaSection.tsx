@@ -3,7 +3,7 @@ import { Facebook, Instagram, Linkedin, Globe } from "lucide-react";
 
 export const SocialMediaSection = () => {
   return (
-    <div className="relative pt-32 pb-24 bg-gradient-to-b from-black via-secondary-dark to-black overflow-hidden">
+    <div className="relative pt-16 pb-24 bg-gradient-to-b from-black via-secondary-dark to-black overflow-hidden">
       {/* Add a dark gradient overlay at the top */}
       <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-black to-transparent"></div>
       
@@ -14,10 +14,10 @@ export const SocialMediaSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center"
         >
-          <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-gradient mb-8">
+          <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-gradient mb-4">
             En quelques secondes, parcourez le monde
           </h2>
-          <p className="text-xl text-gray-300 mb-12 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
             Analyse complète des réseaux sociaux et de tous les navigateurs
           </p>
           
@@ -26,7 +26,7 @@ export const SocialMediaSection = () => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="mb-16"
+            className="mb-12"
           >
             <div className="relative w-full max-w-2xl mx-auto">
               <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-accent/20 to-primary/20 blur-xl rounded-full" />
