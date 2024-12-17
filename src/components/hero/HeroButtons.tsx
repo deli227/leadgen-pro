@@ -3,7 +3,7 @@ import { Button } from "../ui/button";
 
 export const HeroButtons = () => {
   return (
-    <div className="flex flex-col sm:flex-row gap-4 justify-center w-full max-w-xl mx-auto px-4">
+    <div className="flex flex-col sm:flex-row gap-4 justify-center w-full max-w-xl mx-auto px-4 mt-12">
       <Button
         size="lg"
         className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white shadow-lg hover:shadow-xl transition-all duration-300"
