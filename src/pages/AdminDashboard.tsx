@@ -62,15 +62,21 @@ export function AdminDashboard() {
 
       const monthlyRevenue = proUsers ? proUsers * 14.99 : 0
 
-      // Récupérer le nombre total de vues
+      // Récupérer le nombre total de vues (estimation basée sur les utilisateurs)
       const { count: totalViews } = await supabase
         .from('profiles')
         .select('*', { count: 'exact' })
 
-      // Récupérer le nombre d'inscrits sur la waitlist
-      const { count: waitlistCount } = await supabase
+      // Récupérer le nombre d'inscrits sur la waitlist avec le bon rôle
+      const { data: waitlistData, error: waitlistError } = await supabase
         .from('waitlist')
-        .select('*', { count: 'exact' })
+        .select('*')
+        .order('created_at', { ascending: false })
+
+      if (waitlistError) {
+        console.error('Erreur lors de la récupération de la waitlist:', waitlistError)
+        throw waitlistError
+      }
 
       setStats({
         totalUsers: totalUsers || 0,
@@ -79,17 +85,12 @@ export function AdminDashboard() {
         activeUsers: activeUsers || 0,
         totalRevenue: monthlyRevenue,
         totalViews: (totalViews || 0) * 3,
-        waitlistCount: waitlistCount || 0
+        waitlistCount: waitlistData?.length || 0
       })
 
       // Données pour le graphique
       const { data: userData } = await supabase
         .from('profiles')
-        .select('created_at')
-        .order('created_at')
-
-      const { data: waitlistData } = await supabase
-        .from('waitlist')
         .select('created_at')
         .order('created_at')
 
@@ -114,11 +115,14 @@ export function AdminDashboard() {
           groupedData[date].waitlist++
         })
 
-        const chartData = Object.entries(groupedData).map(([date, data]) => ({
-          date,
-          users: data.users,
-          waitlist: data.waitlist
-        }))
+        // Convertir les données groupées en format pour le graphique
+        const chartData = Object.entries(groupedData)
+          .sort(([dateA], [dateB]) => dateA.localeCompare(dateB))
+          .map(([date, data]) => ({
+            date,
+            users: data.users,
+            waitlist: data.waitlist
+          }))
 
         setChartData(chartData)
       }
