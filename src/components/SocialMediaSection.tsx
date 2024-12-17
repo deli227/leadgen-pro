@@ -3,7 +3,7 @@ import { Facebook, Instagram, Linkedin, Globe } from "lucide-react";
 
 export const SocialMediaSection = () => {
   return (
-    <div className="relative py-24 bg-gradient-to-br from-secondary-dark to-black overflow-hidden">
+    <div className="relative pt-32 pb-24 bg-gradient-to-br from-secondary-dark to-black overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
