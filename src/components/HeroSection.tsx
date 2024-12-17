@@ -44,7 +44,7 @@ export const HeroSection = () => {
         ))}
       </div>
 
-      <section className="relative min-h-screen overflow-hidden flex items-center justify-center px-4 sm:px-6 py-12 sm:py-24">
+      <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 -mt-[2rem]">
         {/* Background image with overlay */}
         <div 
           className="absolute inset-0 z-0"
