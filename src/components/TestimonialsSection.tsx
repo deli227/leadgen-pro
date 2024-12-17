@@ -84,6 +84,3 @@ export const TestimonialsSection = () => {
     </div>
   );
 };
-
-// Add default export
-export default TestimonialsSection;
