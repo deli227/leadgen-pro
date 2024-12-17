@@ -45,7 +45,7 @@ const steps = [
 
 export const HowItWorksSection = () => {
   return (
-    <div className="bg-secondary-dark py-12 sm:py-24">
+    <div className="bg-gradient-to-b from-black via-secondary-dark to-secondary-dark py-12 sm:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

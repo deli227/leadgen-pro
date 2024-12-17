@@ -21,7 +21,7 @@ export const LeadExplanationSection = () => {
   ];
 
   return (
-    <div className="bg-secondary-dark py-16 sm:py-24">
+    <div className="bg-gradient-to-b from-secondary-dark via-secondary-dark to-black py-16 sm:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

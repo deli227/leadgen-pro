@@ -3,7 +3,7 @@ import { Lightbulb } from "lucide-react";
 
 export const ExplanationSection = () => {
   return (
-    <section className="relative py-24 bg-secondary-dark overflow-hidden">
+    <section className="relative py-24 bg-gradient-to-b from-black via-secondary-dark to-secondary-dark overflow-hidden">
       <div className="container px-4 mx-auto">
         <div className="flex flex-wrap -m-8">
           <div className="w-full md:w-1/2 p-8">

@@ -3,7 +3,7 @@ import { Target, Zap, Brain } from "lucide-react";
 
 export const ValuePropositionSection = () => {
   return (
-    <section className="relative py-24 bg-gradient-to-br from-secondary-dark to-black overflow-hidden">
+    <section className="relative py-24 bg-gradient-to-br from-black via-secondary-dark to-black overflow-hidden">
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.2)_0%,rgba(0,0,0,0.6)_100%)]" />
       
       {/* Animated gradient orbs */}
