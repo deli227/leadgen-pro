@@ -5,7 +5,23 @@ import { HeroButtons } from "./hero/HeroButtons";
 
 export const HeroSection = () => {
   return (
-    <section className="relative min-h-screen bg-gradient-to-br from-secondary-dark via-[#1A1F2C] to-black overflow-hidden flex items-center justify-center px-4 sm:px-6 py-12 sm:py-24">
+    <section className="relative min-h-screen overflow-hidden flex items-center justify-center px-4 sm:px-6 py-12 sm:py-24">
+      {/* Video Background */}
+      <div className="absolute inset-0 w-full h-full z-0">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+          poster="/placeholder.svg"
+        >
+          <source src="/your-video.mp4" type="video/mp4" />
+        </video>
+        {/* Overlay gradient for better text readability */}
+        <div className="absolute inset-0 bg-gradient-to-br from-secondary-dark/90 via-[#1A1F2C]/80 to-black/70" />
+      </div>
+
       <div className="w-full max-w-6xl relative z-10">
         <div className="grid grid-cols-1 gap-8 items-center">
           <motion.div
