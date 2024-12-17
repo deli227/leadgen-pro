@@ -121,7 +121,11 @@ export function useStats() {
       console.log("Admin dashboard stats updated successfully")
     } catch (error) {
       console.error('Erreur lors de la récupération des statistiques:', error)
-      toast.error("Erreur lors du chargement des statistiques")
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Erreur lors du chargement des statistiques"
+      })
     } finally {
       setIsLoading(false)
     }
