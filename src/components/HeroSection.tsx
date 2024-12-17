@@ -36,8 +36,8 @@ export const HeroSection = () => {
   }, []);
 
   return (
-    <>
-      {/* Background image with overlay */}
+    <div className="relative w-full">
+      {/* Background image with overlay - now covers full width */}
       <div 
         className="fixed inset-0 w-full h-full z-0"
         style={{
@@ -55,9 +55,9 @@ export const HeroSection = () => {
         ))}
       </div>
 
-      {/* Hero content section */}
-      <section className="relative min-h-screen overflow-hidden flex items-center justify-center px-4 sm:px-6 py-12 sm:py-24">
-        <div className="w-full max-w-6xl relative z-20">
+      {/* Hero content section - now properly positioned */}
+      <section className="relative w-full min-h-screen flex items-center justify-center px-4 sm:px-6 py-12 sm:py-24 z-20">
+        <div className="w-full max-w-6xl">
           <div className="grid grid-cols-1 gap-8 items-center">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
@@ -72,6 +72,6 @@ export const HeroSection = () => {
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 };
