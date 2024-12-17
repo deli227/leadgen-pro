@@ -1,32 +1,22 @@
-import { Star, Bolt, BarChartHorizontal, Brain, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import { Target, Search, ChartBar, Zap, Brain } from "lucide-react";
 
 export const QualitySection = () => {
   const features = [
     {
-      icon: Bolt,
-      title: "Rapidité exceptionnelle",
-      description: "Accès en seulement 3 minutes",
+      icon: Target,
+      title: "Identification Précise des Leads",
+      description: "Trouvez des leads qualifiés selon vos critères spécifiques (pays, ville, secteur) pour cibler les bonnes entreprises.",
     },
     {
       icon: Brain,
-      title: "IA spécialisée",
-      description: "Analyse approfondie et qualification précise",
+      title: "Analyse Approfondie",
+      description: "Analysez les points forts et faiblesses de chaque lead pour obtenir des recommandations stratégiques.",
     },
     {
-      icon: Star,
-      title: "Leads premium",
-      description: "Les meilleurs leads du marché",
-    },
-    {
-      icon: BarChartHorizontal,
-      title: "Analyse complète",
-      description: "Toutes les informations essentielles",
-    },
-    {
-      icon: CheckCircle,
-      title: "Parfaitement aligné",
-      description: "Services adaptés aux besoins",
+      icon: ChartBar,
+      title: "Optimisation des Stratégies",
+      description: "Affinez vos actions en ciblant les leads les plus prometteurs pour maximiser votre ROI.",
     },
   ];
 
@@ -37,18 +27,24 @@ export const QualitySection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mx-auto max-w-2xl text-center"
+          className="mx-auto max-w-3xl text-center"
         >
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white sm:text-4xl bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent mb-6">
-            Qualité exceptionnelle des leads
+            C'est Quoi un Lead et Comment LeadGen Pro Vous Aide ?
           </h2>
-          <p className="text-base sm:text-lg leading-8 text-gray-300 mb-12 px-4">
-            En seulement 3 minutes, accédez aux meilleurs leads du marché. Nos leads sont minutieusement qualifiés et analysés par notre IA spécialisée, vous donnant accès à toutes les informations essentielles pour proposer des services parfaitement alignés avec leurs besoins d'amélioration.
+          <p className="text-base sm:text-lg leading-8 text-gray-300 mb-8">
+            Un lead est un contact potentiel qui a montré un intérêt pour vos produits ou services. 
+            Il peut s'agir d'un particulier ou d'une entreprise qui, bien que n'étant pas encore un client, 
+            est susceptible de l'être. Les leads sont essentiels car ce sont eux qui alimentent votre pipeline de ventes.
+          </p>
+          <p className="text-base sm:text-lg leading-8 text-gray-300 mb-12">
+            LeadGen Pro vous aide à maximiser la valeur de ces leads en transformant le processus de gestion, 
+            vous aidant à convertir plus efficacement vos prospects en clients réels.
           </p>
         </motion.div>
 
         <div className="mx-auto mt-8 sm:mt-16 max-w-7xl">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {features.map((feature, index) => (
               <motion.div
                 key={index}
@@ -57,17 +53,31 @@ export const QualitySection = () => {
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 className="relative group"
               >
-                <div className="flex flex-col items-center p-6 bg-secondary-dark/50 rounded-lg border border-primary/10 hover:border-primary/20 transition-all duration-300 hover:shadow-[0_0_30px_rgba(155,135,245,0.3)]">
-                  <div className="rounded-full p-3 bg-primary/10 group-hover:bg-primary/20 transition-colors mb-4 shadow-[0_0_15px_rgba(155,135,245,0.3)] group-hover:shadow-[0_0_25px_rgba(155,135,245,0.5)]">
-                    <feature.icon className="w-6 h-6 text-primary animate-pulse" />
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-accent/10 rounded-xl blur-xl group-hover:blur-2xl transition-all duration-300 opacity-0 group-hover:opacity-100" />
+                <div className="relative bg-black/40 backdrop-blur-sm border border-primary/10 p-8 rounded-xl hover:border-primary/30 transition-all duration-300">
+                  <div className="rounded-full p-3 bg-primary/10 group-hover:bg-primary/20 transition-colors mb-6 w-14 h-14 flex items-center justify-center shadow-[0_0_15px_rgba(155,135,245,0.3)] group-hover:shadow-[0_0_25px_rgba(155,135,245,0.5)]">
+                    <feature.icon className="w-8 h-8 text-primary animate-pulse" />
                   </div>
-                  <h3 className="text-lg font-semibold text-white mb-2 text-center">{feature.title}</h3>
-                  <p className="text-sm text-gray-300 text-center">{feature.description}</p>
+                  <h3 className="text-xl font-semibold text-white mb-4">{feature.title}</h3>
+                  <p className="text-gray-400">{feature.description}</p>
                 </div>
               </motion.div>
             ))}
           </div>
         </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="relative mt-16 flex justify-center"
+        >
+          <img
+            src="/lovable-uploads/f8c10894-6065-48f2-a488-2e601335f8e0.png"
+            alt="LeadGen Pro Illustration"
+            className="w-full max-w-2xl rounded-xl shadow-[0_0_30px_rgba(155,135,245,0.2)] hover:shadow-[0_0_50px_rgba(155,135,245,0.4)] transition-all duration-500"
+          />
+        </motion.div>
       </div>
     </div>
   );
