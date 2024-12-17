@@ -2,17 +2,15 @@ import { Suspense, lazy } from "react";
 import { HeroSection } from "@/components/HeroSection";
 import { NeonCursor } from "@/components/NeonCursor";
 import { WaitlistDialog } from "@/components/WaitlistDialog";
-
-// Lazy load non-critical components
-const TestimonialsSection = lazy(() => import("@/components/TestimonialsSection").then(module => ({ default: module.TestimonialsSection })));
-const PricingSection = lazy(() => import("@/components/PricingSection").then(module => ({ default: module.PricingSection })));
-const FooterSection = lazy(() => import("@/components/FooterSection").then(module => ({ default: module.FooterSection })));
-const HowItWorksSection = lazy(() => import("@/components/HowItWorksSection").then(module => ({ default: module.HowItWorksSection })));
-const ContactSection = lazy(() => import("@/components/ContactSection").then(module => ({ default: module.ContactSection })));
-const LeadExplanationSection = lazy(() => import("@/components/LeadExplanationSection").then(module => ({ default: module.LeadExplanationSection })));
-const SocialMediaSection = lazy(() => import("@/components/SocialMediaSection").then(module => ({ default: module.SocialMediaSection })));
-const ExplanationSection = lazy(() => import("@/components/ExplanationSection").then(module => ({ default: module.ExplanationSection })));
-const ValuePropositionSection = lazy(() => import("@/components/ValuePropositionSection").then(module => ({ default: module.ValuePropositionSection })));
+import { SocialMediaSection } from "@/components/SocialMediaSection";
+import { ValuePropositionSection } from "@/components/ValuePropositionSection";
+import { ExplanationSection } from "@/components/ExplanationSection";
+import { LeadExplanationSection } from "@/components/LeadExplanationSection";
+import { HowItWorksSection } from "@/components/HowItWorksSection";
+import { TestimonialsSection } from "@/components/TestimonialsSection";
+import { PricingSection } from "@/components/PricingSection";
+import { FooterSection } from "@/components/FooterSection";
+import { ContactSection } from "@/components/ContactSection";
 
 // Loading component
 const LoadingSpinner = () => (

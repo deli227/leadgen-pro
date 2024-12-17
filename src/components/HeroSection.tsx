@@ -36,10 +36,10 @@ export const HeroSection = () => {
       <div className="absolute inset-0 w-full h-full z-0">
         <spline-viewer
           url="https://prod.spline.design/4a0Qe8fhhRCudmRe/scene.splinecode"
-          loading-anim
+          loading-anim={true}
           events-target="global"
-          autoplay
-          loop
+          autoplay={true}
+          loop={true}
         ></spline-viewer>
       </div>
 
