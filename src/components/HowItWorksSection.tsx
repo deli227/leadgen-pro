@@ -45,26 +45,26 @@ const steps = [
 
 export const HowItWorksSection = () => {
   return (
-    <div className="bg-secondary-dark py-24 sm:py-32">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+    <div className="bg-secondary-dark py-12 sm:py-24">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mx-auto max-w-2xl text-center"
+          className="mx-auto max-w-2xl text-center mb-12 sm:mb-16"
         >
-          <h2 className="text-4xl font-bold tracking-tight text-white sm:text-5xl bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent mb-6">
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white sm:text-5xl bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent mb-4 sm:mb-6">
             Découvrez Comment Fonctionne LeadGen Pro
           </h2>
-          <p className="text-lg leading-8 text-gray-300">
+          <p className="text-base sm:text-lg leading-7 sm:leading-8 text-gray-300">
             Avec LeadGen Pro, la génération de leads qualifiés devient simple, rapide et ultra-efficace. Voici comment notre solution fonctionne étape par étape :
           </p>
         </motion.div>
 
-        <div className="mx-auto mt-16 max-w-7xl">
-          <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
+        <div className="mx-auto mt-8 sm:mt-16">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
             {/* Steps Section */}
-            <div className="space-y-12">
+            <div className="space-y-8 sm:space-y-12">
               {steps.map((step, index) => (
                 <motion.div
                   key={index}
@@ -74,13 +74,13 @@ export const HowItWorksSection = () => {
                   className="relative flex items-start group"
                 >
                   <div className="shrink-0">
-                    <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-primary/10 ring-2 ring-primary/20 transform transition-all group-hover:scale-110 shadow-[0_0_15px_rgba(155,135,245,0.3)] group-hover:shadow-[0_0_25px_rgba(155,135,245,0.6)]">
-                      <step.icon className="h-6 w-6 text-primary" />
+                    <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-primary/10 ring-2 ring-primary/20 transform transition-all group-hover:scale-110 shadow-[0_0_15px_rgba(155,135,245,0.3)] group-hover:shadow-[0_0_25px_rgba(155,135,245,0.6)]">
+                      <step.icon className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
                     </div>
                   </div>
-                  <div className="ml-6">
-                    <h3 className="text-xl font-semibold text-white mb-2">{step.title}</h3>
-                    <p className="text-gray-300">{step.description}</p>
+                  <div className="ml-4 sm:ml-6">
+                    <h3 className="text-lg sm:text-xl font-semibold text-white mb-2">{step.title}</h3>
+                    <p className="text-sm sm:text-base text-gray-300">{step.description}</p>
                   </div>
                 </motion.div>
               ))}
@@ -91,27 +91,45 @@ export const HowItWorksSection = () => {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.5 }}
-              className="relative min-h-[300px] h-full w-full bg-secondary-dark/50 rounded-xl p-4 sm:p-6 ring-2 ring-primary/20"
+              className="relative bg-secondary-dark/50 rounded-xl p-4 sm:p-6 ring-2 ring-primary/20"
+              style={{ height: '500px' }}
             >
-              <h3 className="text-xl font-semibold text-white mb-4 sm:mb-6 text-center">
+              <h3 className="text-lg sm:text-xl font-semibold text-white mb-4 sm:mb-6 text-center">
                 Progression Moyenne d'Acquisition Clients
               </h3>
-              <div className="w-full h-[calc(100%-4rem)] min-h-[250px]">
+              <div className="w-full h-[calc(100%-4rem)]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={data} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
+                  <LineChart 
+                    data={data} 
+                    margin={{ 
+                      top: 20, 
+                      right: 20, 
+                      left: 0, 
+                      bottom: 60 
+                    }}
+                  >
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis 
                       dataKey="name" 
                       stroke="#9CA3AF"
-                      tick={{ fontSize: 12 }}
+                      tick={{ 
+                        fontSize: '12px',
+                        fill: '#9CA3AF',
+                      }}
                       angle={-45}
                       textAnchor="end"
                       height={60}
+                      interval={0}
+                      padding={{ left: 10, right: 10 }}
                     />
                     <YAxis 
                       stroke="#9CA3AF"
-                      tick={{ fontSize: 12 }}
-                      width={30}
+                      tick={{ 
+                        fontSize: '12px',
+                        fill: '#9CA3AF',
+                      }}
+                      width={40}
+                      padding={{ top: 20, bottom: 20 }}
                     />
                     <Tooltip
                       contentStyle={{
@@ -119,8 +137,9 @@ export const HowItWorksSection = () => {
                         border: '1px solid #374151',
                         borderRadius: '0.5rem',
                         fontSize: '12px',
+                        padding: '8px 12px',
                       }}
-                      labelStyle={{ color: '#9CA3AF' }}
+                      labelStyle={{ color: '#9CA3AF', marginBottom: '4px' }}
                       formatter={(value) => [`${value} clients acquis`, 'Clients']}
                     />
                     <Line
@@ -129,7 +148,16 @@ export const HowItWorksSection = () => {
                       name="Clients Acquis"
                       stroke="#9b87f5"
                       strokeWidth={3}
-                      dot={{ fill: '#9b87f5', strokeWidth: 2 }}
+                      dot={{ 
+                        fill: '#9b87f5', 
+                        strokeWidth: 2,
+                        r: 4,
+                      }}
+                      activeDot={{
+                        r: 6,
+                        stroke: '#9b87f5',
+                        strokeWidth: 2,
+                      }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
