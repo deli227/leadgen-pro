@@ -52,18 +52,18 @@ export const HeroSection = () => {
             backgroundImage: "url('/lovable-uploads/78755e93-23d8-47a2-815a-90bfd6291210.png')",
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            filter: 'brightness(0.15)', // Reduced brightness from 0.2 to 0.15 for a slightly darker effect
+            filter: 'brightness(0.15)',
           }}
         />
 
         {/* Content */}
         <div className="w-full max-w-6xl relative z-10 pt-16 sm:pt-24">
-          <div className="grid grid-cols-1 gap-8 items-center">
+          <div className="grid grid-cols-1 gap-12 items-center">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
-              className="flex flex-col items-center justify-center space-y-8 text-center"
+              className="flex flex-col items-center justify-center space-y-12 text-center"
             >
               <HeroTitle />
               <HeroFeatures />
