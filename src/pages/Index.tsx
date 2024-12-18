@@ -10,7 +10,6 @@ import { SocialMediaSection } from "@/components/SocialMediaSection";
 import { ExplanationSection } from "@/components/ExplanationSection";
 import { ValuePropositionSection } from "@/components/ValuePropositionSection";
 import { NeonCursor } from "@/components/NeonCursor";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 export default function Index() {
   return (
@@ -22,7 +21,6 @@ export default function Index() {
         <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
           <WaitlistDialog triggerButton />
         </div>
-        <LanguageSwitcher />
       </div>
       <main>
         <HeroSection />
