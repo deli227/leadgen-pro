@@ -1,29 +1,26 @@
 import { CheckCircle, Users, LineChart, FileText, Zap, Shield, Globe, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
-import { useTranslation } from "react-i18next";
 
 export const FeaturesSection = () => {
-  const { t } = useTranslation();
-
   const features = [
     {
-      name: t("features.scoring.title"),
-      description: t("features.scoring.description"),
+      name: "Scoring intelligent des leads",
+      description: "Notre IA analyse et attribue un score de 1 à 10 à chaque lead en fonction de sa pertinence pour votre activité.",
       icon: Sparkles,
     },
     {
-      name: t("features.analysis.title"),
-      description: t("features.analysis.description"),
+      name: "Analyse approfondie",
+      description: "Obtenez une vue détaillée des forces et faiblesses de chaque entreprise prospect.",
       icon: LineChart,
     },
     {
-      name: t("features.database.title"),
-      description: t("features.database.description"),
+      name: "Base de données centralisée",
+      description: "Toutes vos données sont centralisées et facilement accessibles dans un tableau de bord intuitif.",
       icon: Globe,
     },
     {
-      name: t("features.collaboration.title"),
-      description: t("features.collaboration.description"),
+      name: "Gestion collaborative",
+      description: "Partagez et collaborez efficacement avec votre équipe commerciale.",
       icon: Users,
     },
   ];
@@ -38,10 +35,10 @@ export const FeaturesSection = () => {
           className="mx-auto max-w-2xl text-center"
         >
           <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
-            {t("features.title")}
+            Fonctionnalités principales
           </h2>
           <p className="mt-6 text-lg leading-8 text-gray-300">
-            {t("features.description")}
+            Des outils puissants pour optimiser votre prospection commerciale
           </p>
         </motion.div>
         <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">

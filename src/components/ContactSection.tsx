@@ -1,11 +1,8 @@
 import { motion } from "framer-motion";
 import { Mail } from "lucide-react";
 import { Button } from "./ui/button";
-import { useTranslation } from "react-i18next";
 
 export const ContactSection = () => {
-  const { t } = useTranslation();
-
   return (
     <div className="bg-gradient-to-b from-gray-50 to-white py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -16,10 +13,10 @@ export const ContactSection = () => {
           className="mx-auto max-w-2xl text-center"
         >
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            {t("contact.title")}
+            Besoin d'une solution sur mesure ?
           </h2>
           <p className="mt-6 text-lg leading-8 text-gray-600">
-            {t("contact.description")}
+            Vous êtes une entreprise avec des besoins spécifiques ? Nous pouvons adapter notre solution à vos exigences particulières.
           </p>
         </motion.div>
 
@@ -41,7 +38,7 @@ export const ContactSection = () => {
               </Button>
             </div>
             <p className="mt-6 text-sm text-gray-500">
-              {t("contact.team")}
+              Notre équipe est à votre écoute pour étudier vos besoins et vous proposer une solution adaptée.
             </p>
           </div>
         </motion.div>
