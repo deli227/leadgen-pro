@@ -14,7 +14,7 @@ export const plans = [
   },
   {
     name: "Pro",
-    description: "Pour les professionnels qui veulent plus",
+    description: "Pour les professionnels qui veulent accélérer leur prospection",
     price: "14,99€",
     features: [
       "250 leads par mois",
