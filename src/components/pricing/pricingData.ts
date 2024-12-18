@@ -29,8 +29,8 @@ export const plans = [
     priceId: "price_1OqKHyKez0igoNdCnewVaA8M",
   },
   {
-    name: "Entreprise",
-    description: "Pour les grandes équipes",
+    name: "Agence",
+    description: "Pour les agences marketing et de prospection",
     price: "199€",
     features: [
       "Leads illimités",
