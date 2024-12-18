@@ -36,13 +36,13 @@ export function Auth() {
           <TabsList className="grid w-full grid-cols-2 mb-8 bg-black/20">
             <TabsTrigger 
               value="login" 
-              className="text-white data-[state=inactive]:text-gray-200 data-[state=inactive]:bg-transparent"
+              className="text-white data-[state=inactive]:text-white data-[state=inactive]:bg-transparent"
             >
               Connexion
             </TabsTrigger>
             <TabsTrigger 
               value="signup"
-              className="text-white data-[state=inactive]:text-gray-200 data-[state=inactive]:bg-transparent"
+              className="text-white data-[state=inactive]:text-white data-[state=inactive]:bg-transparent"
             >
               Inscription
             </TabsTrigger>
@@ -89,6 +89,7 @@ export function Auth() {
           <TabsContent value="signup">
             <SupabaseAuth
               supabaseClient={supabase}
+              view="sign_up"
               appearance={{
                 theme: ThemeSupa,
                 variables: {
@@ -124,8 +125,6 @@ export function Auth() {
                   }
                 },
               }}
-              view="sign_up"
-              showPasswordConfirmation={true}
             />
           </TabsContent>
         </Tabs>
