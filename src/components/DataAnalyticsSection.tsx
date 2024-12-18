@@ -3,13 +3,23 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { Database, Mail, Phone, Globe, Search, Brain, TrendingUp } from "lucide-react";
 
 export const DataAnalyticsSection = () => {
-  // Data for the pie chart showing different types of data collection
   const data = [
     { name: "Emails", value: 30, color: "#9b87f5" },
     { name: "Téléphones", value: 25, color: "#F97316" },
     { name: "Sites Web", value: 20, color: "#7E69AB" },
     { name: "Réseaux Sociaux", value: 25, color: "#6E59A5" },
   ];
+
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-secondary-dark/90 backdrop-blur-sm px-4 py-2 rounded-lg border border-primary/20 shadow-xl">
+          <p className="text-white font-medium">{`${payload[0].name}: ${payload[0].value}%`}</p>
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
     <section className="relative py-24 bg-gradient-to-br from-secondary-dark to-black overflow-hidden">
@@ -77,28 +87,28 @@ export const DataAnalyticsSection = () => {
                     outerRadius={140}
                     paddingAngle={5}
                     dataKey="value"
+                    label={({ name, value }) => `${name}: ${value}%`}
+                    labelLine={false}
                   >
                     {data.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
+                      <Cell 
+                        key={`cell-${index}`} 
+                        fill={entry.color}
+                        stroke="rgba(255,255,255,0.1)"
+                        strokeWidth={2}
+                      />
                     ))}
                   </Pie>
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: "rgba(0,0,0,0.8)", 
-                      border: "1px solid rgba(155,135,245,0.2)",
-                      borderRadius: "8px",
-                      color: "#fff"
-                    }}
-                  />
+                  <Tooltip content={<CustomTooltip />} />
                 </PieChart>
               </ResponsiveContainer>
 
               {/* Icons around the chart */}
               <div className="absolute inset-0 pointer-events-none">
-                <Mail className="absolute top-12 left-12 w-8 h-8 text-primary" />
-                <Phone className="absolute top-12 right-12 w-8 h-8 text-accent" />
-                <Globe className="absolute bottom-12 left-12 w-8 h-8 text-primary-dark" />
-                <Search className="absolute bottom-12 right-12 w-8 h-8 text-primary-light" />
+                <Mail className="absolute top-12 left-12 w-8 h-8 text-primary animate-pulse" />
+                <Phone className="absolute top-12 right-12 w-8 h-8 text-accent animate-pulse" />
+                <Globe className="absolute bottom-12 left-12 w-8 h-8 text-primary-dark animate-pulse" />
+                <Search className="absolute bottom-12 right-12 w-8 h-8 text-primary-light animate-pulse" />
               </div>
             </div>
           </motion.div>
