@@ -22,6 +22,15 @@ export const ValuePropositionSection = () => {
             Nous avons créé l'outil que le marché attendait
           </h2>
           
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="text-xl md:text-2xl font-semibold text-white mb-8 p-6 rounded-lg bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 shadow-lg backdrop-blur-sm"
+          >
+            Vos leads ne pourront plus ignorer leurs points faibles, et c'est là que vous devenez leur solution incontournable!
+          </motion.p>
+          
           <p className="text-lg md:text-xl text-gray-300 leading-relaxed mb-8">
             Imaginez : connaître les points faibles exacts de chacun de vos leads, comprendre leurs besoins avant même qu'ils ne les expriment. Avec notre technologie IA, vous frappez fort, vite et juste.
           </p>
