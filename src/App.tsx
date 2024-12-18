@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Index from "./pages/Index";
 import { Dashboard } from "./pages/Dashboard";
 import { AdminDashboard } from "./pages/AdminDashboard";
@@ -20,6 +20,26 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+// Component to handle conversion tracking
+const ConversionTracker = () => {
+  const location = useLocation();
+  
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const isSuccess = searchParams.get('success') === 'true';
+    
+    if (isSuccess && typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', 'conversion', {
+        'send_to': 'AW-16817733892/vsRWCKC3nPgZEISCqdM-',
+        'transaction_id': ''
+      });
+      console.log('Conversion event tracked');
+    }
+  }, [location]);
+
+  return null;
+};
 
 const App = () => {
   const [session, setSession] = useState<Session | null>(null);
@@ -71,6 +91,7 @@ const App = () => {
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <ConversionTracker />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route
