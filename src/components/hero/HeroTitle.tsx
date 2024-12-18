@@ -14,7 +14,8 @@ export const HeroTitle = () => {
         Une première mondiale en prospection B2B
       </h2>
       <p className="mt-8 text-base sm:text-lg md:text-xl leading-8 text-gray-300">
-        Recherchez vos leads qualifiés et lancez une analyse approfondie grâce à notre IA innovante. Obtenez instantanément une vision à 360° : points forts, points faibles, opportunités d'amélioration... Tout ce dont vous avez besoin pour comprendre et conquérir vos prospects est à portée de clic.
+        Propulsez votre marketing et votre prospection dans une nouvelle dimension avec notre IA révolutionnaire !
+        Repérez vos leads qualifiés en un instant et obtenez une vision à 360° : forces à exploiter, faiblesses à dépasser, opportunités à saisir. Transformez chaque prospect en succès grâce à des insights percutants et un avantage imbattable. Prêt à dominer votre marché ? Passez à la vitesse supérieure dès maintenant !
       </p>
       <CountdownTimer />
     </div>
