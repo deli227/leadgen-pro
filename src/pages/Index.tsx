@@ -9,7 +9,6 @@ import { WaitlistDialog } from "@/components/WaitlistDialog";
 import { SocialMediaSection } from "@/components/SocialMediaSection";
 import { ExplanationSection } from "@/components/ExplanationSection";
 import { ValuePropositionSection } from "@/components/ValuePropositionSection";
-import { DataAnalyticsSection } from "@/components/DataAnalyticsSection";
 import { NeonCursor } from "@/components/NeonCursor";
 
 export default function Index() {
@@ -27,7 +26,6 @@ export default function Index() {
         <HeroSection />
         <SocialMediaSection />
         <ValuePropositionSection />
-        <DataAnalyticsSection />
         <ExplanationSection />
         <LeadExplanationSection />
         <HowItWorksSection />
