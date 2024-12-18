@@ -22,21 +22,14 @@ export const ValuePropositionSection = () => {
             Nous avons créé l'outil que le marché attendait
           </h2>
           
-          {/* Nouveau texte impactant avec animation et style distinctif */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{
-              duration: 0.8,
-              ease: "easeOut",
-              delay: 0.2
-            }}
-            className="my-12 p-8 rounded-xl bg-gradient-to-r from-primary/10 via-accent/5 to-primary/10 border border-primary/20 shadow-[0_0_30px_rgba(155,135,245,0.2)] hover:shadow-[0_0_50px_rgba(155,135,245,0.3)] transition-all duration-500"
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="text-xl md:text-2xl font-semibold text-white mb-8 p-6 rounded-lg bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 shadow-lg backdrop-blur-sm"
           >
-            <p className="text-xl md:text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-primary via-white to-accent animate-gradient leading-relaxed">
-              LeadGen Pro, c'est la fin des leads aléatoires. Chaque contact est qualifié, analysé et prêt à passer à l'action. 250 leads par mois ? C'est une mine d'or sur-mesure pour exploser vos résultats et dominer votre marché.
-            </p>
-          </motion.div>
+            Vos leads ne pourront plus ignorer leurs points faibles, et c'est là que vous devenez leur solution incontournable!
+          </motion.p>
           
           <p className="text-lg md:text-xl text-gray-300 leading-relaxed mb-8">
             Imaginez : connaître les points faibles exacts de chacun de vos leads, comprendre leurs besoins avant même qu'ils ne les expriment. Avec notre technologie IA, vous frappez fort, vite et juste.
