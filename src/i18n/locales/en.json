@@ -14,6 +14,10 @@
     "profile": "Profile",
     "logout": "Logout"
   },
+  "hero": {
+    "title": "A World First in B2B Prospecting",
+    "mainText": "Propel your marketing and prospecting into a new dimension with our revolutionary AI! Instantly identify qualified leads and get a 360° view: strengths to leverage, weaknesses to overcome, opportunities to seize. Transform each prospect into success with powerful insights and an unbeatable advantage. Ready to dominate your market? Step up to the next level now!"
+  },
   "leads": {
     "addToAnalytics": "Add to Analytics",
     "addToExport": "Add to Export",
