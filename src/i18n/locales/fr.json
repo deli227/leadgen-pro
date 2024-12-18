@@ -16,15 +16,83 @@
   },
   "hero": {
     "title": "Une première mondiale en prospection B2B",
-    "mainText": "Propulsez votre marketing et votre prospection dans une nouvelle dimension avec notre IA révolutionnaire ! Repérez vos leads qualifiés en un instant et obtenez une vision à 360° : forces à exploiter, faiblesses à dépasser, opportunités à saisir. Transformez chaque prospect en succès grâce à des insights percutants et un avantage imbattable. Prêt à dominer votre marché ? Passez à la vitesse supérieure dès maintenant !"
+    "mainText": "Propulsez votre marketing et votre prospection dans une nouvelle dimension avec notre IA révolutionnaire ! Repérez vos leads qualifiés en un instant et obtenez une vision à 360° : forces à exploiter, faiblesses à dépasser, opportunités à saisir. Transformez chaque prospect en succès grâce à des insights percutants et un avantage imbattable. Prêt à dominer votre marché ? Passez à la vitesse supérieure dès maintenant !",
+    "features": {
+      "title": "Fonctionnalités principales",
+      "scoring": "Scoring intelligent des leads",
+      "analysis": "Analyse approfondie",
+      "database": "Base de données centralisée",
+      "collaboration": "Gestion collaborative"
+    }
   },
-  "leads": {
-    "addToAnalytics": "Ajouter aux analytiques",
-    "addToExport": "Ajouter à l'export",
-    "company": "Entreprise",
-    "email": "Email",
-    "phone": "Téléphone",
-    "score": "Score",
-    "industry": "Industrie"
+  "features": {
+    "title": "Fonctionnalités principales",
+    "description": "Des outils puissants pour optimiser votre prospection commerciale",
+    "scoring": {
+      "title": "Scoring intelligent des leads",
+      "description": "Notre IA analyse et attribue un score de 1 à 10 à chaque lead en fonction de sa pertinence pour votre activité."
+    },
+    "analysis": {
+      "title": "Analyse approfondie",
+      "description": "Obtenez une vue détaillée des forces et faiblesses de chaque entreprise prospect."
+    },
+    "database": {
+      "title": "Base de données centralisée",
+      "description": "Toutes vos données sont centralisées et facilement accessibles dans un tableau de bord intuitif."
+    },
+    "collaboration": {
+      "title": "Gestion collaborative",
+      "description": "Partagez et collaborez efficacement avec votre équipe commerciale."
+    }
+  },
+  "pricing": {
+    "title": "Des forfaits adaptés à vos besoins",
+    "subtitle": "Choisissez le plan qui correspond le mieux à vos objectifs de prospection",
+    "monthly": "par mois",
+    "startTrial": "Commencer l'essai",
+    "contactUs": "Nous contacter",
+    "plans": {
+      "free": {
+        "name": "Gratuit",
+        "description": "Pour découvrir la plateforme",
+        "features": [
+          "5 leads par jour",
+          "Analyse basique",
+          "Export CSV"
+        ]
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "Pour les professionnels",
+        "features": [
+          "50 leads par jour",
+          "Analyse avancée",
+          "Export personnalisé",
+          "Support prioritaire"
+        ]
+      },
+      "enterprise": {
+        "name": "Entreprise",
+        "description": "Pour les grandes équipes",
+        "features": [
+          "Leads illimités",
+          "API dédiée",
+          "Support dédié",
+          "Formation personnalisée"
+        ]
+      }
+    }
+  },
+  "contact": {
+    "title": "Besoin d'une solution sur mesure ?",
+    "description": "Vous êtes une entreprise avec des besoins spécifiques ? Nous pouvons adapter notre solution à vos exigences particulières.",
+    "team": "Notre équipe est à votre écoute pour étudier vos besoins et vous proposer une solution adaptée."
+  },
+  "testimonials": {
+    "title": "Ils l'ont déjà testé en avant-première",
+    "subtitle": "Découvrez les retours de nos premiers utilisateurs"
+  },
+  "footer": {
+    "rights": "Tous droits réservés."
   }
 }

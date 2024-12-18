@@ -16,15 +16,83 @@
   },
   "hero": {
     "title": "A World First in B2B Prospecting",
-    "mainText": "Propel your marketing and prospecting into a new dimension with our revolutionary AI! Instantly identify qualified leads and get a 360° view: strengths to leverage, weaknesses to overcome, opportunities to seize. Transform each prospect into success with powerful insights and an unbeatable advantage. Ready to dominate your market? Step up to the next level now!"
+    "mainText": "Propel your marketing and prospecting into a new dimension with our revolutionary AI! Instantly identify qualified leads and get a 360° view: strengths to leverage, weaknesses to overcome, opportunities to seize. Transform each prospect into success with powerful insights and an unbeatable advantage. Ready to dominate your market? Step up to the next level now!",
+    "features": {
+      "title": "Key Features",
+      "scoring": "Intelligent Lead Scoring",
+      "analysis": "In-depth Analysis",
+      "database": "Centralized Database",
+      "collaboration": "Collaborative Management"
+    }
   },
-  "leads": {
-    "addToAnalytics": "Add to Analytics",
-    "addToExport": "Add to Export",
-    "company": "Company",
-    "email": "Email",
-    "phone": "Phone",
-    "score": "Score",
-    "industry": "Industry"
+  "features": {
+    "title": "Key Features",
+    "description": "Powerful tools to optimize your sales prospecting",
+    "scoring": {
+      "title": "Intelligent Lead Scoring",
+      "description": "Our AI analyzes and assigns a score from 1 to 10 to each lead based on their relevance to your business."
+    },
+    "analysis": {
+      "title": "In-depth Analysis",
+      "description": "Get a detailed view of the strengths and weaknesses of each prospect company."
+    },
+    "database": {
+      "title": "Centralized Database",
+      "description": "All your data is centralized and easily accessible in an intuitive dashboard."
+    },
+    "collaboration": {
+      "title": "Collaborative Management",
+      "description": "Share and collaborate effectively with your sales team."
+    }
+  },
+  "pricing": {
+    "title": "Plans Tailored to Your Needs",
+    "subtitle": "Choose the plan that best matches your prospecting goals",
+    "monthly": "per month",
+    "startTrial": "Start Trial",
+    "contactUs": "Contact Us",
+    "plans": {
+      "free": {
+        "name": "Free",
+        "description": "To discover the platform",
+        "features": [
+          "5 leads per day",
+          "Basic analysis",
+          "CSV export"
+        ]
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "For professionals",
+        "features": [
+          "50 leads per day",
+          "Advanced analysis",
+          "Custom export",
+          "Priority support"
+        ]
+      },
+      "enterprise": {
+        "name": "Enterprise",
+        "description": "For large teams",
+        "features": [
+          "Unlimited leads",
+          "Dedicated API",
+          "Dedicated support",
+          "Custom training"
+        ]
+      }
+    }
+  },
+  "contact": {
+    "title": "Need a Custom Solution?",
+    "description": "Are you a business with specific needs? We can adapt our solution to your particular requirements.",
+    "team": "Our team is here to understand your needs and propose a tailored solution."
+  },
+  "testimonials": {
+    "title": "They've Already Tested It",
+    "subtitle": "Discover feedback from our first users"
+  },
+  "footer": {
+    "rights": "All rights reserved."
   }
 }

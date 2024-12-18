@@ -1,7 +1,10 @@
 import { Star, Quote } from "lucide-react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 export const TestimonialsSection = () => {
+  const { t } = useTranslation();
+  
   const testimonials = [
     {
       content: "Grâce à LeadGen Pro Beta, nous avons augmenté notre taux de conversion de 25% en 3 mois. L'outil est devenu indispensable pour notre équipe commerciale.",
@@ -36,10 +39,10 @@ export const TestimonialsSection = () => {
           className="mx-auto max-w-xl text-center"
         >
           <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            Ils l'ont déjà testé en avant-première
+            {t("testimonials.title")}
           </h2>
           <p className="mt-4 text-lg text-gray-300">
-            Découvrez les retours de nos premiers utilisateurs
+            {t("testimonials.subtitle")}
           </p>
         </motion.div>
         <div className="mx-auto mt-16 flow-root max-w-2xl sm:mt-20 lg:mx-0 lg:max-w-none">
