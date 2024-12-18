@@ -1,4 +1,4 @@
-import { Mail, MapPin, Phone, Globe } from "lucide-react"
+import { Mail, MapPin, Phone, Globe, Facebook, Instagram, Linkedin, Twitter } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { LeadScoreDisplay } from "../LeadScoreDisplay"
 import { motion } from "framer-motion"
@@ -69,16 +69,17 @@ export function LeadCard({ lead, onAddToAnalytics }: LeadCardProps) {
           )}
         </div>
 
-        {(lead.socialMedia?.linkedin || lead.socialMedia?.twitter) && (
+        {lead.socialMedia && (
           <div className="pt-3 border-t border-primary/10 flex gap-3">
             {lead.socialMedia.linkedin && (
               <a 
                 href={lead.socialMedia.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-primary-light/70 hover:text-primary hover:underline transition-colors"
+                className="text-primary-light/70 hover:text-primary transition-colors"
+                title="LinkedIn"
               >
-                LinkedIn
+                <Linkedin className="h-4 w-4" />
               </a>
             )}
             {lead.socialMedia.twitter && (
@@ -86,9 +87,32 @@ export function LeadCard({ lead, onAddToAnalytics }: LeadCardProps) {
                 href={lead.socialMedia.twitter}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-primary-light/70 hover:text-primary hover:underline transition-colors"
+                className="text-primary-light/70 hover:text-primary transition-colors"
+                title="X (Twitter)"
               >
-                Twitter
+                <Twitter className="h-4 w-4" />
+              </a>
+            )}
+            {lead.socialMedia.facebook && (
+              <a 
+                href={lead.socialMedia.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary-light/70 hover:text-primary transition-colors"
+                title="Facebook"
+              >
+                <Facebook className="h-4 w-4" />
+              </a>
+            )}
+            {lead.socialMedia.instagram && (
+              <a 
+                href={lead.socialMedia.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary-light/70 hover:text-primary transition-colors"
+                title="Instagram"
+              >
+                <Instagram className="h-4 w-4" />
               </a>
             )}
           </div>

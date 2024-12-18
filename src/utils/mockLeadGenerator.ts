@@ -26,6 +26,16 @@ const generateRandomWeaknesses = () => {
   return faker.helpers.arrayElements(allWeaknesses, { min: 1, max: 3 });
 };
 
+const generateSocialMediaLinks = (companyName: string) => {
+  const sanitizedName = companyName.toLowerCase().replace(/[^a-z0-9]/g, '');
+  return {
+    linkedin: `https://linkedin.com/company/${sanitizedName}`,
+    twitter: `https://twitter.com/${sanitizedName}`,
+    facebook: `https://facebook.com/${sanitizedName}`,
+    instagram: `https://instagram.com/${sanitizedName}`
+  };
+};
+
 export const generateMockLead = () => {
   const company = faker.company.name();
   const domain = faker.internet.domainName();
@@ -37,14 +47,12 @@ export const generateMockLead = () => {
     phone: faker.phone.number(),
     address: faker.location.streetAddress(),
     qualification: faker.number.int({ min: 3, max: 10 }),
-    socialMedia: {
-      linkedin: `https://linkedin.com/company/${company.toLowerCase().replace(/\s+/g, '-')}`,
-      twitter: `https://twitter.com/${company.toLowerCase().replace(/\s+/g, '')}`
-    },
+    socialMedia: generateSocialMediaLinks(company),
     score: faker.number.int({ min: 5, max: 10 }),
     industry: faker.helpers.arrayElement(industries),
     strengths: generateRandomStrengths(),
-    weaknesses: generateRandomWeaknesses()
+    weaknesses: generateRandomWeaknesses(),
+    website: `https://www.${domain}`
   };
 };
 
