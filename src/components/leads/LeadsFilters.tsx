@@ -6,6 +6,10 @@ import { FiltersTabContent } from "./filters/FiltersTabContent"
 import { ExportTabContent } from "./filters/ExportTabContent"
 import { SearchInput } from "./filters/SearchInput"
 import { LocationFilters } from "./filters/LocationFilters"
+import { IconButton } from "../buttons/IconButton"
+import { Search } from "lucide-react"
+import { supabase } from "@/integrations/supabase/client"
+import { toast } from "sonner"
 
 interface LeadsFiltersProps {
   filters: {
@@ -34,6 +38,28 @@ export function LeadsFilters({
   exportLeads,
   onRemoveFromExport
 }: LeadsFiltersProps) {
+  const handleSearch = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) throw new Error('Session non trouvée')
+
+      const response = await supabase.functions.invoke('generate-leads', {
+        body: { filters },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
+      })
+
+      if (response.error) throw response.error
+
+      toast.success("Recherche lancée avec succès")
+      window.location.reload()
+    } catch (error) {
+      console.error('Erreur:', error)
+      toast.error("Impossible de lancer la recherche. Veuillez réessayer.")
+    }
+  }
+
   return (
     <Tabs defaultValue="filters" className="w-full">
       <TabsList className="grid w-full grid-cols-4 bg-gradient-to-r from-black to-secondary-dark border border-primary-light/20 rounded-t-xl overflow-hidden shadow-lg">
@@ -108,10 +134,20 @@ export function LeadsFilters({
             <p className="text-primary-light/70 mb-4">
               Entrez le nom de l'entreprise pour obtenir toutes les informations détaillées la concernant.
             </p>
-            <SearchInput 
-              value={filters.search}
-              onChange={(value) => setFilters({ ...filters, search: value })}
-            />
+            <div className="space-y-4">
+              <SearchInput 
+                value={filters.search}
+                onChange={(value) => setFilters({ ...filters, search: value })}
+              />
+              <div className="flex justify-end">
+                <IconButton
+                  icon={Search}
+                  label="Lancer la recherche"
+                  onClick={handleSearch}
+                  className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
+                />
+              </div>
+            </div>
           </div>
 
           <LocationFilters 
