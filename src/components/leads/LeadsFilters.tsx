@@ -10,6 +10,7 @@ import { IconButton } from "../buttons/IconButton"
 import { Search } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 import { toast } from "sonner"
+import { IndustrySelect } from "./filters/IndustrySelect"
 
 interface LeadsFiltersProps {
   filters: {
@@ -156,6 +157,16 @@ export function LeadsFilters({
             onCountryChange={(value) => setFilters({ ...filters, country: value, city: "all" })}
             onCityChange={(value) => setFilters({ ...filters, city: value })}
           />
+
+          <div className="p-4 rounded-lg bg-black/40 border border-primary/20">
+            <p className="text-primary-light/70 mb-4">
+              Sélectionnez le secteur d'activité pour affiner votre recherche.
+            </p>
+            <IndustrySelect 
+              value={filters.industry}
+              onChange={(value) => setFilters({ ...filters, industry: value })}
+            />
+          </div>
         </motion.div>
       </TabsContent>
 
