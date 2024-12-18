@@ -22,21 +22,21 @@ export const DataAnalyticsSection = () => {
   };
 
   return (
-    <section className="relative py-24 bg-gradient-to-br from-secondary-dark to-black overflow-hidden">
+    <section className="relative py-12 sm:py-24 bg-gradient-to-br from-secondary-dark to-black overflow-hidden">
       {/* Background effects */}
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.2)_0%,rgba(0,0,0,0.6)_100%)]" />
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full filter blur-3xl animate-pulse" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent/20 rounded-full filter blur-3xl animate-pulse" />
 
       <div className="container relative z-10 mx-auto px-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          {/* Chart - Now on the left */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          {/* Chart */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="relative h-[400px] w-full order-2 lg:order-1"
+            className="relative h-[300px] sm:h-[400px] w-full order-2 lg:order-1"
           >
             <div className="absolute inset-0 bg-secondary-dark/30 backdrop-blur-sm rounded-xl border border-primary/10 shadow-lg">
               <ResponsiveContainer width="100%" height="100%">
@@ -45,8 +45,8 @@ export const DataAnalyticsSection = () => {
                     data={data}
                     cx="50%"
                     cy="50%"
-                    innerRadius={80}
-                    outerRadius={140}
+                    innerRadius={60}
+                    outerRadius={Math.min(100, window.innerWidth * 0.2)}
                     paddingAngle={5}
                     dataKey="value"
                     label={({ name, value }) => `${name}: ${value}%`}
@@ -67,46 +67,46 @@ export const DataAnalyticsSection = () => {
 
               {/* Icons around the chart */}
               <div className="absolute inset-0 pointer-events-none">
-                <Mail className="absolute top-12 left-12 w-8 h-8 text-primary animate-pulse" />
-                <Phone className="absolute top-12 right-12 w-8 h-8 text-accent animate-pulse" />
-                <Globe className="absolute bottom-12 left-12 w-8 h-8 text-primary-dark animate-pulse" />
-                <Search className="absolute bottom-12 right-12 w-8 h-8 text-primary-light animate-pulse" />
+                <Mail className="absolute top-8 sm:top-12 left-8 sm:left-12 w-6 h-6 sm:w-8 sm:h-8 text-primary animate-pulse" />
+                <Phone className="absolute top-8 sm:top-12 right-8 sm:right-12 w-6 h-6 sm:w-8 sm:h-8 text-accent animate-pulse" />
+                <Globe className="absolute bottom-8 sm:bottom-12 left-8 sm:left-12 w-6 h-6 sm:w-8 sm:h-8 text-primary-dark animate-pulse" />
+                <Search className="absolute bottom-8 sm:bottom-12 right-8 sm:right-12 w-6 h-6 sm:w-8 sm:h-8 text-primary-light animate-pulse" />
               </div>
             </div>
           </motion.div>
 
-          {/* Text Content - Now on the right */}
+          {/* Text Content */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="space-y-8 order-1 lg:order-2"
+            className="space-y-6 sm:space-y-8 order-1 lg:order-2 px-2 sm:px-4"
           >
-            <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary via-primary-light to-accent bg-clip-text text-transparent">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary via-primary-light to-accent bg-clip-text text-transparent">
               Données Complètes, Décisions Éclairées
             </h2>
             
-            <div className="space-y-6 text-gray-300">
-              <div className="flex items-start gap-4">
-                <Database className="w-6 h-6 text-primary mt-1 flex-shrink-0" />
-                <p className="text-lg">
+            <div className="space-y-4 sm:space-y-6 text-gray-300">
+              <div className="flex items-start gap-3 sm:gap-4">
+                <Database className="w-5 h-5 sm:w-6 sm:h-6 text-primary mt-1 flex-shrink-0" />
+                <p className="text-base sm:text-lg">
                   Accédez à des informations complètes sur vos leads : emails directs, numéros de téléphone, 
                   sites internet et tous leurs réseaux sociaux.
                 </p>
               </div>
               
-              <div className="flex items-start gap-4">
-                <Brain className="w-6 h-6 text-primary mt-1 flex-shrink-0" />
-                <p className="text-lg">
+              <div className="flex items-start gap-3 sm:gap-4">
+                <Brain className="w-5 h-5 sm:w-6 sm:h-6 text-primary mt-1 flex-shrink-0" />
+                <p className="text-base sm:text-lg">
                   Ensuite lancez l'analyse avec notre IA avancée qui scanne, analyse et identifie les meilleures opportunités pour vous 
                   en quelques secondes.
                 </p>
               </div>
               
-              <div className="flex items-start gap-4">
-                <TrendingUp className="w-6 h-6 text-primary mt-1 flex-shrink-0" />
-                <p className="text-lg">
+              <div className="flex items-start gap-3 sm:gap-4">
+                <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-primary mt-1 flex-shrink-0" />
+                <p className="text-base sm:text-lg">
                   Prenez des décisions stratégiques en un temps record et voyez vos conversions décoller.
                 </p>
               </div>
