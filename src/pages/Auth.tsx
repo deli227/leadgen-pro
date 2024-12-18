@@ -33,9 +33,19 @@ export function Auth() {
           Bienvenue
         </h1>
         <Tabs defaultValue="login" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-8">
-            <TabsTrigger value="login">Connexion</TabsTrigger>
-            <TabsTrigger value="signup">Inscription</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 mb-8 bg-black/20">
+            <TabsTrigger 
+              value="login" 
+              className="text-white data-[state=inactive]:text-gray-200 data-[state=inactive]:bg-transparent"
+            >
+              Connexion
+            </TabsTrigger>
+            <TabsTrigger 
+              value="signup"
+              className="text-white data-[state=inactive]:text-gray-200 data-[state=inactive]:bg-transparent"
+            >
+              Inscription
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="login">
             <SupabaseAuth
@@ -45,8 +55,8 @@ export function Auth() {
                 variables: {
                   default: {
                     colors: {
-                      brand: '#646cff',
-                      brandAccent: '#747bff',
+                      brand: '#9b87f5',
+                      brandAccent: '#7E69AB',
                       inputText: 'white',
                       inputBackground: 'rgba(255, 255, 255, 0.1)',
                       inputBorder: 'rgba(255, 255, 255, 0.2)',
@@ -58,6 +68,7 @@ export function Auth() {
                 className: {
                   input: 'text-white',
                   label: 'text-white',
+                  button: 'text-white bg-primary hover:bg-primary-dark',
                 }
               }}
               providers={[]}
@@ -83,8 +94,8 @@ export function Auth() {
                 variables: {
                   default: {
                     colors: {
-                      brand: '#646cff',
-                      brandAccent: '#747bff',
+                      brand: '#9b87f5',
+                      brandAccent: '#7E69AB',
                       inputText: 'white',
                       inputBackground: 'rgba(255, 255, 255, 0.1)',
                       inputBorder: 'rgba(255, 255, 255, 0.2)',
@@ -96,6 +107,7 @@ export function Auth() {
                 className: {
                   input: 'text-white',
                   label: 'text-white',
+                  button: 'text-white bg-primary hover:bg-primary-dark',
                 }
               }}
               providers={[]}
@@ -104,6 +116,7 @@ export function Auth() {
                   sign_up: {
                     email_label: 'Email',
                     password_label: 'Mot de passe',
+                    password_label_confirmation: 'Confirmer le mot de passe',
                     button_label: "S'inscrire",
                     loading_button_label: 'Inscription en cours...',
                     social_provider_text: "S'inscrire avec {{provider}}",
@@ -111,6 +124,8 @@ export function Auth() {
                   }
                 },
               }}
+              view="sign_up"
+              showPasswordConfirmation={true}
             />
           </TabsContent>
         </Tabs>
