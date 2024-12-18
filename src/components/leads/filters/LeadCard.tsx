@@ -1,4 +1,4 @@
-import { Mail, MapPin, Phone } from "lucide-react"
+import { Mail, MapPin, Phone, Globe } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { LeadScoreDisplay } from "../LeadScoreDisplay"
 import { motion } from "framer-motion"
@@ -51,6 +51,20 @@ export function LeadCard({ lead, onAddToAnalytics }: LeadCardProps) {
             <div className="flex items-center gap-2 text-primary-light/80 hover:text-primary-light transition-colors">
               <MapPin className="h-4 w-4 flex-shrink-0" />
               <span className="text-sm line-clamp-1">{lead.address}</span>
+            </div>
+          )}
+
+          {lead.website && (
+            <div className="flex items-center gap-2 text-primary-light/80 hover:text-primary-light transition-colors">
+              <Globe className="h-4 w-4 flex-shrink-0" />
+              <a 
+                href={lead.website} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-sm hover:underline line-clamp-1"
+              >
+                {lead.website.replace('https://', '')}
+              </a>
             </div>
           )}
         </div>

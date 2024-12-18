@@ -92,6 +92,7 @@ export type Database = {
           strengths: string[] | null
           user_id: string | null
           weaknesses: string[] | null
+          website: string | null
         }
         Insert: {
           address?: string | null
@@ -107,6 +108,7 @@ export type Database = {
           strengths?: string[] | null
           user_id?: string | null
           weaknesses?: string[] | null
+          website?: string | null
         }
         Update: {
           address?: string | null
@@ -122,6 +124,7 @@ export type Database = {
           strengths?: string[] | null
           user_id?: string | null
           weaknesses?: string[] | null
+          website?: string | null
         }
         Relationships: [
           {

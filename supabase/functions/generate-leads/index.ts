@@ -44,7 +44,8 @@ const generateMockLead = (userId: string) => {
     score: faker.number.int({ min: 5, max: 10 }),
     industry: faker.helpers.arrayElement(industries),
     strengths: generateRandomStrengths(),
-    weaknesses: generateRandomWeaknesses()
+    weaknesses: generateRandomWeaknesses(),
+    website: `https://www.${domain}` // Ajout de la génération du site web
   }
 }
 
