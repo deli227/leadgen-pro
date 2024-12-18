@@ -116,7 +116,7 @@ export function Auth() {
                   sign_up: {
                     email_label: 'Email',
                     password_label: 'Mot de passe',
-                    password_label_confirmation: 'Confirmer le mot de passe',
+                    confirmation_text: 'Confirmer le mot de passe',
                     button_label: "S'inscrire",
                     loading_button_label: 'Inscription en cours...',
                     social_provider_text: "S'inscrire avec {{provider}}",
