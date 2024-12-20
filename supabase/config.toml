@@ -1,2 +1,4 @@
+project_id = "rbsuobpaqwtmiesxwcaw"
+
 [functions.generate-leads]
 verify_jwt = true
