@@ -5,11 +5,18 @@ export async function searchWithBrightData(searchQuery: string, leadCount: numbe
   const brightDataPassword = Deno.env.get('BRIGHT_DATA_PASSWORD');
   
   if (!brightDataUsername || !brightDataPassword) {
-    console.error('Erreur: Identifiants Bright Data non trouvés dans les variables d\'environnement');
+    console.error('Error: Bright Data credentials not found in environment variables:', {
+      username: !!brightDataUsername,
+      password: !!brightDataPassword
+    });
     throw new Error('Configuration error: Bright Data credentials not found');
   }
 
-  console.log('Recherche avec la requête:', searchQuery);
+  console.log('Searching with query:', searchQuery);
+  console.log('Using credentials:', {
+    username: brightDataUsername.substring(0, 10) + '...',
+    passwordLength: brightDataPassword.length
+  });
   
   try {
     const proxyUrl = 'brd.superproxy.io:33335';
@@ -21,22 +28,21 @@ export async function searchWithBrightData(searchQuery: string, leadCount: numbe
         'Accept-Encoding': 'gzip, deflate',
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
       },
-      signal: AbortSignal.timeout(30000), // 30 seconds timeout
+      signal: AbortSignal.timeout(30000) // 30 seconds timeout
     });
 
-    console.log('Status code de la réponse:', response.status);
+    console.log('Response status code:', response.status);
     
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Réponse d\'erreur complète:', errorText);
+      console.error('Complete error response:', errorText);
       throw new Error(`Search error: ${response.status} - ${errorText}`);
     }
 
     const html = await response.text();
-    console.log('Longueur de la réponse HTML:', html.length);
+    console.log('HTML response length:', html.length);
 
     // Parse the HTML to extract organic results
-    // This is a basic example - you might want to use a proper HTML parser
     const results = [];
     const matches = html.match(/<div class="g">(.*?)<\/div>/g);
     
@@ -54,10 +60,10 @@ export async function searchWithBrightData(searchQuery: string, leadCount: numbe
       }
     }
 
-    console.log('Nombre de résultats extraits:', results.length);
+    console.log('Number of extracted results:', results.length);
     return results;
   } catch (error) {
-    console.error('Erreur détaillée lors de la recherche:', error);
+    console.error('Detailed search error:', error);
     throw error;
   }
 }
