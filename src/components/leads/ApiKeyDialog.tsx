@@ -1,12 +1,10 @@
 import { useState } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { useToast } from "@/components/ui/use-toast"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { useToast } from "@/hooks/use-toast"
 import { Settings } from "lucide-react"
 
 export function ApiKeyDialog() {
-  const [apiKey, setApiKey] = useState("")
   const { toast } = useToast()
 
   const handleSaveApiKey = () => {
@@ -19,9 +17,8 @@ export function ApiKeyDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="bg-primary hover:bg-primary-dark text-white border-none">
-          <Settings className="h-4 w-4 mr-2" />
-          Configurer API
+        <Button variant="outline" size="icon" className="border-primary-light">
+          <Settings className="h-4 w-4 text-primary-light" />
         </Button>
       </DialogTrigger>
       <DialogContent className="bg-secondary-dark border-primary-light">
