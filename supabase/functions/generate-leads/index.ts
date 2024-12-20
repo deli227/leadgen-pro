@@ -18,21 +18,24 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
     )
 
-    // Récupérer les secrets
-    const { data: secrets, error: secretsError } = await supabaseClient
+    // Récupérer le secret
+    const { data: secret, error: secretError } = await supabaseClient
       .from('secrets')
-      .select('value')
-      .in('name', ['BRIGHT_DATA_PROXY_URL'])
+      .select('*')
+      .eq('name', 'BRIGHT_DATA_PROXY_URL')
+      .single()
 
-    if (secretsError) {
-      throw new Error(`Error fetching secrets: ${secretsError.message}`)
+    if (secretError) {
+      console.error('Error fetching secret:', secretError)
+      throw new Error(`Error fetching secret: ${secretError.message}`)
     }
 
-    const proxyUrl = secrets.find(s => s.name === 'BRIGHT_DATA_PROXY_URL')?.value
-
-    if (!proxyUrl) {
+    if (!secret || !secret.value) {
+      console.error('No proxy URL found in secrets')
       throw new Error('Bright Data proxy URL not found')
     }
+
+    console.log('Secret retrieved successfully')
 
     // Récupérer les paramètres de la requête
     const { filters } = await req.json()
@@ -45,7 +48,7 @@ serve(async (req) => {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
-      proxy: proxyUrl,
+      proxy: secret.value,
     }
 
     // Exemple de requête à travers le proxy
