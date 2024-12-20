@@ -9,12 +9,14 @@ export async function searchWithBrightData(searchQuery: string, leadCount: numbe
   }
 
   console.log('Appel de l\'API Bright Data avec la requête:', searchQuery);
+  console.log('Utilisation de la clé API:', brightDataApiKey.substring(0, 5) + '...');
   
   const response = await fetch('https://api.brightdata.com/serp/google', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${brightDataApiKey}`,
+      'apikey': brightDataApiKey, // Ajout de la clé API dans le header 'apikey'
     },
     body: JSON.stringify({
       query: searchQuery,
@@ -27,6 +29,8 @@ export async function searchWithBrightData(searchQuery: string, leadCount: numbe
   if (!response.ok) {
     const errorText = await response.text();
     console.error('Erreur Bright Data:', errorText);
+    console.error('Status:', response.status);
+    console.error('Headers:', Object.fromEntries(response.headers.entries()));
     throw new Error(`Bright Data API error: ${errorText}`);
   }
 
