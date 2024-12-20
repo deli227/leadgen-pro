@@ -29,21 +29,30 @@ export function FiltersTabContent({
       setIsGenerating(true)
 
       const { data: { session } } = await supabase.auth.getSession()
-      if (!session) throw new Error('Session non trouvée')
+      if (!session) {
+        toast.error("Erreur d'authentification", {
+          description: "Veuillez vous reconnecter."
+        })
+        return
+      }
 
       console.log('Envoi des paramètres à generate-leads:', filters)
-      const response = await supabase.functions.invoke('generate-leads', {
+      const { data, error } = await supabase.functions.invoke('generate-leads', {
         body: { filters },
         headers: {
           Authorization: `Bearer ${session.access_token}`
         }
       })
 
-      console.log('Réponse de generate-leads:', response)
+      console.log('Réponse de generate-leads:', { data, error })
 
-      if (response.error) {
-        console.error('Erreur détaillée:', response.error)
-        throw new Error(response.error.message || 'Erreur lors de la génération des leads')
+      if (error) {
+        console.error('Erreur détaillée:', error)
+        throw new Error(error.message || 'Erreur lors de la génération des leads')
+      }
+
+      if (!data || !data.success) {
+        throw new Error('La réponse de l\'API est invalide')
       }
 
       toast.success("Génération réussie", {
