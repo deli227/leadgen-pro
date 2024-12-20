@@ -9,40 +9,45 @@ export async function searchWithBrightData(searchQuery: string, leadCount: numbe
   }
 
   console.log('Appel de l\'API Bright Data avec la requête:', searchQuery);
-  console.log('Utilisation de la clé API:', brightDataApiKey.substring(0, 5) + '...');
+  console.log('Nombre de leads demandés:', leadCount);
   
-  const response = await fetch('https://api.brightdata.com/serp/google', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${brightDataApiKey}`,
-      'apikey': brightDataApiKey, // Ajout de la clé API dans le header 'apikey'
-    },
-    body: JSON.stringify({
-      query: searchQuery,
-      domain: 'google.com',
-      num_pages: Math.ceil(leadCount / 10),
-      parse: true
-    }),
-  });
+  try {
+    const response = await fetch('https://api.brightdata.com/serp/google', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${brightDataApiKey}`,
+      },
+      body: JSON.stringify({
+        query: searchQuery,
+        domain: 'google.com',
+        num_pages: Math.ceil(leadCount / 10),
+        parse: true
+      }),
+    });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error('Erreur Bright Data:', errorText);
-    console.error('Status:', response.status);
-    console.error('Headers:', Object.fromEntries(response.headers.entries()));
-    throw new Error(`Bright Data API error: ${errorText}`);
+    console.log('Status code de la réponse Bright Data:', response.status);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Réponse complète de Bright Data:', errorText);
+      console.error('Headers de la réponse:', Object.fromEntries(response.headers.entries()));
+      throw new Error(`Bright Data API error: ${response.status} - ${errorText}`);
+    }
+
+    const results = await response.json();
+    console.log('Nombre de résultats reçus:', results.organic?.length || 0);
+
+    if (!results.organic || !Array.isArray(results.organic)) {
+      console.error('Format de réponse invalide:', results);
+      throw new Error('Invalid response format from Bright Data');
+    }
+
+    return results.organic;
+  } catch (error) {
+    console.error('Erreur lors de l\'appel à Bright Data:', error);
+    throw error;
   }
-
-  const results = await response.json();
-  console.log('Résultats bruts reçus de Bright Data:', results);
-
-  if (!results.organic || !Array.isArray(results.organic)) {
-    console.error('Format de réponse invalide:', results);
-    throw new Error('Invalid response format from Bright Data');
-  }
-
-  return results.organic;
 }
 
 export function buildSearchQuery({ industry, country, city }: SearchParams): string {
