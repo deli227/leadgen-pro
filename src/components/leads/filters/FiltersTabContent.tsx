@@ -40,7 +40,8 @@ export function FiltersTabContent({
       const { data, error } = await supabase.functions.invoke('generate-leads', {
         body: { filters },
         headers: {
-          Authorization: `Bearer ${session.access_token}`
+          Authorization: `Bearer ${session.access_token}`,
+          apikey: process.env.VITE_SUPABASE_ANON_KEY // Ajout de la clé anon
         }
       })
 
