@@ -1,5 +1,9 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
-import { corsHeaders } from '../_shared/cors.ts'
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
 
 interface SearchParams {
   industry: string
@@ -7,8 +11,6 @@ interface SearchParams {
   city: string
   leadCount: number
 }
-
-const BRIGHT_DATA_SERP_API_URL = 'https://api.brightdata.com/serp/google'
 
 Deno.serve(async (req) => {
   // Handle CORS
@@ -47,13 +49,28 @@ Deno.serve(async (req) => {
     // Récupérer les paramètres de recherche
     const { industry, country, city, leadCount }: SearchParams = await req.json()
     
-    console.log('Recherche avec paramètres:', { industry, country, city, leadCount })
+    console.log('Paramètres de recherche:', { industry, country, city, leadCount })
 
     // Construire la requête de recherche
-    const searchQuery = `${industry} company ${city} ${country}`
+    let searchQuery = ''
+    if (industry !== 'all') {
+      searchQuery += `${industry} company `
+    }
+    if (city !== 'all') {
+      searchQuery += `${city} `
+    }
+    if (country !== 'all') {
+      searchQuery += `${country}`
+    }
     
-    // Appeler l'API SERP de Bright Data
-    const response = await fetch(BRIGHT_DATA_SERP_API_URL, {
+    if (!searchQuery.trim()) {
+      searchQuery = 'companies'
+    }
+
+    console.log('Requête de recherche finale:', searchQuery)
+
+    // Appeler l'API Bright Data
+    const brightDataResponse = await fetch('https://api.brightdata.com/serp/google', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -62,23 +79,28 @@ Deno.serve(async (req) => {
       body: JSON.stringify({
         query: searchQuery,
         domain: 'google.com',
-        num_pages: Math.ceil(leadCount / 10), // 10 résultats par page
+        num_pages: Math.ceil(leadCount / 10),
+        parse: true
       }),
     })
 
-    if (!response.ok) {
-      throw new Error(`Bright Data API error: ${response.statusText}`)
+    if (!brightDataResponse.ok) {
+      console.error('Erreur Bright Data:', await brightDataResponse.text())
+      throw new Error(`Bright Data API error: ${brightDataResponse.statusText}`)
     }
 
-    const results = await response.json()
+    const results = await brightDataResponse.json()
     console.log('Résultats bruts:', results)
+
+    if (!results.organic || !Array.isArray(results.organic)) {
+      throw new Error('Format de réponse invalide de Bright Data')
+    }
 
     // Traiter et formater les résultats
     const leads = results.organic.slice(0, leadCount).map((result: any) => ({
-      company: result.title.replace(/- .*$/, '').trim(),
+      company: result.title.replace(/[-–—|].+$/, '').trim(),
       website: result.link,
-      description: result.snippet,
-      industry,
+      industry: industry === 'all' ? 'Non spécifié' : industry,
       user_id: user.id,
       qualification: 0,
       score: 0,
@@ -95,6 +117,7 @@ Deno.serve(async (req) => {
       .insert(leads)
 
     if (insertError) {
+      console.error('Erreur insertion:', insertError)
       throw new Error(`Error inserting leads: ${insertError.message}`)
     }
 
