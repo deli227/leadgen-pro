@@ -1,128 +1,132 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { corsHeaders } from '../_shared/cors.ts'
-import { faker } from 'npm:@faker-js/faker/locale/fr'
+import { createClient } from '@supabase/supabase-js'
+import { corsHeaders } from '../_shared/cors'
 
-const industries = [
-  "Technologies", "E-commerce", "Finance", "Santé", "Éducation",
-  "Immobilier", "Services aux entreprises", "Marketing", "Logistique",
-  "Énergie", "Tourisme", "Alimentation"
-]
-
-const generateRandomStrengths = () => {
-  const allStrengths = [
-    "Innovation continue", "Équipe expérimentée", "Position de leader",
-    "Forte croissance", "Présence internationale", "Excellence opérationnelle",
-    "R&D avancée", "Service client premium", "Marque reconnue"
-  ]
-  return faker.helpers.arrayElements(allStrengths, { min: 2, max: 4 })
+interface SearchParams {
+  industry: string
+  country: string
+  city: string
+  leadCount: number
 }
 
-const generateRandomWeaknesses = () => {
-  const allWeaknesses = [
-    "Concurrence forte", "Coûts élevés", "Dépendance fournisseurs",
-    "Marché saturé", "Rotation du personnel", "Dette technique",
-    "Processus complexes", "Marketing limité"
-  ]
-  return faker.helpers.arrayElements(allWeaknesses, { min: 1, max: 3 })
-}
-
-const generateSocialMediaLinks = (companyName: string) => {
-  const sanitizedName = companyName.toLowerCase().replace(/[^a-z0-9]/g, '');
-  return {
-    linkedin: `https://linkedin.com/company/${sanitizedName}`,
-    twitter: `https://twitter.com/${sanitizedName}`,
-    facebook: `https://facebook.com/${sanitizedName}`,
-    instagram: `https://instagram.com/${sanitizedName}`
-  };
-};
-
-const generateMockLead = (userId: string) => {
-  const company = faker.company.name()
-  const domain = faker.internet.domainName()
-  
-  return {
-    user_id: userId,
-    company,
-    email: `contact@${domain}`,
-    phone: faker.phone.number(),
-    address: faker.location.streetAddress(),
-    qualification: faker.number.int({ min: 3, max: 10 }),
-    social_media: generateSocialMediaLinks(company),
-    score: faker.number.int({ min: 5, max: 10 }),
-    industry: faker.helpers.arrayElement(industries),
-    strengths: generateRandomStrengths(),
-    weaknesses: generateRandomWeaknesses(),
-    website: `https://www.${domain}`
-  }
-}
+const BRIGHT_DATA_SERP_API_URL = 'https://api.brightdata.com/serp/google'
 
 Deno.serve(async (req) => {
+  // Handle CORS
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    const supabase = createClient(
+    // Vérifier l'authentification
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader) {
+      throw new Error('Missing Authorization header')
+    }
+
+    // Créer le client Supabase
+    const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      {
+        global: {
+          headers: { Authorization: authHeader },
+        },
+      }
     )
 
-    // Get the JWT from the Authorization header
-    const authHeader = req.headers.get('Authorization')?.split('Bearer ')[1]
-    if (!authHeader) {
-      throw new Error('Non authentifié')
-    }
+    // Récupérer l'utilisateur
+    const {
+      data: { user },
+      error: userError,
+    } = await supabaseClient.auth.getUser()
 
-    // Get the user from the JWT
-    const { data: { user }, error: userError } = await supabase.auth.getUser(authHeader)
     if (userError || !user) {
-      throw new Error('Utilisateur non trouvé')
+      throw new Error('Unauthorized')
     }
 
-    // Get the request body
-    const { filters } = await req.json()
-    const { leadCount = 10 } = filters || {}
+    // Récupérer les paramètres de recherche
+    const { industry, country, city, leadCount }: SearchParams = await req.json()
+    
+    console.log('Recherche avec paramètres:', { industry, country, city, leadCount })
 
-    console.log('Generating leads for user:', user.id)
-    console.log('Lead count:', leadCount)
+    // Construire la requête de recherche
+    const searchQuery = `${industry} company ${city} ${country}`
+    
+    // Appeler l'API SERP de Bright Data
+    const response = await fetch(BRIGHT_DATA_SERP_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${Deno.env.get('BRIGHT_DATA_SERP_API_KEY')}`,
+      },
+      body: JSON.stringify({
+        query: searchQuery,
+        domain: 'google.com',
+        num_pages: Math.ceil(leadCount / 10), // 10 résultats par page
+      }),
+    })
 
-    // Generate mock leads
-    const mockLeads = Array.from({ length: leadCount }, () => generateMockLead(user.id))
+    if (!response.ok) {
+      throw new Error(`Bright Data API error: ${response.statusText}`)
+    }
 
-    // Insert the leads into the database
-    const { data: insertedLeads, error: insertError } = await supabase
+    const results = await response.json()
+    console.log('Résultats bruts:', results)
+
+    // Traiter et formater les résultats
+    const leads = results.organic.slice(0, leadCount).map((result: any) => ({
+      company: result.title.replace(/- .*$/, '').trim(),
+      website: result.link,
+      description: result.snippet,
+      industry,
+      user_id: user.id,
+      qualification: 0,
+      score: 0,
+      social_media: {},
+      strengths: [],
+      weaknesses: [],
+    }))
+
+    console.log('Leads formatés:', leads)
+
+    // Insérer les leads dans la base de données
+    const { error: insertError } = await supabaseClient
       .from('leads')
-      .insert(mockLeads)
-      .select()
+      .insert(leads)
 
     if (insertError) {
-      console.error('Error inserting leads:', insertError)
-      throw insertError
+      throw new Error(`Error inserting leads: ${insertError.message}`)
     }
 
-    // Update user's lead generation counts
-    const { error: updateError } = await supabase
+    // Mettre à jour les compteurs de l'utilisateur
+    const { error: updateError } = await supabaseClient
       .from('profiles')
       .update({
-        leads_generated_today: supabase.sql`leads_generated_today + ${leadCount}`,
-        leads_generated_this_month: supabase.sql`leads_generated_this_month + ${leadCount}`,
-        last_lead_generation_date: new Date().toISOString()
+        leads_generated_today: leads.length,
+        last_lead_generation_date: new Date().toISOString(),
       })
       .eq('id', user.id)
 
     if (updateError) {
       console.error('Error updating profile:', updateError)
-      throw updateError
     }
 
-    return new Response(JSON.stringify(insertedLeads), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    })
+    return new Response(
+      JSON.stringify({ success: true, leads }),
+      {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+      }
+    )
+
   } catch (error) {
-    console.error('Error in generate-leads function:', error)
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 400,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    })
+    console.error('Error:', error)
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 400,
+      }
+    )
   }
 })
