@@ -12,19 +12,20 @@ export async function searchWithBrightData(searchQuery: string, leadCount: numbe
   console.log('Utilisation de la clé API:', brightDataApiKey.substring(0, 5) + '...');
   
   try {
-    // L'URL correcte de l'API Bright Data pour les recherches SERP
-    const response = await fetch('https://api.brightdata.com/dca/serp', {
+    const response = await fetch('https://api.brightdata.com/request', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${brightDataApiKey}`,
       },
       body: JSON.stringify({
-        query: searchQuery,
-        domain: 'google.com',
-        num_pages: Math.ceil(leadCount / 10),
+        zone: 'serp',
+        url: `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`,
+        format: 'json',
+        method: 'GET',
+        country: 'fr',
         parse: true,
-        country: 'fr' // Ajout du paramètre pays pour améliorer les résultats
+        num_pages: Math.ceil(leadCount / 10)
       }),
     });
 
