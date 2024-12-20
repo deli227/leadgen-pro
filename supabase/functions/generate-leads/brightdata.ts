@@ -19,9 +19,9 @@ export async function searchWithBrightData(searchQuery: string, leadCount: numbe
         'Authorization': `Bearer ${brightDataApiKey}`,
       },
       body: JSON.stringify({
-        zone: 'serp',
+        zone: 'serp_api1',
         url: `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`,
-        format: 'json',
+        format: 'raw',
         method: 'GET',
         country: 'fr',
         parse: true,
