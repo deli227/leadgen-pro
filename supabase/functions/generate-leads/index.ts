@@ -22,6 +22,7 @@ Deno.serve(async (req) => {
     // Vérifier l'authentification
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
+      console.error('Erreur: Pas d\'en-tête d\'autorisation')
       throw new Error('Missing Authorization header')
     }
 
@@ -42,14 +43,20 @@ Deno.serve(async (req) => {
       error: userError,
     } = await supabaseClient.auth.getUser()
 
-    if (userError || !user) {
+    if (userError) {
+      console.error('Erreur d\'authentification:', userError)
       throw new Error('Unauthorized')
+    }
+
+    if (!user) {
+      console.error('Erreur: Pas d\'utilisateur trouvé')
+      throw new Error('No user found')
     }
 
     // Récupérer les paramètres de recherche
     const { industry, country, city, leadCount }: SearchParams = await req.json()
     
-    console.log('Paramètres de recherche:', { industry, country, city, leadCount })
+    console.log('Paramètres de recherche reçus:', { industry, country, city, leadCount })
 
     // Construire la requête de recherche
     let searchQuery = ''
@@ -69,12 +76,20 @@ Deno.serve(async (req) => {
 
     console.log('Requête de recherche finale:', searchQuery)
 
+    // Vérifier la clé API Bright Data
+    const brightDataApiKey = Deno.env.get('BRIGHT_DATA_SERP_API_KEY')
+    if (!brightDataApiKey) {
+      console.error('Erreur: Clé API Bright Data non trouvée')
+      throw new Error('Bright Data API key not found')
+    }
+
     // Appeler l'API Bright Data
+    console.log('Appel de l\'API Bright Data...')
     const brightDataResponse = await fetch('https://api.brightdata.com/serp/google', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${Deno.env.get('BRIGHT_DATA_SERP_API_KEY')}`,
+        'Authorization': `Bearer ${brightDataApiKey}`,
       },
       body: JSON.stringify({
         query: searchQuery,
@@ -85,15 +100,17 @@ Deno.serve(async (req) => {
     })
 
     if (!brightDataResponse.ok) {
-      console.error('Erreur Bright Data:', await brightDataResponse.text())
-      throw new Error(`Bright Data API error: ${brightDataResponse.statusText}`)
+      const errorText = await brightDataResponse.text()
+      console.error('Erreur Bright Data:', errorText)
+      throw new Error(`Bright Data API error: ${brightDataResponse.status} - ${errorText}`)
     }
 
     const results = await brightDataResponse.json()
-    console.log('Résultats bruts:', results)
+    console.log('Résultats bruts reçus de Bright Data:', results)
 
     if (!results.organic || !Array.isArray(results.organic)) {
-      throw new Error('Format de réponse invalide de Bright Data')
+      console.error('Format de réponse invalide:', results)
+      throw new Error('Invalid response format from Bright Data')
     }
 
     // Traiter et formater les résultats
@@ -117,7 +134,7 @@ Deno.serve(async (req) => {
       .insert(leads)
 
     if (insertError) {
-      console.error('Erreur insertion:', insertError)
+      console.error('Erreur lors de l\'insertion des leads:', insertError)
       throw new Error(`Error inserting leads: ${insertError.message}`)
     }
 
@@ -131,7 +148,7 @@ Deno.serve(async (req) => {
       .eq('id', user.id)
 
     if (updateError) {
-      console.error('Error updating profile:', updateError)
+      console.error('Erreur lors de la mise à jour du profil:', updateError)
     }
 
     return new Response(
@@ -143,9 +160,12 @@ Deno.serve(async (req) => {
     )
 
   } catch (error) {
-    console.error('Error:', error)
+    console.error('Erreur générale:', error)
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error.message,
+        details: error.stack 
+      }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 400,

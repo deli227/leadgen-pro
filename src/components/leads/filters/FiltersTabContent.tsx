@@ -4,7 +4,7 @@ import { LeadCountSlider } from "./LeadCountSlider"
 import { Button } from "@/components/ui/button"
 import { Loader2 } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "sonner"
 import { LeadsList } from "./LeadsList"
 import { motion } from "framer-motion"
 import { useState } from "react"
@@ -22,19 +22,16 @@ export function FiltersTabContent({
   leads, 
   onAddToAnalytics 
 }: FiltersTabContentProps) {
-  const { toast } = useToast()
   const [isGenerating, setIsGenerating] = useState(false)
 
   const handleGenerateLeads = async () => {
     try {
       setIsGenerating(true)
 
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('Non authentifié')
-
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) throw new Error('Session non trouvée')
 
+      console.log('Envoi des paramètres à generate-leads:', filters)
       const response = await supabase.functions.invoke('generate-leads', {
         body: { filters },
         headers: {
@@ -42,20 +39,22 @@ export function FiltersTabContent({
         }
       })
 
-      if (response.error) throw response.error
+      console.log('Réponse de generate-leads:', response)
 
-      toast({
-        title: "Génération réussie",
-        description: "Les leads ont été générés avec succès.",
+      if (response.error) {
+        console.error('Erreur détaillée:', response.error)
+        throw new Error(response.error.message || 'Erreur lors de la génération des leads')
+      }
+
+      toast.success("Génération réussie", {
+        description: "Les leads ont été générés avec succès."
       })
 
       window.location.reload()
-    } catch (error) {
-      console.error('Erreur:', error)
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Impossible de générer les leads. Veuillez réessayer.",
+    } catch (error: any) {
+      console.error('Erreur complète:', error)
+      toast.error("Erreur de génération", {
+        description: error.message || "Une erreur est survenue lors de la génération des leads."
       })
     } finally {
       setIsGenerating(false)
@@ -74,7 +73,7 @@ export function FiltersTabContent({
           country={filters.country}
           city={filters.city}
           onCountryChange={(value) => {
-            console.log("Changement de pays dans LeadsFilters:", value)
+            console.log("Changement de pays:", value)
             setFilters({ ...filters, country: value, city: "all" })
           }}
           onCityChange={(value) => setFilters({ ...filters, city: value })}
