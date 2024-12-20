@@ -48,11 +48,23 @@ export function FiltersTabContent({
 
       if (error) {
         console.error('Erreur détaillée:', error)
-        throw new Error(error.message || 'Erreur lors de la génération des leads')
+        if (error.message.includes('Bright Data API key not found')) {
+          toast.error("Erreur de configuration", {
+            description: "La clé API Bright Data n'est pas configurée. Veuillez contacter le support."
+          })
+        } else {
+          toast.error("Erreur de génération", {
+            description: error.message || "Une erreur est survenue lors de la génération des leads."
+          })
+        }
+        return
       }
 
       if (!data || !data.success) {
-        throw new Error('La réponse de l\'API est invalide')
+        toast.error("Erreur de génération", {
+          description: "La réponse de l'API est invalide"
+        })
+        return
       }
 
       toast.success("Génération réussie", {

@@ -80,7 +80,16 @@ Deno.serve(async (req) => {
     const brightDataApiKey = Deno.env.get('BRIGHT_DATA_SERP_API_KEY')
     if (!brightDataApiKey) {
       console.error('Erreur: Clé API Bright Data non trouvée')
-      throw new Error('Bright Data API key not found')
+      return new Response(
+        JSON.stringify({
+          error: 'Configuration error: Bright Data API key not found',
+          message: 'La clé API Bright Data n\'est pas configurée'
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 400
+        }
+      )
     }
 
     // Appeler l'API Bright Data
@@ -102,7 +111,17 @@ Deno.serve(async (req) => {
     if (!brightDataResponse.ok) {
       const errorText = await brightDataResponse.text()
       console.error('Erreur Bright Data:', errorText)
-      throw new Error(`Bright Data API error: ${brightDataResponse.status} - ${errorText}`)
+      return new Response(
+        JSON.stringify({
+          error: 'Bright Data API error',
+          message: 'Erreur lors de l\'appel à l\'API Bright Data',
+          details: errorText
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: brightDataResponse.status
+        }
+      )
     }
 
     const results = await brightDataResponse.json()
@@ -110,7 +129,16 @@ Deno.serve(async (req) => {
 
     if (!results.organic || !Array.isArray(results.organic)) {
       console.error('Format de réponse invalide:', results)
-      throw new Error('Invalid response format from Bright Data')
+      return new Response(
+        JSON.stringify({
+          error: 'Invalid response format',
+          message: 'Format de réponse invalide de Bright Data'
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 400
+        }
+      )
     }
 
     // Traiter et formater les résultats
@@ -135,7 +163,17 @@ Deno.serve(async (req) => {
 
     if (insertError) {
       console.error('Erreur lors de l\'insertion des leads:', insertError)
-      throw new Error(`Error inserting leads: ${insertError.message}`)
+      return new Response(
+        JSON.stringify({
+          error: 'Database error',
+          message: 'Erreur lors de l\'insertion des leads dans la base de données',
+          details: insertError.message
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 400
+        }
+      )
     }
 
     // Mettre à jour les compteurs de l'utilisateur
