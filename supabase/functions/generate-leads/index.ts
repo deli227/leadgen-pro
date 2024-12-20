@@ -1,32 +1,21 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
-
-interface SearchParams {
-  industry: string
-  country: string
-  city: string
-  leadCount: number
-}
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7';
+import { corsHeaders } from './cors.ts';
+import { searchWithBrightData, buildSearchQuery } from './brightdata.ts';
+import { insertLeadsAndUpdateProfile } from './database.ts';
+import { SearchParams, LeadResult } from './types.ts';
 
 Deno.serve(async (req) => {
-  // Handle CORS
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response('ok', { headers: corsHeaders });
   }
 
   try {
-    // Vérifier l'authentification
-    const authHeader = req.headers.get('Authorization')
+    const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      console.error('Erreur: Pas d\'en-tête d\'autorisation')
-      throw new Error('Missing Authorization header')
+      console.error('Erreur: Pas d\'en-tête d\'autorisation');
+      throw new Error('Missing Authorization header');
     }
 
-    // Créer le client Supabase
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
@@ -35,159 +24,43 @@ Deno.serve(async (req) => {
           headers: { Authorization: authHeader },
         },
       }
-    )
+    );
 
-    // Récupérer l'utilisateur
     const {
       data: { user },
       error: userError,
-    } = await supabaseClient.auth.getUser()
+    } = await supabaseClient.auth.getUser();
 
-    if (userError) {
-      console.error('Erreur d\'authentification:', userError)
-      throw new Error('Unauthorized')
+    if (userError || !user) {
+      console.error('Erreur d\'authentification:', userError);
+      throw new Error(userError?.message || 'Unauthorized');
     }
 
-    if (!user) {
-      console.error('Erreur: Pas d\'utilisateur trouvé')
-      throw new Error('No user found')
-    }
+    const searchParams: SearchParams = await req.json();
+    console.log('Paramètres de recherche reçus:', searchParams);
 
-    // Récupérer les paramètres de recherche
-    const { industry, country, city, leadCount }: SearchParams = await req.json()
-    
-    console.log('Paramètres de recherche reçus:', { industry, country, city, leadCount })
+    const searchQuery = buildSearchQuery(searchParams);
+    console.log('Requête de recherche finale:', searchQuery);
 
-    // Construire la requête de recherche
-    let searchQuery = ''
-    if (industry !== 'all') {
-      searchQuery += `${industry} company `
-    }
-    if (city !== 'all') {
-      searchQuery += `${city} `
-    }
-    if (country !== 'all') {
-      searchQuery += `${country}`
-    }
-    
-    if (!searchQuery.trim()) {
-      searchQuery = 'companies'
-    }
+    const organicResults = await searchWithBrightData(searchQuery, searchParams.leadCount);
 
-    console.log('Requête de recherche finale:', searchQuery)
+    const leads: LeadResult[] = organicResults
+      .slice(0, searchParams.leadCount)
+      .map((result: any) => ({
+        company: result.title.replace(/[-–—|].+$/, '').trim(),
+        website: result.link,
+        industry: searchParams.industry === 'all' ? 'Non spécifié' : searchParams.industry,
+        user_id: user.id,
+        qualification: 0,
+        score: 0,
+        social_media: {},
+        strengths: [],
+        weaknesses: [],
+      }));
 
-    // Vérifier la clé API Bright Data
-    const brightDataApiKey = Deno.env.get('BRIGHT_DATA_SERP_API_KEY')
-    if (!brightDataApiKey) {
-      console.error('Erreur: Clé API Bright Data non trouvée')
-      return new Response(
-        JSON.stringify({
-          error: 'Configuration error: Bright Data API key not found',
-          message: 'La clé API Bright Data n\'est pas configurée'
-        }),
-        {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 400
-        }
-      )
-    }
+    console.log('Leads formatés:', leads);
 
-    // Appeler l'API Bright Data
-    console.log('Appel de l\'API Bright Data...')
-    const brightDataResponse = await fetch('https://api.brightdata.com/serp/google', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${brightDataApiKey}`,
-      },
-      body: JSON.stringify({
-        query: searchQuery,
-        domain: 'google.com',
-        num_pages: Math.ceil(leadCount / 10),
-        parse: true
-      }),
-    })
-
-    if (!brightDataResponse.ok) {
-      const errorText = await brightDataResponse.text()
-      console.error('Erreur Bright Data:', errorText)
-      return new Response(
-        JSON.stringify({
-          error: 'Bright Data API error',
-          message: 'Erreur lors de l\'appel à l\'API Bright Data',
-          details: errorText
-        }),
-        {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: brightDataResponse.status
-        }
-      )
-    }
-
-    const results = await brightDataResponse.json()
-    console.log('Résultats bruts reçus de Bright Data:', results)
-
-    if (!results.organic || !Array.isArray(results.organic)) {
-      console.error('Format de réponse invalide:', results)
-      return new Response(
-        JSON.stringify({
-          error: 'Invalid response format',
-          message: 'Format de réponse invalide de Bright Data'
-        }),
-        {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 400
-        }
-      )
-    }
-
-    // Traiter et formater les résultats
-    const leads = results.organic.slice(0, leadCount).map((result: any) => ({
-      company: result.title.replace(/[-–—|].+$/, '').trim(),
-      website: result.link,
-      industry: industry === 'all' ? 'Non spécifié' : industry,
-      user_id: user.id,
-      qualification: 0,
-      score: 0,
-      social_media: {},
-      strengths: [],
-      weaknesses: [],
-    }))
-
-    console.log('Leads formatés:', leads)
-
-    // Insérer les leads dans la base de données
-    const { error: insertError } = await supabaseClient
-      .from('leads')
-      .insert(leads)
-
-    if (insertError) {
-      console.error('Erreur lors de l\'insertion des leads:', insertError)
-      return new Response(
-        JSON.stringify({
-          error: 'Database error',
-          message: 'Erreur lors de l\'insertion des leads dans la base de données',
-          details: insertError.message
-        }),
-        {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 400
-        }
-      )
-    }
-
-    // Mettre à jour les compteurs de l'utilisateur
-    const { error: updateError } = await supabaseClient
-      .from('profiles')
-      .update({
-        leads_generated_today: leads.length,
-        last_lead_generation_date: new Date().toISOString(),
-      })
-      .eq('id', user.id)
-
-    if (updateError) {
-      console.error('Erreur lors de la mise à jour du profil:', updateError)
-    }
+    await insertLeadsAndUpdateProfile(supabaseClient, leads, user.id);
 
     return new Response(
       JSON.stringify({ success: true, leads }),
@@ -195,10 +68,10 @@ Deno.serve(async (req) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
       }
-    )
+    );
 
   } catch (error) {
-    console.error('Erreur générale:', error)
+    console.error('Erreur générale:', error);
     return new Response(
       JSON.stringify({ 
         error: error.message,
@@ -208,6 +81,6 @@ Deno.serve(async (req) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 400,
       }
-    )
+    );
   }
-})
+});
