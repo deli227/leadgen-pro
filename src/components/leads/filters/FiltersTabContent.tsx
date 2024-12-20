@@ -41,7 +41,7 @@ export function FiltersTabContent({
         body: { filters },
         headers: {
           Authorization: `Bearer ${session.access_token}`,
-          apikey: process.env.VITE_SUPABASE_ANON_KEY // Ajout de la clé anon
+          apikey: supabase.supabaseKey // Utilisation de la clé anon du client Supabase
         }
       })
 
