@@ -9,10 +9,11 @@ export async function searchWithBrightData(searchQuery: string, leadCount: numbe
   }
 
   console.log('Appel de l\'API Bright Data avec la requête:', searchQuery);
-  console.log('Nombre de leads demandés:', leadCount);
+  console.log('Utilisation de la clé API:', brightDataApiKey.substring(0, 5) + '...');
   
   try {
-    const response = await fetch('https://api.brightdata.com/serp/google', {
+    // L'URL correcte de l'API Bright Data pour les recherches SERP
+    const response = await fetch('https://api.brightdata.com/dca/serp', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -22,7 +23,8 @@ export async function searchWithBrightData(searchQuery: string, leadCount: numbe
         query: searchQuery,
         domain: 'google.com',
         num_pages: Math.ceil(leadCount / 10),
-        parse: true
+        parse: true,
+        country: 'fr' // Ajout du paramètre pays pour améliorer les résultats
       }),
     });
 
@@ -45,7 +47,7 @@ export async function searchWithBrightData(searchQuery: string, leadCount: numbe
 
     return results.organic;
   } catch (error) {
-    console.error('Erreur lors de l\'appel à Bright Data:', error);
+    console.error('Erreur détaillée lors de l\'appel à Bright Data:', error);
     throw error;
   }
 }
