@@ -1,0 +1,7 @@
+project_id = "rbsuobpaqwtmiesxwcaw"
+
+[env.BRIGHT_DATA_USERNAME]
+value = "brd-customer-hl_2b64525c-zone-serp_api1"
+
+[env.BRIGHT_DATA_PASSWORD]
+value = "kg60rpmf5tu3"

@@ -1,54 +1,63 @@
 import { SearchParams } from './types.ts';
 
 export async function searchWithBrightData(searchQuery: string, leadCount: number) {
-  const brightDataApiKey = Deno.env.get('BRIGHT_DATA_SERP_API_KEY');
+  const brightDataUsername = Deno.env.get('BRIGHT_DATA_USERNAME');
+  const brightDataPassword = Deno.env.get('BRIGHT_DATA_PASSWORD');
   
-  if (!brightDataApiKey) {
-    console.error('Erreur: Clé API Bright Data non trouvée dans les variables d\'environnement');
-    throw new Error('Configuration error: Bright Data API key not found');
+  if (!brightDataUsername || !brightDataPassword) {
+    console.error('Erreur: Identifiants Bright Data non trouvés dans les variables d\'environnement');
+    throw new Error('Configuration error: Bright Data credentials not found');
   }
 
-  console.log('Appel de l\'API Bright Data avec la requête:', searchQuery);
-  console.log('Utilisation de la clé API:', brightDataApiKey.substring(0, 5) + '...');
+  console.log('Recherche avec la requête:', searchQuery);
   
   try {
-    const response = await fetch('https://api.brightdata.com/request', {
-      method: 'POST',
+    const proxyUrl = 'brd.superproxy.io:33335';
+    const auth = btoa(`${brightDataUsername}:${brightDataPassword}`);
+    
+    const response = await fetch(`https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`, {
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${brightDataApiKey}`,
+        'Proxy-Authorization': `Basic ${auth}`,
+        'Accept-Encoding': 'gzip, deflate',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
       },
-      body: JSON.stringify({
-        zone: 'serp_api1',
-        url: `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`,
-        format: 'raw',
-        method: 'GET',
-        country: 'fr',
-        parse: true,
-        num_pages: Math.ceil(leadCount / 10)
-      }),
+      signal: AbortSignal.timeout(30000), // 30 seconds timeout
     });
 
-    console.log('Status code de la réponse Bright Data:', response.status);
+    console.log('Status code de la réponse:', response.status);
     
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Réponse complète de Bright Data:', errorText);
-      console.error('Headers de la réponse:', Object.fromEntries(response.headers.entries()));
-      throw new Error(`Bright Data API error: ${response.status} - ${errorText}`);
+      console.error('Réponse d\'erreur complète:', errorText);
+      throw new Error(`Search error: ${response.status} - ${errorText}`);
     }
 
-    const results = await response.json();
-    console.log('Nombre de résultats reçus:', results.organic?.length || 0);
+    const html = await response.text();
+    console.log('Longueur de la réponse HTML:', html.length);
 
-    if (!results.organic || !Array.isArray(results.organic)) {
-      console.error('Format de réponse invalide:', results);
-      throw new Error('Invalid response format from Bright Data');
+    // Parse the HTML to extract organic results
+    // This is a basic example - you might want to use a proper HTML parser
+    const results = [];
+    const matches = html.match(/<div class="g">(.*?)<\/div>/g);
+    
+    if (matches) {
+      for (const match of matches.slice(0, leadCount)) {
+        const titleMatch = match.match(/<h3[^>]*>(.*?)<\/h3>/);
+        const linkMatch = match.match(/href="([^"]*)"[^>]*>/);
+        
+        if (titleMatch && linkMatch) {
+          results.push({
+            title: titleMatch[1].replace(/<[^>]*>/g, ''),
+            link: linkMatch[1]
+          });
+        }
+      }
     }
 
-    return results.organic;
+    console.log('Nombre de résultats extraits:', results.length);
+    return results;
   } catch (error) {
-    console.error('Erreur détaillée lors de l\'appel à Bright Data:', error);
+    console.error('Erreur détaillée lors de la recherche:', error);
     throw error;
   }
 }
