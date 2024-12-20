@@ -6,14 +6,13 @@ import { useToast } from "@/components/ui/use-toast"
 import { Settings } from "lucide-react"
 
 export function ApiKeyDialog() {
-  const [apiKey, setApiKey] = useState(localStorage.getItem("scraping_api_key") || "")
+  const [apiKey, setApiKey] = useState("")
   const { toast } = useToast()
 
   const handleSaveApiKey = () => {
-    localStorage.setItem("scraping_api_key", apiKey)
     toast({
-      title: "Clé API sauvegardée",
-      description: "Votre clé API a été enregistrée avec succès."
+      title: "Configuration API",
+      description: "La fonctionnalité de scraping a été désactivée."
     })
   }
 
@@ -27,28 +26,10 @@ export function ApiKeyDialog() {
       </DialogTrigger>
       <DialogContent className="bg-secondary-dark border-primary-light">
         <DialogHeader>
-          <DialogTitle className="text-primary-light">Configuration de la clé API</DialogTitle>
+          <DialogTitle className="text-primary-light">Configuration désactivée</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <label htmlFor="apiKey" className="text-sm font-medium text-primary-light">
-              Clé API pour le scraping
-            </label>
-            <Input
-              id="apiKey"
-              type="password"
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-              className="bg-black border-primary-light text-primary-light"
-              placeholder="Entrez votre clé API"
-            />
-          </div>
-          <Button 
-            onClick={handleSaveApiKey}
-            className="w-full bg-primary hover:bg-primary-dark text-white"
-          >
-            Sauvegarder
-          </Button>
+        <div className="p-4 text-primary-light">
+          La fonctionnalité de scraping a été désactivée.
         </div>
       </DialogContent>
     </Dialog>
