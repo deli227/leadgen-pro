@@ -39,21 +39,21 @@ export const HeroSection = () => {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {isVideoLoading ? (
-        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-black to-gray-900" />
+        <div className="absolute inset-0 bg-gradient-to-br from-black to-gray-900" />
       ) : videoUrl ? (
         <video
           autoPlay
           loop
           muted
           playsInline
-          className="absolute top-0 left-0 w-full h-full object-cover"
-          style={{ filter: "brightness(0.4)" }}
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ filter: "brightness(0.5)" }}
         >
           <source src={videoUrl} type="video/mp4" />
           Votre navigateur ne supporte pas la lecture de vidéos.
         </video>
       ) : (
-        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-black to-gray-900" />
+        <div className="absolute inset-0 bg-gradient-to-br from-black to-gray-900" />
       )}
       
       <div className="relative z-10 container mx-auto px-4 py-32 text-center">
