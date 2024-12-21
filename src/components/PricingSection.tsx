@@ -37,6 +37,44 @@ export const PricingSection = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="mt-16 max-w-4xl mx-auto bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5 rounded-2xl p-6 sm:p-8 border border-primary/10"
+        >
+          <h3 className="text-2xl sm:text-3xl font-bold text-center mb-6 bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+            Nous ne générons pas des leads, nous créons des opportunités !
+          </h3>
+          
+          <p className="text-gray-300 mb-8 text-center">
+            Oubliez les générateurs de leads aléatoires qui vous noient sous des listes inutiles. Notre solution, c'est bien plus ! Grâce à notre analyse IA avancée, chaque lead est une opportunité taillée sur mesure pour votre réussite.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div className="bg-black/30 p-4 rounded-lg border border-primary/10">
+              <h4 className="text-lg font-semibold text-primary-light mb-2">Des contacts pertinents, pas de hasard :</h4>
+              <p className="text-gray-400">Chaque lead est sélectionné et analysé pour vous garantir un profil précis et prêt à convertir. Vous ne recevez que des prospects réellement intéressants.</p>
+            </div>
+
+            <div className="bg-black/30 p-4 rounded-lg border border-primary/10">
+              <h4 className="text-lg font-semibold text-primary-light mb-2">Connaître avant d'agir :</h4>
+              <p className="text-gray-400">Nous identifions les besoins et points faibles de chaque lead, pour que vous puissiez arriver avec la solution parfaite dès le premier contact.</p>
+            </div>
+          </div>
+
+          <div className="bg-black/30 p-4 rounded-lg border border-primary/10 mb-8">
+            <h4 className="text-lg font-semibold text-primary-light mb-2">Un volume exact, sans surprises :</h4>
+            <p className="text-gray-400">Pas de faux espoirs : nous livrons exactement le nombre de leads promis, qualifiés et vérifiés.</p>
+          </div>
+
+          <div className="text-center p-4 bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 rounded-lg">
+            <p className="text-lg text-gray-200">
+              💡 Avec nous, vous ne chassez plus à l'aveugle : vous ciblez, vous convainquez, vous transformez. Essayez gratuitement avec 3 leads offerts et découvrez une nouvelle ère de prospection !
+            </p>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
           className="mt-16"
         >
