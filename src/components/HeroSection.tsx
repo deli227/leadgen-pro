@@ -3,16 +3,34 @@ import { HeroTitle } from "./hero/HeroTitle";
 import { HeroButtons } from "./hero/HeroButtons";
 import { HeroFeatures } from "./hero/HeroFeatures";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export const HeroSection = () => {
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [isVideoLoading, setIsVideoLoading] = useState(true);
 
   useEffect(() => {
     const fetchVideoUrl = async () => {
-      const { data: { publicUrl } } = supabase.storage
-        .from('videos')
-        .getPublicUrl('hero-background.mp4');
-      setVideoUrl(publicUrl);
+      try {
+        const { data: { publicUrl } } = supabase.storage
+          .from('videos')
+          .getPublicUrl('hero-background.mp4');
+        
+        // Verify if the video exists by making a HEAD request
+        const response = await fetch(publicUrl, { method: 'HEAD' });
+        if (response.ok) {
+          setVideoUrl(publicUrl);
+          console.log("Video URL loaded:", publicUrl);
+        } else {
+          console.error("Video not found at URL:", publicUrl);
+          toast.error("Erreur lors du chargement de la vidéo");
+        }
+      } catch (error) {
+        console.error("Error fetching video URL:", error);
+        toast.error("Erreur lors du chargement de la vidéo");
+      } finally {
+        setIsVideoLoading(false);
+      }
     };
 
     fetchVideoUrl();
@@ -20,7 +38,9 @@ export const HeroSection = () => {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {videoUrl ? (
+      {isVideoLoading ? (
+        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-black to-gray-900" />
+      ) : videoUrl ? (
         <video
           autoPlay
           loop
@@ -30,7 +50,7 @@ export const HeroSection = () => {
           style={{ filter: "brightness(0.4)" }}
         >
           <source src={videoUrl} type="video/mp4" />
-          Your browser does not support the video tag.
+          Votre navigateur ne supporte pas la lecture de vidéos.
         </video>
       ) : (
         <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-black to-gray-900" />
