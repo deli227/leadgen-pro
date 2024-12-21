@@ -11,8 +11,8 @@ export const CountdownTimer = () => {
 
   useEffect(() => {
     const calculateTimeLeft = () => {
-      // Date cible : 22 décembre 2024 à 18h00 (heure de Paris)
-      const targetDate = new Date('2024-12-22T18:00:00+01:00');
+      // Date cible : Lundi prochain 20h00 (heure de Paris)
+      const targetDate = new Date('2024-04-22T20:00:00+02:00');
       const now = new Date();
       
       console.log('Target date:', targetDate);
