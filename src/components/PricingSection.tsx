@@ -1,6 +1,7 @@
 import { PricingPlan } from "./pricing/PricingPlan";
 import { plans } from "./pricing/pricingData";
 import { motion } from "framer-motion";
+import { ComparisonTable } from "./pricing/ComparisonTable";
 
 export const PricingSection = () => {
   return (
@@ -32,6 +33,15 @@ export const PricingSection = () => {
             </motion.div>
           ))}
         </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.6 }}
+          className="mt-16"
+        >
+          <ComparisonTable />
+        </motion.div>
       </div>
     </div>
   );

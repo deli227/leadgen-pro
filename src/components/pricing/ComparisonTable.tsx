@@ -4,6 +4,9 @@ export const ComparisonTable = () => {
   return (
     <div className="w-full max-w-4xl mx-auto overflow-x-auto">
       <div className="bg-black/40 backdrop-blur-sm border border-primary/20 rounded-xl p-4">
+        <h2 className="text-2xl font-bold text-center mb-6 bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+          Comparaison détaillée des solutions de prospection
+        </h2>
         <table className="w-full border-collapse">
           <thead>
             <tr className="border-b border-primary/20">
@@ -17,14 +20,14 @@ export const ComparisonTable = () => {
             <tr className="border-b border-primary/10">
               <td className="p-4 text-gray-300">Prix (200 leads)</td>
               <td className="p-4 text-primary-light font-medium">24.99 €/mois (garantis)</td>
-              <td className="p-4 text-gray-400">~50 €/mois (non qualifiés)</td>
-              <td className="p-4 text-gray-400">~60 €/mois (non qualifiés)</td>
+              <td className="p-4 text-gray-400">1 000 €/mois (volume estimé)</td>
+              <td className="p-4 text-gray-400">1 200 €/mois (volume estimé)</td>
             </tr>
             <tr className="border-b border-primary/10">
               <td className="p-4 text-gray-300">Prix (500 leads)</td>
               <td className="p-4 text-primary-light font-medium">59.99 €/mois (garantis)</td>
-              <td className="p-4 text-gray-400">~300 €/mois (non qualifiés)</td>
-              <td className="p-4 text-gray-400">~400 €/mois (non qualifiés)</td>
+              <td className="p-4 text-gray-400">1 500 €/mois (volume estimé)</td>
+              <td className="p-4 text-gray-400">2 000 €/mois (volume estimé)</td>
             </tr>
             <tr className="border-b border-primary/10">
               <td className="p-4 text-gray-300">Analyse IA avancée</td>
@@ -76,8 +79,16 @@ export const ComparisonTable = () => {
                   <span>Très élevée et garantie</span>
                 </div>
               </td>
-              <td className="p-4 text-amber-500">Moyenne</td>
-              <td className="p-4 text-red-500">Faible</td>
+              <td className="p-4">
+                <div className="flex items-center text-amber-500">
+                  <span>Moyenne</span>
+                </div>
+              </td>
+              <td className="p-4">
+                <div className="flex items-center text-red-500">
+                  <span>Faible</span>
+                </div>
+              </td>
             </tr>
           </tbody>
         </table>
