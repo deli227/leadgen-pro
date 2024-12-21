@@ -1,10 +1,10 @@
-import { Database } from "lucide-react"
-import { Mail } from "lucide-react"
+import { Database, Mail } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { LeadsTab } from "./tabs/LeadsTab"
 import { AutomationTab } from "./tabs/AutomationTab"
 import { useTranslation } from "react-i18next"
 import { Lead } from "@/types/leads"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 interface DashboardTabsProps {
   filters: {
@@ -34,6 +34,7 @@ export function DashboardTabs({
   onRemoveFromExport
 }: DashboardTabsProps) {
   const { t } = useTranslation()
+  const isMobile = useIsMobile()
 
   return (
     <Tabs defaultValue="leads" className="space-y-4">
@@ -47,15 +48,15 @@ export function DashboardTabs({
         </TabsTrigger>
         <TabsTrigger 
           value="automation" 
-          className="text-primary-light data-[state=active]:bg-primary/20"
+          className="text-primary-light data-[state=active]:bg-primary/20 relative"
         >
           <Mail className="h-4 w-4 mr-2" />
-          <span className="flex items-center gap-2">
-            {t('common.automation')} 
-            <span className="text-xs text-primary-light/50 ml-1">
+          <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2">
+            <span>{t('common.automation')}</span>
+            <span className="text-[10px] sm:text-xs text-primary-light/50 absolute -bottom-4 sm:static whitespace-nowrap">
               ({t('common.comingSoon')})
             </span>
-          </span>
+          </div>
         </TabsTrigger>
       </TabsList>
 
