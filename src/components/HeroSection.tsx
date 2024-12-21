@@ -1,80 +1,46 @@
-import { motion } from "framer-motion";
-import { HeroTitle } from "./hero/HeroTitle";
-import { HeroFeatures } from "./hero/HeroFeatures";
-import { HeroButtons } from "./hero/HeroButtons";
 import { useEffect, useState } from "react";
-
-// Star component for the animated background
-const Star = ({ delay }: { delay: number }) => (
-  <motion.div
-    className="absolute w-0.5 h-0.5 bg-primary rounded-full"
-    animate={{
-      scale: [1, 1.2, 1],
-      opacity: [0.7, 1, 0.7],
-      y: [0, -20, 0],
-      x: [0, 10, 0],
-    }}
-    transition={{
-      duration: 4,
-      delay: delay,
-      repeat: Infinity,
-      ease: "easeInOut"
-    }}
-    style={{
-      left: `${Math.random() * 100}%`,
-      top: `${Math.random() * 100}%`,
-    }}
-  />
-);
+import { HeroTitle } from "./hero/HeroTitle";
+import { HeroButtons } from "./hero/HeroButtons";
+import { HeroFeatures } from "./hero/HeroFeatures";
+import { supabase } from "@/integrations/supabase/client";
 
 export const HeroSection = () => {
-  const [stars, setStars] = useState<number[]>([]);
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    // Create 50 stars with random delays
-    setStars(Array.from({ length: 50 }, (_, i) => Math.random() * 3));
+    const fetchVideoUrl = async () => {
+      const { data: { publicUrl } } = supabase.storage
+        .from('videos')
+        .getPublicUrl('hero-background.mp4');
+      setVideoUrl(publicUrl);
+    };
+
+    fetchVideoUrl();
   }, []);
 
   return (
-    <>
-      {/* Stars container that covers the entire page */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        {stars.map((delay, index) => (
-          <Star key={index} delay={delay} />
-        ))}
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {videoUrl ? (
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute top-0 left-0 w-full h-full object-cover"
+          style={{ filter: "brightness(0.4)" }}
+        >
+          <source src={videoUrl} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      ) : (
+        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-black to-gray-900" />
+      )}
+      
+      <div className="relative z-10 container mx-auto px-4 py-32 text-center">
+        <HeroTitle />
+        <HeroButtons />
+        <HeroFeatures />
       </div>
-
-      <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 -mt-[2rem] pb-24">
-        {/* Video background with overlay */}
-        <div className="absolute inset-0 z-0 overflow-hidden">
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="absolute min-w-full min-h-full object-cover"
-            style={{ filter: 'brightness(0.12)' }}
-          >
-            <source src="/lovable-uploads/videos/hero-background.mp4" type="video/mp4" />
-          </video>
-        </div>
-
-        {/* Content */}
-        <div className="w-full max-w-6xl relative z-10 pt-16 sm:pt-24">
-          <div className="grid grid-cols-1 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              className="flex flex-col items-center justify-center space-y-12 text-center"
-            >
-              <HeroTitle />
-              <HeroFeatures />
-              <HeroButtons />
-            </motion.div>
-          </div>
-        </div>
-      </section>
-    </>
+    </section>
   );
 };
