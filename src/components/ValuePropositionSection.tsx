@@ -19,7 +19,7 @@ export const ValuePropositionSection = () => {
           className="max-w-4xl mx-auto text-center mb-16"
         >
           <h2 className="text-3xl md:text-4xl font-bold mb-8 bg-gradient-to-r from-primary via-primary-light to-accent bg-clip-text text-transparent">
-            Nous avons créé l'outil que le marché attendait
+            Découvrez la puissance de l'IA pour votre prospection
           </h2>
           
           <motion.p
@@ -28,15 +28,15 @@ export const ValuePropositionSection = () => {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="text-xl md:text-2xl font-semibold text-white mb-8 p-6 rounded-lg bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 shadow-lg backdrop-blur-sm"
           >
-            Vos leads ne pourront plus ignorer leurs points faibles, et c'est là que vous devenez leur solution incontournable!
+            Transformez vos leads en opportunités concrètes grâce à notre technologie innovante
           </motion.p>
           
           <p className="text-lg md:text-xl text-gray-300 leading-relaxed mb-8">
-            Imaginez : connaître les points faibles exacts de chacun de vos leads, comprendre leurs besoins avant même qu'ils ne les expriment. Avec notre technologie IA, vous frappez fort, vite et juste.
+            Notre solution utilise l'intelligence artificielle pour analyser et comprendre les besoins de vos prospects avant même qu'ils ne les expriment.
           </p>
           
           <p className="text-lg md:text-xl text-gray-300 leading-relaxed mb-8">
-            Plus de discours approximatifs, plus de temps perdu : vous proposez la solution parfaite qui répond à leurs faiblesses.
+            Plus de prospection à l'aveugle : ciblez précisément les entreprises qui ont besoin de vos services.
           </p>
         </motion.div>
 
@@ -50,18 +50,18 @@ export const ValuePropositionSection = () => {
           {[
             {
               icon: Target,
-              title: "Précision Ciblée",
-              description: "Identifiez les points faibles de vos prospects avec une précision chirurgicale"
+              title: "Ciblage Intelligent",
+              description: "Identifiez les prospects les plus pertinents pour votre activité"
             },
             {
               icon: Brain,
-              title: "IA Avancée",
-              description: "Notre technologie analyse et comprend les besoins avant qu'ils ne soient exprimés"
+              title: "Analyse IA",
+              description: "Comprenez les besoins de vos prospects grâce à notre technologie avancée"
             },
             {
               icon: Zap,
-              title: "Impact Immédiat",
-              description: "Devenez celui qui apporte des réponses là où les autres cherchent encore des questions"
+              title: "Résultats Rapides",
+              description: "Convertissez plus efficacement avec des insights précis et actionnables"
             }
           ].map((feature, index) => (
             <motion.div
@@ -90,7 +90,7 @@ export const ValuePropositionSection = () => {
           className="text-center mt-16"
         >
           <p className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
-            Leadgen Pro : quand la précision rencontre la performance, vous devenez inarrêtable
+            LeadGen Pro : L'intelligence artificielle au service de votre croissance
           </p>
         </motion.div>
       </div>
