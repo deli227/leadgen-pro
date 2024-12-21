@@ -6,57 +6,100 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+async function scrapeLeadsWithBrightData(filters: any) {
+  const proxyUrl = Deno.env.get('BRIGHT_DATA_PROXY_URL')
+  if (!proxyUrl) {
+    throw new Error('Bright Data API key not found')
+  }
+
+  const query = `${filters.industry} ${filters.city} ${filters.country}`
+  const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`
+
+  console.log('Scraping with query:', query)
+
+  try {
+    const response = await fetch(searchUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      },
+      // @ts-ignore - Le type WebSocket n'est pas reconnu par Deno
+      proxy: proxyUrl
+    })
+
+    const html = await response.text()
+    console.log('Received HTML length:', html.length)
+
+    // Simulation de génération de leads (à remplacer par le vrai scraping)
+    const leads = []
+    const count = Math.min(filters.leadCount || 10, 50) // Maximum 50 leads
+
+    for (let i = 1; i <= count; i++) {
+      leads.push({
+        company: `Entreprise ${i} - ${filters.industry}`,
+        website: `https://example${i}.com`,
+        email: `contact@example${i}.com`,
+        phone: `+33 1 23 45 67 ${i.toString().padStart(2, '0')}`,
+        address: `${filters.city}, ${filters.country}`,
+        industry: filters.industry,
+        social_media: {
+          linkedin: `https://linkedin.com/company/example${i}`,
+          twitter: `https://twitter.com/example${i}`
+        },
+        score: Math.floor(Math.random() * 5) + 5, // Score entre 5 et 10
+        qualification: Math.floor(Math.random() * 3) + 2, // Qualification entre 2 et 5
+        strengths: ['Présence digitale forte', 'Croissance rapide'],
+        weaknesses: ['Communication à améliorer']
+      })
+    }
+
+    return leads
+  } catch (error) {
+    console.error('Error during scraping:', error)
+    throw error
+  }
+}
+
 serve(async (req) => {
+  // Gestion des requêtes CORS preflight
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response(null, { headers: corsHeaders })
   }
 
   try {
     // Créer le client Supabase
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? ''
     )
 
-    // Récupérer le secret
-    const { data: secret, error: secretError } = await supabaseClient
-      .from('secrets')
-      .select('*')
-      .eq('name', 'BRIGHT_DATA_PROXY_URL')
-      .single()
-
-    if (secretError) {
-      console.error('Error fetching secret:', secretError)
-      throw new Error(`Error fetching secret: ${secretError.message}`)
-    }
-
-    if (!secret || !secret.value) {
-      console.error('No proxy URL found in secrets')
-      throw new Error('Bright Data proxy URL not found')
-    }
-
-    console.log('Secret retrieved successfully')
-
-    // Récupérer les paramètres de la requête
+    // Récupérer les filtres de la requête
     const { filters } = await req.json()
     console.log('Received filters:', filters)
 
-    // Configuration du proxy
-    const fetchOptions = {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      proxy: secret.value,
+    // Valider les filtres
+    if (!filters || !filters.country || !filters.industry) {
+      throw new Error('Missing required filters')
     }
 
-    // Exemple de requête à travers le proxy
-    const response = await fetch('https://example.com', fetchOptions)
-    const data = await response.json()
+    // Générer les leads
+    const leads = await scrapeLeadsWithBrightData(filters)
+    console.log(`Generated ${leads.length} leads`)
+
+    // Insérer les leads dans la base de données
+    const { error: insertError } = await supabaseClient
+      .from('leads')
+      .insert(leads.map(lead => ({
+        ...lead,
+        user_id: filters.userId // Important pour les RLS policies
+      })))
+
+    if (insertError) {
+      console.error('Error inserting leads:', insertError)
+      throw insertError
+    }
 
     return new Response(
-      JSON.stringify({ success: true, data }),
+      JSON.stringify({ success: true, message: `${leads.length} leads generated successfully` }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200 
@@ -66,7 +109,10 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error:', error)
     return new Response(
-      JSON.stringify({ success: false, error: error.message }),
+      JSON.stringify({ 
+        success: false, 
+        error: error.message || 'An error occurred during lead generation'
+      }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 500 
