@@ -6,91 +6,58 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-async function scrapeLeadsWithBrightData(filters: any) {
-  const proxyUrl = Deno.env.get('BRIGHT_DATA_PROXY_URL')
-  if (!proxyUrl) {
-    throw new Error('Bright Data API key not found')
-  }
+async function generateMockLeads(filters: any) {
+  const leads = []
+  const count = Math.min(filters.leadCount || 10, 50) // Maximum 50 leads
 
-  const query = `${filters.industry} ${filters.city} ${filters.country}`
-  const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`
-
-  console.log('Scraping with query:', query)
-
-  try {
-    const response = await fetch(searchUrl, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+  for (let i = 1; i <= count; i++) {
+    leads.push({
+      company: `Entreprise ${i} - ${filters.industry}`,
+      website: `https://example${i}.com`,
+      email: `contact@example${i}.com`,
+      phone: `+33 1 23 45 67 ${i.toString().padStart(2, '0')}`,
+      address: `${filters.city}, ${filters.country}`,
+      industry: filters.industry,
+      social_media: {
+        linkedin: `https://linkedin.com/company/example${i}`,
+        twitter: `https://twitter.com/example${i}`
       },
-      // @ts-ignore - Le type WebSocket n'est pas reconnu par Deno
-      proxy: proxyUrl
+      score: Math.floor(Math.random() * 5) + 5, // Score entre 5 et 10
+      qualification: Math.floor(Math.random() * 3) + 2, // Qualification entre 2 et 5
+      strengths: ['Présence digitale forte', 'Croissance rapide'],
+      weaknesses: ['Communication à améliorer']
     })
-
-    const html = await response.text()
-    console.log('Received HTML length:', html.length)
-
-    // Simulation de génération de leads (à remplacer par le vrai scraping)
-    const leads = []
-    const count = Math.min(filters.leadCount || 10, 50) // Maximum 50 leads
-
-    for (let i = 1; i <= count; i++) {
-      leads.push({
-        company: `Entreprise ${i} - ${filters.industry}`,
-        website: `https://example${i}.com`,
-        email: `contact@example${i}.com`,
-        phone: `+33 1 23 45 67 ${i.toString().padStart(2, '0')}`,
-        address: `${filters.city}, ${filters.country}`,
-        industry: filters.industry,
-        social_media: {
-          linkedin: `https://linkedin.com/company/example${i}`,
-          twitter: `https://twitter.com/example${i}`
-        },
-        score: Math.floor(Math.random() * 5) + 5, // Score entre 5 et 10
-        qualification: Math.floor(Math.random() * 3) + 2, // Qualification entre 2 et 5
-        strengths: ['Présence digitale forte', 'Croissance rapide'],
-        weaknesses: ['Communication à améliorer']
-      })
-    }
-
-    return leads
-  } catch (error) {
-    console.error('Error during scraping:', error)
-    throw error
   }
+
+  return leads
 }
 
 serve(async (req) => {
-  // Gestion des requêtes CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
 
   try {
-    // Créer le client Supabase
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? ''
     )
 
-    // Récupérer les filtres de la requête
     const { filters } = await req.json()
     console.log('Received filters:', filters)
 
-    // Valider les filtres
     if (!filters || !filters.country || !filters.industry) {
       throw new Error('Missing required filters')
     }
 
-    // Générer les leads
-    const leads = await scrapeLeadsWithBrightData(filters)
+    const leads = await generateMockLeads(filters)
     console.log(`Generated ${leads.length} leads`)
 
-    // Insérer les leads dans la base de données
     const { error: insertError } = await supabaseClient
       .from('leads')
       .insert(leads.map(lead => ({
         ...lead,
-        user_id: filters.userId // Important pour les RLS policies
+        user_id: filters.userId
       })))
 
     if (insertError) {
