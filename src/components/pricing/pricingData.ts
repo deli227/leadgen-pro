@@ -6,7 +6,7 @@ export const plans = [
     features: [
       "3 leads offerts",
       "Analyse IA avancée",
-      "Export multi-formats (CSV, Excel, API)",
+      "Multi format",
       "Support prioritaire",
       "Idéal pour découvrir sans risque",
     ],
