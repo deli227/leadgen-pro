@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Target, Zap, Brain } from "lucide-react";
+import { ComparisonTable } from "./pricing/ComparisonTable";
 
 export const ValuePropositionSection = () => {
   return (
@@ -45,7 +46,7 @@ export const ValuePropositionSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
           viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto"
+          className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto mb-16"
         >
           {[
             {
@@ -80,6 +81,16 @@ export const ValuePropositionSection = () => {
               </div>
             </motion.div>
           ))}
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          viewport={{ once: true }}
+          className="mb-16"
+        >
+          <ComparisonTable />
         </motion.div>
 
         <motion.div
