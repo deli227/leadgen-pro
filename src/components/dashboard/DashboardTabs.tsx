@@ -53,7 +53,7 @@ export function DashboardTabs({
           <Mail className="h-4 w-4 mr-2" />
           <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2">
             <span>{t('common.automation')}</span>
-            <span className="text-[10px] sm:text-xs text-primary-light/50 absolute -bottom-4 sm:static whitespace-nowrap">
+            <span className="text-[10px] sm:text-xs text-primary-light/80 absolute -bottom-4 sm:static whitespace-nowrap">
               ({t('common.comingSoon')})
             </span>
           </div>

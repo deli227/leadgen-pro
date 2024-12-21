@@ -20,17 +20,17 @@ export function AutomationSection({ title, buttonIcon: ButtonIcon, buttonText, i
   return (
     <section className="space-y-4">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <h2 className="text-xl font-semibold bg-gradient-to-r from-primary via-primary-light to-primary bg-clip-text text-transparent">
+        <h2 className="text-xl font-semibold text-primary-light">
           {title}
         </h2>
         <Button 
           variant="outline" 
-          className="border-primary/20 w-full sm:w-auto whitespace-nowrap bg-black/40 backdrop-blur-sm hover:bg-primary/10 transition-all duration-300"
+          className="border-primary/20 w-full sm:w-auto whitespace-nowrap bg-black/40 backdrop-blur-sm hover:bg-primary/10 transition-all duration-300 text-primary-light"
           disabled
         >
           <ButtonIcon className="h-4 w-4 mr-2" />
           {buttonText}
-          <Badge variant="secondary" className="ml-2 bg-primary/20 text-xs">
+          <Badge variant="secondary" className="ml-2 bg-primary/20 text-primary-light text-xs">
             Bientôt
           </Badge>
         </Button>
