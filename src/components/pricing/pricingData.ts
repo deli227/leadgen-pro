@@ -19,6 +19,7 @@ export const plans = [
     price: "24,99€",
     features: [
       "200 leads garantis par mois",
+      "10 leads par jour maximum",
       "Analyse IA avancée",
       "Export multi-formats",
       "Accès API",
@@ -36,6 +37,7 @@ export const plans = [
     price: "59,99€",
     features: [
       "500 leads garantis par mois",
+      "20 leads par jour maximum",
       "Analyse IA avancée et personnalisée",
       "Export multi-formats",
       "API dédiée pour automatisation",
