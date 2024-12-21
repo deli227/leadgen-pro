@@ -25,11 +25,11 @@ export default function Index() {
       <main>
         <HeroSection />
         <SocialMediaSection />
-        <ValuePropositionSection />
         <ExplanationSection />
         <LeadExplanationSection />
         <HowItWorksSection />
         <PricingSection />
+        <ValuePropositionSection />
         <TestimonialsSection />
         <ContactSection />
       </main>
