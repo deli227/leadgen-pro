@@ -47,29 +47,49 @@ const App = () => {
 
   useEffect(() => {
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      if (error) {
-        console.error("Error getting session:", error);
+    const initializeAuth = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) {
+          console.error("Error getting session:", error);
+          // Clear any invalid tokens
+          await supabase.auth.signOut();
+          toast.error("Session expirée, veuillez vous reconnecter");
+        } else {
+          console.log("Initial session:", session);
+          setSession(session);
+        }
+      } catch (error) {
+        console.error("Error initializing auth:", error);
         toast.error("Erreur de connexion");
+      } finally {
+        setIsLoading(false);
       }
-      console.log("Initial session:", session);
-      setSession(session);
-      setIsLoading(false);
-    });
+    };
+
+    initializeAuth();
 
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      console.log("Auth state changed:", _event, session);
-      setSession(session);
-      if (_event === 'SIGNED_OUT') {
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log("Auth state changed:", event, session);
+      
+      if (event === 'TOKEN_REFRESHED') {
+        console.log('Token refreshed successfully');
+      }
+      
+      if (event === 'SIGNED_OUT') {
+        // Clear any stored tokens and query cache
         queryClient.clear();
+        localStorage.removeItem('supabase.auth.token');
         toast.success("Déconnexion réussie");
-      } else if (_event === 'SIGNED_IN') {
+      } else if (event === 'SIGNED_IN') {
         queryClient.invalidateQueries();
         toast.success("Connexion réussie");
       }
+      
+      setSession(session);
     });
 
     return () => {
