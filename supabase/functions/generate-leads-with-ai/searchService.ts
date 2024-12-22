@@ -74,6 +74,8 @@ export async function searchWithSerpAPI(filters: any) {
       })
     };
 
+    console.log('Options de la requête:', options);
+
     const response = await fetch('https://api.brightdata.com/request', options);
 
     if (!response.ok) {
