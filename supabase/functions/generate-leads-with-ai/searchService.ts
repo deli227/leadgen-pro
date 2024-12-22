@@ -13,40 +13,44 @@ export async function searchWithSerpAPI(filters: any) {
 
     // Add industry if specified
     if (filters.industry && filters.industry !== 'all') {
-      // Remove quotes to avoid too restrictive search
       searchTerms.push(filters.industry);
       console.log('Ajout du secteur à la recherche:', filters.industry);
     }
 
+    // Get country specific parameters
+    const countryParams = getCountrySearchParams(filters.country);
+    console.log('Paramètres spécifiques au pays:', countryParams);
+
     // Add location information
     if (filters.country && filters.country !== 'all') {
       const countryName = getCountryName(filters.country);
-      // Add location keyword for better results
-      searchTerms.push(`entreprises ${countryName}`);
+      // Add location keyword based on country
+      searchTerms.push(`${countryParams.businessTerm} ${countryName}`);
       console.log('Ajout du pays à la recherche:', countryName);
     }
     
     if (filters.city && filters.city !== 'all') {
-      // Add city with "entreprises" keyword
-      searchTerms.push(`entreprises ${filters.city}`);
+      searchTerms.push(`${countryParams.businessTerm} ${filters.city}`);
       console.log('Ajout de la ville à la recherche:', filters.city);
     }
 
-    // If no search terms are provided, use a broader default
+    // If no search terms are provided, use a broader default based on country
     if (searchTerms.length === 0) {
-      searchTerms.push('entreprises françaises');
-      console.log('Aucun critère spécifique fourni, utilisation de la recherche par défaut: entreprises françaises');
+      const defaultCountry = filters.country === 'all' ? 'FR' : filters.country;
+      const params = getCountrySearchParams(defaultCountry);
+      searchTerms.push(`${params.businessTerm} ${getCountryName(defaultCountry)}`);
+      console.log('Utilisation de la recherche par défaut pour le pays:', defaultCountry);
     }
 
     // Add specific terms to improve business search results but make them optional
-    searchTerms.push('(business OR company OR entreprise)');
+    searchTerms.push(`(${countryParams.businessTerms.join(' OR ')})`);
     
     // Combine all search terms with OR operator to get more results
     const searchQuery = searchTerms.join(' OR ');
     console.log('Requête de recherche finale:', searchQuery);
 
-    // Add more results and French language
-    const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}&num=20&hl=fr&gl=fr`;
+    // Construct Google URL with country-specific parameters
+    const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}&num=20&hl=${countryParams.lang}&gl=${countryParams.gl}`;
     console.log('URL de recherche construite:', googleUrl);
 
     const options = {
@@ -59,10 +63,10 @@ export async function searchWithSerpAPI(filters: any) {
         format: "json",
         zone: "serp_api4",
         url: googleUrl,
-        // Add additional parameters to get more business results
         params: {
           type: "business",
-          results_count: 20
+          results_count: 20,
+          country: countryParams.gl
         }
       })
     };
@@ -116,4 +120,79 @@ function getCountryName(countryCode: string): string {
     'CI': 'Côte d\'Ivoire'
   };
   return countryMap[countryCode] || countryCode;
+}
+
+// Helper function to get country-specific search parameters
+function getCountrySearchParams(countryCode: string): {
+  lang: string;
+  gl: string;
+  businessTerm: string;
+  businessTerms: string[];
+} {
+  const defaultParams = {
+    lang: 'fr',
+    gl: 'FR',
+    businessTerm: 'entreprises',
+    businessTerms: ['entreprise', 'société', 'business', 'company']
+  };
+
+  const countryParams: { [key: string]: typeof defaultParams } = {
+    'FR': defaultParams,
+    'BE': {
+      lang: 'fr',
+      gl: 'BE',
+      businessTerm: 'entreprises',
+      businessTerms: ['entreprise', 'société', 'bedrijf', 'business']
+    },
+    'CH': {
+      lang: 'fr',
+      gl: 'CH',
+      businessTerm: 'entreprises',
+      businessTerms: ['entreprise', 'société', 'unternehmen', 'firma']
+    },
+    'CA': {
+      lang: 'fr',
+      gl: 'CA',
+      businessTerm: 'entreprises',
+      businessTerms: ['entreprise', 'société', 'business', 'company']
+    },
+    'LU': {
+      lang: 'fr',
+      gl: 'LU',
+      businessTerm: 'entreprises',
+      businessTerms: ['entreprise', 'société', 'firma', 'business']
+    },
+    'MC': {
+      lang: 'fr',
+      gl: 'MC',
+      businessTerm: 'entreprises',
+      businessTerms: ['entreprise', 'société', 'business']
+    },
+    'MA': {
+      lang: 'fr',
+      gl: 'MA',
+      businessTerm: 'entreprises',
+      businessTerms: ['entreprise', 'société', 'شركة']
+    },
+    'TN': {
+      lang: 'fr',
+      gl: 'TN',
+      businessTerm: 'entreprises',
+      businessTerms: ['entreprise', 'société', 'شركة']
+    },
+    'SN': {
+      lang: 'fr',
+      gl: 'SN',
+      businessTerm: 'entreprises',
+      businessTerms: ['entreprise', 'société', 'business']
+    },
+    'CI': {
+      lang: 'fr',
+      gl: 'CI',
+      businessTerm: 'entreprises',
+      businessTerms: ['entreprise', 'société', 'business']
+    }
+  };
+
+  return countryParams[countryCode] || defaultParams;
 }
