@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { useQueryClient } from "@tanstack/react-query"
 import { Lead } from "@/types/leads"
 import { supabase } from "@/integrations/supabase/client"
+import { toast } from "sonner"
 
 interface LeadsAnalyticsProps {
   leads: Lead[]
@@ -23,6 +24,21 @@ export function LeadsAnalytics({ leads, onAddToExport }: LeadsAnalyticsProps) {
 
   const handleDelete = async (lead: Lead) => {
     try {
+      // First check if we have an authenticated session
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+      
+      if (sessionError || !session) {
+        console.error('Erreur de session:', sessionError)
+        toast({
+          variant: "destructive",
+          title: "Erreur d'authentification",
+          description: "Veuillez vous reconnecter pour effectuer cette action"
+        })
+        return
+      }
+
+      console.log('Tentative de suppression du lead:', lead.id)
+      
       const { error } = await supabase
         .from('leads')
         .delete()
