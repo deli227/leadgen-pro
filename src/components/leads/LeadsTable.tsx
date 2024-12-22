@@ -1,11 +1,11 @@
-import { Lead } from "@/types/leads";
-import { useLeadsData } from "@/hooks/useLeadsData";
-import { useSessionData } from "@/hooks/useSessionData";
-import { LeadsList } from "./filters/LeadsList";
-import { ExportTabContent } from "./filters/ExportTabContent";
-import { LeadCountSlider } from "./filters/LeadCountSlider";
-import { SearchInput } from "./filters/SearchInput";
-import { useEffect, useState } from "react";
+import { useState } from "react"
+import { Lead } from "@/types/leads"
+import { useLeadsData } from "@/hooks/useLeadsData"
+import { useSessionData } from "@/hooks/useSessionData"
+import { LeadsList } from "./filters/LeadsList"
+import { ExportTabContent } from "./filters/ExportTabContent"
+import { LeadCountSlider } from "./filters/LeadCountSlider"
+import { SearchInput } from "./filters/SearchInput"
 
 export function LeadsTable() {
   const session = useSessionData();
@@ -25,12 +25,6 @@ export function LeadsTable() {
   const handleRemoveFromExport = (leadId: string) => {
     setExportLeads(prev => prev.filter(lead => lead.id !== leadId));
   };
-
-  useEffect(() => {
-    if (exportLeads.length > leadCount) {
-      setExportLeads(prev => prev.slice(0, leadCount));
-    }
-  }, [leadCount]);
 
   return (
     <div className="p-4 bg-secondary-dark/80 rounded-lg border border-primary-light/20">

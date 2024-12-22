@@ -1,67 +1,62 @@
 import { Button } from "@/components/ui/button";
-import { Eye, NotebookPen, PlusCircle } from "lucide-react";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { useToast } from "@/components/ui/use-toast";
-import { LeadDetails } from "./LeadDetails";
-import { LeadNotes } from "./LeadNotes";
+import { Brain, NotebookPen, FileDown, Trash2 } from "lucide-react";
 import { Lead } from "@/types/leads";
 
-interface LeadsTableActionsProps {
+interface LeadActionsProps {
   lead: Lead;
-  onShowDetails: (lead: Lead) => void;
+  onAnalyze: (lead: Lead) => void;
   onShowNotes: (lead: Lead) => void;
   onAddToExport: (lead: Lead) => void;
-  exportList: string[];
+  onDelete?: (lead: Lead) => void;
 }
 
-export function LeadsTableActions({ 
+export function LeadActions({ 
   lead, 
-  onShowDetails, 
+  onAnalyze, 
   onShowNotes, 
-  onAddToExport,
-  exportList 
-}: LeadsTableActionsProps) {
-  const { toast } = useToast();
-
+  onAddToExport, 
+  onDelete 
+}: LeadActionsProps) {
   return (
-    <div className="flex gap-2">
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button
-            onClick={() => onShowDetails(lead)}
-            variant="outline"
-            size="sm"
-            className="bg-gradient-to-r from-primary to-primary-dark text-primary-light border-none hover:opacity-90 transition-all duration-300"
-          >
-            <Eye className="h-4 w-4 mr-2" />
-            Détails
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="bg-secondary-dark border-primary-light backdrop-blur-lg bg-opacity-95">
-          <LeadDetails lead={lead} onClose={() => {}} />
-        </DialogContent>
-      </Dialog>
-      
+    <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+      <Button
+        onClick={() => onAnalyze(lead)}
+        variant="outline"
+        size="sm"
+        className="flex-1 sm:flex-none bg-gradient-to-r from-primary to-primary-dark text-primary-light border-none hover:opacity-90 text-xs sm:text-sm"
+      >
+        <Brain className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+        Analyser
+      </Button>
       <Button
         onClick={() => onShowNotes(lead)}
         variant="outline"
         size="sm"
-        className="bg-gradient-to-r from-primary to-primary-dark text-primary-light border-none hover:opacity-90 transition-all duration-300"
+        className="flex-1 sm:flex-none bg-gradient-to-r from-primary to-primary-dark text-primary-light border-none hover:opacity-90 text-xs sm:text-sm"
       >
-        <NotebookPen className="h-4 w-4 mr-2" />
+        <NotebookPen className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
         Notes
       </Button>
-      
       <Button
         onClick={() => onAddToExport(lead)}
         variant="outline"
         size="sm"
-        className="bg-gradient-to-r from-primary to-primary-dark text-primary-light border-none hover:opacity-90 transition-all duration-300"
-        disabled={exportList.includes(lead.id)}
+        className="flex-1 sm:flex-none bg-gradient-to-r from-primary to-primary-dark text-primary-light border-none hover:opacity-90 text-xs sm:text-sm"
       >
-        <PlusCircle className="h-4 w-4 mr-2" />
-        {exportList.includes(lead.id) ? "Ajouté" : "Exporter"}
+        <FileDown className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+        Exporter
       </Button>
+      {onDelete && (
+        <Button
+          onClick={() => onDelete(lead)}
+          variant="outline"
+          size="sm"
+          className="flex-1 sm:flex-none bg-gradient-to-r from-red-500 to-red-600 text-white border-none hover:opacity-90 text-xs sm:text-sm"
+        >
+          <Trash2 className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+          Supprimer
+        </Button>
+      )}
     </div>
   );
 }

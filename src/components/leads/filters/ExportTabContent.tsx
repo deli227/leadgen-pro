@@ -2,10 +2,11 @@ import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Trash2 } from "lucide-react"
 import { LeadsExport } from "../LeadsExport"
+import { Lead } from "@/types/leads"
 
 interface ExportTabContentProps {
-  exportLeads: any[]
-  onRemoveFromExport: (leadId: number) => void
+  exportLeads: Lead[]
+  onRemoveFromExport: (leadId: string) => void
 }
 
 export function ExportTabContent({ exportLeads, onRemoveFromExport }: ExportTabContentProps) {
