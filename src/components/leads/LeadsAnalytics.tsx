@@ -19,9 +19,7 @@ export function LeadsAnalytics({
   const { handleAnalyze } = useLeadActions()
 
   const handleDelete = (lead: Lead) => {
-    if (onLocalRemove) {
-      onLocalRemove(lead.id)
-    }
+    // On ne supprime que de la liste analytique
     if (onRemoveFromAnalytics) {
       onRemoveFromAnalytics(lead.id)
     }

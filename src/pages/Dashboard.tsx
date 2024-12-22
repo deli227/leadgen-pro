@@ -23,7 +23,6 @@ export function Dashboard() {
   const [exportLeads, setExportLeads] = useState<Lead[]>([])
   const [removedAnalyticsLeads, setRemovedAnalyticsLeads] = useState<string[]>([])
   const [removedExportLeads, setRemovedExportLeads] = useState<string[]>([])
-  const [removedSearchLeads, setRemovedSearchLeads] = useState<string[]>([])
 
   const { data: session } = useSessionData()
   const { data: profile } = useProfileData(session)
@@ -68,17 +67,14 @@ export function Dashboard() {
     })
   }
 
-  // Filtrer les leads pour chaque onglet en excluant ceux qui ont été supprimés localement
-  const filteredAnalyticsLeads = analyticsLeads.filter(
-    lead => !removedAnalyticsLeads.includes(lead.id)
-  )
-
+  // Filtrer uniquement les leads pour l'export qui ont été supprimés
   const filteredExportLeads = exportLeads.filter(
     lead => !removedExportLeads.includes(lead.id)
   )
 
-  const filteredSearchLeads = leads.filter(
-    lead => !removedSearchLeads.includes(lead.id)
+  // Filtrer uniquement les leads pour l'analytique qui ont été supprimés
+  const filteredAnalyticsLeads = analyticsLeads.filter(
+    lead => !removedAnalyticsLeads.includes(lead.id)
   )
 
   return (
@@ -105,7 +101,7 @@ export function Dashboard() {
         <DashboardTabs 
           filters={filters}
           setFilters={setFilters}
-          leads={filteredSearchLeads}
+          leads={leads}
           analyticsLeads={filteredAnalyticsLeads}
           onAddToAnalytics={handleAddToAnalytics}
           onAddToExport={handleAddToExport}
