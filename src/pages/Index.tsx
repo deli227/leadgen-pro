@@ -11,6 +11,7 @@ import { ExplanationSection } from "@/components/ExplanationSection";
 import { ValuePropositionSection } from "@/components/ValuePropositionSection";
 import { NeonCursor } from "@/components/NeonCursor";
 import { HiringSection } from "@/components/HiringSection";
+import { LogosCarousel } from "@/components/LogosCarousel";
 
 export default function Index() {
   return (
@@ -25,6 +26,7 @@ export default function Index() {
       </div>
       <main>
         <HeroSection />
+        <LogosCarousel />
         <SocialMediaSection />
         <ExplanationSection />
         <LeadExplanationSection />
