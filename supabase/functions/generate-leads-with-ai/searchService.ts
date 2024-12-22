@@ -61,18 +61,20 @@ export async function searchWithSerpAPI(filters: any) {
   try {
     console.log('Envoi de la requête à Bright Data API:', searchUrl);
     
-    const response = await fetch('https://api.brightdata.com/request', {
+    const options = {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': `Bearer ${brightDataProxyUrl}`,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         format: 'json',
         zone: 'serp_api4',
         url: searchUrl
       })
-    });
+    };
+
+    const response = await fetch('https://api.brightdata.com/request', options);
 
     if (!response.ok) {
       console.error('Erreur de la requête:', response.status, response.statusText);
