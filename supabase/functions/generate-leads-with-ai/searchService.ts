@@ -68,12 +68,9 @@ export async function searchWithSerpAPI(filters: any) {
         'Authorization': `Bearer ${brightDataProxyUrl}`,
       },
       body: JSON.stringify({
+        format: 'json',
         zone: 'serp_api4',
-        url: searchUrl,
-        format: 'raw',
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-        }
+        url: searchUrl
       })
     });
 
@@ -82,34 +79,20 @@ export async function searchWithSerpAPI(filters: any) {
       throw new Error(`Erreur lors de la recherche: ${response.status} ${response.statusText}`);
     }
 
-    const html = await response.text();
+    const data = await response.json();
+    console.log('Réponse de Bright Data:', data);
     
-    // Extraction basique des résultats de recherche
-    const results = [];
-    const regex = /<div class="g">(.*?)<\/div>/g;
-    const titleRegex = /<h3[^>]*>(.*?)<\/h3>/;
-    const snippetRegex = /<div class="VwiC3b[^>]*>(.*?)<\/div>/;
-    const linkRegex = /<a href="([^"]*)"[^>]*>/;
-
-    let match;
-    while ((match = regex.exec(html)) !== null && results.length < (filters.leadCount || 5)) {
-      const titleMatch = titleRegex.exec(match[1]);
-      const snippetMatch = snippetRegex.exec(match[1]);
-      const linkMatch = linkRegex.exec(match[1]);
-
-      if (titleMatch && snippetMatch && linkMatch) {
-        results.push({
-          title: titleMatch[1].replace(/<[^>]*>/g, ''),
-          snippet: snippetMatch[1].replace(/<[^>]*>/g, ''),
-          link: linkMatch[1]
-        });
-      }
-    }
-
-    if (results.length === 0) {
-      console.error('Aucun résultat trouvé dans le HTML:', html.substring(0, 500));
+    if (!data || !data.organic_results) {
+      console.error('Aucun résultat trouvé dans la réponse');
       throw new Error(`Aucun résultat trouvé pour la recherche "${searchQuery}". Essayez d'élargir vos critères de recherche.`);
     }
+
+    // Transformation des résultats au format attendu
+    const results = data.organic_results.slice(0, filters.leadCount || 5).map((result: any) => ({
+      title: result.title,
+      snippet: result.snippet,
+      link: result.link
+    }));
 
     console.log('Nombre de résultats trouvés:', results.length);
     return results;
