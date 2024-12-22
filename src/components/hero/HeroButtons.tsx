@@ -25,7 +25,7 @@ export const HeroButtons = () => {
         size="lg"
         className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-gradient-to-r from-[#8B5CF6] via-[#D946EF] to-[#8B5CF6] text-white hover:from-[#7C3AED] hover:via-[#C026D3] hover:to-[#7C3AED] shadow-lg hover:shadow-xl transition-all duration-300"
         aria-label="Voir la démo"
-        onClick={() => window.open('https://youtu.be/hywJowRLVKY', '_blank')}
+        onClick={() => window.open('https://youtu.be/g3ry9vVp5qI', '_blank')}
       >
         <Play className="mr-2 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
         Voir la démo
