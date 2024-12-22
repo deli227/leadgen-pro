@@ -4,30 +4,14 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { useToast } from "@/components/ui/use-toast"
 import { LeadDetails } from "./LeadDetails"
 import { LeadNotes } from "./LeadNotes"
-
-interface Lead {
-  id: number
-  company: string
-  email: string
-  phone: string
-  address?: string
-  qualification: number
-  socialMedia: {
-    linkedin: string
-    twitter: string
-  }
-  score: number
-  industry: string
-  strengths: string[]
-  weaknesses: string[]
-}
+import { Lead } from "@/types/leads"
 
 interface LeadsTableActionsProps {
   lead: Lead
   onShowDetails: (lead: Lead) => void
   onShowNotes: (lead: Lead) => void
-  onAddToExport: (leadId: number) => void
-  exportList: number[]
+  onAddToExport: (lead: Lead) => void
+  exportList: string[]
 }
 
 export function LeadsTableActions({ 
@@ -69,7 +53,7 @@ export function LeadsTableActions({
       </Button>
       
       <Button
-        onClick={() => onAddToExport(lead.id)}
+        onClick={() => onAddToExport(lead)}
         variant="outline"
         size="sm"
         className="bg-gradient-to-r from-primary to-primary-dark text-primary-light border-none hover:opacity-90 transition-all duration-300"
