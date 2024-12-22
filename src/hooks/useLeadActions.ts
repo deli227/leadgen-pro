@@ -26,7 +26,7 @@ export function useLeadActions() {
         .from('leads')
         .delete()
         .eq('id', lead.id)
-        .eq('user_id', session.user.id); // Ensure we only delete user's own leads
+        .eq('user_id', session.user.id); // S'assurer qu'on ne supprime que les leads de l'utilisateur
 
       if (error) {
         console.error('Erreur lors de la suppression:', error);
@@ -41,6 +41,7 @@ export function useLeadActions() {
         description: "Le lead a été supprimé avec succès"
       });
       
+      // Invalider le cache pour forcer un rechargement des leads
       queryClient.invalidateQueries({ queryKey: ['leads'] });
     } catch (error) {
       console.error('Erreur lors de la suppression:', error);
