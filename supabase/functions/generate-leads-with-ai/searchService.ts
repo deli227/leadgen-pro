@@ -2,29 +2,28 @@ export async function searchWithSerpAPI(filters: any) {
   try {
     console.log('Démarrage de la recherche avec les filtres:', JSON.stringify(filters, null, 2));
 
+    // Get country specific parameters
+    const countryParams = getCountrySearchParams(filters.country);
+    console.log('Paramètres spécifiques au pays:', countryParams);
+
     // Construct the search query based on filters
     let searchTerms = [];
     
     // Add company name if provided
     if (filters.search) {
-      searchTerms.push(filters.search);
+      searchTerms.push(`"${filters.search}"`);
       console.log('Ajout du nom de l\'entreprise à la recherche:', filters.search);
     }
 
     // Add industry if specified
     if (filters.industry && filters.industry !== 'all') {
-      searchTerms.push(filters.industry);
+      searchTerms.push(`"${filters.industry}"`);
       console.log('Ajout du secteur à la recherche:', filters.industry);
     }
-
-    // Get country specific parameters
-    const countryParams = getCountrySearchParams(filters.country);
-    console.log('Paramètres spécifiques au pays:', countryParams);
 
     // Add location information
     if (filters.country && filters.country !== 'all') {
       const countryName = getCountryName(filters.country);
-      // Add location keyword based on country
       searchTerms.push(`${countryParams.businessTerm} ${countryName}`);
       console.log('Ajout du pays à la recherche:', countryName);
     }
@@ -34,7 +33,7 @@ export async function searchWithSerpAPI(filters: any) {
       console.log('Ajout de la ville à la recherche:', filters.city);
     }
 
-    // If no search terms are provided, use a broader default based on country
+    // If no specific search terms are provided, use a broader search
     if (searchTerms.length === 0) {
       const defaultCountry = filters.country === 'all' ? 'FR' : filters.country;
       const params = getCountrySearchParams(defaultCountry);
@@ -42,14 +41,11 @@ export async function searchWithSerpAPI(filters: any) {
       console.log('Utilisation de la recherche par défaut pour le pays:', defaultCountry);
     }
 
-    // Add specific terms to improve business search results but make them optional
-    searchTerms.push(`(${countryParams.businessTerms.join(' OR ')})`);
-    
-    // Combine all search terms with OR operator to get more results
-    const searchQuery = searchTerms.join(' OR ');
+    // Combine search terms
+    const searchQuery = searchTerms.join(' ');
     console.log('Requête de recherche finale:', searchQuery);
 
-    // Construct Google URL with country-specific parameters
+    // Construct the URL with proper parameters
     const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}&num=20&hl=${countryParams.lang}&gl=${countryParams.gl}`;
     console.log('URL de recherche construite:', googleUrl);
 
@@ -60,14 +56,10 @@ export async function searchWithSerpAPI(filters: any) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        format: "json",
-        zone: "serp_api4",
         url: googleUrl,
-        params: {
-          type: "business",
-          results_count: 20,
-          country: countryParams.gl
-        }
+        country: countryParams.gl,
+        format: "json",
+        zone: "serp_api4"
       })
     };
 
@@ -82,7 +74,6 @@ export async function searchWithSerpAPI(filters: any) {
 
     const data = await response.json();
     console.log('Données brutes reçues:', JSON.stringify(data, null, 2));
-    console.log('Nombre de résultats trouvés:', data.organic_results?.length || 0);
 
     if (!data || !data.organic_results || data.organic_results.length === 0) {
       console.log('Aucun résultat trouvé pour la recherche');
@@ -96,7 +87,7 @@ export async function searchWithSerpAPI(filters: any) {
       link: result.link || ''
     }));
 
-    console.log('Résultats transformés:', JSON.stringify(results, null, 2));
+    console.log('Nombre de résultats trouvés:', results.length);
     return results;
 
   } catch (error) {
@@ -127,72 +118,59 @@ function getCountrySearchParams(countryCode: string): {
   lang: string;
   gl: string;
   businessTerm: string;
-  businessTerms: string[];
 } {
-  const defaultParams = {
-    lang: 'fr',
-    gl: 'FR',
-    businessTerm: 'entreprises',
-    businessTerms: ['entreprise', 'société', 'business', 'company']
-  };
-
-  const countryParams: { [key: string]: typeof defaultParams } = {
-    'FR': defaultParams,
+  const params: { [key: string]: { lang: string; gl: string; businessTerm: string } } = {
+    'FR': {
+      lang: 'fr',
+      gl: 'FR',
+      businessTerm: 'entreprise'
+    },
     'BE': {
       lang: 'fr',
       gl: 'BE',
-      businessTerm: 'entreprises',
-      businessTerms: ['entreprise', 'société', 'bedrijf', 'business']
+      businessTerm: 'entreprise'
     },
     'CH': {
       lang: 'fr',
       gl: 'CH',
-      businessTerm: 'entreprises',
-      businessTerms: ['entreprise', 'société', 'unternehmen', 'firma']
+      businessTerm: 'entreprise'
     },
     'CA': {
       lang: 'fr',
       gl: 'CA',
-      businessTerm: 'entreprises',
-      businessTerms: ['entreprise', 'société', 'business', 'company']
+      businessTerm: 'entreprise'
     },
     'LU': {
       lang: 'fr',
       gl: 'LU',
-      businessTerm: 'entreprises',
-      businessTerms: ['entreprise', 'société', 'firma', 'business']
+      businessTerm: 'entreprise'
     },
     'MC': {
       lang: 'fr',
       gl: 'MC',
-      businessTerm: 'entreprises',
-      businessTerms: ['entreprise', 'société', 'business']
+      businessTerm: 'entreprise'
     },
     'MA': {
       lang: 'fr',
       gl: 'MA',
-      businessTerm: 'entreprises',
-      businessTerms: ['entreprise', 'société', 'شركة']
+      businessTerm: 'société'
     },
     'TN': {
       lang: 'fr',
       gl: 'TN',
-      businessTerm: 'entreprises',
-      businessTerms: ['entreprise', 'société', 'شركة']
+      businessTerm: 'société'
     },
     'SN': {
       lang: 'fr',
       gl: 'SN',
-      businessTerm: 'entreprises',
-      businessTerms: ['entreprise', 'société', 'business']
+      businessTerm: 'entreprise'
     },
     'CI': {
       lang: 'fr',
       gl: 'CI',
-      businessTerm: 'entreprises',
-      businessTerms: ['entreprise', 'société', 'business']
+      businessTerm: 'entreprise'
     }
   };
 
-  return countryParams[countryCode] || defaultParams;
+  return params[countryCode] || params['FR'];
 }
