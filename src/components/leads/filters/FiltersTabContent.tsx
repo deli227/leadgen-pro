@@ -1,44 +1,131 @@
-import { motion } from "framer-motion"
-import { Lead } from "@/types/leads"
-import { LeadsList } from "./LeadsList"
+import { LocationFilters } from "./LocationFilters"
+import { IndustrySelect } from "./IndustrySelect"
 import { LeadCountSlider } from "./LeadCountSlider"
+import { Button } from "@/components/ui/button"
+import { Loader2 } from "lucide-react"
+import { supabase } from "@/integrations/supabase/client"
+import { toast } from "sonner"
+import { LeadsList } from "./LeadsList"
+import { motion } from "framer-motion"
+import { useState } from "react"
 
 interface FiltersTabContentProps {
-  filters: {
-    search: string
-    leadCount: number
-    industry: string
-    country: string
-    city: string
-  }
+  filters: any
   setFilters: (filters: any) => void
-  leads: Lead[]
-  onAddToAnalytics: (lead: Lead) => void
-  onAnalyze: (lead: Lead) => void
+  leads: any[]
+  onAddToAnalytics: (lead: any) => void
 }
 
 export function FiltersTabContent({ 
   filters, 
   setFilters, 
-  leads,
-  onAddToAnalytics,
-  onAnalyze
+  leads, 
+  onAddToAnalytics 
 }: FiltersTabContentProps) {
+  const [isGenerating, setIsGenerating] = useState(false)
+
+  const handleGenerateLeads = async () => {
+    try {
+      setIsGenerating(true)
+
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        toast.error("Erreur d'authentification", {
+          description: "Veuillez vous reconnecter."
+        })
+        return
+      }
+
+      console.log('Session trouvée:', session)
+      console.log('Envoi des paramètres à generate-leads:', filters)
+
+      const { data, error } = await supabase.functions.invoke('generate-leads-with-ai', {
+        body: { 
+          filters,
+          userId: session.user.id 
+        },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
+      })
+
+      console.log('Réponse de generate-leads:', { data, error })
+
+      if (error) {
+        console.error('Erreur détaillée:', error)
+        toast.error("Erreur de génération", {
+          description: error.message || "Une erreur est survenue lors de la génération des leads."
+        })
+        return
+      }
+
+      if (!data || !data.success) {
+        toast.error("Erreur de génération", {
+          description: "La réponse de l'API est invalide"
+        })
+        return
+      }
+
+      toast.success("Génération réussie", {
+        description: "Les leads ont été générés avec succès."
+      })
+
+      window.location.reload()
+    } catch (error: any) {
+      console.error('Erreur complète:', error)
+      toast.error("Erreur de génération", {
+        description: error.message || "Une erreur est survenue lors de la génération des leads."
+      })
+    } finally {
+      setIsGenerating(false)
+    }
+  }
+
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="space-y-6 bg-gradient-to-br from-black/80 to-secondary-dark/80 p-8 rounded-b-xl border border-primary/10 shadow-xl"
-    >
+    <div className="space-y-6 bg-gradient-to-br from-black/80 to-secondary-dark/80 p-8 rounded-b-xl border border-primary/10 shadow-xl">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        className="flex flex-wrap gap-4"
+      >
+        <LocationFilters 
+          country={filters.country}
+          city={filters.city}
+          onCountryChange={(value) => {
+            console.log("Changement de pays:", value)
+            setFilters({ ...filters, country: value, city: "all" })
+          }}
+          onCityChange={(value) => setFilters({ ...filters, city: value })}
+        />
+        
+        <IndustrySelect 
+          value={filters.industry}
+          onChange={(value) => setFilters({ ...filters, industry: value })}
+        />
+
+        <Button
+          onClick={handleGenerateLeads}
+          disabled={isGenerating}
+          className="ml-auto bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+        >
+          {isGenerating ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Génération...
+            </>
+          ) : (
+            'Générer les leads'
+          )}
+        </Button>
+      </motion.div>
+
       <LeadCountSlider 
         value={filters.leadCount}
         onChange={(value) => setFilters({ ...filters, leadCount: value })}
       />
-      <LeadsList 
-        leads={leads} 
-        onAddToAnalytics={onAddToAnalytics}
-        onAnalyze={onAnalyze}
-      />
-    </motion.div>
+
+      <LeadsList leads={leads} onAddToAnalytics={onAddToAnalytics} />
+    </div>
   )
 }
