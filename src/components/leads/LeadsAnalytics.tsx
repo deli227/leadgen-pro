@@ -22,7 +22,13 @@ export function LeadsAnalytics({ leads, onAddToExport, onLocalRemove }: LeadsAna
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
       <div className="space-y-3 sm:space-y-4">
         {leads.map(lead => (
-          <div key={lead.id} className="p-3 sm:p-4 border border-primary/20 rounded-lg bg-black/40">
+          <motion.div
+            key={lead.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="p-3 sm:p-4 border border-primary/20 rounded-lg bg-black/40"
+          >
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
               <div>
                 <h3 className="text-base sm:text-lg font-semibold text-primary-light">{lead.company}</h3>
@@ -36,7 +42,7 @@ export function LeadsAnalytics({ leads, onAddToExport, onLocalRemove }: LeadsAna
                 onDelete={handleDelete}
               />
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
     </div>

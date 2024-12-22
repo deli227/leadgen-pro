@@ -22,6 +22,8 @@ export function Dashboard() {
   const [analyticsLeads, setAnalyticsLeads] = useState<Lead[]>([])
   const [exportLeads, setExportLeads] = useState<Lead[]>([])
   const [removedAnalyticsLeads, setRemovedAnalyticsLeads] = useState<string[]>([])
+  const [removedExportLeads, setRemovedExportLeads] = useState<string[]>([])
+  const [removedSearchLeads, setRemovedSearchLeads] = useState<string[]>([])
 
   const { data: session } = useSessionData()
   const { data: profile } = useProfileData(session)
@@ -31,8 +33,6 @@ export function Dashboard() {
   const handleAddToAnalytics = (lead: Lead) => {
     if (!analyticsLeads.find(l => l.id === lead.id)) {
       setAnalyticsLeads(prev => [...prev, lead])
-      // Si le lead était précédemment supprimé, on le retire de la liste des supprimés
-      setRemovedAnalyticsLeads(prev => prev.filter(id => id !== lead.id))
       toast({
         title: "Ajout aux analytiques",
         description: "Le lead a été ajouté aux analytiques avec succès"
@@ -51,6 +51,7 @@ export function Dashboard() {
   }
 
   const handleRemoveFromExport = (leadId: string) => {
+    setRemovedExportLeads(prev => [...prev, leadId])
     setExportLeads(prev => prev.filter(lead => lead.id !== leadId))
     toast({
       title: "Retrait de l'export",
@@ -58,15 +59,23 @@ export function Dashboard() {
     })
   }
 
-  // Filtrer les leads d'analytics en excluant ceux qui ont été supprimés
+  // Filtrer les leads pour chaque onglet en excluant ceux qui ont été supprimés localement
   const filteredAnalyticsLeads = analyticsLeads.filter(
     lead => !removedAnalyticsLeads.includes(lead.id)
+  )
+
+  const filteredExportLeads = exportLeads.filter(
+    lead => !removedExportLeads.includes(lead.id)
+  )
+
+  const filteredSearchLeads = leads.filter(
+    lead => !removedSearchLeads.includes(lead.id)
   )
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary-dark via-[#1A1F2C] to-black">
       <div className="container mx-auto py-2 sm:py-4 md:py-8 px-2 sm:px-4 animate-fade-in max-w-[98%] sm:max-w-[95%] lg:max-w-[90%] xl:max-w-[1400px]">
-        <DashboardHeader exportLeads={exportLeads} />
+        <DashboardHeader exportLeads={filteredExportLeads} />
 
         {profile && limits && (
           <motion.div 
@@ -87,19 +96,12 @@ export function Dashboard() {
         <DashboardTabs 
           filters={filters}
           setFilters={setFilters}
-          leads={leads}
+          leads={filteredSearchLeads}
           analyticsLeads={filteredAnalyticsLeads}
           onAddToAnalytics={handleAddToAnalytics}
           onAddToExport={handleAddToExport}
-          exportLeads={exportLeads}
-          onRemoveFromExport={(leadId: string) => {
-            setRemovedAnalyticsLeads(prev => [...prev, leadId])
-            setAnalyticsLeads(prev => prev.filter(lead => lead.id !== leadId))
-            toast({
-              title: "Lead retiré des analytiques",
-              description: "Le lead a été retiré des analytiques avec succès"
-            })
-          }}
+          exportLeads={filteredExportLeads}
+          onRemoveFromExport={handleRemoveFromExport}
         />
       </div>
     </div>
