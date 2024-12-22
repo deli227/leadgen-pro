@@ -1,7 +1,6 @@
 import { Lead } from "@/types/leads";
 import { useLeadsData } from "@/hooks/useLeadsData";
 import { useSessionData } from "@/hooks/useSessionData";
-import { Button } from "@/components/ui/button";
 import { LeadsList } from "./filters/LeadsList";
 import { ExportTabContent } from "./filters/ExportTabContent";
 import { LeadCountSlider } from "./filters/LeadCountSlider";
@@ -11,7 +10,7 @@ import { useEffect, useState } from "react";
 export function LeadsTable() {
   const session = useSessionData();
   const leads = useLeadsData(session.data);
-  const [exportLeads, setExportLeads] = useState<any[]>([]);
+  const [exportLeads, setExportLeads] = useState<Lead[]>([]);
   const [leadCount, setLeadCount] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -19,11 +18,11 @@ export function LeadsTable() {
     lead.company.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleAddToExport = (lead: any) => {
+  const handleAddToExport = (lead: Lead) => {
     setExportLeads(prev => [...prev, lead]);
   };
 
-  const handleRemoveFromExport = (leadId: number) => {
+  const handleRemoveFromExport = (leadId: string) => {
     setExportLeads(prev => prev.filter(lead => lead.id !== leadId));
   };
 
