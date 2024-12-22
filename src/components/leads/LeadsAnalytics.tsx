@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast"
 import { Textarea } from "@/components/ui/textarea"
 import { useQueryClient } from "@tanstack/react-query"
 import { Lead } from "@/types/leads"
+import { supabase } from "@/integrations/supabase/client"
 
 interface LeadsAnalyticsProps {
   leads: Lead[]
