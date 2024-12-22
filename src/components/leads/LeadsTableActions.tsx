@@ -1,17 +1,17 @@
-import { Button } from "@/components/ui/button"
-import { Eye, NotebookPen, PlusCircle } from "lucide-react"
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
-import { useToast } from "@/components/ui/use-toast"
-import { LeadDetails } from "./LeadDetails"
-import { LeadNotes } from "./LeadNotes"
-import { Lead } from "@/types/leads"
+import { Button } from "@/components/ui/button";
+import { Eye, NotebookPen, PlusCircle } from "lucide-react";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { useToast } from "@/components/ui/use-toast";
+import { LeadDetails } from "./LeadDetails";
+import { LeadNotes } from "./LeadNotes";
+import { Lead } from "@/types/leads";
 
 interface LeadsTableActionsProps {
-  lead: Lead
-  onShowDetails: (lead: Lead) => void
-  onShowNotes: (lead: Lead) => void
-  onAddToExport: (lead: Lead) => void
-  exportList: string[]
+  lead: Lead;
+  onShowDetails: (lead: Lead) => void;
+  onShowNotes: (lead: Lead) => void;
+  onAddToExport: (lead: Lead) => void;
+  exportList: string[];
 }
 
 export function LeadsTableActions({ 
@@ -21,7 +21,7 @@ export function LeadsTableActions({
   onAddToExport,
   exportList 
 }: LeadsTableActionsProps) {
-  const { toast } = useToast()
+  const { toast } = useToast();
 
   return (
     <div className="flex gap-2">
@@ -63,5 +63,5 @@ export function LeadsTableActions({
         {exportList.includes(lead.id) ? "Ajouté" : "Exporter"}
       </Button>
     </div>
-  )
+  );
 }
