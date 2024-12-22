@@ -45,27 +45,30 @@ export async function searchWithSerpAPI(filters: any) {
     const searchQuery = searchTerms.join(' ');
     console.log('Requête de recherche finale:', searchQuery);
 
-    // Construct the URL with proper parameters
-    const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}&num=20&hl=${countryParams.lang}&gl=${countryParams.gl}`;
-    console.log('URL de recherche construite:', googleUrl);
+    const brightDataUrl = Deno.env.get('BRIGHT_DATA_PROXY_URL');
+    if (!brightDataUrl) {
+      throw new Error('BRIGHT_DATA_PROXY_URL is not set');
+    }
 
-    const options = {
-      method: 'POST',
-      headers: {
-        Authorization: 'Bearer 352509a73b073f603e763af31cb203e1fad3af732e9a080dfe3d0a4456674a69',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        url: googleUrl,
-        country: countryParams.gl,
-        format: "json",
-        zone: "serp_api4"
-      })
+    const requestBody = {
+      search_parameters: {
+        q: searchQuery,
+        num: 20,
+        hl: countryParams.lang,
+        gl: countryParams.gl
+      }
     };
 
-    console.log('Options de la requête:', JSON.stringify(options, null, 2));
+    console.log('Corps de la requête Bright Data:', JSON.stringify(requestBody, null, 2));
 
-    const response = await fetch('https://api.brightdata.com/request', options);
+    const response = await fetch(brightDataUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestBody)
+    });
+
     console.log('Statut de la réponse:', response.status);
 
     if (!response.ok) {
