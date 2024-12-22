@@ -15,7 +15,7 @@ interface AnalyticsTabProps {
   onAddToAnalytics: (lead: Lead) => void
   onAddToExport: (lead: Lead) => void
   exportLeads: Lead[]
-  onRemoveFromExport: (leadId: number) => void
+  onRemoveFromExport: (leadId: string) => void
 }
 
 export function AnalyticsTab({

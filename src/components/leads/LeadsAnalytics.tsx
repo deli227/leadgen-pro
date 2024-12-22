@@ -14,12 +14,22 @@ interface LeadsAnalyticsProps {
 export function LeadsAnalytics({ leads, onAddToExport }: LeadsAnalyticsProps) {
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
   const [showNotes, setShowNotes] = useState(false)
-  const { handleDelete, handleAnalyze } = useLeadActions()
+  const { handleAnalyze } = useLeadActions()
+  const [removedLeads, setRemovedLeads] = useState<string[]>([])
+
+  const handleDelete = (lead: Lead) => {
+    setRemovedLeads(prev => [...prev, lead.id])
+    toast.success("Lead retiré des analytiques", {
+      description: "Le lead a été retiré de l'analyse mais reste dans votre liste principale"
+    })
+  }
+
+  const filteredLeads = leads.filter(lead => !removedLeads.includes(lead.id))
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
       <div className="space-y-3 sm:space-y-4">
-        {leads.map(lead => (
+        {filteredLeads.map(lead => (
           <div key={lead.id} className="p-3 sm:p-4 border border-primary/20 rounded-lg bg-black/40">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
               <div>
