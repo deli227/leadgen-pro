@@ -1,27 +1,12 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Brain, NotebookPen, FileDown } from "lucide-react"
+import { Brain, NotebookPen, FileDown, Trash2 } from "lucide-react"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { LeadNotes } from "./LeadNotes"
 import { useToast } from "@/hooks/use-toast"
 import { Textarea } from "@/components/ui/textarea"
-
-interface Lead {
-  id: number
-  company: string
-  email: string
-  phone: string
-  address?: string
-  qualification: number
-  socialMedia: {
-    linkedin: string
-    twitter: string
-  }
-  score: number
-  industry: string
-  strengths: string[]
-  weaknesses: string[]
-}
+import { useQueryClient } from "@tanstack/react-query"
+import { Lead } from "@/types/leads"
 
 interface LeadsAnalyticsProps {
   leads: Lead[]
@@ -33,6 +18,32 @@ export function LeadsAnalytics({ leads, onAddToExport }: LeadsAnalyticsProps) {
   const [showNotes, setShowNotes] = useState(false)
   const [aiAnalysis, setAiAnalysis] = useState<Record<number, string>>({})
   const { toast } = useToast()
+  const queryClient = useQueryClient()
+
+  const handleDelete = async (lead: Lead) => {
+    try {
+      const { error } = await supabase
+        .from('leads')
+        .delete()
+        .eq('id', lead.id)
+
+      if (error) throw error
+
+      toast({
+        title: "Lead supprimé",
+        description: "Le lead a été supprimé avec succès"
+      })
+      
+      queryClient.invalidateQueries({ queryKey: ['leads'] })
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error)
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Impossible de supprimer le lead"
+      })
+    }
+  }
 
   const handleAnalyze = async (lead: Lead) => {
     try {
@@ -94,35 +105,19 @@ export function LeadsAnalytics({ leads, onAddToExport }: LeadsAnalyticsProps) {
                   <FileDown className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                   Exporter
                 </Button>
+                <Button
+                  onClick={() => handleDelete(lead)}
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 sm:flex-none bg-gradient-to-r from-red-500 to-red-600 text-white border-none hover:opacity-90 text-xs sm:text-sm"
+                >
+                  <Trash2 className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                  Supprimer
+                </Button>
               </div>
             </div>
           </div>
         ))}
-      </div>
-
-      <div className="lg:sticky lg:top-4 space-y-4">
-        <div className="p-4 sm:p-6 border border-primary/20 rounded-lg bg-black/40 min-h-[300px]">
-          <h3 className="text-lg sm:text-xl font-semibold text-primary-light mb-4">
-            {selectedLead ? "Analyse IA" : "Sélectionnez un lead à analyser"}
-          </h3>
-          {selectedLead && aiAnalysis[selectedLead.id] ? (
-            <div className="space-y-4 animate-fade-in">
-              <div className="p-3 sm:p-4 bg-black/20 rounded-lg border border-primary/10">
-                <h4 className="text-base sm:text-lg font-medium text-primary-light mb-2">{selectedLead.company}</h4>
-                <Textarea
-                  value={aiAnalysis[selectedLead.id]}
-                  readOnly
-                  className="w-full min-h-[200px] bg-black/20 border-primary-light/20 text-primary-light text-xs sm:text-sm"
-                />
-              </div>
-            </div>
-          ) : (
-            <div className="flex items-center justify-center h-[200px] text-primary-light/50">
-              <Brain className="h-8 w-8 sm:h-12 sm:w-12 mr-2" />
-              <span className="text-xs sm:text-base">Cliquez sur "Analyser" pour lancer l'analyse IA</span>
-            </div>
-          )}
-        </div>
       </div>
 
       <Dialog open={showNotes} onOpenChange={setShowNotes}>

@@ -1,14 +1,34 @@
-import { Mail, MapPin, Phone, Globe, Facebook, Instagram, Linkedin, Twitter } from "lucide-react"
+import { Mail, MapPin, Phone, Globe, Facebook, Instagram, Linkedin, Twitter, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { LeadScoreDisplay } from "../LeadScoreDisplay"
 import { motion } from "framer-motion"
+import { toast } from "sonner"
+import { supabase } from "@/integrations/supabase/client"
 
 interface LeadCardProps {
   lead: any
   onAddToAnalytics: (lead: any) => void
+  onLeadDeleted: () => void
 }
 
-export function LeadCard({ lead, onAddToAnalytics }: LeadCardProps) {
+export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProps) {
+  const handleDelete = async () => {
+    try {
+      const { error } = await supabase
+        .from('leads')
+        .delete()
+        .eq('id', lead.id);
+
+      if (error) throw error;
+
+      toast.success("Lead supprimé avec succès");
+      onLeadDeleted();
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error);
+      toast.error("Erreur lors de la suppression du lead");
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -17,13 +37,23 @@ export function LeadCard({ lead, onAddToAnalytics }: LeadCardProps) {
       className="p-4 border border-primary/20 rounded-xl bg-gradient-to-br from-black/40 to-secondary-dark/40 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 group"
     >
       <div className="flex flex-col gap-3">
-        <div className="space-y-1">
-          <h4 className="text-base font-semibold text-primary-light group-hover:text-white transition-colors line-clamp-1">
-            {lead.company}
-          </h4>
-          <p className="text-sm text-primary-light/70 line-clamp-1">
-            {lead.industry}
-          </p>
+        <div className="flex justify-between items-start">
+          <div className="space-y-1">
+            <h4 className="text-base font-semibold text-primary-light group-hover:text-white transition-colors line-clamp-1">
+              {lead.company}
+            </h4>
+            <p className="text-sm text-primary-light/70 line-clamp-1">
+              {lead.industry}
+            </p>
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-primary-light/70 hover:text-red-500 hover:bg-red-500/10"
+            onClick={handleDelete}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
         </div>
 
         <LeadScoreDisplay score={lead.score} />
@@ -128,5 +158,5 @@ export function LeadCard({ lead, onAddToAnalytics }: LeadCardProps) {
         </Button>
       </div>
     </motion.div>
-  )
+  );
 }
