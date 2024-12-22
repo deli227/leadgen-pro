@@ -1,6 +1,7 @@
 import { motion } from "framer-motion"
 import { LeadsFilters } from "@/components/leads/LeadsFilters"
 import { Lead } from "@/types/leads"
+import { useState } from "react"
 
 interface LeadsTabProps {
   filters: {
@@ -29,6 +30,14 @@ export function LeadsTab({
   exportLeads,
   onRemoveFromExport
 }: LeadsTabProps) {
+  const [removedLeads, setRemovedLeads] = useState<string[]>([])
+
+  const filteredLeads = leads.filter(lead => !removedLeads.includes(lead.id))
+
+  const handleLocalRemove = (leadId: string) => {
+    setRemovedLeads(prev => [...prev, leadId])
+  }
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
@@ -38,12 +47,13 @@ export function LeadsTab({
       <LeadsFilters 
         filters={filters} 
         setFilters={setFilters} 
-        leads={leads}
+        leads={filteredLeads}
         analyticsLeads={analyticsLeads}
         onAddToAnalytics={onAddToAnalytics}
         onAddToExport={onAddToExport}
         exportLeads={exportLeads}
         onRemoveFromExport={onRemoveFromExport}
+        onLocalRemove={handleLocalRemove}
       />
     </motion.div>
   )

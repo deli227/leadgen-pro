@@ -1,19 +1,22 @@
-import { useState } from "react"
-import { Dialog, DialogContent } from "@/components/ui/dialog"
-import { LeadNotes } from "./LeadNotes"
+import { motion } from "framer-motion"
 import { Lead } from "@/types/leads"
-import { useLeadActions } from "@/hooks/useLeadActions"
 import { LeadActions } from "./LeadActions"
+import { useLeadActions } from "@/hooks/useLeadActions"
 
 interface LeadsAnalyticsProps {
   leads: Lead[]
   onAddToExport: (lead: Lead) => void
+  onLocalRemove?: (leadId: string) => void
 }
 
-export function LeadsAnalytics({ leads, onAddToExport }: LeadsAnalyticsProps) {
-  const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
-  const [showNotes, setShowNotes] = useState(false)
+export function LeadsAnalytics({ leads, onAddToExport, onLocalRemove }: LeadsAnalyticsProps) {
   const { handleAnalyze } = useLeadActions()
+
+  const handleDelete = (lead: Lead) => {
+    if (onLocalRemove) {
+      onLocalRemove(lead.id)
+    }
+  }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
@@ -28,29 +31,14 @@ export function LeadsAnalytics({ leads, onAddToExport }: LeadsAnalyticsProps) {
               <LeadActions
                 lead={lead}
                 onAnalyze={handleAnalyze}
-                onShowNotes={(lead) => {
-                  setSelectedLead(lead)
-                  setShowNotes(true)
-                }}
+                onShowNotes={() => {}}
                 onAddToExport={onAddToExport}
+                onDelete={handleDelete}
               />
             </div>
           </div>
         ))}
       </div>
-
-      <Dialog open={showNotes} onOpenChange={setShowNotes}>
-        <DialogContent className="bg-secondary-dark border-primary-light backdrop-blur-lg bg-opacity-95 w-[95vw] max-w-[500px] sm:w-full">
-          {selectedLead && (
-            <LeadNotes
-              lead={selectedLead}
-              onClose={() => {
-                setShowNotes(false)
-              }}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }
