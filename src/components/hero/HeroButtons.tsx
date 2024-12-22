@@ -23,7 +23,7 @@ export const HeroButtons = () => {
         variant="outline"
         size="lg"
         onClick={scrollToPricing}
-        className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-gradient-to-r from-primary/20 to-accent/20 hover:from-primary/30 hover:to-accent/30 text-white border-primary-light/20 hover:border-primary-light/30 hover:text-white transition-all duration-300 animate-pulse"
+        className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-gradient-to-r from-primary/20 to-accent/20 hover:from-primary/30 hover:to-accent/30 text-white border-primary-light/20 hover:border-primary-light/30 hover:text-white transition-all duration-300"
         aria-label="Voir nos tarifs"
       >
         Nos tarifs
