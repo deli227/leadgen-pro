@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Play } from "lucide-react";
 import { Button } from "../ui/button";
 
 export const HeroButtons = () => {
@@ -19,6 +19,18 @@ export const HeroButtons = () => {
         Commencer gratuitement
         <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
       </Button>
+
+      {/* Demo Button */}
+      <Button
+        size="lg"
+        className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-gradient-to-r from-accent via-primary to-accent text-white hover:from-accent/90 hover:via-primary/90 hover:to-accent/90 shadow-lg hover:shadow-xl transition-all duration-300 animate-pulse hover:animate-none"
+        aria-label="Voir la démo"
+        onClick={() => window.open('https://youtu.be/hywJowRLVKY', '_blank')}
+      >
+        <Play className="mr-2 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
+        Voir la démo
+      </Button>
+
       <Button
         variant="outline"
         size="lg"
