@@ -45,28 +45,25 @@ export async function searchWithSerpAPI(filters: any) {
     const searchQuery = searchTerms.join(' ');
     console.log('Requête de recherche finale:', searchQuery);
 
-    const brightDataUrl = Deno.env.get('BRIGHT_DATA_PROXY_URL');
-    if (!brightDataUrl) {
+    const brightDataUrl = 'https://brd.superproxy.io:33335';
+    const proxyAuth = Deno.env.get('BRIGHT_DATA_PROXY_URL');
+    
+    if (!proxyAuth) {
       throw new Error('BRIGHT_DATA_PROXY_URL is not set');
     }
 
-    const requestBody = {
-      search_parameters: {
-        q: searchQuery,
-        num: 20,
-        hl: countryParams.lang,
-        gl: countryParams.gl
-      }
-    };
+    // Construct the Google search URL with proper parameters
+    const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}&num=20&hl=${countryParams.lang}&gl=${countryParams.gl}`;
+    console.log('URL de recherche Google:', googleUrl);
 
-    console.log('Corps de la requête Bright Data:', JSON.stringify(requestBody, null, 2));
-
-    const response = await fetch(brightDataUrl, {
-      method: 'POST',
+    const response = await fetch(googleUrl, {
+      method: 'GET',
       headers: {
-        'Content-Type': 'application/json'
+        'Proxy-Authorization': `Basic ${btoa(proxyAuth)}`,
+        'Accept': 'application/json',
       },
-      body: JSON.stringify(requestBody)
+      // @ts-ignore - Deno fetch API doesn't have proxy option in its types
+      proxy: brightDataUrl
     });
 
     console.log('Statut de la réponse:', response.status);
