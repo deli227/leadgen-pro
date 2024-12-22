@@ -36,9 +36,14 @@ export function FiltersTabContent({
         return
       }
 
+      console.log('Session trouvée:', session)
       console.log('Envoi des paramètres à generate-leads:', filters)
-      const { data, error } = await supabase.functions.invoke('generate-leads', {
-        body: { filters },
+
+      const { data, error } = await supabase.functions.invoke('generate-leads-with-ai', {
+        body: { 
+          filters,
+          userId: session.user.id 
+        },
         headers: {
           Authorization: `Bearer ${session.access_token}`
         }

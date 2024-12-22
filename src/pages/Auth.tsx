@@ -2,21 +2,54 @@ import { Auth as SupabaseAuth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import { toast } from "sonner";
 
 export function Auth() {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.onAuthStateChange((event, session) => {
+    // Vérifier la session au chargement
+    const checkSession = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) {
+        console.error("Erreur lors de la vérification de la session:", error);
+        toast.error("Erreur de connexion");
+      }
+      if (session) {
+        navigate("/dashboard");
+      }
+      setIsLoading(false);
+    };
+
+    checkSession();
+
+    // Écouter les changements d'état d'authentification
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log("Changement d'état d'authentification:", event, session);
       if (session) {
         navigate("/dashboard");
       }
     });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [navigate]);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary-dark to-[#1A1F2C] flex flex-col items-center justify-center p-4">
@@ -81,6 +114,14 @@ export function Auth() {
                     loading_button_label: 'Connexion en cours...',
                     social_provider_text: 'Se connecter avec {{provider}}',
                     link_text: "Vous avez déjà un compte ? Connectez-vous",
+                  },
+                  sign_up: {
+                    email_label: 'Email',
+                    password_label: 'Mot de passe',
+                    button_label: "S'inscrire",
+                    loading_button_label: 'Inscription en cours...',
+                    social_provider_text: "S'inscrire avec {{provider}}",
+                    link_text: "Vous n'avez pas de compte ? Inscrivez-vous",
                   }
                 },
               }}
@@ -117,7 +158,6 @@ export function Auth() {
                   sign_up: {
                     email_label: 'Email',
                     password_label: 'Mot de passe',
-                    confirmation_text: 'Confirmer le mot de passe',
                     button_label: "S'inscrire",
                     loading_button_label: 'Inscription en cours...',
                     social_provider_text: "S'inscrire avec {{provider}}",
