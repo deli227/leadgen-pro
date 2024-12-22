@@ -59,13 +59,20 @@ export async function searchWithSerpAPI(filters: any) {
   const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}&num=${filters.leadCount || 5}&hl=fr`;
   
   try {
-    console.log('Envoi de la requête à Google via Bright Data:', searchUrl);
+    console.log('Envoi de la requête à Bright Data API:', searchUrl);
     
-    const response = await fetch(searchUrl, {
+    const response = await fetch('https://api.brightdata.com/request', {
+      method: 'POST',
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${brightDataProxyUrl}`,
       },
-      proxy: brightDataProxyUrl
+      body: JSON.stringify({
+        url: searchUrl,
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
+      })
     });
 
     if (!response.ok) {
