@@ -1,11 +1,9 @@
 import { corsHeaders } from './corsConfig.ts';
 
-const serpApiKey = Deno.env.get('SERPAPI_KEY');
+const brightDataProxyUrl = Deno.env.get('BRIGHT_DATA_PROXY_URL');
 
 export async function searchWithSerpAPI(filters: any) {
-  console.log('Recherche SerpAPI avec les filtres:', filters);
-  
-  const serpApiUrl = `https://serpapi.com/search`;
+  console.log('Recherche avec Bright Data et les filtres:', filters);
   
   // Construction de la requête en fonction des filtres
   let searchQuery = '';
@@ -29,7 +27,6 @@ export async function searchWithSerpAPI(filters: any) {
     
     // Ajout du pays si spécifié
     if (filters.country && filters.country !== 'all') {
-      // Mapping des codes pays vers les noms complets
       const countryMapping: { [key: string]: string } = {
         'FR': 'France',
         'BE': 'Belgique',
@@ -55,40 +52,61 @@ export async function searchWithSerpAPI(filters: any) {
 
   console.log('Requête de recherche finale:', searchQuery);
 
-  const params = new URLSearchParams({
-    q: searchQuery,
-    engine: "google",
-    api_key: serpApiKey!,
-    num: String(filters.leadCount || 5),
-    gl: filters.country?.toLowerCase() || "fr",
-    hl: "fr",
-    location: filters.city !== 'all' ? filters.city : (filters.country !== 'all' ? filters.country : 'France'),
-  });
+  if (!brightDataProxyUrl) {
+    throw new Error('URL du proxy Bright Data non configurée');
+  }
 
+  const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}&num=${filters.leadCount || 5}&hl=fr`;
+  
   try {
-    console.log('Envoi de la requête à SerpAPI avec les paramètres:', Object.fromEntries(params));
-    const response = await fetch(`${serpApiUrl}?${params}`);
-    const result = await response.json();
+    console.log('Envoi de la requête à Google via Bright Data:', searchUrl);
     
+    const response = await fetch(searchUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      },
+      proxy: brightDataProxyUrl
+    });
+
     if (!response.ok) {
-      console.error('Erreur SerpAPI:', result);
-      throw new Error(`Erreur SerpAPI: ${result.error || 'Erreur inconnue'}`);
+      console.error('Erreur de la requête:', response.status, response.statusText);
+      throw new Error(`Erreur lors de la recherche: ${response.status} ${response.statusText}`);
     }
 
-    console.log('Nombre de résultats SerpAPI:', result.organic_results?.length || 0);
+    const html = await response.text();
+    
+    // Extraction basique des résultats de recherche
+    const results = [];
+    const regex = /<div class="g">(.*?)<\/div>/g;
+    const titleRegex = /<h3[^>]*>(.*?)<\/h3>/;
+    const snippetRegex = /<div class="VwiC3b[^>]*>(.*?)<\/div>/;
+    const linkRegex = /<a href="([^"]*)"[^>]*>/;
 
-    if (!result.organic_results || result.organic_results.length === 0) {
-      console.error('Aucun résultat dans la réponse:', result);
+    let match;
+    while ((match = regex.exec(html)) !== null && results.length < (filters.leadCount || 5)) {
+      const titleMatch = titleRegex.exec(match[1]);
+      const snippetMatch = snippetRegex.exec(match[1]);
+      const linkMatch = linkRegex.exec(match[1]);
+
+      if (titleMatch && snippetMatch && linkMatch) {
+        results.push({
+          title: titleMatch[1].replace(/<[^>]*>/g, ''),
+          snippet: snippetMatch[1].replace(/<[^>]*>/g, ''),
+          link: linkMatch[1]
+        });
+      }
+    }
+
+    if (results.length === 0) {
+      console.error('Aucun résultat trouvé dans le HTML:', html.substring(0, 500));
       throw new Error(`Aucun résultat trouvé pour la recherche "${searchQuery}". Essayez d'élargir vos critères de recherche.`);
     }
 
-    return result.organic_results.map((entry: any) => ({
-      title: entry.title,
-      snippet: entry.snippet,
-      link: entry.link,
-    }));
+    console.log('Nombre de résultats trouvés:', results.length);
+    return results;
+
   } catch (error) {
-    console.error('Erreur lors de la recherche SerpAPI:', error);
+    console.error('Erreur lors de la recherche avec Bright Data:', error);
     throw error;
   }
 }
