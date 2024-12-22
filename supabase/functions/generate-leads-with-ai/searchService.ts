@@ -1,4 +1,4 @@
-import { corsHeaders } from './corsConfig';
+import { corsHeaders } from './corsConfig.ts';
 
 const serpApiKey = Deno.env.get('SERPAPI_KEY');
 
@@ -43,11 +43,6 @@ export async function searchWithSerpAPI(filters: any) {
     searchQuery += countryName;
   }
 
-  // Si une recherche spécifique est fournie, l'utiliser à la place
-  if (filters.search) {
-    searchQuery = filters.search;
-  }
-
   console.log('Requête de recherche finale:', searchQuery);
 
   const params = new URLSearchParams({
@@ -55,8 +50,8 @@ export async function searchWithSerpAPI(filters: any) {
     engine: "google",
     api_key: serpApiKey!,
     num: String(filters.leadCount || 5),
-    gl: filters.country?.toLowerCase() || "fr", // Localisation basée sur le pays sélectionné
-    hl: "fr", // Langue française
+    gl: filters.country?.toLowerCase() || "fr",
+    hl: "fr",
     location: filters.city !== 'all' ? filters.city : (filters.country !== 'all' ? filters.country : 'France'),
   });
 
