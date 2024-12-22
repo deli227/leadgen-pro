@@ -18,6 +18,7 @@ interface LeadsTabProps {
   onAddToExport: (lead: Lead) => void
   exportLeads: Lead[]
   onRemoveFromExport: (leadId: string) => void
+  onRemoveFromAnalytics: (leadId: string) => void
 }
 
 export function LeadsTab({
@@ -28,7 +29,8 @@ export function LeadsTab({
   onAddToAnalytics,
   onAddToExport,
   exportLeads,
-  onRemoveFromExport
+  onRemoveFromExport,
+  onRemoveFromAnalytics
 }: LeadsTabProps) {
   const [removedLeads, setRemovedLeads] = useState<string[]>([])
 
@@ -53,6 +55,7 @@ export function LeadsTab({
         onAddToExport={onAddToExport}
         exportLeads={exportLeads}
         onRemoveFromExport={onRemoveFromExport}
+        onRemoveFromAnalytics={onRemoveFromAnalytics}
         onLocalRemove={handleLocalRemove}
       />
     </motion.div>

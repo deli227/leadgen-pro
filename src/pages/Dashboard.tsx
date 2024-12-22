@@ -59,6 +59,15 @@ export function Dashboard() {
     })
   }
 
+  const handleRemoveFromAnalytics = (leadId: string) => {
+    setRemovedAnalyticsLeads(prev => [...prev, leadId])
+    setAnalyticsLeads(prev => prev.filter(lead => lead.id !== leadId))
+    toast({
+      title: "Retrait des analytiques",
+      description: "Le lead a été retiré des analytiques avec succès"
+    })
+  }
+
   // Filtrer les leads pour chaque onglet en excluant ceux qui ont été supprimés localement
   const filteredAnalyticsLeads = analyticsLeads.filter(
     lead => !removedAnalyticsLeads.includes(lead.id)
@@ -102,6 +111,7 @@ export function Dashboard() {
           onAddToExport={handleAddToExport}
           exportLeads={filteredExportLeads}
           onRemoveFromExport={handleRemoveFromExport}
+          onRemoveFromAnalytics={handleRemoveFromAnalytics}
         />
       </div>
     </div>

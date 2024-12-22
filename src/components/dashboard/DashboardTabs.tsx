@@ -21,6 +21,7 @@ interface DashboardTabsProps {
   onAddToExport: (lead: Lead) => void
   exportLeads: Lead[]
   onRemoveFromExport: (leadId: string) => void
+  onRemoveFromAnalytics: (leadId: string) => void
 }
 
 export function DashboardTabs({
@@ -31,7 +32,8 @@ export function DashboardTabs({
   onAddToAnalytics,
   onAddToExport,
   exportLeads,
-  onRemoveFromExport
+  onRemoveFromExport,
+  onRemoveFromAnalytics
 }: DashboardTabsProps) {
   const { t } = useTranslation()
   const isMobile = useIsMobile()
@@ -70,6 +72,7 @@ export function DashboardTabs({
           onAddToExport={onAddToExport}
           exportLeads={exportLeads}
           onRemoveFromExport={onRemoveFromExport}
+          onRemoveFromAnalytics={onRemoveFromAnalytics}
         />
       </TabsContent>
 
