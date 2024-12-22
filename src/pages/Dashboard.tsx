@@ -21,6 +21,7 @@ export function Dashboard() {
   })
   const [analyticsLeads, setAnalyticsLeads] = useState<Lead[]>([])
   const [exportLeads, setExportLeads] = useState<Lead[]>([])
+  const [removedAnalyticsLeads, setRemovedAnalyticsLeads] = useState<string[]>([])
 
   const { data: session } = useSessionData()
   const { data: profile } = useProfileData(session)
@@ -30,6 +31,8 @@ export function Dashboard() {
   const handleAddToAnalytics = (lead: Lead) => {
     if (!analyticsLeads.find(l => l.id === lead.id)) {
       setAnalyticsLeads(prev => [...prev, lead])
+      // Si le lead était précédemment supprimé, on le retire de la liste des supprimés
+      setRemovedAnalyticsLeads(prev => prev.filter(id => id !== lead.id))
       toast({
         title: "Ajout aux analytiques",
         description: "Le lead a été ajouté aux analytiques avec succès"
@@ -54,6 +57,11 @@ export function Dashboard() {
       description: "Le lead a été retiré de l'export avec succès"
     })
   }
+
+  // Filtrer les leads d'analytics en excluant ceux qui ont été supprimés
+  const filteredAnalyticsLeads = analyticsLeads.filter(
+    lead => !removedAnalyticsLeads.includes(lead.id)
+  )
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary-dark via-[#1A1F2C] to-black">
@@ -80,11 +88,18 @@ export function Dashboard() {
           filters={filters}
           setFilters={setFilters}
           leads={leads}
-          analyticsLeads={analyticsLeads}
+          analyticsLeads={filteredAnalyticsLeads}
           onAddToAnalytics={handleAddToAnalytics}
           onAddToExport={handleAddToExport}
           exportLeads={exportLeads}
-          onRemoveFromExport={handleRemoveFromExport}
+          onRemoveFromExport={(leadId: string) => {
+            setRemovedAnalyticsLeads(prev => [...prev, leadId])
+            setAnalyticsLeads(prev => prev.filter(lead => lead.id !== leadId))
+            toast({
+              title: "Lead retiré des analytiques",
+              description: "Le lead a été retiré des analytiques avec succès"
+            })
+          }}
         />
       </div>
     </div>
