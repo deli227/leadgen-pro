@@ -20,10 +20,10 @@ export const HeroButtons = () => {
         <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
       </Button>
 
-      {/* Demo Button */}
+      {/* Demo Button - Updated with new colors and removed pulse animation */}
       <Button
         size="lg"
-        className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-gradient-to-r from-accent via-primary to-accent text-white hover:from-accent/90 hover:via-primary/90 hover:to-accent/90 shadow-lg hover:shadow-xl transition-all duration-300 animate-pulse hover:animate-none"
+        className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-gradient-to-r from-[#8B5CF6] via-[#D946EF] to-[#8B5CF6] text-white hover:from-[#7C3AED] hover:via-[#C026D3] hover:to-[#7C3AED] shadow-lg hover:shadow-xl transition-all duration-300"
         aria-label="Voir la démo"
         onClick={() => window.open('https://youtu.be/hywJowRLVKY', '_blank')}
       >
