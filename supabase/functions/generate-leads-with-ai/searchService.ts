@@ -1,9 +1,11 @@
 import { corsHeaders } from './corsConfig.ts';
 
-const brightDataProxy = Deno.env.get('BRIGHT_DATA_PROXY_URL');
+const serpApiKey = Deno.env.get('SERPAPI_KEY');
 
 export async function searchWithSerpAPI(filters: any) {
-  console.log('Recherche avec les filtres:', filters);
+  console.log('Recherche SerpAPI avec les filtres:', filters);
+  
+  const serpApiUrl = `https://serpapi.com/search`;
   
   // Construction de la requête en fonction des filtres
   let searchQuery = '';
@@ -53,71 +55,40 @@ export async function searchWithSerpAPI(filters: any) {
 
   console.log('Requête de recherche finale:', searchQuery);
 
-  if (!brightDataProxy) {
-    throw new Error('Configuration Bright Data manquante');
-  }
+  const params = new URLSearchParams({
+    q: searchQuery,
+    engine: "google",
+    api_key: serpApiKey!,
+    num: String(filters.leadCount || 5),
+    gl: filters.country?.toLowerCase() || "fr",
+    hl: "fr",
+    location: filters.city !== 'all' ? filters.city : (filters.country !== 'all' ? filters.country : 'France'),
+  });
 
   try {
-    const searchParams = new URLSearchParams({
-      q: searchQuery,
-      hl: 'fr',
-      num: String(filters.leadCount || 5)
-    });
-
-    console.log('Envoi de la requête à Google avec les paramètres:', Object.fromEntries(searchParams));
-
-    const response = await fetch(`https://www.google.com/search?${searchParams}`, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-      },
-      proxy: brightDataProxy
-    });
-
+    console.log('Envoi de la requête à SerpAPI avec les paramètres:', Object.fromEntries(params));
+    const response = await fetch(`${serpApiUrl}?${params}`);
+    const result = await response.json();
+    
     if (!response.ok) {
-      console.error('Erreur de recherche:', response.statusText);
-      throw new Error('Erreur lors de la recherche Google');
+      console.error('Erreur SerpAPI:', result);
+      throw new Error(`Erreur SerpAPI: ${result.error || 'Erreur inconnue'}`);
     }
 
-    const html = await response.text();
-    
-    // Extraction basique des résultats de recherche
-    const results = extractSearchResults(html);
-    
-    if (!results || results.length === 0) {
-      console.error('Aucun résultat dans la réponse');
+    console.log('Nombre de résultats SerpAPI:', result.organic_results?.length || 0);
+
+    if (!result.organic_results || result.organic_results.length === 0) {
+      console.error('Aucun résultat dans la réponse:', result);
       throw new Error(`Aucun résultat trouvé pour la recherche "${searchQuery}". Essayez d'élargir vos critères de recherche.`);
     }
 
-    console.log('Nombre de résultats trouvés:', results.length);
-    return results;
-
+    return result.organic_results.map((entry: any) => ({
+      title: entry.title,
+      snippet: entry.snippet,
+      link: entry.link,
+    }));
   } catch (error) {
-    console.error('Erreur lors de la recherche:', error);
+    console.error('Erreur lors de la recherche SerpAPI:', error);
     throw error;
   }
-}
-
-function extractSearchResults(html: string) {
-  // Extraction basique des résultats avec des expressions régulières
-  const results = [];
-  const titleRegex = /<h3[^>]*>(.*?)<\/h3>/g;
-  const snippetRegex = /<div[^>]*class="[^"]*snippet[^"]*"[^>]*>(.*?)<\/div>/g;
-  const linkRegex = /<a[^>]*href="([^"]*)"[^>]*>/g;
-
-  let match;
-  while ((match = titleRegex.exec(html)) !== null) {
-    const title = match[1].replace(/<[^>]*>/g, '');
-    const snippet = snippetRegex.exec(html)?.[1]?.replace(/<[^>]*>/g, '') || '';
-    const link = linkRegex.exec(html)?.[1] || '';
-
-    if (title && link) {
-      results.push({
-        title,
-        snippet,
-        link: link.startsWith('http') ? link : `https://www.google.com${link}`
-      });
-    }
-  }
-
-  return results;
 }
