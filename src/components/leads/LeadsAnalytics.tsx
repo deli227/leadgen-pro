@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button"
 import { Brain, NotebookPen, FileDown, Trash2 } from "lucide-react"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { LeadNotes } from "./LeadNotes"
-import { useToast } from "@/hooks/use-toast"
 import { Textarea } from "@/components/ui/textarea"
 import { useQueryClient } from "@tanstack/react-query"
 import { Lead } from "@/types/leads"
@@ -19,19 +18,15 @@ export function LeadsAnalytics({ leads, onAddToExport }: LeadsAnalyticsProps) {
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
   const [showNotes, setShowNotes] = useState(false)
   const [aiAnalysis, setAiAnalysis] = useState<Record<number, string>>({})
-  const { toast } = useToast()
   const queryClient = useQueryClient()
 
   const handleDelete = async (lead: Lead) => {
     try {
-      // First check if we have an authenticated session
       const { data: { session }, error: sessionError } = await supabase.auth.getSession()
       
       if (sessionError || !session) {
         console.error('Erreur de session:', sessionError)
-        toast({
-          variant: "destructive",
-          title: "Erreur d'authentification",
+        toast.error("Erreur d'authentification", {
           description: "Veuillez vous reconnecter pour effectuer cette action"
         })
         return
@@ -46,25 +41,20 @@ export function LeadsAnalytics({ leads, onAddToExport }: LeadsAnalyticsProps) {
 
       if (error) {
         console.error('Erreur lors de la suppression:', error)
-        toast({
-          variant: "destructive",
-          title: "Erreur",
+        toast.error("Erreur", {
           description: "Une erreur est survenue lors de la suppression du lead"
         })
         return
       }
 
-      toast({
-        title: "Succès",
+      toast.success("Succès", {
         description: "Le lead a été supprimé avec succès"
       })
       
       queryClient.invalidateQueries({ queryKey: ['leads'] })
     } catch (error) {
       console.error('Erreur lors de la suppression:', error)
-      toast({
-        variant: "destructive",
-        title: "Erreur",
+      toast.error("Erreur", {
         description: "Une erreur est survenue lors de la suppression du lead"
       })
     }
@@ -76,14 +66,11 @@ export function LeadsAnalytics({ leads, onAddToExport }: LeadsAnalyticsProps) {
       setAiAnalysis(prev => ({ ...prev, [lead.id]: analysis }))
       setSelectedLead(lead)
       
-      toast({
-        title: "Analyse terminée",
+      toast.success("Analyse terminée", {
         description: "L'analyse IA a été générée avec succès"
       })
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Erreur",
+      toast.error("Erreur", {
         description: "Impossible de générer l'analyse IA"
       })
     }
@@ -152,8 +139,7 @@ export function LeadsAnalytics({ leads, onAddToExport }: LeadsAnalyticsProps) {
               lead={selectedLead}
               onClose={() => {
                 setShowNotes(false)
-                toast({
-                  title: "Note enregistrée",
+                toast.success("Note enregistrée", {
                   description: "Votre note a été sauvegardée avec succès."
                 })
               }}
