@@ -1,7 +1,6 @@
 import { motion } from "framer-motion"
 import { LeadsFilters } from "@/components/leads/LeadsFilters"
 import { Lead } from "@/types/leads"
-import { useToast } from "@/hooks/use-toast"
 
 interface LeadsTabProps {
   filters: {
