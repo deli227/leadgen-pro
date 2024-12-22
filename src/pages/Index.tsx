@@ -10,6 +10,7 @@ import { SocialMediaSection } from "@/components/SocialMediaSection";
 import { ExplanationSection } from "@/components/ExplanationSection";
 import { ValuePropositionSection } from "@/components/ValuePropositionSection";
 import { NeonCursor } from "@/components/NeonCursor";
+import { HiringSection } from "@/components/HiringSection";
 
 export default function Index() {
   return (
@@ -31,7 +32,8 @@ export default function Index() {
         <PricingSection />
         <ValuePropositionSection />
         <TestimonialsSection />
-        <ContactSection />
+        <HiringSection />
+        <ContactSection id="contact-section" />
       </main>
       <FooterSection />
     </div>
