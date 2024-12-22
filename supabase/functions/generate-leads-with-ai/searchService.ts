@@ -13,36 +13,40 @@ export async function searchWithSerpAPI(filters: any) {
 
     // Add industry if specified
     if (filters.industry && filters.industry !== 'all') {
-      searchTerms.push(`"${filters.industry}"`);
+      // Remove quotes to avoid too restrictive search
+      searchTerms.push(filters.industry);
       console.log('Ajout du secteur à la recherche:', filters.industry);
     }
 
     // Add location information
     if (filters.country && filters.country !== 'all') {
       const countryName = getCountryName(filters.country);
-      searchTerms.push(countryName);
+      // Add location keyword for better results
+      searchTerms.push(`entreprises ${countryName}`);
       console.log('Ajout du pays à la recherche:', countryName);
     }
     
     if (filters.city && filters.city !== 'all') {
-      searchTerms.push(`"${filters.city}"`);
+      // Add city with "entreprises" keyword
+      searchTerms.push(`entreprises ${filters.city}`);
       console.log('Ajout de la ville à la recherche:', filters.city);
     }
 
-    // If no search terms are provided, use a default
+    // If no search terms are provided, use a broader default
     if (searchTerms.length === 0) {
-      searchTerms.push('entreprises');
-      console.log('Aucun critère spécifique fourni, utilisation de la recherche par défaut: entreprises');
+      searchTerms.push('entreprises françaises');
+      console.log('Aucun critère spécifique fourni, utilisation de la recherche par défaut: entreprises françaises');
     }
 
-    // Add specific terms to improve business search results
-    searchTerms.push('business OR company OR entreprise');
+    // Add specific terms to improve business search results but make them optional
+    searchTerms.push('(business OR company OR entreprise)');
     
-    // Combine all search terms
-    const searchQuery = searchTerms.join(' ');
+    // Combine all search terms with OR operator to get more results
+    const searchQuery = searchTerms.join(' OR ');
     console.log('Requête de recherche finale:', searchQuery);
 
-    const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}&num=10&hl=fr`;
+    // Add more results and French language
+    const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}&num=20&hl=fr&gl=fr`;
     console.log('URL de recherche construite:', googleUrl);
 
     const options = {
@@ -54,7 +58,12 @@ export async function searchWithSerpAPI(filters: any) {
       body: JSON.stringify({
         format: "json",
         zone: "serp_api4",
-        url: googleUrl
+        url: googleUrl,
+        // Add additional parameters to get more business results
+        params: {
+          type: "business",
+          results_count: 20
+        }
       })
     };
 
