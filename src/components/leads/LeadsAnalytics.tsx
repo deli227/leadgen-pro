@@ -28,10 +28,18 @@ export function LeadsAnalytics({ leads, onAddToExport }: LeadsAnalyticsProps) {
         .delete()
         .eq('id', lead.id)
 
-      if (error) throw error
+      if (error) {
+        console.error('Erreur lors de la suppression:', error)
+        toast({
+          variant: "destructive",
+          title: "Erreur",
+          description: "Une erreur est survenue lors de la suppression du lead"
+        })
+        return
+      }
 
       toast({
-        title: "Lead supprimé",
+        title: "Succès",
         description: "Le lead a été supprimé avec succès"
       })
       
@@ -41,7 +49,7 @@ export function LeadsAnalytics({ leads, onAddToExport }: LeadsAnalyticsProps) {
       toast({
         variant: "destructive",
         title: "Erreur",
-        description: "Impossible de supprimer le lead"
+        description: "Une erreur est survenue lors de la suppression du lead"
       })
     }
   }
