@@ -16,6 +16,7 @@ interface AnalyticsTabProps {
   onAddToExport: (lead: Lead) => void
   exportLeads: Lead[]
   onRemoveFromExport: (leadId: string) => void
+  onRemoveFromAnalytics: (leadId: string) => void
 }
 
 export function AnalyticsTab({
@@ -25,7 +26,8 @@ export function AnalyticsTab({
   onAddToAnalytics,
   onAddToExport,
   exportLeads,
-  onRemoveFromExport
+  onRemoveFromExport,
+  onRemoveFromAnalytics
 }: AnalyticsTabProps) {
   return (
     <motion.div 
@@ -42,6 +44,7 @@ export function AnalyticsTab({
         onAddToExport={onAddToExport}
         exportLeads={exportLeads}
         onRemoveFromExport={onRemoveFromExport}
+        onRemoveFromAnalytics={onRemoveFromAnalytics}
       />
     </motion.div>
   )

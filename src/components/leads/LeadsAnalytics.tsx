@@ -7,14 +7,23 @@ interface LeadsAnalyticsProps {
   leads: Lead[]
   onAddToExport: (lead: Lead) => void
   onLocalRemove?: (leadId: string) => void
+  onRemoveFromAnalytics?: (leadId: string) => void
 }
 
-export function LeadsAnalytics({ leads, onAddToExport, onLocalRemove }: LeadsAnalyticsProps) {
+export function LeadsAnalytics({ 
+  leads, 
+  onAddToExport, 
+  onLocalRemove,
+  onRemoveFromAnalytics 
+}: LeadsAnalyticsProps) {
   const { handleAnalyze } = useLeadActions()
 
   const handleDelete = (lead: Lead) => {
     if (onLocalRemove) {
       onLocalRemove(lead.id)
+    }
+    if (onRemoveFromAnalytics) {
+      onRemoveFromAnalytics(lead.id)
     }
   }
 
