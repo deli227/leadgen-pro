@@ -11,6 +11,7 @@ import { Search } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 import { toast } from "sonner"
 import { IndustrySelect } from "./filters/IndustrySelect"
+import { Lead } from "@/types/leads"
 
 interface LeadsFiltersProps {
   filters: {
@@ -21,12 +22,12 @@ interface LeadsFiltersProps {
     city: string
   }
   setFilters: (filters: any) => void
-  leads: any[]
-  analyticsLeads: any[]
-  onAddToAnalytics: (lead: any) => void
-  onAddToExport: (lead: any) => void
-  exportLeads: any[]
-  onRemoveFromExport: (leadId: number) => void
+  leads: Lead[]
+  analyticsLeads: Lead[]
+  onAddToAnalytics: (lead: Lead) => void
+  onAddToExport: (lead: Lead) => void
+  exportLeads: Lead[]
+  onRemoveFromExport: (leadId: string) => void
 }
 
 export function LeadsFilters({ 
