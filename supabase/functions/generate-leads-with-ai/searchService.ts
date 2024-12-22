@@ -45,9 +45,7 @@ export async function searchWithSerpAPI(filters: any) {
     const searchQuery = searchTerms.join(' ');
     console.log('Requête de recherche finale:', searchQuery);
 
-    const brightDataUrl = 'https://brd.superproxy.io:33335';
     const proxyAuth = Deno.env.get('BRIGHT_DATA_PROXY_URL');
-    
     if (!proxyAuth) {
       throw new Error('BRIGHT_DATA_PROXY_URL is not set');
     }
@@ -57,13 +55,10 @@ export async function searchWithSerpAPI(filters: any) {
     console.log('URL de recherche Google:', googleUrl);
 
     const response = await fetch(googleUrl, {
-      method: 'GET',
       headers: {
         'Proxy-Authorization': `Basic ${btoa(proxyAuth)}`,
         'Accept': 'application/json',
       },
-      // @ts-ignore - Deno fetch API doesn't have proxy option in its types
-      proxy: brightDataUrl
     });
 
     console.log('Statut de la réponse:', response.status);
