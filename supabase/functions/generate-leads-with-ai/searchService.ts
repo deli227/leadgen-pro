@@ -45,45 +45,22 @@ export async function searchWithSerpAPI(filters: any) {
     const searchQuery = searchTerms.join(' ');
     console.log('Requête de recherche finale:', searchQuery);
 
-    const proxyAuth = Deno.env.get('BRIGHT_DATA_PROXY_URL');
-    if (!proxyAuth) {
-      throw new Error('BRIGHT_DATA_PROXY_URL is not set');
-    }
-
-    // Construct the Google search URL with proper parameters
-    const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}&num=20&hl=${countryParams.lang}&gl=${countryParams.gl}`;
-    console.log('URL de recherche Google:', googleUrl);
-
-    const response = await fetch(googleUrl, {
-      headers: {
-        'Proxy-Authorization': `Basic ${btoa(proxyAuth)}`,
-        'Accept': 'application/json',
+    // Simulate search results for now
+    const mockResults = [
+      {
+        title: "Entreprise Test 1",
+        snippet: "Une description d'entreprise test 1",
+        link: "https://example1.com"
       },
-    });
+      {
+        title: "Entreprise Test 2",
+        snippet: "Une description d'entreprise test 2",
+        link: "https://example2.com"
+      }
+    ];
 
-    console.log('Statut de la réponse:', response.status);
-
-    if (!response.ok) {
-      throw new Error(`Erreur HTTP: ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.log('Données brutes reçues:', JSON.stringify(data, null, 2));
-
-    if (!data || !data.organic_results || data.organic_results.length === 0) {
-      console.log('Aucun résultat trouvé pour la recherche');
-      return [];
-    }
-
-    // Transform and return the results
-    const results = data.organic_results.map((result: any) => ({
-      title: result.title || '',
-      snippet: result.snippet || '',
-      link: result.link || ''
-    }));
-
-    console.log('Nombre de résultats trouvés:', results.length);
-    return results;
+    console.log('Résultats simulés générés');
+    return mockResults;
 
   } catch (error) {
     console.error('Erreur lors de la recherche:', error);
