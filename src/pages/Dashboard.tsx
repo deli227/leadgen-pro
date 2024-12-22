@@ -47,7 +47,7 @@ export function Dashboard() {
     }
   }
 
-  const handleRemoveFromExport = (leadId: number) => {
+  const handleRemoveFromExport = (leadId: string) => {
     setExportLeads(prev => prev.filter(lead => lead.id !== leadId))
     toast({
       title: "Retrait de l'export",

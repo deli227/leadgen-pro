@@ -32,7 +32,7 @@ export function useLeadsData(session: Session | null) {
   });
 
   const leads: Lead[] = supabaseLeads.map(lead => ({
-    id: parseInt(lead.id),
+    id: lead.id,
     company: lead.company,
     email: lead.email || "",
     phone: lead.phone || "",
