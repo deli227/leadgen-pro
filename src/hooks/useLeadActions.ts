@@ -20,12 +20,13 @@ export function useLeadActions() {
         return;
       }
 
-      console.log('Tentative de suppression du lead:', lead.id);
+      console.log('Tentative de suppression du lead:', lead.id, 'par utilisateur:', session.user.id);
       
       const { error } = await supabase
         .from('leads')
         .delete()
-        .eq('id', lead.id);
+        .eq('id', lead.id)
+        .eq('user_id', session.user.id); // Ensure we only delete user's own leads
 
       if (error) {
         console.error('Erreur lors de la suppression:', error);
@@ -35,6 +36,7 @@ export function useLeadActions() {
         return;
       }
 
+      console.log('Lead supprimé avec succès:', lead.id);
       toast.success("Succès", {
         description: "Le lead a été supprimé avec succès"
       });
@@ -50,6 +52,14 @@ export function useLeadActions() {
 
   const handleAnalyze = async (lead: Lead) => {
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error("Erreur d'authentification");
+        return;
+      }
+
+      console.log('Analyse du lead:', lead.id, 'par utilisateur:', session.user.id);
+      
       const analysis = `Analyse IA pour ${lead.company}:\n- Force principale: ${lead.strengths[0]}\n- Point d'amélioration: ${lead.weaknesses[0]}`;
       setAiAnalysis(prev => ({ ...prev, [lead.id]: analysis }));
       
@@ -57,6 +67,7 @@ export function useLeadActions() {
         description: "L'analyse IA a été générée avec succès"
       });
     } catch (error) {
+      console.error('Erreur lors de l\'analyse:', error);
       toast.error("Erreur", {
         description: "Impossible de générer l'analyse IA"
       });

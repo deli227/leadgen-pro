@@ -42,17 +42,31 @@ export function LeadsFilters({
   const handleSearch = async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession()
-      if (!session) throw new Error('Session non trouvée')
+      if (!session) {
+        toast.error("Erreur d'authentification", {
+          description: "Veuillez vous connecter pour générer des leads"
+        })
+        return
+      }
+
+      console.log('Génération de leads pour utilisateur:', session.user.id, 'avec filtres:', filters)
 
       const response = await supabase.functions.invoke('generate-leads', {
-        body: { filters },
+        body: { 
+          ...filters,
+          userId: session.user.id  // Ensure user ID is included
+        },
         headers: {
           Authorization: `Bearer ${session.access_token}`
         }
       })
 
-      if (response.error) throw response.error
+      if (response.error) {
+        console.error('Erreur lors de la génération:', response.error)
+        throw response.error
+      }
 
+      console.log('Leads générés avec succès')
       toast.success("Recherche lancée avec succès")
       window.location.reload()
     } catch (error) {

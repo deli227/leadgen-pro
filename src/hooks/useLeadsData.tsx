@@ -8,8 +8,12 @@ export function useLeadsData(session: Session | null) {
   const { data: supabaseLeads = [], error } = useQuery({
     queryKey: ['leads', session?.user?.id],
     queryFn: async () => {
-      if (!session?.user?.id) throw new Error('No user ID');
+      if (!session?.user?.id) {
+        console.error('No user ID available');
+        throw new Error('No user ID');
+      }
 
+      console.log('Fetching leads for user:', session.user.id);
       const { data, error } = await supabase
         .from('leads')
         .select('*')
@@ -21,6 +25,7 @@ export function useLeadsData(session: Session | null) {
         throw error;
       }
       
+      console.log('Leads fetched successfully:', data?.length || 0, 'leads');
       return data;
     },
     enabled: !!session?.user?.id
