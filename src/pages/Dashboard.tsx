@@ -30,8 +30,13 @@ export function Dashboard() {
   const leads = useLeadsData(session)
 
   const handleAddToAnalytics = (lead: Lead) => {
+    // Si le lead n'est pas déjà dans la liste analytique
     if (!analyticsLeads.find(l => l.id === lead.id)) {
       setAnalyticsLeads(prev => [...prev, lead])
+      // Si le lead était précédemment supprimé, on le retire de la liste des leads supprimés
+      if (removedAnalyticsLeads.includes(lead.id)) {
+        setRemovedAnalyticsLeads(prev => prev.filter(id => id !== lead.id))
+      }
       toast({
         title: "Ajout aux analytiques",
         description: "Le lead a été ajouté aux analytiques avec succès"
