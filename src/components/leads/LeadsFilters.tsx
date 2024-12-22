@@ -28,6 +28,7 @@ interface LeadsFiltersProps {
   onAddToExport: (lead: Lead) => void
   exportLeads: Lead[]
   onRemoveFromExport: (leadId: string) => void
+  onRemoveFromAnalytics: (leadId: string) => void
   onLocalRemove?: (leadId: string) => void
 }
 
@@ -40,6 +41,7 @@ export function LeadsFilters({
   onAddToExport,
   exportLeads,
   onRemoveFromExport,
+  onRemoveFromAnalytics,
   onLocalRemove
 }: LeadsFiltersProps) {
   const handleSearch = async () => {
@@ -142,6 +144,7 @@ export function LeadsFilters({
           leads={analyticsLeads} 
           onAddToExport={onAddToExport} 
           onLocalRemove={onLocalRemove}
+          onRemoveFromAnalytics={onRemoveFromAnalytics}
         />
       </TabsContent>
 
