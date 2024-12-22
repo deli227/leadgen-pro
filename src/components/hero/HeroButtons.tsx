@@ -2,6 +2,13 @@ import { ArrowRight } from "lucide-react";
 import { Button } from "../ui/button";
 
 export const HeroButtons = () => {
+  const scrollToPricing = () => {
+    const pricingSection = document.querySelector('#pricing-section');
+    if (pricingSection) {
+      pricingSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="flex flex-col sm:flex-row gap-4 justify-center w-full max-w-xl mx-auto px-4 mt-24">
       <Button
@@ -15,10 +22,11 @@ export const HeroButtons = () => {
       <Button
         variant="outline"
         size="lg"
-        className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-gradient-to-r from-primary/20 to-primary-dark/20 text-primary-light border-primary-light/20 hover:bg-primary/30 hover:text-white transition-all duration-300"
-        aria-label="Voir la démonstration"
+        onClick={scrollToPricing}
+        className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-gradient-to-r from-primary/20 to-accent/20 hover:from-primary/30 hover:to-accent/30 text-white border-primary-light/20 hover:border-primary-light/30 hover:text-white transition-all duration-300 animate-pulse"
+        aria-label="Voir nos tarifs"
       >
-        Voir la démo
+        Nos tarifs
       </Button>
     </div>
   );
