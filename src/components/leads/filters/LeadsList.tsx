@@ -1,36 +1,30 @@
-import { ScrollArea } from "@/components/ui/scroll-area"
+import { motion } from "framer-motion"
+import { Lead } from "@/types/leads"
 import { LeadCard } from "./LeadCard"
-import { useQueryClient } from "@tanstack/react-query"
 
 interface LeadsListProps {
-  leads: any[]
-  onAddToAnalytics: (lead: any) => void
+  leads: Lead[]
+  onAddToAnalytics: (lead: Lead) => void
+  onAnalyze: (lead: Lead) => void
 }
 
-export function LeadsList({ leads, onAddToAnalytics }: LeadsListProps) {
-  const queryClient = useQueryClient();
-
-  const handleLeadDeleted = () => {
-    queryClient.invalidateQueries({ queryKey: ['leads'] });
-  };
-
+export function LeadsList({ leads, onAddToAnalytics, onAnalyze }: LeadsListProps) {
   return (
-    <div className="mt-4">
-      <h3 className="text-lg font-semibold mb-4 bg-gradient-to-r from-primary-light to-accent bg-clip-text text-transparent">
-        Leads générés
-      </h3>
-      <ScrollArea className="h-[calc(100vh-20rem)] pr-2">
-        <div className="grid gap-3 grid-cols-1">
-          {leads.map((lead) => (
-            <LeadCard
-              key={lead.id}
-              lead={lead}
-              onAddToAnalytics={onAddToAnalytics}
-              onLeadDeleted={handleLeadDeleted}
-            />
-          ))}
-        </div>
-      </ScrollArea>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      {leads.map((lead, index) => (
+        <motion.div
+          key={lead.id}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: index * 0.1 }}
+        >
+          <LeadCard 
+            lead={lead} 
+            onAddToAnalytics={onAddToAnalytics}
+            onAnalyze={onAnalyze}
+          />
+        </motion.div>
+      ))}
     </div>
-  );
+  )
 }

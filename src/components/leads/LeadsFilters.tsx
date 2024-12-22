@@ -12,6 +12,9 @@ import { supabase } from "@/integrations/supabase/client"
 import { toast } from "sonner"
 import { IndustrySelect } from "./filters/IndustrySelect"
 import { Lead } from "@/types/leads"
+import { useState } from "react"
+import { AIAnalysisWindow } from "./analysis/AIAnalysisWindow"
+import { useLeadActions } from "@/hooks/useLeadActions"
 
 interface LeadsFiltersProps {
   filters: {
@@ -44,6 +47,13 @@ export function LeadsFilters({
   onRemoveFromAnalytics,
   onLocalRemove
 }: LeadsFiltersProps) {
+  const [isAnalysisOpen, setIsAnalysisOpen] = useState(false)
+  const [currentAnalysis, setCurrentAnalysis] = useState<{ company: string, analysis: string | null }>({
+    company: "",
+    analysis: null
+  })
+  const { aiAnalysis, handleAnalyze } = useLeadActions()
+
   const handleSearch = async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession()
@@ -78,6 +88,16 @@ export function LeadsFilters({
       console.error('Erreur:', error)
       toast.error("Impossible de lancer la recherche. Veuillez réessayer.")
     }
+  }
+
+  const handleLeadAnalysis = async (lead: Lead) => {
+    setIsAnalysisOpen(true)
+    setCurrentAnalysis({ company: lead.company, analysis: null })
+    await handleAnalyze(lead)
+    setCurrentAnalysis({ 
+      company: lead.company, 
+      analysis: aiAnalysis[lead.id] || "Aucune analyse disponible pour le moment."
+    })
   }
 
   return (
@@ -136,6 +156,7 @@ export function LeadsFilters({
           setFilters={setFilters}
           leads={leads}
           onAddToAnalytics={onAddToAnalytics}
+          onAnalyze={handleLeadAnalysis}
         />
       </TabsContent>
 
@@ -145,6 +166,7 @@ export function LeadsFilters({
           onAddToExport={onAddToExport} 
           onLocalRemove={onLocalRemove}
           onRemoveFromAnalytics={onRemoveFromAnalytics}
+          onAnalyze={handleLeadAnalysis}
         />
       </TabsContent>
 
@@ -200,6 +222,13 @@ export function LeadsFilters({
           onRemoveFromExport={onRemoveFromExport}
         />
       </TabsContent>
+
+      <AIAnalysisWindow 
+        isOpen={isAnalysisOpen}
+        onClose={() => setIsAnalysisOpen(false)}
+        analysis={currentAnalysis.analysis}
+        company={currentAnalysis.company}
+      />
     </Tabs>
   )
 }
