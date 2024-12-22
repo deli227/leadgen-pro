@@ -59,7 +59,7 @@ export function LeadsFilters({
       const response = await supabase.functions.invoke('generate-leads', {
         body: { 
           ...filters,
-          userId: session.user.id  // Ensure user ID is included
+          userId: session.user.id
         },
         headers: {
           Authorization: `Bearer ${session.access_token}`

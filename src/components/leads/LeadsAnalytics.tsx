@@ -2,6 +2,8 @@ import { motion } from "framer-motion"
 import { Lead } from "@/types/leads"
 import { LeadActions } from "./LeadActions"
 import { useLeadActions } from "@/hooks/useLeadActions"
+import { AIAnalysisWindow } from "./analysis/AIAnalysisWindow"
+import { useState } from "react"
 
 interface LeadsAnalyticsProps {
   leads: Lead[]
@@ -17,17 +19,22 @@ export function LeadsAnalytics({
   onRemoveFromAnalytics 
 }: LeadsAnalyticsProps) {
   const { handleAnalyze } = useLeadActions()
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
 
   const handleDelete = (lead: Lead) => {
-    // On ne supprime que de la liste analytique
     if (onRemoveFromAnalytics) {
       onRemoveFromAnalytics(lead.id)
     }
   }
 
+  const handleAnalyzeLead = async (lead: Lead) => {
+    await handleAnalyze(lead)
+    setSelectedLead(lead)
+  }
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-      <div className="space-y-3 sm:space-y-4">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+      <div className="lg:col-span-2 space-y-3 sm:space-y-4">
         {leads.map(lead => (
           <motion.div
             key={lead.id}
@@ -43,7 +50,7 @@ export function LeadsAnalytics({
               </div>
               <LeadActions
                 lead={lead}
-                onAnalyze={handleAnalyze}
+                onAnalyze={handleAnalyzeLead}
                 onShowNotes={() => {}}
                 onAddToExport={onAddToExport}
                 onDelete={handleDelete}
@@ -52,6 +59,8 @@ export function LeadsAnalytics({
           </motion.div>
         ))}
       </div>
+      
+      <AIAnalysisWindow lead={selectedLead} />
     </div>
   )
 }
