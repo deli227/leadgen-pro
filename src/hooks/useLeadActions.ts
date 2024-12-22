@@ -5,7 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 export function useLeadActions() {
-  const [aiAnalysis, setAiAnalysis] = useState<Record<number, string>>({});
+  const [aiAnalysis, setAiAnalysis] = useState<Record<string, string>>({});
   const queryClient = useQueryClient();
 
   const handleDelete = async (lead: Lead) => {
@@ -26,10 +26,10 @@ export function useLeadActions() {
         .from('leads')
         .delete()
         .eq('id', lead.id)
-        .eq('user_id', session.user.id); // S'assurer qu'on ne supprime que les leads de l'utilisateur
+        .eq('user_id', session.user.id);
 
       if (error) {
-        console.error('Erreur lors de la suppression:', error);
+        console.error('Erreur détaillée lors de la suppression:', error);
         toast.error("Erreur", {
           description: "Une erreur est survenue lors de la suppression du lead"
         });
@@ -41,7 +41,6 @@ export function useLeadActions() {
         description: "Le lead a été supprimé avec succès"
       });
       
-      // Invalider le cache pour forcer un rechargement des leads
       queryClient.invalidateQueries({ queryKey: ['leads'] });
     } catch (error) {
       console.error('Erreur lors de la suppression:', error);
