@@ -9,8 +9,6 @@ export const plans = [
       "Multi format",
       "Support prioritaire",
       "Idéal pour découvrir sans risque",
-      "Accès basique aux automatisations (Bientôt)",
-      "1 workflow d'automatisation (Bientôt)",
     ],
     buttonText: "Commencer gratuitement",
     type: "free",
