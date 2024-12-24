@@ -52,7 +52,7 @@ export const HeroSection = () => {
             backgroundImage: "url('/lovable-uploads/78755e93-23d8-47a2-815a-90bfd6291210.png')",
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            filter: 'brightness(0.12)',
+            filter: 'brightness(0.15)', // Légèrement augmenté de 0.12 à 0.15
           }}
         />
 
