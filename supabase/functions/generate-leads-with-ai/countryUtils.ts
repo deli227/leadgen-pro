@@ -1,74 +1,39 @@
-import { CountryParams } from './types';
+import { CountryParams } from './types.ts';
 
-export const getCountryName = (countryCode: string): string => {
-  const countryMap: { [key: string]: string } = {
+export function getCountryName(countryCode: string): string {
+  const countryNames: { [key: string]: string } = {
     'FR': 'France',
     'BE': 'Belgique',
     'CH': 'Suisse',
     'CA': 'Canada',
-    'LU': 'Luxembourg',
-    'MC': 'Monaco',
-    'MA': 'Maroc',
-    'TN': 'Tunisie',
-    'SN': 'Sénégal',
-    'CI': 'Côte d\'Ivoire'
+    'US': 'États-Unis',
+    'GB': 'Royaume-Uni',
+    'DE': 'Allemagne',
+    'ES': 'Espagne',
+    'IT': 'Italie',
+    'PT': 'Portugal',
+    'NL': 'Pays-Bas',
+    'LU': 'Luxembourg'
   };
-  return countryMap[countryCode] || countryCode;
-};
+  
+  return countryNames[countryCode] || countryCode;
+}
 
-export const getCountrySearchParams = (countryCode: string): CountryParams => {
+export function getCountrySearchParams(countryCode: string): CountryParams {
   const params: { [key: string]: CountryParams } = {
-    'FR': {
-      lang: 'fr',
-      gl: 'FR',
-      businessTerm: 'entreprise'
-    },
-    'BE': {
-      lang: 'fr',
-      gl: 'BE',
-      businessTerm: 'entreprise'
-    },
-    'CH': {
-      lang: 'fr',
-      gl: 'CH',
-      businessTerm: 'entreprise'
-    },
-    'CA': {
-      lang: 'fr',
-      gl: 'CA',
-      businessTerm: 'entreprise'
-    },
-    'LU': {
-      lang: 'fr',
-      gl: 'LU',
-      businessTerm: 'entreprise'
-    },
-    'MC': {
-      lang: 'fr',
-      gl: 'MC',
-      businessTerm: 'entreprise'
-    },
-    'MA': {
-      lang: 'fr',
-      gl: 'MA',
-      businessTerm: 'société'
-    },
-    'TN': {
-      lang: 'fr',
-      gl: 'TN',
-      businessTerm: 'société'
-    },
-    'SN': {
-      lang: 'fr',
-      gl: 'SN',
-      businessTerm: 'entreprise'
-    },
-    'CI': {
-      lang: 'fr',
-      gl: 'CI',
-      businessTerm: 'entreprise'
-    }
+    'FR': { lang: 'fr', gl: 'fr', businessTerm: 'entreprise' },
+    'BE': { lang: 'fr', gl: 'be', businessTerm: 'entreprise' },
+    'CH': { lang: 'fr', gl: 'ch', businessTerm: 'entreprise' },
+    'CA': { lang: 'fr', gl: 'ca', businessTerm: 'entreprise' },
+    'US': { lang: 'en', gl: 'us', businessTerm: 'company' },
+    'GB': { lang: 'en', gl: 'uk', businessTerm: 'company' },
+    'DE': { lang: 'de', gl: 'de', businessTerm: 'Unternehmen' },
+    'ES': { lang: 'es', gl: 'es', businessTerm: 'empresa' },
+    'IT': { lang: 'it', gl: 'it', businessTerm: 'azienda' },
+    'PT': { lang: 'pt', gl: 'pt', businessTerm: 'empresa' },
+    'NL': { lang: 'nl', gl: 'nl', businessTerm: 'bedrijf' },
+    'LU': { lang: 'fr', gl: 'lu', businessTerm: 'entreprise' }
   };
 
   return params[countryCode] || params['FR'];
-};
+}
