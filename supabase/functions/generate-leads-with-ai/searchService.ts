@@ -45,27 +45,88 @@ export async function searchWithSerpAPI(filters: any) {
     const searchQuery = searchTerms.join(' ');
     console.log('Requête de recherche finale:', searchQuery);
 
-    // Simulate search results for now
-    const mockResults = [
-      {
-        title: "Entreprise Test 1",
-        snippet: "Une description d'entreprise test 1",
-        link: "https://example1.com"
-      },
-      {
-        title: "Entreprise Test 2",
-        snippet: "Une description d'entreprise test 2",
-        link: "https://example2.com"
-      }
-    ];
+    // Get Bright Data proxy URL from environment
+    const brightDataProxyUrl = Deno.env.get('BRIGHT_DATA_PROXY_URL');
+    if (!brightDataProxyUrl) {
+      throw new Error('BRIGHT_DATA_PROXY_URL not configured');
+    }
 
-    console.log('Résultats simulés générés');
-    return mockResults;
+    // Construct the Google search URL with parameters
+    const searchUrl = new URL('https://www.google.com/search');
+    searchUrl.searchParams.append('q', searchQuery);
+    searchUrl.searchParams.append('hl', countryParams.lang);
+    searchUrl.searchParams.append('gl', countryParams.gl);
+    searchUrl.searchParams.append('num', filters.leadCount.toString());
+
+    console.log('URL de recherche construite:', searchUrl.toString());
+
+    // Make request through Bright Data proxy
+    const response = await fetch(searchUrl.toString(), {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      },
+      method: 'GET',
+      redirect: 'follow',
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const html = await response.text();
+    console.log('Réponse reçue, longueur HTML:', html.length);
+
+    // Parse the results (simplified example)
+    const results = parseSearchResults(html);
+    console.log('Résultats parsés:', results);
+
+    return results;
 
   } catch (error) {
     console.error('Erreur lors de la recherche:', error);
     throw error;
   }
+}
+
+// Helper function to parse search results from HTML
+function parseSearchResults(html: string) {
+  // Simplified example - you would want to use a proper HTML parser here
+  const results = [];
+  // Basic regex to extract search results
+  const regex = /<div class="g">(.*?)<\/div>/g;
+  const matches = html.matchAll(regex);
+
+  for (const match of matches) {
+    const result = {
+      title: extractTitle(match[1]),
+      snippet: extractSnippet(match[1]),
+      link: extractLink(match[1])
+    };
+    if (result.link) {
+      results.push(result);
+    }
+  }
+
+  return results;
+}
+
+function extractTitle(html: string): string {
+  const match = html.match(/<h3[^>]*>(.*?)<\/h3>/);
+  return match ? stripTags(match[1]) : '';
+}
+
+function extractSnippet(html: string): string {
+  const match = html.match(/<div class="VwiC3b"[^>]*>(.*?)<\/div>/);
+  return match ? stripTags(match[1]) : '';
+}
+
+function extractLink(html: string): string {
+  const match = html.match(/href="([^"]+)"/);
+  return match ? match[1] : '';
+}
+
+function stripTags(html: string): string {
+  return html.replace(/<[^>]*>/g, '');
 }
 
 // Helper function to convert country codes to full names
