@@ -1,5 +1,5 @@
-import { SearchFilters, SearchResult } from './types';
-import { getCountryName, getCountrySearchParams } from './countryUtils';
+import { SearchFilters, SearchResult, CountryParams } from './types.ts';
+import { getCountryName, getCountrySearchParams } from './countryUtils.ts';
 
 export async function searchWithSerpAPI(filters: SearchFilters): Promise<SearchResult[]> {
   try {
