@@ -6,14 +6,12 @@ export function getCountryName(countryCode: string): string {
     'BE': 'Belgique',
     'CH': 'Suisse',
     'CA': 'Canada',
-    'US': 'États-Unis',
-    'GB': 'Royaume-Uni',
-    'DE': 'Allemagne',
-    'ES': 'Espagne',
-    'IT': 'Italie',
-    'PT': 'Portugal',
-    'NL': 'Pays-Bas',
-    'LU': 'Luxembourg'
+    'LU': 'Luxembourg',
+    'MC': 'Monaco',
+    'MA': 'Maroc',
+    'TN': 'Tunisie',
+    'SN': 'Sénégal',
+    'CI': 'Côte d\'Ivoire'
   };
   
   return countryNames[countryCode] || countryCode;
@@ -25,14 +23,12 @@ export function getCountrySearchParams(countryCode: string): CountryParams {
     'BE': { lang: 'fr', gl: 'be', businessTerm: 'entreprise' },
     'CH': { lang: 'fr', gl: 'ch', businessTerm: 'entreprise' },
     'CA': { lang: 'fr', gl: 'ca', businessTerm: 'entreprise' },
-    'US': { lang: 'en', gl: 'us', businessTerm: 'company' },
-    'GB': { lang: 'en', gl: 'uk', businessTerm: 'company' },
-    'DE': { lang: 'de', gl: 'de', businessTerm: 'Unternehmen' },
-    'ES': { lang: 'es', gl: 'es', businessTerm: 'empresa' },
-    'IT': { lang: 'it', gl: 'it', businessTerm: 'azienda' },
-    'PT': { lang: 'pt', gl: 'pt', businessTerm: 'empresa' },
-    'NL': { lang: 'nl', gl: 'nl', businessTerm: 'bedrijf' },
-    'LU': { lang: 'fr', gl: 'lu', businessTerm: 'entreprise' }
+    'LU': { lang: 'fr', gl: 'lu', businessTerm: 'entreprise' },
+    'MC': { lang: 'fr', gl: 'mc', businessTerm: 'entreprise' },
+    'MA': { lang: 'fr', gl: 'ma', businessTerm: 'société' },
+    'TN': { lang: 'fr', gl: 'tn', businessTerm: 'société' },
+    'SN': { lang: 'fr', gl: 'sn', businessTerm: 'entreprise' },
+    'CI': { lang: 'fr', gl: 'ci', businessTerm: 'entreprise' }
   };
 
   return params[countryCode] || params['FR'];

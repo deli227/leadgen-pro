@@ -1,4 +1,4 @@
-import { SearchFilters, SearchResult, CountryParams } from './types.ts';
+import { SearchFilters, SearchResult } from './types.ts';
 import { getCountryName, getCountrySearchParams } from './countryUtils.ts';
 
 export async function searchWithSerpAPI(filters: SearchFilters): Promise<SearchResult[]> {
