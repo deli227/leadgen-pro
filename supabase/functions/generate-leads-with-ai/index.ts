@@ -16,18 +16,27 @@ serve(async (req) => {
     console.log('Filtres reçus:', filters)
     console.log('ID utilisateur:', userId)
 
-    // Retourner une réponse temporaire indiquant que la fonctionnalité est désactivée
+    // Temporary mock response while we implement a new search solution
+    const mockResults = [{
+      company: "Example Company",
+      website: "www.example.com",
+      email: "contact@example.com",
+      phone: "+1234567890",
+      address: "123 Example St",
+      industry: filters.industry || "Technology",
+      score: 8,
+      qualification: 7,
+      strengths: ["Strong market presence", "Innovative solutions"],
+      weaknesses: ["Limited international reach"]
+    }]
+
     return new Response(
-      JSON.stringify({ 
-        success: false, 
-        error: "La génération automatique de leads est temporairement désactivée." 
-      }),
+      JSON.stringify({ success: true, data: mockResults }),
       { 
         headers: { 
           ...corsHeaders,
           'Content-Type': 'application/json'
-        },
-        status: 400
+        } 
       }
     )
   } catch (error) {

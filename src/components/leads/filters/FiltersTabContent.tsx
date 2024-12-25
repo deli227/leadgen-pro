@@ -25,7 +25,60 @@ export function FiltersTabContent({
   const [isGenerating, setIsGenerating] = useState(false)
 
   const handleGenerateLeads = async () => {
-    toast.error("La génération automatique de leads est temporairement désactivée")
+    try {
+      setIsGenerating(true)
+
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        toast.error("Erreur d'authentification", {
+          description: "Veuillez vous reconnecter."
+        })
+        return
+      }
+
+      console.log('Session trouvée:', session)
+      console.log('Envoi des paramètres à generate-leads:', filters)
+
+      const { data, error } = await supabase.functions.invoke('generate-leads-with-ai', {
+        body: { 
+          filters,
+          userId: session.user.id 
+        },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
+      })
+
+      console.log('Réponse de generate-leads:', { data, error })
+
+      if (error) {
+        console.error('Erreur détaillée:', error)
+        toast.error("Erreur de génération", {
+          description: error.message || "Une erreur est survenue lors de la génération des leads."
+        })
+        return
+      }
+
+      if (!data || !data.success) {
+        toast.error("Erreur de génération", {
+          description: "La réponse de l'API est invalide"
+        })
+        return
+      }
+
+      toast.success("Génération réussie", {
+        description: "Les leads ont été générés avec succès."
+      })
+
+      window.location.reload()
+    } catch (error: any) {
+      console.error('Erreur complète:', error)
+      toast.error("Erreur de génération", {
+        description: error.message || "Une erreur est survenue lors de la génération des leads."
+      })
+    } finally {
+      setIsGenerating(false)
+    }
   }
 
   return (
@@ -53,10 +106,17 @@ export function FiltersTabContent({
 
         <Button
           onClick={handleGenerateLeads}
-          disabled={true}
-          className="ml-auto bg-gradient-to-r from-primary/50 to-accent/50 text-white/50 cursor-not-allowed"
+          disabled={isGenerating}
+          className="ml-auto bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white shadow-lg hover:shadow-xl transition-all duration-300"
         >
-          Génération désactivée
+          {isGenerating ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Génération...
+            </>
+          ) : (
+            'Générer les leads'
+          )}
         </Button>
       </motion.div>
 
