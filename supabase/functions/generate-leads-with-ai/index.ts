@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { searchWithSerpAPI } from './searchService.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -7,6 +6,7 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
@@ -16,16 +16,18 @@ serve(async (req) => {
     console.log('Filtres reçus:', filters)
     console.log('ID utilisateur:', userId)
 
-    const results = await searchWithSerpAPI(filters)
-    console.log('Résultats de recherche:', results)
-
+    // Retourner une réponse temporaire indiquant que la fonctionnalité est désactivée
     return new Response(
-      JSON.stringify({ success: true, data: results }),
+      JSON.stringify({ 
+        success: false, 
+        error: "La génération automatique de leads est temporairement désactivée." 
+      }),
       { 
         headers: { 
           ...corsHeaders,
           'Content-Type': 'application/json'
-        } 
+        },
+        status: 400
       }
     )
   } catch (error) {
