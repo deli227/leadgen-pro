@@ -1,44 +1,35 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-const buildBasicSearchPrompt = (filters: any) => {
-  const leadCount = Math.min(Math.max(filters.leadCount, 1), 50);
-
-  let prompt = `Generate EXACTLY ${leadCount} unique company leads as a JSON array. The response MUST be a valid JSON array starting with [ and ending with ]. Each company should have this exact structure:
-  {
-    "company": "Company Name",
-    "email": "contact@company.com",
-    "phone": "+1234567890",
-    "website": "https://company.com",
-    "address": "Full Address",
-    "industry": "${filters.industry}",
-    "score": 8,
-    "socialMedia": {
-      "linkedin": "https://linkedin.com/company/...",
-      "twitter": "https://twitter.com/...",
-      "facebook": "https://facebook.com/...",
-      "instagram": "https://instagram.com/..."
+function buildBasicSearchPrompt(filters: any) {
+  const prompt = `Generate ${filters.leadCount} B2B leads in ${filters.country}, ${filters.city} for the ${filters.industry} industry. Return a JSON array of leads with this exact format:
+  [
+    {
+      "company": "Company Name",
+      "website": "https://example.com",
+      "email": "contact@example.com",
+      "phone": "+1234567890",
+      "address": "Full Address",
+      "industry": "${filters.industry}",
+      "socialMedia": {
+        "linkedin": "https://linkedin.com/company/example",
+        "twitter": "https://twitter.com/example"
+      },
+      "score": 8,
+      "qualification": 4,
+      "strengths": ["Strength 1", "Strength 2"],
+      "weaknesses": ["Weakness 1", "Weakness 2"]
     }
-  }`;
-  
-  if (filters.country !== 'all') {
-    prompt += `\nCompanies must be located in ${filters.country}`;
-    if (filters.city !== 'all') {
-      prompt += `, specifically in ${filters.city}`;
-    }
-  }
-  
-  if (filters.industry !== 'all') {
-    prompt += `\nCompanies must be in the ${filters.industry} industry`;
-  }
+  ]
 
-  prompt += `\n\nCRITICAL REQUIREMENTS:
-  1. Return EXACTLY ${leadCount} companies
-  2. Response must be a valid JSON array
+  Rules:
+  1. Use realistic, professional data
+  2. Ensure all URLs are properly formatted
   3. Start with [ and end with ]
   4. Each company must be unique
   5. All fields must use the exact names shown above
@@ -50,33 +41,37 @@ const buildBasicSearchPrompt = (filters: any) => {
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { 
-      headers: {
-        ...corsHeaders,
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      }
-    })
+    return new Response(null, { headers: corsHeaders })
   }
 
   try {
-    const { filters, userId } = await req.json()
-    console.log('Filters received:', filters)
-    console.log('User ID:', userId)
+    const { filters } = await req.json()
+    console.log('Received filters:', filters)
 
-    const perplexityApiKey = Deno.env.get('PERPLEXITY_API_KEY')
-    if (!perplexityApiKey) {
-      throw new Error('Perplexity API key not configured')
+    if (!filters || !filters.country || !filters.industry || !filters.userId) {
+      throw new Error('Missing required filters')
     }
 
-    console.log('Sending request to Perplexity...')
+    // Initialize Supabase client
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      {
+        auth: {
+          persistSession: false
+        }
+      }
+    )
+
+    // Call Perplexity API to generate leads
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${perplexityApiKey}`,
+        'Authorization': `Bearer ${Deno.env.get('PERPLEXITY_API_KEY')}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama-3.1-sonar-small-128k-online',
+        model: 'pplx-7b-chat',
         messages: [
           {
             role: 'system',
@@ -87,41 +82,37 @@ serve(async (req) => {
             content: buildBasicSearchPrompt(filters)
           }
         ],
-        temperature: 0.1, // Reduced for more consistent output
+        temperature: 0.1,
         top_p: 0.9,
-        max_tokens: 2000 // Increased to handle larger responses
+        max_tokens: 2000
       }),
     });
 
     if (!response.ok) {
-      console.error('Perplexity API error:', await response.text())
-      throw new Error('Error generating leads')
+      throw new Error(`Perplexity API error: ${response.status} ${response.statusText}`);
     }
 
-    const result = await response.json()
-    console.log('Perplexity response received')
-    
-    let generatedLeads
+    const data = await response.json();
+    console.log('Perplexity API response:', data);
+
+    if (!data.choices || !data.choices[0] || !data.choices[0].message || !data.choices[0].message.content) {
+      throw new Error('Invalid API response structure');
+    }
+
+    const content = data.choices[0].message.content;
+    console.log('Generated content:', content);
+
+    let generatedLeads;
     try {
-      const content = result.choices[0].message.content.trim()
-      console.log('Raw content:', content)
-      
-      // Ensure we only parse the JSON array part
-      const jsonStart = content.indexOf('[')
-      const jsonEnd = content.lastIndexOf(']') + 1
-      if (jsonStart === -1 || jsonEnd === 0) {
-        throw new Error('No JSON array found in response')
-      }
-      
-      const jsonContent = content.slice(jsonStart, jsonEnd)
-      console.log('Cleaned JSON content:', jsonContent)
-      
-      generatedLeads = JSON.parse(jsonContent)
-      
+      // Try to parse the content directly
+      generatedLeads = JSON.parse(content);
+
+      // Validate that it's an array
       if (!Array.isArray(generatedLeads)) {
-        throw new Error('Response is not an array')
+        throw new Error('Response is not an array');
       }
-      
+
+      // Validate lead count
       if (generatedLeads.length !== filters.leadCount) {
         throw new Error(`Incorrect number of leads: ${generatedLeads.length} instead of ${filters.leadCount}`)
       }
@@ -132,36 +123,53 @@ serve(async (req) => {
           throw new Error(`Lead at index ${index} is missing required fields`)
         }
       })
+
+      // Add user_id to each lead
+      const leadsWithUserId = generatedLeads.map((lead: any) => ({
+        ...lead,
+        user_id: filters.userId
+      }));
+
+      // Insert leads into Supabase
+      const { data: insertedLeads, error: insertError } = await supabaseClient
+        .from('leads')
+        .insert(leadsWithUserId)
+        .select();
+
+      if (insertError) {
+        console.error('Error inserting leads:', insertError);
+        throw new Error(`Failed to insert leads: ${insertError.message}`);
+      }
+
+      console.log('Successfully inserted leads:', insertedLeads);
+
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          message: `${leadsWithUserId.length} leads generated and saved successfully`,
+          data: insertedLeads
+        }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200 
+        }
+      );
+
     } catch (error) {
       console.error('Error parsing response:', error)
       throw new Error('Invalid response format: ' + error.message)
     }
 
-    return new Response(
-      JSON.stringify({ 
-        success: true, 
-        data: generatedLeads 
-      }),
-      { 
-        headers: { 
-          ...corsHeaders,
-          'Content-Type': 'application/json'
-        } 
-      }
-    )
   } catch (error) {
     console.error('Error:', error)
     return new Response(
       JSON.stringify({ 
         success: false, 
-        error: error.message 
+        error: error.message || 'An error occurred during lead generation'
       }),
       { 
-        headers: { 
-          ...corsHeaders,
-          'Content-Type': 'application/json'
-        },
-        status: 400
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 400 
       }
     )
   }
