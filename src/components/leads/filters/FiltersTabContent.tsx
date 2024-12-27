@@ -1,140 +1,125 @@
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { LeadsList } from "./LeadsList"
 import { LocationFilters } from "./LocationFilters"
 import { IndustrySelect } from "./IndustrySelect"
 import { LeadCountSlider } from "./LeadCountSlider"
-import { Button } from "@/components/ui/button"
-import { Loader2 } from "lucide-react"
+import { SearchInput } from "./SearchInput"
+import { useSessionData } from "@/hooks/useSessionData"
 import { supabase } from "@/integrations/supabase/client"
 import { toast } from "sonner"
-import { LeadsList } from "./LeadsList"
-import { motion } from "framer-motion"
-import { useState } from "react"
+import { useQueryClient } from "@tanstack/react-query"
+import { Lead } from "@/types/leads"
 
 interface FiltersTabContentProps {
-  filters: any
+  filters: {
+    search: string
+    leadCount: number
+    industry: string
+    country: string
+    city: string
+  }
   setFilters: (filters: any) => void
-  leads: any[]
-  onAddToAnalytics: (lead: any) => void
+  leads: Lead[]
+  onAddToAnalytics: (lead: Lead) => void
 }
 
-export function FiltersTabContent({ 
-  filters, 
-  setFilters, 
-  leads, 
-  onAddToAnalytics 
+export function FiltersTabContent({
+  filters,
+  setFilters,
+  leads,
+  onAddToAnalytics
 }: FiltersTabContentProps) {
+  const { data: session } = useSessionData()
+  const queryClient = useQueryClient()
   const [isGenerating, setIsGenerating] = useState(false)
 
   const handleGenerateLeads = async () => {
+    if (!session?.user) {
+      toast.error("Vous devez être connecté pour générer des leads")
+      return
+    }
+
+    setIsGenerating(true)
+    console.info("Session trouvée:", session)
+
     try {
-      setIsGenerating(true)
-
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) {
-        toast.error("Erreur d'authentification", {
-          description: "Veuillez vous reconnecter."
-        })
-        return
-      }
-
-      // Ensure all required filters are present and have default values if needed
-      const requestFilters = {
-        ...filters,
-        country: filters.country || 'all',
-        industry: filters.industry || 'all',
-        leadCount: filters.leadCount || 10,
+      const params = {
+        search: filters.search,
+        leadCount: filters.leadCount,
+        industry: filters.industry,
+        country: filters.country,
+        city: filters.city,
         userId: session.user.id
       }
 
-      console.log('Session trouvée:', session)
-      console.log('Envoi des paramètres à generate-leads:', requestFilters)
+      console.info("Envoi des paramètres à generate-leads:", params)
 
       const { data, error } = await supabase.functions.invoke('generate-leads-with-ai', {
-        body: { 
-          filters: requestFilters,
-          userId: session.user.id 
-        },
-        headers: {
-          Authorization: `Bearer ${session.access_token}`
-        }
+        body: params
       })
 
-      console.log('Réponse de generate-leads:', { data, error })
+      console.info("Réponse de generate-leads:", { data, error })
 
       if (error) {
-        console.error('Erreur détaillée:', error)
-        toast.error("Erreur de génération", {
-          description: error.message || "Une erreur est survenue lors de la génération des leads."
-        })
-        return
+        console.error("Erreur détaillée:", error)
+        throw error
       }
 
-      if (!data || !data.success) {
-        toast.error("Erreur de génération", {
-          description: "La réponse de l'API est invalide"
-        })
-        return
+      if (!data?.leads || !Array.isArray(data.leads)) {
+        throw new Error("Format de réponse invalide")
       }
 
-      toast.success("Génération réussie", {
-        description: "Les leads ont été générés avec succès."
-      })
-
-      window.location.reload()
+      // Invalidate the leads query to trigger a refresh
+      await queryClient.invalidateQueries({ queryKey: ['leads'] })
+      
+      toast.success(`${data.leads.length} leads ont été générés avec succès`)
     } catch (error: any) {
-      console.error('Erreur complète:', error)
-      toast.error("Erreur de génération", {
-        description: error.message || "Une erreur est survenue lors de la génération des leads."
-      })
+      console.error("Erreur lors de la génération des leads:", error)
+      toast.error(error.message || "Erreur lors de la génération des leads")
     } finally {
       setIsGenerating(false)
     }
   }
 
   return (
-    <div className="space-y-6 bg-gradient-to-br from-black/80 to-secondary-dark/80 p-8 rounded-b-xl border border-primary/10 shadow-xl">
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-        className="flex flex-wrap gap-4"
-      >
-        <LocationFilters 
-          country={filters.country}
-          city={filters.city}
-          onCountryChange={(value) => {
-            console.log("Changement de pays:", value)
-            setFilters({ ...filters, country: value, city: "all" })
-          }}
-          onCityChange={(value) => setFilters({ ...filters, city: value })}
+    <div className="space-y-6">
+      <div className="space-y-4">
+        <SearchInput 
+          value={filters.search} 
+          onChange={(value) => setFilters({ ...filters, search: value })} 
+        />
+        
+        <LeadCountSlider 
+          value={filters.leadCount} 
+          onChange={(value) => setFilters({ ...filters, leadCount: value })} 
         />
         
         <IndustrySelect 
-          value={filters.industry}
-          onChange={(value) => setFilters({ ...filters, industry: value })}
+          value={filters.industry} 
+          onChange={(value) => setFilters({ ...filters, industry: value })} 
+        />
+        
+        <LocationFilters 
+          country={filters.country}
+          city={filters.city}
+          onCountryChange={(value) => setFilters({ ...filters, country: value })}
+          onCityChange={(value) => setFilters({ ...filters, city: value })}
         />
 
-        <Button
-          onClick={handleGenerateLeads}
+        <Button 
+          onClick={handleGenerateLeads} 
+          className="w-full"
           disabled={isGenerating}
-          className="ml-auto bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white shadow-lg hover:shadow-xl transition-all duration-300"
         >
-          {isGenerating ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Génération...
-            </>
-          ) : (
-            'Générer les leads'
-          )}
+          {isGenerating ? "Génération en cours..." : "Générer des leads"}
         </Button>
-      </motion.div>
+      </div>
 
-      <LeadCountSlider 
-        value={filters.leadCount}
-        onChange={(value) => setFilters({ ...filters, leadCount: value })}
+      <LeadsList 
+        leads={leads} 
+        onAddToAnalytics={onAddToAnalytics} 
       />
-
-      <LeadsList leads={leads} onAddToAnalytics={onAddToAnalytics} />
     </div>
   )
 }
