@@ -1,120 +1,113 @@
 import { Lead, GenerateLeadsResponse } from './types.ts';
-import JSON5 from 'https://cdn.jsdelivr.net/npm/json5@2.2.3/dist/index.min.mjs';
 
 export function parsePerplexityResponse(content: string): Lead[] {
-  console.log('Contenu brut de la réponse avant parsing:', content);
-  console.log('Type du contenu:', typeof content);
-  console.log('Longueur du contenu:', content.length);
+  console.log('Contenu brut de la réponse:', content);
   
-  // Nettoyage initial
-  let cleanedContent = content.trim();
+  // On va traiter la réponse ligne par ligne
+  const lines = content.split('\n');
+  const leads: Lead[] = [];
+  let currentLead: Partial<Lead> = {};
   
-  // Recherche du premier [ et du dernier ] pour extraire uniquement le JSON
-  const startIndex = cleanedContent.indexOf('[');
-  const endIndex = cleanedContent.lastIndexOf(']');
-  
-  if (startIndex === -1 || endIndex === -1) {
-    console.error('Aucun tableau JSON trouvé dans la réponse');
-    throw new Error('Format de réponse invalide: aucun tableau JSON trouvé');
-  }
-  
-  // Extraction du JSON uniquement
-  cleanedContent = cleanedContent.substring(startIndex, endIndex + 1);
-  
-  // Nettoyage supplémentaire
-  cleanedContent = cleanedContent
-    .replace(/'/g, '"') // Remplace les guillemets simples par des doubles
-    .replace(/(\w+)\s*:/g, '"$1":') // Entoure les clés sans guillemets par des guillemets, gère les espaces
-    .replace(/\n/g, '') // Supprime les nouvelles lignes
-    .replace(/,\s*([\]}])/g, '$1') // Supprime les virgules trailing
-    .replace(/\\"/g, '"') // Gère les guillemets échappés
-    .replace(/"{2,}/g, '"') // Remplace les guillemets doubles multiples par un seul
-    .replace(/\s+/g, ' ') // Remplace les espaces multiples par un seul espace
-    .replace(/:\s+/g, ':') // Supprime les espaces après les deux-points
-    .replace(/,\s+/g, ','); // Supprime les espaces après les virgules
-
-  console.log('Contenu nettoyé avant parsing:', cleanedContent);
-  
-  try {
-    const parsedContent = JSON5.parse(cleanedContent);
-    console.log('Contenu parsé:', parsedContent);
+  for (const line of lines) {
+    const trimmedLine = line.trim();
     
-    if (Array.isArray(parsedContent)) {
-      return validateAndFormatLeads(parsedContent);
-    }
+    // Si la ligne est vide ou contient juste des caractères spéciaux, on l'ignore
+    if (!trimmedLine || trimmedLine.match(/^[.,\-\[\]{}()]*$/)) continue;
     
-    // Si c'est un objet avec une propriété contenant un tableau
-    const possibleArrayProperties = ['leads', 'data', 'results', 'companies'];
-    for (const prop of possibleArrayProperties) {
-      if (Array.isArray(parsedContent[prop])) {
-        return validateAndFormatLeads(parsedContent[prop]);
+    // On détecte le début d'une nouvelle entreprise
+    if (trimmedLine.includes('company') || trimmedLine.includes('entreprise') || trimmedLine.includes('société')) {
+      // Si on avait déjà une entreprise en cours, on l'ajoute à la liste
+      if (currentLead.company) {
+        leads.push(formatLead(currentLead));
+        currentLead = {};
       }
+      currentLead.company = extractValue(trimmedLine);
     }
-    
-    throw new Error('Aucun tableau de leads trouvé dans la réponse');
-  } catch (error) {
-    console.error('Erreur lors du parsing JSON:', error);
-    console.error('Position approximative de l\'erreur:', error.message);
-    console.log('Contenu qui a causé l\'erreur:', cleanedContent);
-    throw new Error(`Erreur de parsing JSON: ${error.message}`);
+    // On détecte les autres champs
+    else if (trimmedLine.includes('email')) {
+      currentLead.email = extractValue(trimmedLine);
+    }
+    else if (trimmedLine.includes('phone') || trimmedLine.includes('téléphone')) {
+      currentLead.phone = extractValue(trimmedLine);
+    }
+    else if (trimmedLine.includes('website') || trimmedLine.includes('site')) {
+      currentLead.website = formatWebsite(extractValue(trimmedLine));
+    }
+    else if (trimmedLine.includes('address') || trimmedLine.includes('adresse')) {
+      currentLead.address = extractValue(trimmedLine);
+    }
+    else if (trimmedLine.includes('industry') || trimmedLine.includes('secteur')) {
+      currentLead.industry = extractValue(trimmedLine);
+    }
+    else if (trimmedLine.includes('linkedin')) {
+      if (!currentLead.socialMedia) currentLead.socialMedia = { linkedin: '', twitter: '', facebook: '', instagram: '' };
+      currentLead.socialMedia.linkedin = formatSocialUrl(extractValue(trimmedLine), 'linkedin');
+    }
+    else if (trimmedLine.includes('twitter')) {
+      if (!currentLead.socialMedia) currentLead.socialMedia = { linkedin: '', twitter: '', facebook: '', instagram: '' };
+      currentLead.socialMedia.twitter = formatSocialUrl(extractValue(trimmedLine), 'twitter');
+    }
   }
+
+  // On ajoute le dernier lead s'il existe
+  if (currentLead.company) {
+    leads.push(formatLead(currentLead));
+  }
+
+  console.log('Leads extraits:', leads);
+  return leads;
 }
 
-function validateAndFormatLeads(leads: any[]): Lead[] {
-  if (!Array.isArray(leads)) {
-    throw new Error('La réponse n\'est pas un tableau');
+function extractValue(line: string): string {
+  // On cherche après : ou = ou -
+  const matches = line.match(/(?::|=|-)\s*([^,}\]]+)/);
+  if (matches && matches[1]) {
+    return matches[1].trim().replace(/['"]/g, '');
   }
+  // Si on ne trouve pas ces caractères, on prend tout après le premier espace
+  const words = line.split(/\s+/);
+  return words.slice(1).join(' ').replace(/['"]/g, '');
+}
 
-  return leads.map((lead, index) => {
-    // Validation et nettoyage des données
-    if (!lead.company || typeof lead.company !== 'string') {
-      console.warn(`Lead ${index} : company manquant ou invalide`);
-      lead.company = `Entreprise ${index + 1}`;
+function formatWebsite(url: string): string {
+  if (!url) return '';
+  if (!url.startsWith('http')) {
+    return `https://${url.replace(/^[/\\]+/, '')}`;
+  }
+  return url;
+}
+
+function formatSocialUrl(url: string, platform: string): string {
+  if (!url) return '';
+  if (!url.startsWith('http')) {
+    switch (platform) {
+      case 'linkedin':
+        return `https://linkedin.com/${url.replace(/^[/\\]+/, '')}`;
+      case 'twitter':
+        return `https://twitter.com/${url.replace(/^[/\\]+/, '')}`;
+      default:
+        return `https://${url}`;
     }
+  }
+  return url;
+}
 
-    // S'assurer que toutes les propriétés textuelles sont des chaînes
-    const textProperties = ['email', 'phone', 'website', 'address', 'industry'];
-    textProperties.forEach(prop => {
-      if (lead[prop] && typeof lead[prop] !== 'string') {
-        lead[prop] = String(lead[prop]);
-      }
-    });
-
-    // Valider et formater les URLs
-    if (lead.website && !lead.website.startsWith('https://')) {
-      lead.website = `https://${lead.website.replace(/^https?:\/\//, '')}`;
+function formatLead(lead: Partial<Lead>): Lead {
+  return {
+    company: lead.company || '',
+    email: lead.email || '',
+    phone: lead.phone || '',
+    website: lead.website || '',
+    address: lead.address || '',
+    industry: lead.industry || '',
+    score: Math.floor(Math.random() * 10) + 1, // Score aléatoire entre 1 et 10
+    socialMedia: {
+      linkedin: lead.socialMedia?.linkedin || '',
+      twitter: lead.socialMedia?.twitter || '',
+      facebook: lead.socialMedia?.facebook || '',
+      instagram: lead.socialMedia?.instagram || ''
     }
-
-    // Valider le format des réseaux sociaux
-    if (!lead.socialMedia) {
-      lead.socialMedia = { linkedin: '', twitter: '' };
-    }
-
-    ['linkedin', 'twitter'].forEach(platform => {
-      if (lead.socialMedia[platform] && !lead.socialMedia[platform].startsWith('https://')) {
-        lead.socialMedia[platform] = `https://${lead.socialMedia[platform].replace(/^https?:\/\//, '')}`;
-      }
-    });
-
-    // Valider le score
-    if (typeof lead.score !== 'number' || lead.score < 0 || lead.score > 10) {
-      lead.score = Math.floor(Math.random() * 10) + 1;
-    }
-
-    return {
-      company: lead.company,
-      email: lead.email || '',
-      phone: lead.phone || '',
-      website: lead.website || '',
-      address: lead.address || '',
-      industry: lead.industry || '',
-      score: lead.score,
-      socialMedia: {
-        linkedin: lead.socialMedia.linkedin || '',
-        twitter: lead.socialMedia.twitter || ''
-      }
-    };
-  });
+  };
 }
 
 export function formatResponse(leads: Lead[], filters: any): GenerateLeadsResponse {
