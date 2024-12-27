@@ -1,4 +1,5 @@
 import { Lead } from '../types/lead';
+import { formatWebsite } from './formatters';
 
 export function initializeEmptyLead(): Partial<Lead> {
   return {
@@ -13,7 +14,11 @@ export function initializeEmptyLead(): Partial<Lead> {
       twitter: '',
       facebook: '',
       instagram: ''
-    }
+    },
+    score: 0,
+    qualification: 0,
+    strengths: [],
+    weaknesses: []
   };
 }
 
@@ -29,36 +34,21 @@ export function formatLead(lead: Partial<Lead>): Lead {
       instagram: lead.social_media?.instagram || ''
     };
 
-    const formattedLead: Lead = {
+    return {
       company: lead.company || '',
       email: lead.email || '',
       phone: lead.phone || '',
-      website: lead.website || '',
+      website: formatWebsite(lead.website || ''),
       address: lead.address || '',
       industry: lead.industry || '',
       score: Math.floor(Math.random() * 10) + 1,
-      social_media
+      qualification: Math.floor(Math.random() * 10) + 1,
+      social_media,
+      strengths: lead.strengths || [],
+      weaknesses: lead.weaknesses || []
     };
-
-    console.log('Formatted lead:', formattedLead);
-    return formattedLead;
   } catch (error) {
-    console.error('Erreur lors du formatage du lead:', error);
-    // Return a valid lead object with empty values in case of error
-    return {
-      company: lead.company || 'Unknown Company',
-      email: '',
-      phone: '',
-      website: '',
-      address: '',
-      industry: '',
-      score: 1,
-      social_media: {
-        linkedin: '',
-        twitter: '',
-        facebook: '',
-        instagram: ''
-      }
-    };
+    console.error('Error formatting lead:', error);
+    throw error;
   }
 }

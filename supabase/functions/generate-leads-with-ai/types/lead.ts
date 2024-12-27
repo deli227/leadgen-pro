@@ -6,14 +6,18 @@ export interface SocialMedia {
 }
 
 export interface Lead {
+  id?: string;
   company: string;
-  email: string;
-  phone: string;
-  website: string;
-  address: string;
-  industry: string;
-  score: number;
-  social_media: SocialMedia;
+  email?: string;
+  phone?: string;
+  website?: string;
+  address?: string;
+  qualification?: number;
+  social_media?: SocialMedia;
+  score?: number;
+  industry?: string;
+  strengths?: string[];
+  weaknesses?: string[];
 }
 
 export interface GenerateLeadsResponse {
