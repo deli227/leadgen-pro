@@ -29,13 +29,13 @@ export function buildPrompt(filters: Filters): string {
   }
   
   if (filters.industry !== 'all') {
-    prompt += ` dans le secteur ${filters.industry}`;
+    prompt += ` dans le secteur "${filters.industry}"`;
   }
   
   if (filters.country !== 'all') {
-    prompt += ` en ${filters.country}`;
+    prompt += ` en "${filters.country}"`;
     if (filters.city !== 'all') {
-      prompt += `, plus précisément à ${filters.city}`;
+      prompt += `, plus précisément à "${filters.city}"`;
     }
   }
 
@@ -44,7 +44,9 @@ export function buildPrompt(filters: Filters): string {
 - Utilise TOUJOURS des guillemets doubles pour les noms de propriétés et les valeurs textuelles
 - Le score doit être un nombre entre 1 et 10
 - Tous les URLs doivent être des URLs valides commençant par "http://" ou "https://"
-- Les numéros de téléphone doivent être au format international ("+33...")`;
+- Les numéros de téléphone doivent être au format international ("+33...")
+- Chaque propriété doit être entourée de guillemets doubles
+- Vérifie que le JSON est valide avant de le renvoyer`;
 
   return prompt;
 }
