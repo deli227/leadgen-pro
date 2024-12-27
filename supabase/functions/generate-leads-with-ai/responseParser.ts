@@ -1,26 +1,39 @@
 import { Lead, GenerateLeadsResponse } from './types.ts';
+import JSON5 from 'https://cdn.jsdelivr.net/npm/json5@2.2.3/dist/index.min.mjs';
 
 export function parsePerplexityResponse(content: string): Lead[] {
-  console.log('Contenu brut de la réponse:', content);
+  console.log('Contenu brut de la réponse avant parsing:', content);
+  console.log('Type du contenu:', typeof content);
+  console.log('Longueur du contenu:', content.length);
   
   // Nettoyage et validation du contenu JSON
-  let jsonContent = content.trim();
+  let cleanedContent = content.trim();
   
-  // Essayons d'abord de trouver un tableau JSON valide
-  const arrayMatch = jsonContent.match(/\[([\s\S]*)\]/);
-  if (arrayMatch) {
-    try {
-      const leads = JSON.parse(arrayMatch[0]);
-      console.log('Leads parsés depuis le tableau:', leads);
-      return validateAndFormatLeads(leads);
-    } catch (error) {
-      console.error('Erreur lors du parsing du tableau:', error);
-    }
-  }
+  // Nettoyage supplémentaire pour gérer les cas problématiques
+  cleanedContent = cleanedContent
+    .replace(/'/g, '"') // Remplace les guillemets simples par des doubles
+    .replace(/(\w+):/g, '"$1":') // Entoure les clés sans guillemets par des guillemets
+    .replace(/\n/g, '') // Supprime les nouvelles lignes
+    .replace(/,\s*([\]}])/g, '$1'); // Supprime les virgules trailing
 
-  // Si ce n'est pas un tableau, essayons de parser l'ensemble du contenu
+  console.log('Contenu nettoyé avant parsing:', cleanedContent);
+  
   try {
-    const parsedContent = JSON.parse(jsonContent);
+    // Essayons d'abord de trouver un tableau JSON valide
+    const arrayMatch = cleanedContent.match(/\[([\s\S]*)\]/);
+    if (arrayMatch) {
+      try {
+        const leads = JSON5.parse(arrayMatch[0]);
+        console.log('Leads parsés depuis le tableau:', leads);
+        return validateAndFormatLeads(leads);
+      } catch (error) {
+        console.error('Erreur lors du parsing du tableau:', error);
+        console.error('Contenu problématique:', arrayMatch[0].substring(3300, 3350));
+      }
+    }
+
+    // Si ce n'est pas un tableau, essayons de parser l'ensemble du contenu
+    const parsedContent = JSON5.parse(cleanedContent);
     console.log('Contenu parsé complet:', parsedContent);
     
     // Si c'est un tableau, utilisons-le directement
@@ -39,7 +52,8 @@ export function parsePerplexityResponse(content: string): Lead[] {
     throw new Error('Aucun tableau de leads trouvé dans la réponse');
   } catch (error) {
     console.error('Erreur lors du parsing JSON:', error);
-    console.log('Contenu qui a causé l\'erreur:', jsonContent);
+    console.error('Position approximative de l\'erreur:', error.message);
+    console.log('Contenu qui a causé l\'erreur:', cleanedContent);
     throw new Error(`Erreur de parsing JSON: ${error.message}`);
   }
 }
