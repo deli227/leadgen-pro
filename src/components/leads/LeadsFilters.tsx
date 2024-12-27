@@ -12,7 +12,6 @@ import { supabase } from "@/integrations/supabase/client"
 import { toast } from "sonner"
 import { IndustrySelect } from "./filters/IndustrySelect"
 import { Lead } from "@/types/leads"
-import { generateLeads } from "@/utils/leadGeneration"
 
 interface LeadsFiltersProps {
   filters: {
@@ -55,11 +54,7 @@ export function LeadsFilters({
         return
       }
 
-      await generateLeads({
-        ...filters,
-        userId: session.user.id,
-        session
-      })
+      toast.error("Fonctionnalité temporairement désactivée")
     } catch (error) {
       console.error('Erreur:', error)
       toast.error("Impossible de lancer la recherche. Veuillez réessayer.")
