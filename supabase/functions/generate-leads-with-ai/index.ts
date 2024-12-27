@@ -1,10 +1,14 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { corsHeaders } from '../_shared/cors.ts'
 
 const PERPLEXITY_API_KEY = Deno.env.get('PERPLEXITY_API_KEY')
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
 
 // Validate input data
 function validateInputData(data: any) {
@@ -22,6 +26,26 @@ function validateInputData(data: any) {
   return true
 }
 
+// Clean and parse Perplexity response
+function parsePerplexityResponse(content: string): any[] {
+  try {
+    // Try to extract JSON if it's wrapped in backticks or has extra text
+    const jsonMatch = content.match(/```json\n?(.*)\n?```/) || content.match(/\[(.*)\]/s)
+    const jsonContent = jsonMatch ? jsonMatch[1] : content
+    const cleanedContent = jsonContent.trim().replace(/^[^[]*\[/, '[').replace(/][^]]*$/, ']')
+    const leads = JSON.parse(cleanedContent)
+    
+    if (!Array.isArray(leads)) {
+      throw new Error('Generated content is not an array')
+    }
+    
+    return leads
+  } catch (error) {
+    console.error('Error parsing Perplexity response:', error)
+    throw new Error('Failed to parse generated leads')
+  }
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
@@ -36,11 +60,17 @@ serve(async (req) => {
 
     // Parse and validate request data
     const requestData = await req.json()
-    console.log('Received request data:', requestData)
+    console.log('Received request data:', {
+      ...requestData,
+      userId: '[REDACTED]' // Protect sensitive data in logs
+    })
     validateInputData(requestData)
 
     const { search, leadCount, industry, country, city, userId } = requestData
-    console.log('Validated request parameters:', { search, leadCount, industry, country, city, userId })
+    console.log('Validated request parameters:', { 
+      search, leadCount, industry, country, city,
+      userId: '[REDACTED]' // Protect sensitive data in logs
+    })
 
     // Construct prompt
     const prompt = `Generate ${leadCount} business leads in the ${industry} industry from ${city}, ${country}. For each lead, provide:
@@ -57,7 +87,7 @@ serve(async (req) => {
     - qualification (number between 1-10)
     Ensure the response is a properly formatted JSON array that can be parsed.`
 
-    console.log('Sending prompt to Perplexity:', prompt)
+    console.log('Sending prompt to Perplexity')
 
     // Make request to Perplexity API with proper headers
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
@@ -94,30 +124,15 @@ serve(async (req) => {
     }
 
     const data = await response.json()
-    console.log('Perplexity API response:', data)
+    console.log('Perplexity API response received')
 
     if (!data.choices || !data.choices[0] || !data.choices[0].message) {
       throw new Error('Invalid response format from Perplexity API')
     }
 
-    let leads = []
-    try {
-      const content = data.choices[0].message.content
-      // Try to extract JSON if it's wrapped in backticks or has extra text
-      const jsonMatch = content.match(/```json\n?(.*)\n?```/) || content.match(/\[(.*)\]/s)
-      const jsonContent = jsonMatch ? jsonMatch[1] : content
-      const cleanedContent = jsonContent.trim().replace(/^[^[]*\[/, '[').replace(/][^]]*$/, ']')
-      leads = JSON.parse(cleanedContent)
-      
-      if (!Array.isArray(leads)) {
-        throw new Error('Generated content is not an array')
-      }
-      
-      console.log('Parsed leads:', leads)
-    } catch (error) {
-      console.error('Error parsing leads:', error)
-      throw new Error('Failed to parse generated leads')
-    }
+    // Parse and validate the generated leads
+    const leads = parsePerplexityResponse(data.choices[0].message.content)
+    console.log(`Successfully parsed ${leads.length} leads`)
 
     // Initialize Supabase client
     const supabase = createClient(
@@ -125,11 +140,11 @@ serve(async (req) => {
       SUPABASE_ANON_KEY!
     )
 
-    // Insert leads into Supabase
+    // Insert leads into Supabase with error handling
     const { data: insertedLeads, error: insertError } = await supabase
       .from('leads')
       .insert(
-        leads.map((lead: any) => ({
+        leads.map(lead => ({
           ...lead,
           user_id: userId,
           score: Math.floor(Math.random() * 10) + 1
