@@ -1,4 +1,4 @@
-import { Filters } from './types';
+import { Filters } from './types.ts';
 
 export function buildPrompt(filters: Filters): string {
   const leadCount = Math.min(Math.max(filters.leadCount, 1), 50);
