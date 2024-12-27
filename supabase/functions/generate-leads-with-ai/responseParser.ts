@@ -6,50 +6,71 @@ export function parsePerplexityResponse(content: string): Lead[] {
   // Nettoyage et validation du contenu JSON
   let jsonContent = content.trim();
   
-  // Recherche d'un tableau JSON valide
+  // Essayons d'abord de trouver un tableau JSON valide
   const arrayMatch = jsonContent.match(/\[([\s\S]*)\]/);
-  if (!arrayMatch) {
-    console.error('Aucun tableau JSON trouvé dans:', jsonContent);
-    throw new Error('Aucun tableau JSON valide trouvé dans la réponse');
+  if (arrayMatch) {
+    try {
+      const leads = JSON.parse(arrayMatch[0]);
+      console.log('Leads parsés depuis le tableau:', leads);
+      return validateAndFormatLeads(leads);
+    } catch (error) {
+      console.error('Erreur lors du parsing du tableau:', error);
+    }
   }
 
-  jsonContent = arrayMatch[0];
-  console.log('Tableau JSON extrait:', jsonContent);
-
+  // Si ce n'est pas un tableau, essayons de parser l'ensemble du contenu
   try {
-    const leads = JSON.parse(jsonContent);
-    console.log('Leads parsés avec succès:', leads);
+    const parsedContent = JSON.parse(jsonContent);
+    console.log('Contenu parsé complet:', parsedContent);
     
-    // Validation du format des leads
-    if (!Array.isArray(leads)) {
-      throw new Error('La réponse n\'est pas un tableau');
+    // Si c'est un tableau, utilisons-le directement
+    if (Array.isArray(parsedContent)) {
+      return validateAndFormatLeads(parsedContent);
     }
-
-    // Validation de chaque lead
-    leads.forEach((lead, index) => {
-      if (!lead.company || typeof lead.company !== 'string') {
-        throw new Error(`Lead ${index} : company manquant ou invalide`);
+    
+    // Si c'est un objet avec une propriété contenant un tableau
+    const possibleArrayProperties = ['leads', 'data', 'results', 'companies'];
+    for (const prop of possibleArrayProperties) {
+      if (Array.isArray(parsedContent[prop])) {
+        return validateAndFormatLeads(parsedContent[prop]);
       }
-      // Ajout de valeurs par défaut si nécessaire
-      lead.email = lead.email || '';
-      lead.phone = lead.phone || '';
-      lead.website = lead.website || '';
-      lead.address = lead.address || '';
-      lead.industry = lead.industry || '';
-      lead.socialMedia = lead.socialMedia || {
-        linkedin: '',
-        twitter: '',
-        facebook: '',
-        instagram: ''
-      };
-    });
-
-    return leads;
+    }
+    
+    throw new Error('Aucun tableau de leads trouvé dans la réponse');
   } catch (error) {
     console.error('Erreur lors du parsing JSON:', error);
     console.log('Contenu qui a causé l\'erreur:', jsonContent);
     throw new Error(`Erreur de parsing JSON: ${error.message}`);
   }
+}
+
+function validateAndFormatLeads(leads: any[]): Lead[] {
+  if (!Array.isArray(leads)) {
+    throw new Error('La réponse n\'est pas un tableau');
+  }
+
+  return leads.map((lead, index) => {
+    if (!lead.company || typeof lead.company !== 'string') {
+      console.warn(`Lead ${index} : company manquant ou invalide, utilisation d'une valeur par défaut`);
+      lead.company = `Entreprise ${index + 1}`;
+    }
+
+    return {
+      company: lead.company,
+      email: lead.email || '',
+      phone: lead.phone || '',
+      website: lead.website || '',
+      address: lead.address || '',
+      industry: lead.industry || '',
+      score: typeof lead.score === 'number' ? lead.score : 0,
+      socialMedia: {
+        linkedin: lead.socialMedia?.linkedin || '',
+        twitter: lead.socialMedia?.twitter || '',
+        facebook: lead.socialMedia?.facebook || '',
+        instagram: lead.socialMedia?.instagram || ''
+      }
+    };
+  });
 }
 
 export function formatResponse(leads: Lead[], filters: any): GenerateLeadsResponse {
