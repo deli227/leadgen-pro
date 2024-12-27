@@ -15,42 +15,59 @@ export function parsePerplexityResponse(content: string): Lead[] {
     if (!trimmedLine || trimmedLine.match(/^[.,\-\[\]{}()]*$/)) continue;
     
     try {
-      if (trimmedLine.includes('company') || trimmedLine.includes('entreprise')) {
+      if (trimmedLine.toLowerCase().includes('company') || trimmedLine.toLowerCase().includes('entreprise')) {
         if (currentLead.company) {
           leads.push(formatLead(currentLead));
           currentLead = initializeEmptyLead();
         }
         currentLead.company = extractValue(trimmedLine);
       }
-      else if (trimmedLine.includes('linkedin')) {
+      else if (trimmedLine.toLowerCase().includes('linkedin')) {
         const linkedinUrl = extractValue(trimmedLine);
-        if (linkedinUrl) {
+        if (linkedinUrl && linkedinUrl !== 'undefined' && linkedinUrl.length > 0) {
           currentLead.social_media = {
-            ...currentLead.social_media,
+            ...currentLead.social_media || {},
             linkedin: linkedinUrl
           };
         }
       }
-      else if (trimmedLine.includes('twitter')) {
+      else if (trimmedLine.toLowerCase().includes('twitter')) {
         const twitterUrl = extractValue(trimmedLine);
-        if (twitterUrl) {
+        if (twitterUrl && twitterUrl !== 'undefined' && twitterUrl.length > 0) {
           currentLead.social_media = {
-            ...currentLead.social_media,
+            ...currentLead.social_media || {},
             twitter: twitterUrl
           };
         }
       }
-      // Autres champs basiques
-      else if (trimmedLine.includes('email')) {
+      else if (trimmedLine.toLowerCase().includes('facebook')) {
+        const facebookUrl = extractValue(trimmedLine);
+        if (facebookUrl && facebookUrl !== 'undefined' && facebookUrl.length > 0) {
+          currentLead.social_media = {
+            ...currentLead.social_media || {},
+            facebook: facebookUrl
+          };
+        }
+      }
+      else if (trimmedLine.toLowerCase().includes('instagram')) {
+        const instagramUrl = extractValue(trimmedLine);
+        if (instagramUrl && instagramUrl !== 'undefined' && instagramUrl.length > 0) {
+          currentLead.social_media = {
+            ...currentLead.social_media || {},
+            instagram: instagramUrl
+          };
+        }
+      }
+      else if (trimmedLine.toLowerCase().includes('email')) {
         currentLead.email = extractValue(trimmedLine);
       }
-      else if (trimmedLine.includes('phone')) {
+      else if (trimmedLine.toLowerCase().includes('phone')) {
         currentLead.phone = extractValue(trimmedLine);
       }
-      else if (trimmedLine.includes('website')) {
+      else if (trimmedLine.toLowerCase().includes('website')) {
         currentLead.website = extractValue(trimmedLine);
       }
-      else if (trimmedLine.includes('industry')) {
+      else if (trimmedLine.toLowerCase().includes('industry')) {
         currentLead.industry = extractValue(trimmedLine);
       }
     } catch (error) {

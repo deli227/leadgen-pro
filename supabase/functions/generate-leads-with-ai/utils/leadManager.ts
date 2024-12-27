@@ -7,10 +7,7 @@ export function initializeEmptyLead(): Partial<Lead> {
     phone: '',
     website: '',
     industry: '',
-    social_media: {
-      linkedin: '',
-      twitter: ''
-    }
+    social_media: {}
   };
 }
 
@@ -18,15 +15,12 @@ export function formatLead(lead: Partial<Lead>): Lead {
   try {
     console.log('Formatting lead:', lead);
     
-    // S'assurer que social_media existe avec les propriétés requises
-    const social_media = {
-      linkedin: lead.social_media?.linkedin || '',
-      twitter: lead.social_media?.twitter || ''
-    };
-
     // Ne garder que les réseaux sociaux non vides
+    const social_media = lead.social_media || {};
     const filteredSocialMedia = Object.fromEntries(
-      Object.entries(social_media).filter(([_, value]) => value !== '')
+      Object.entries(social_media).filter(([_, value]) => 
+        value && value !== 'undefined' && value.length > 0
+      )
     );
 
     return {
