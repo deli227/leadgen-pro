@@ -5,9 +5,7 @@ export function parsePerplexityResponse(content: string): Lead[] {
   
   const lines = content.split('\n');
   const leads: Lead[] = [];
-  let currentLead: Partial<Lead> = {
-    social_media: { linkedin: '', twitter: '', facebook: '', instagram: '' }
-  };
+  let currentLead: Partial<Lead> = initializeEmptyLead();
   
   for (const line of lines) {
     const trimmedLine = line.trim();
@@ -18,9 +16,7 @@ export function parsePerplexityResponse(content: string): Lead[] {
       if (trimmedLine.includes('company') || trimmedLine.includes('entreprise') || trimmedLine.includes('société')) {
         if (currentLead.company) {
           leads.push(formatLead(currentLead));
-          currentLead = {
-            social_media: { linkedin: '', twitter: '', facebook: '', instagram: '' }
-          };
+          currentLead = initializeEmptyLead();
         }
         currentLead.company = extractValue(trimmedLine);
       }
@@ -87,6 +83,23 @@ export function parsePerplexityResponse(content: string): Lead[] {
 
   console.log('Leads extraits:', leads);
   return leads;
+}
+
+function initializeEmptyLead(): Partial<Lead> {
+  return {
+    company: '',
+    email: '',
+    phone: '',
+    website: '',
+    address: '',
+    industry: '',
+    social_media: {
+      linkedin: '',
+      twitter: '',
+      facebook: '',
+      instagram: ''
+    }
+  };
 }
 
 function extractValue(line: string): string {
