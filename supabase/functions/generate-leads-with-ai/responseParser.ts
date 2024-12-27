@@ -9,34 +9,33 @@ export function parsePerplexityResponse(content: string): Lead[] {
   // Nettoyage et validation du contenu JSON
   let cleanedContent = content.trim();
   
-  // Nettoyage supplémentaire pour gérer les cas problématiques
+  // Recherche du premier [ et du dernier ] pour extraire uniquement le JSON
+  const startIndex = cleanedContent.indexOf('[');
+  const endIndex = cleanedContent.lastIndexOf(']');
+  
+  if (startIndex === -1 || endIndex === -1) {
+    console.error('Aucun tableau JSON trouvé dans la réponse');
+    throw new Error('Format de réponse invalide: aucun tableau JSON trouvé');
+  }
+  
+  // Extraction du JSON uniquement
+  cleanedContent = cleanedContent.substring(startIndex, endIndex + 1);
+  
+  // Nettoyage supplémentaire
   cleanedContent = cleanedContent
     .replace(/'/g, '"') // Remplace les guillemets simples par des doubles
     .replace(/(\w+):/g, '"$1":') // Entoure les clés sans guillemets par des guillemets
     .replace(/\n/g, '') // Supprime les nouvelles lignes
-    .replace(/,\s*([\]}])/g, '$1'); // Supprime les virgules trailing
+    .replace(/,\s*([\]}])/g, '$1') // Supprime les virgules trailing
+    .replace(/\\"/g, '"') // Gère les guillemets échappés
+    .replace(/"{2,}/g, '"'); // Remplace les guillemets doubles multiples par un seul
 
   console.log('Contenu nettoyé avant parsing:', cleanedContent);
   
   try {
-    // Essayons d'abord de trouver un tableau JSON valide
-    const arrayMatch = cleanedContent.match(/\[([\s\S]*)\]/);
-    if (arrayMatch) {
-      try {
-        const leads = JSON5.parse(arrayMatch[0]);
-        console.log('Leads parsés depuis le tableau:', leads);
-        return validateAndFormatLeads(leads);
-      } catch (error) {
-        console.error('Erreur lors du parsing du tableau:', error);
-        console.error('Contenu problématique:', arrayMatch[0].substring(3300, 3350));
-      }
-    }
-
-    // Si ce n'est pas un tableau, essayons de parser l'ensemble du contenu
     const parsedContent = JSON5.parse(cleanedContent);
-    console.log('Contenu parsé complet:', parsedContent);
+    console.log('Contenu parsé:', parsedContent);
     
-    // Si c'est un tableau, utilisons-le directement
     if (Array.isArray(parsedContent)) {
       return validateAndFormatLeads(parsedContent);
     }
