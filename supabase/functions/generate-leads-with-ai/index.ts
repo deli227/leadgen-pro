@@ -89,7 +89,10 @@ serve(async (req) => {
     });
 
     if (!response.ok) {
-      throw new Error(`Perplexity API error: ${response.status} ${response.statusText}`);
+      console.error('Perplexity API error:', response.status, response.statusText);
+      const errorText = await response.text();
+      console.error('Error details:', errorText);
+      throw new Error(`Perplexity API error: ${response.status} ${response.statusText}\n${errorText}`);
     }
 
     const data = await response.json();
