@@ -21,25 +21,28 @@ const buildBasicSearchPrompt = (filters: any) => {
     prompt += ` dans le secteur ${filters.industry}`;
   }
 
-  prompt += `\n\nPour chaque entreprise, fournis les informations suivantes dans ce format JSON précis :
-  {
-    "company": "Nom de l'entreprise",
-    "email": "Email de contact principal",
-    "phone": "Numéro de téléphone",
-    "website": "Site web officiel",
-    "address": "Adresse complète",
-    "industry": "${filters.industry}",
-    "score": "Score sur 10 basé sur la présence en ligne et le potentiel commercial",
-    "socialMedia": {
-      "linkedin": "URL LinkedIn si disponible",
-      "twitter": "URL Twitter si disponible",
-      "facebook": "URL Facebook si disponible",
-      "instagram": "URL Instagram si disponible"
+  prompt += `\n\nRenvoie un tableau JSON contenant EXACTEMENT ${leadCount} entreprises avec ce format précis :
+  [
+    {
+      "company": "Nom de l'entreprise",
+      "email": "Email de contact principal",
+      "phone": "Numéro de téléphone",
+      "website": "Site web officiel",
+      "address": "Adresse complète",
+      "industry": "${filters.industry}",
+      "score": "Score sur 10 basé sur la présence en ligne et le potentiel commercial",
+      "socialMedia": {
+        "linkedin": "URL LinkedIn si disponible",
+        "twitter": "URL Twitter si disponible",
+        "facebook": "URL Facebook si disponible",
+        "instagram": "URL Instagram si disponible"
+      }
     }
-  }`;
+  ]`;
 
   prompt += `\n\nInstructions importantes:
-  - Tu DOIS renvoyer EXACTEMENT ${leadCount} entreprises, ni plus ni moins
+  - Tu DOIS renvoyer EXACTEMENT ${leadCount} entreprises dans un tableau JSON
+  - Le tableau doit commencer par [ et finir par ]
   - Chaque entreprise doit être unique
   - Si tu ne trouves pas assez d'entreprises correspondant aux critères, élargis légèrement la recherche tout en restant pertinent
   - Le nombre de résultats (${leadCount}) est une contrainte absolue`;
@@ -48,7 +51,6 @@ const buildBasicSearchPrompt = (filters: any) => {
 }
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
@@ -74,7 +76,7 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'Tu es un expert en recherche d\'entreprises B2B. Tu fournis uniquement des informations vérifiables et à jour.'
+            content: 'Tu es un expert en recherche d\'entreprises B2B. Tu fournis uniquement des informations vérifiables et à jour. Tu réponds TOUJOURS avec un tableau JSON valide.'
           },
           {
             role: 'user',
@@ -100,11 +102,27 @@ serve(async (req) => {
     let generatedLeads
     try {
       const content = result.choices[0].message.content
+      console.log('Contenu de la réponse:', content)
+      
+      // Nettoyage du contenu pour s'assurer qu'il commence et finit par des crochets
+      const cleanedContent = content.trim().replace(/^[^[]*(\[.*\])[^]*$/, '$1')
+      console.log('Contenu nettoyé:', cleanedContent)
+      
       // Tentative de parser le JSON de la réponse
-      generatedLeads = JSON.parse(content)
+      generatedLeads = JSON.parse(cleanedContent)
+      
+      // Vérification que c'est bien un tableau
+      if (!Array.isArray(generatedLeads)) {
+        throw new Error('La réponse n\'est pas un tableau')
+      }
+      
+      // Vérification du nombre exact de leads
+      if (generatedLeads.length !== filters.leadCount) {
+        throw new Error(`Nombre incorrect de leads: ${generatedLeads.length} au lieu de ${filters.leadCount}`)
+      }
     } catch (error) {
       console.error('Erreur lors du parsing de la réponse:', error)
-      throw new Error('Format de réponse invalide')
+      throw new Error('Format de réponse invalide: ' + error.message)
     }
 
     return new Response(
