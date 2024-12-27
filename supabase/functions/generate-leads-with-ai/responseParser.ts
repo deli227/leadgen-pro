@@ -1,4 +1,4 @@
-import { Lead } from './types/lead';
+import { Lead, GenerateLeadsResponse } from './types/lead';
 import { extractValue } from './utils/formatters';
 import { initializeEmptyLead, formatLead } from './utils/leadManager';
 import { formatWebsite, formatSocialUrl } from './utils/formatters';
@@ -41,18 +41,12 @@ export function parsePerplexityResponse(content: string): Lead[] {
       else if (trimmedLine.includes('linkedin')) {
         const linkedinUrl = formatSocialUrl(extractValue(trimmedLine), 'linkedin');
         if (linkedinUrl) {
-          if (!currentLead.social_media) {
-            currentLead.social_media = { linkedin: '', twitter: '', facebook: '', instagram: '' };
-          }
           currentLead.social_media.linkedin = linkedinUrl;
         }
       }
       else if (trimmedLine.includes('twitter')) {
         const twitterUrl = formatSocialUrl(extractValue(trimmedLine), 'twitter');
         if (twitterUrl) {
-          if (!currentLead.social_media) {
-            currentLead.social_media = { linkedin: '', twitter: '', facebook: '', instagram: '' };
-          }
           currentLead.social_media.twitter = twitterUrl;
         }
       }
@@ -70,7 +64,7 @@ export function parsePerplexityResponse(content: string): Lead[] {
   return leads;
 }
 
-export function formatResponse(leads: Lead[], filters: any): { success: boolean; data?: any; error?: string } {
+export function formatResponse(leads: Lead[], filters: any): GenerateLeadsResponse {
   try {
     return {
       success: true,

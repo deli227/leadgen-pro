@@ -1,5 +1,4 @@
-import { Lead, SocialMedia } from '../types/lead';
-import { formatWebsite, formatSocialUrl } from './formatters';
+import { Lead } from '../types/lead';
 
 export function initializeEmptyLead(): Partial<Lead> {
   return {
@@ -23,7 +22,7 @@ export function formatLead(lead: Partial<Lead>): Lead {
     console.log('Formatting lead:', lead);
     
     // Ensure social_media object exists with all required properties
-    const social_media: SocialMedia = {
+    const social_media = {
       linkedin: lead.social_media?.linkedin || '',
       twitter: lead.social_media?.twitter || '',
       facebook: lead.social_media?.facebook || '',
@@ -34,7 +33,7 @@ export function formatLead(lead: Partial<Lead>): Lead {
       company: lead.company || '',
       email: lead.email || '',
       phone: lead.phone || '',
-      website: formatWebsite(lead.website || ''),
+      website: lead.website || '',
       address: lead.address || '',
       industry: lead.industry || '',
       score: Math.floor(Math.random() * 10) + 1,
