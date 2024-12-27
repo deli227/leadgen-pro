@@ -1,28 +1,29 @@
-import { Lead, GenerateLeadsResponse } from './types'
+import { Lead, GenerateLeadsResponse } from './types';
 
 export function parsePerplexityResponse(content: string): Lead[] {
-  console.log('Contenu brut de la réponse:', content)
+  console.log('Contenu brut de la réponse:', content);
   
   // Nettoyage et validation du contenu JSON
-  let jsonContent = content.trim()
+  let jsonContent = content.trim();
   
   // Recherche d'un tableau JSON valide
-  const arrayMatch = jsonContent.match(/\[([\s\S]*)\]/)
+  const arrayMatch = jsonContent.match(/\[([\s\S]*)\]/);
   if (!arrayMatch) {
-    throw new Error('Aucun tableau JSON valide trouvé dans la réponse')
+    console.error('Aucun tableau JSON trouvé dans:', jsonContent);
+    throw new Error('Aucun tableau JSON valide trouvé dans la réponse');
   }
 
-  jsonContent = arrayMatch[0]
-  console.log('Tableau JSON extrait:', jsonContent)
+  jsonContent = arrayMatch[0];
+  console.log('Tableau JSON extrait:', jsonContent);
 
   try {
-    const leads = JSON.parse(jsonContent)
-    console.log('Leads parsés avec succès:', leads)
-    return leads
+    const leads = JSON.parse(jsonContent);
+    console.log('Leads parsés avec succès:', leads);
+    return leads;
   } catch (error) {
-    console.error('Erreur lors du parsing JSON:', error)
-    console.log('Contenu qui a causé l\'erreur:', jsonContent)
-    throw new Error(`Erreur de parsing JSON: ${error.message}`)
+    console.error('Erreur lors du parsing JSON:', error);
+    console.log('Contenu qui a causé l\'erreur:', jsonContent);
+    throw new Error(`Erreur de parsing JSON: ${error.message}`);
   }
 }
 
@@ -41,5 +42,5 @@ export function formatResponse(leads: Lead[], filters: any): GenerateLeadsRespon
         }
       }
     }
-  }
+  };
 }
