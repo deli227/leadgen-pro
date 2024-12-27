@@ -8,7 +8,7 @@ const corsHeaders = {
 const buildBasicSearchPrompt = (filters: any) => {
   const leadCount = Math.min(Math.max(filters.leadCount, 1), 50);
 
-  let prompt = `Je recherche ${leadCount} entreprises`;
+  let prompt = `Génère ${leadCount} leads d'entreprises`;
   
   if (filters.search) {
     prompt += ` correspondant à "${filters.search}"`;
@@ -25,22 +25,24 @@ const buildBasicSearchPrompt = (filters: any) => {
     }
   }
 
-  prompt += `\n\nPour chaque entreprise, fournis les informations au format JSON suivant:
-  {
-    "company": "Nom de l'entreprise",
-    "email": "Email de contact",
-    "phone": "Téléphone",
-    "website": "Site web",
-    "address": "Adresse complète",
-    "industry": "${filters.industry}",
-    "score": "Note sur 10 basée sur la présence en ligne",
-    "socialMedia": {
-      "linkedin": "URL LinkedIn",
-      "twitter": "URL Twitter",
-      "facebook": "URL Facebook", 
-      "instagram": "URL Instagram"
+  prompt += `\n\nRéponds UNIQUEMENT avec un tableau JSON d'objets ayant cette structure exacte, sans texte avant ni après:
+  [
+    {
+      "company": "Nom de l'entreprise",
+      "email": "Email de contact",
+      "phone": "Téléphone",
+      "website": "Site web",
+      "address": "Adresse complète",
+      "industry": "${filters.industry}",
+      "score": "Note sur 10 basée sur la présence en ligne",
+      "socialMedia": {
+        "linkedin": "URL LinkedIn",
+        "twitter": "URL Twitter",
+        "facebook": "URL Facebook",
+        "instagram": "URL Instagram"
+      }
     }
-  }`;
+  ]`;
 
   return prompt;
 }
@@ -49,10 +51,7 @@ serve(async (req) => {
   // Gestion des requêtes CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { 
-      headers: { 
-        ...corsHeaders,
-        'Content-Type': 'application/json'
-      } 
+      headers: corsHeaders
     })
   }
 
@@ -90,7 +89,7 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'Tu es un expert en recherche d\'entreprises B2B. Tu fournis uniquement des informations vérifiables et à jour.'
+            content: 'Tu es un expert en génération de leads B2B. Tu fournis uniquement des données au format JSON demandé, sans texte avant ni après.'
           },
           {
             role: 'user',
@@ -127,6 +126,10 @@ serve(async (req) => {
     let generatedLeads
     try {
       const content = result.choices[0].message.content
+      // Vérifie si la réponse commence par un crochet (tableau JSON)
+      if (!content.trim().startsWith('[')) {
+        throw new Error('Format de réponse invalide: la réponse doit être un tableau JSON')
+      }
       generatedLeads = JSON.parse(content)
       console.log('Leads générés et parsés avec succès:', generatedLeads)
     } catch (error) {
