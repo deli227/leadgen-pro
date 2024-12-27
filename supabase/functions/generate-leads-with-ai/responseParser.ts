@@ -24,12 +24,14 @@ export function parsePerplexityResponse(content: string): Lead[] {
   // Nettoyage supplémentaire
   cleanedContent = cleanedContent
     .replace(/'/g, '"') // Remplace les guillemets simples par des doubles
-    .replace(/(\w+):/g, '"$1":') // Entoure les clés sans guillemets par des guillemets
+    .replace(/(\w+)\s*:/g, '"$1":') // Entoure les clés sans guillemets par des guillemets, gère les espaces
     .replace(/\n/g, '') // Supprime les nouvelles lignes
     .replace(/,\s*([\]}])/g, '$1') // Supprime les virgules trailing
     .replace(/\\"/g, '"') // Gère les guillemets échappés
     .replace(/"{2,}/g, '"') // Remplace les guillemets doubles multiples par un seul
-    .replace(/\s+/g, ' '); // Remplace les espaces multiples par un seul espace
+    .replace(/\s+/g, ' ') // Remplace les espaces multiples par un seul espace
+    .replace(/:\s+/g, ':') // Supprime les espaces après les deux-points
+    .replace(/,\s+/g, ','); // Supprime les espaces après les virgules
 
   console.log('Contenu nettoyé avant parsing:', cleanedContent);
   
