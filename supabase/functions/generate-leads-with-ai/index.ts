@@ -42,7 +42,8 @@ const buildBasicSearchPrompt = (filters: any) => {
   3. Start with [ and end with ]
   4. Each company must be unique
   5. All fields must use the exact names shown above
-  6. DO NOT include any text before or after the JSON array`;
+  6. DO NOT include any text before or after the JSON array
+  7. DO NOT include any explanations or comments`;
 
   return prompt;
 }
@@ -79,16 +80,16 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'You are a JSON API that ONLY returns valid JSON arrays. Never include any explanatory text. Your response must always start with [ and end with ].'
+            content: 'You are a JSON API that ONLY returns valid JSON arrays. Never include any explanatory text. Your response must always start with [ and end with ]. Never include any text before or after the JSON array.'
           },
           {
             role: 'user',
             content: buildBasicSearchPrompt(filters)
           }
         ],
-        temperature: 0.2,
+        temperature: 0.1, // Reduced for more consistent output
         top_p: 0.9,
-        max_tokens: 1000
+        max_tokens: 2000 // Increased to handle larger responses
       }),
     });
 
@@ -124,6 +125,13 @@ serve(async (req) => {
       if (generatedLeads.length !== filters.leadCount) {
         throw new Error(`Incorrect number of leads: ${generatedLeads.length} instead of ${filters.leadCount}`)
       }
+
+      // Validate each lead has required fields
+      generatedLeads.forEach((lead: any, index: number) => {
+        if (!lead.company || !lead.industry || !lead.socialMedia) {
+          throw new Error(`Lead at index ${index} is missing required fields`)
+        }
+      })
     } catch (error) {
       console.error('Error parsing response:', error)
       throw new Error('Invalid response format: ' + error.message)
