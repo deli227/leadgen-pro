@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { corsHeaders } from './corsConfig.ts'
 import { buildPrompt } from './promptBuilder.ts'
 import { parsePerplexityResponse, formatResponse } from './responseParser.ts'
+import { createClient } from '@supabase/supabase-js'
 import type { GenerateLeadsResponse } from './types.ts'
 
 serve(async (req) => {
@@ -80,8 +81,38 @@ serve(async (req) => {
     try {
       const content = result.choices[0].message.content
       const leads = parsePerplexityResponse(content)
-      const formattedResponse = formatResponse(leads, filters)
+      
+      // Création du client Supabase
+      const supabaseUrl = Deno.env.get('SUPABASE_URL')
+      const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+      
+      if (!supabaseUrl || !supabaseServiceKey) {
+        throw new Error('Configuration Supabase manquante')
+      }
 
+      const supabase = createClient(supabaseUrl, supabaseServiceKey)
+
+      // Insertion des leads dans la base de données
+      for (const lead of leads) {
+        const { error: insertError } = await supabase
+          .from('leads')
+          .insert({
+            ...lead,
+            user_id: userId,
+            qualification: Math.floor(Math.random() * 10) + 1, // Score aléatoire entre 1 et 10
+            social_media: {
+              linkedin: lead.socialMedia.linkedin,
+              twitter: lead.socialMedia.twitter
+            }
+          })
+
+        if (insertError) {
+          console.error('Erreur lors de l\'insertion du lead:', insertError)
+          throw insertError
+        }
+      }
+
+      const formattedResponse = formatResponse(leads, filters)
       return new Response(
         JSON.stringify(formattedResponse),
         { 
