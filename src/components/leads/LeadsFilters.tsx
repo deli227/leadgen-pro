@@ -56,11 +56,18 @@ export function LeadsFilters({
 
       console.log('Génération de leads pour utilisateur:', session.user.id, 'avec filtres:', filters)
 
-      const response = await supabase.functions.invoke('generate-leads', {
-        body: { 
-          ...filters,
-          userId: session.user.id
-        },
+      // S'assurer que tous les champs requis sont présents
+      const requestData = {
+        search: filters.search || "",  // Valeur par défaut si vide
+        leadCount: filters.leadCount || 10, // Valeur par défaut si non défini
+        industry: filters.industry || "all", // Valeur par défaut si non défini
+        country: filters.country || "all", // Valeur par défaut si non défini
+        city: filters.city || "all", // Valeur par défaut si non défini
+        userId: session.user.id
+      }
+
+      const response = await supabase.functions.invoke('generate-leads-with-ai', {
+        body: requestData,
         headers: {
           Authorization: `Bearer ${session.access_token}`
         }
