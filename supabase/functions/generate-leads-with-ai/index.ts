@@ -1,57 +1,12 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
-
-const buildBasicSearchPrompt = (filters: any) => {
-  const leadCount = Math.min(Math.max(filters.leadCount, 1), 50);
-
-  let prompt = `Génère ${leadCount} leads d'entreprises`;
-  
-  if (filters.search) {
-    prompt += ` correspondant à "${filters.search}"`;
-  }
-  
-  if (filters.industry !== 'all') {
-    prompt += ` dans le secteur ${filters.industry}`;
-  }
-  
-  if (filters.country !== 'all') {
-    prompt += ` en ${filters.country}`;
-    if (filters.city !== 'all') {
-      prompt += `, plus précisément à ${filters.city}`;
-    }
-  }
-
-  prompt += `\n\nRéponds UNIQUEMENT avec un tableau JSON d'objets ayant cette structure exacte, sans texte avant ni après:
-  [
-    {
-      "company": "Nom de l'entreprise",
-      "email": "Email de contact",
-      "phone": "Téléphone",
-      "website": "Site web",
-      "address": "Adresse complète",
-      "industry": "${filters.industry}",
-      "score": "Note sur 10 basée sur la présence en ligne",
-      "socialMedia": {
-        "linkedin": "URL LinkedIn",
-        "twitter": "URL Twitter",
-        "facebook": "URL Facebook",
-        "instagram": "URL Instagram"
-      }
-    }
-  ]`;
-
-  return prompt;
-}
+import { corsHeaders } from './corsConfig.ts'
+import { buildPrompt } from './promptBuilder.ts'
+import { parsePerplexityResponse, formatResponse } from './responseParser.ts'
+import type { GenerateLeadsResponse } from './types.ts'
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { 
-      headers: corsHeaders
-    })
+    return new Response(null, { headers: corsHeaders })
   }
 
   try {
@@ -92,14 +47,14 @@ serve(async (req) => {
           },
           {
             role: 'user',
-            content: buildBasicSearchPrompt(filters)
+            content: buildPrompt(filters)
           }
         ],
         temperature: 0.2,
         top_p: 0.9,
         max_tokens: 1000
       }),
-    });
+    })
 
     if (!response.ok) {
       const errorText = await response.text()
@@ -122,70 +77,31 @@ serve(async (req) => {
     const result = await response.json()
     console.log('Réponse Perplexity brute:', result)
 
-    let generatedLeads
     try {
       const content = result.choices[0].message.content
-      console.log('Contenu brut de la réponse:', content)
+      const leads = parsePerplexityResponse(content)
+      const formattedResponse = formatResponse(leads, filters)
 
-      // Nettoyage et validation du contenu JSON
-      let jsonContent = content.trim()
-      
-      // Vérifie si le contenu commence par un crochet
-      if (!jsonContent.startsWith('[')) {
-        // Tente de trouver un tableau JSON valide dans la réponse
-        const jsonMatch = jsonContent.match(/\[([\s\S]*)\]/);
-        if (jsonMatch) {
-          jsonContent = jsonMatch[0];
-        } else {
-          throw new Error('Aucun tableau JSON valide trouvé dans la réponse');
-        }
-      }
-
-      try {
-        generatedLeads = JSON.parse(jsonContent)
-        console.log('Leads générés et parsés avec succès:', generatedLeads)
-
-        // Construction de la réponse au format demandé
-        const formattedResponse = {
-          success: true,
-          data: {
-            leads: generatedLeads,
-            metadata: {
-              totalLeads: generatedLeads.length,
-              generatedAt: new Date().toISOString(),
-              searchCriteria: {
-                industry: filters.industry,
-                country: filters.country,
-                leadCount: filters.leadCount
-              }
-            }
+      return new Response(
+        JSON.stringify(formattedResponse),
+        { 
+          headers: { 
+            ...corsHeaders,
+            'Content-Type': 'application/json'
           }
         }
-
-        return new Response(
-          JSON.stringify(formattedResponse),
-          { 
-            headers: { 
-              ...corsHeaders,
-              'Content-Type': 'application/json'
-            }
-          }
-        )
-
-      } catch (parseError) {
-        console.error('Erreur lors du parsing JSON:', parseError)
-        console.log('Contenu qui a causé l\'erreur:', jsonContent)
-        throw new Error(`Erreur de parsing JSON: ${parseError.message}`)
-      }
+      )
 
     } catch (error) {
       console.error('Erreur lors du traitement de la réponse:', error)
+      const errorResponse: GenerateLeadsResponse = {
+        success: false,
+        error: 'Format de réponse invalide',
+        details: error.message
+      }
+
       return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: 'Format de réponse invalide',
-          details: error.message
-        }),
+        JSON.stringify(errorResponse),
         { 
           headers: { 
             ...corsHeaders,
