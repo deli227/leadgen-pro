@@ -6,43 +6,43 @@ const PERPLEXITY_API_KEY = Deno.env.get('PERPLEXITY_API_KEY')
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')
 
+// Validate input data
+function validateInputData(data: any) {
+  const requiredFields = ['search', 'leadCount', 'industry', 'country', 'city', 'userId']
+  const missingFields = requiredFields.filter(field => !data[field])
+  
+  if (missingFields.length > 0) {
+    throw new Error(`Missing required fields: ${missingFields.join(', ')}`)
+  }
+
+  if (typeof data.leadCount !== 'number' || data.leadCount < 1 || data.leadCount > 50) {
+    throw new Error('leadCount must be a number between 1 and 50')
+  }
+
+  return true
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    const { search, leadCount, industry, country, city, userId } = await req.json()
-    console.log('Received request with params:', { search, leadCount, industry, country, city, userId })
-
-    // Validate required parameters
-    if (!industry || !country || !city || !userId) {
-      console.error('Missing required filters:', { industry, country, city, userId })
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: 'Missing required filters'
-        }),
-        {
-          status: 400,
-          headers: {
-            ...corsHeaders,
-            'Content-Type': 'application/json'
-          }
-        }
-      )
-    }
-
+    // Validate API key
     if (!PERPLEXITY_API_KEY) {
       console.error('PERPLEXITY_API_KEY is not set')
       throw new Error('PERPLEXITY_API_KEY is not set')
     }
 
-    const supabase = createClient(
-      SUPABASE_URL!,
-      SUPABASE_ANON_KEY!
-    )
+    // Parse and validate request data
+    const requestData = await req.json()
+    console.log('Received request data:', requestData)
+    validateInputData(requestData)
 
+    const { search, leadCount, industry, country, city, userId } = requestData
+    console.log('Validated request parameters:', { search, leadCount, industry, country, city, userId })
+
+    // Construct prompt
     const prompt = `Generate ${leadCount} business leads in the ${industry} industry from ${city}, ${country}. For each lead, provide:
     1. Company name
     2. Industry focus
@@ -59,11 +59,13 @@ serve(async (req) => {
 
     console.log('Sending prompt to Perplexity:', prompt)
 
+    // Make request to Perplexity API with proper headers
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${PERPLEXITY_API_KEY}`,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
       },
       body: JSON.stringify({
         model: 'sonar-medium-online',
@@ -116,6 +118,12 @@ serve(async (req) => {
       console.error('Error parsing leads:', error)
       throw new Error('Failed to parse generated leads')
     }
+
+    // Initialize Supabase client
+    const supabase = createClient(
+      SUPABASE_URL!,
+      SUPABASE_ANON_KEY!
+    )
 
     // Insert leads into Supabase
     const { data: insertedLeads, error: insertError } = await supabase
