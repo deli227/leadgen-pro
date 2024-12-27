@@ -120,50 +120,71 @@ serve(async (req) => {
     }
 
     const result = await response.json()
-    console.log('Réponse Perplexity reçue:', result)
+    console.log('Réponse Perplexity brute:', result)
 
     let generatedLeads
     try {
       const content = result.choices[0].message.content
-      if (!content.trim().startsWith('[')) {
-        throw new Error('Format de réponse invalide: la réponse doit être un tableau JSON')
-      }
-      generatedLeads = JSON.parse(content)
-      console.log('Leads générés et parsés avec succès:', generatedLeads)
+      console.log('Contenu brut de la réponse:', content)
 
-      // Construction de la réponse au format demandé
-      const formattedResponse = {
-        success: true,
-        data: {
-          leads: generatedLeads,
-          metadata: {
-            totalLeads: generatedLeads.length,
-            generatedAt: new Date().toISOString(),
-            searchCriteria: {
-              industry: filters.industry,
-              country: filters.country,
-              leadCount: filters.leadCount
+      // Nettoyage et validation du contenu JSON
+      let jsonContent = content.trim()
+      
+      // Vérifie si le contenu commence par un crochet
+      if (!jsonContent.startsWith('[')) {
+        // Tente de trouver un tableau JSON valide dans la réponse
+        const jsonMatch = jsonContent.match(/\[([\s\S]*)\]/);
+        if (jsonMatch) {
+          jsonContent = jsonMatch[0];
+        } else {
+          throw new Error('Aucun tableau JSON valide trouvé dans la réponse');
+        }
+      }
+
+      try {
+        generatedLeads = JSON.parse(jsonContent)
+        console.log('Leads générés et parsés avec succès:', generatedLeads)
+
+        // Construction de la réponse au format demandé
+        const formattedResponse = {
+          success: true,
+          data: {
+            leads: generatedLeads,
+            metadata: {
+              totalLeads: generatedLeads.length,
+              generatedAt: new Date().toISOString(),
+              searchCriteria: {
+                industry: filters.industry,
+                country: filters.country,
+                leadCount: filters.leadCount
+              }
             }
           }
         }
+
+        return new Response(
+          JSON.stringify(formattedResponse),
+          { 
+            headers: { 
+              ...corsHeaders,
+              'Content-Type': 'application/json'
+            }
+          }
+        )
+
+      } catch (parseError) {
+        console.error('Erreur lors du parsing JSON:', parseError)
+        console.log('Contenu qui a causé l\'erreur:', jsonContent)
+        throw new Error(`Erreur de parsing JSON: ${parseError.message}`)
       }
 
-      return new Response(
-        JSON.stringify(formattedResponse),
-        { 
-          headers: { 
-            ...corsHeaders,
-            'Content-Type': 'application/json'
-          }
-        }
-      )
-
     } catch (error) {
-      console.error('Erreur lors du parsing de la réponse:', error)
+      console.error('Erreur lors du traitement de la réponse:', error)
       return new Response(
         JSON.stringify({ 
           success: false, 
-          error: 'Format de réponse invalide' 
+          error: 'Format de réponse invalide',
+          details: error.message
         }),
         { 
           headers: { 
