@@ -3,7 +3,6 @@ import { Lead, GenerateLeadsResponse } from './types.ts';
 export function parsePerplexityResponse(content: string): Lead[] {
   console.log('Contenu brut de la réponse:', content);
   
-  // On va traiter la réponse ligne par ligne
   const lines = content.split('\n');
   const leads: Lead[] = [];
   let currentLead: Partial<Lead> = {};
@@ -11,19 +10,15 @@ export function parsePerplexityResponse(content: string): Lead[] {
   for (const line of lines) {
     const trimmedLine = line.trim();
     
-    // Si la ligne est vide ou contient juste des caractères spéciaux, on l'ignore
     if (!trimmedLine || trimmedLine.match(/^[.,\-\[\]{}()]*$/)) continue;
     
-    // On détecte le début d'une nouvelle entreprise
     if (trimmedLine.includes('company') || trimmedLine.includes('entreprise') || trimmedLine.includes('société')) {
-      // Si on avait déjà une entreprise en cours, on l'ajoute à la liste
       if (currentLead.company) {
         leads.push(formatLead(currentLead));
         currentLead = {};
       }
       currentLead.company = extractValue(trimmedLine);
     }
-    // On détecte les autres champs
     else if (trimmedLine.includes('email')) {
       currentLead.email = extractValue(trimmedLine);
     }
@@ -40,16 +35,15 @@ export function parsePerplexityResponse(content: string): Lead[] {
       currentLead.industry = extractValue(trimmedLine);
     }
     else if (trimmedLine.includes('linkedin')) {
-      if (!currentLead.socialMedia) currentLead.socialMedia = { linkedin: '', twitter: '', facebook: '', instagram: '' };
-      currentLead.socialMedia.linkedin = formatSocialUrl(extractValue(trimmedLine), 'linkedin');
+      if (!currentLead.social_media) currentLead.social_media = { linkedin: '', twitter: '' };
+      currentLead.social_media.linkedin = formatSocialUrl(extractValue(trimmedLine), 'linkedin');
     }
     else if (trimmedLine.includes('twitter')) {
-      if (!currentLead.socialMedia) currentLead.socialMedia = { linkedin: '', twitter: '', facebook: '', instagram: '' };
-      currentLead.socialMedia.twitter = formatSocialUrl(extractValue(trimmedLine), 'twitter');
+      if (!currentLead.social_media) currentLead.social_media = { linkedin: '', twitter: '' };
+      currentLead.social_media.twitter = formatSocialUrl(extractValue(trimmedLine), 'twitter');
     }
   }
 
-  // On ajoute le dernier lead s'il existe
   if (currentLead.company) {
     leads.push(formatLead(currentLead));
   }
@@ -59,12 +53,10 @@ export function parsePerplexityResponse(content: string): Lead[] {
 }
 
 function extractValue(line: string): string {
-  // On cherche après : ou = ou -
   const matches = line.match(/(?::|=|-)\s*([^,}\]]+)/);
   if (matches && matches[1]) {
     return matches[1].trim().replace(/['"]/g, '');
   }
-  // Si on ne trouve pas ces caractères, on prend tout après le premier espace
   const words = line.split(/\s+/);
   return words.slice(1).join(' ').replace(/['"]/g, '');
 }
@@ -100,12 +92,10 @@ function formatLead(lead: Partial<Lead>): Lead {
     website: lead.website || '',
     address: lead.address || '',
     industry: lead.industry || '',
-    score: Math.floor(Math.random() * 10) + 1, // Score aléatoire entre 1 et 10
-    socialMedia: {
-      linkedin: lead.socialMedia?.linkedin || '',
-      twitter: lead.socialMedia?.twitter || '',
-      facebook: lead.socialMedia?.facebook || '',
-      instagram: lead.socialMedia?.instagram || ''
+    score: Math.floor(Math.random() * 10) + 1,
+    social_media: {
+      linkedin: lead.social_media?.linkedin || '',
+      twitter: lead.social_media?.twitter || ''
     }
   };
 }

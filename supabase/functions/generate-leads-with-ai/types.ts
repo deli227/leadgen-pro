@@ -14,11 +14,9 @@ export interface Lead {
   address: string;
   industry: string;
   score: number;
-  socialMedia: {
+  social_media: {
     linkedin: string;
     twitter: string;
-    facebook: string;
-    instagram: string;
   };
 }
 
