@@ -1,4 +1,4 @@
-import { Lead, GenerateLeadsResponse } from './types';
+import { Lead, GenerateLeadsResponse } from './types.ts';
 
 export function parsePerplexityResponse(content: string): Lead[] {
   console.log('Contenu brut de la réponse:', content);
