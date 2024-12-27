@@ -23,39 +23,17 @@ export function parsePerplexityResponse(content: string): Lead[] {
         currentLead.company = extractValue(trimmedLine);
       }
       else if (trimmedLine.toLowerCase().includes('linkedin')) {
-        const linkedinUrl = extractValue(trimmedLine);
-        if (linkedinUrl && linkedinUrl !== 'undefined' && linkedinUrl.length > 0) {
-          currentLead.social_media = {
-            ...currentLead.social_media || {},
-            linkedin: linkedinUrl
-          };
+        const url = extractValue(trimmedLine);
+        if (url && url.length > 0 && url !== 'undefined') {
+          currentLead.social_media = currentLead.social_media || {};
+          currentLead.social_media.linkedin = url;
         }
       }
       else if (trimmedLine.toLowerCase().includes('twitter')) {
-        const twitterUrl = extractValue(trimmedLine);
-        if (twitterUrl && twitterUrl !== 'undefined' && twitterUrl.length > 0) {
-          currentLead.social_media = {
-            ...currentLead.social_media || {},
-            twitter: twitterUrl
-          };
-        }
-      }
-      else if (trimmedLine.toLowerCase().includes('facebook')) {
-        const facebookUrl = extractValue(trimmedLine);
-        if (facebookUrl && facebookUrl !== 'undefined' && facebookUrl.length > 0) {
-          currentLead.social_media = {
-            ...currentLead.social_media || {},
-            facebook: facebookUrl
-          };
-        }
-      }
-      else if (trimmedLine.toLowerCase().includes('instagram')) {
-        const instagramUrl = extractValue(trimmedLine);
-        if (instagramUrl && instagramUrl !== 'undefined' && instagramUrl.length > 0) {
-          currentLead.social_media = {
-            ...currentLead.social_media || {},
-            instagram: instagramUrl
-          };
+        const url = extractValue(trimmedLine);
+        if (url && url.length > 0 && url !== 'undefined') {
+          currentLead.social_media = currentLead.social_media || {};
+          currentLead.social_media.twitter = url;
         }
       }
       else if (trimmedLine.toLowerCase().includes('email')) {
