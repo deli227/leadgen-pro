@@ -5,7 +5,9 @@ export function parsePerplexityResponse(content: string): Lead[] {
   
   const lines = content.split('\n');
   const leads: Lead[] = [];
-  let currentLead: Partial<Lead> = {};
+  let currentLead: Partial<Lead> = {
+    social_media: { linkedin: '', twitter: '' } // Initialisation par défaut
+  };
   
   for (const line of lines) {
     const trimmedLine = line.trim();
@@ -15,7 +17,9 @@ export function parsePerplexityResponse(content: string): Lead[] {
     if (trimmedLine.includes('company') || trimmedLine.includes('entreprise') || trimmedLine.includes('société')) {
       if (currentLead.company) {
         leads.push(formatLead(currentLead));
-        currentLead = {};
+        currentLead = {
+          social_media: { linkedin: '', twitter: '' } // Réinitialisation avec valeurs par défaut
+        };
       }
       currentLead.company = extractValue(trimmedLine);
     }
@@ -35,20 +39,14 @@ export function parsePerplexityResponse(content: string): Lead[] {
       currentLead.industry = extractValue(trimmedLine);
     }
     else if (trimmedLine.includes('linkedin')) {
-      if (!currentLead.social_media) {
-        currentLead.social_media = { linkedin: '', twitter: '' };
-      }
       const linkedinUrl = formatSocialUrl(extractValue(trimmedLine), 'linkedin');
-      if (linkedinUrl) {
+      if (linkedinUrl && currentLead.social_media) {
         currentLead.social_media.linkedin = linkedinUrl;
       }
     }
     else if (trimmedLine.includes('twitter')) {
-      if (!currentLead.social_media) {
-        currentLead.social_media = { linkedin: '', twitter: '' };
-      }
       const twitterUrl = formatSocialUrl(extractValue(trimmedLine), 'twitter');
-      if (twitterUrl) {
+      if (twitterUrl && currentLead.social_media) {
         currentLead.social_media.twitter = twitterUrl;
       }
     }
@@ -82,18 +80,13 @@ function formatWebsite(url: string): string {
 function formatSocialUrl(url: string, platform: string): string {
   if (!url) return '';
   
-  // Nettoyer l'URL
   url = url.trim().toLowerCase();
+  url = url.replace(/^[@/\\]+/, '');
   
-  // Si l'URL est déjà complète, la retourner
   if (url.startsWith('http')) {
     return url;
   }
   
-  // Enlever @ ou / au début si présent
-  url = url.replace(/^[@/\\]+/, '');
-  
-  // Construire l'URL complète selon la plateforme
   switch (platform) {
     case 'linkedin':
       return `https://linkedin.com/in/${url}`;
@@ -105,10 +98,8 @@ function formatSocialUrl(url: string, platform: string): string {
 }
 
 function formatLead(lead: Partial<Lead>): Lead {
-  // S'assurer que social_media existe avec des valeurs par défaut
   const defaultSocialMedia = { linkedin: '', twitter: '' };
-  const social_media = lead.social_media || defaultSocialMedia;
-
+  
   return {
     company: lead.company || '',
     email: lead.email || '',
@@ -118,8 +109,8 @@ function formatLead(lead: Partial<Lead>): Lead {
     industry: lead.industry || '',
     score: Math.floor(Math.random() * 10) + 1,
     social_media: {
-      linkedin: social_media.linkedin || '',
-      twitter: social_media.twitter || ''
+      linkedin: lead.social_media?.linkedin || defaultSocialMedia.linkedin,
+      twitter: lead.social_media?.twitter || defaultSocialMedia.twitter
     }
   };
 }
