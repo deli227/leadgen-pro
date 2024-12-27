@@ -36,12 +36,21 @@ export function FiltersTabContent({
         return
       }
 
+      // Ensure all required filters are present and have default values if needed
+      const requestFilters = {
+        ...filters,
+        country: filters.country || 'all',
+        industry: filters.industry || 'all',
+        leadCount: filters.leadCount || 10,
+        userId: session.user.id
+      }
+
       console.log('Session trouvée:', session)
-      console.log('Envoi des paramètres à generate-leads:', filters)
+      console.log('Envoi des paramètres à generate-leads:', requestFilters)
 
       const { data, error } = await supabase.functions.invoke('generate-leads-with-ai', {
         body: { 
-          filters,
+          filters: requestFilters,
           userId: session.user.id 
         },
         headers: {
