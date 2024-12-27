@@ -2,7 +2,7 @@ import { Filters } from './types.ts';
 
 export function buildPrompt(filters: Filters): string {
   const leadCount = Math.min(Math.max(filters.leadCount, 1), 50);
-  let prompt = `Tu es un expert en génération de leads B2B. Tu dois UNIQUEMENT renvoyer un tableau JSON valide avec des noms de propriétés et des valeurs entre guillemets doubles, sans AUCUN texte avant ni après. Format exact attendu:
+  let prompt = `Tu es un expert en génération de leads B2B. IMPORTANT: Tu dois UNIQUEMENT renvoyer un tableau JSON valide, sans AUCUN texte avant ni après. Format exact attendu:
 
 [
   {
@@ -15,9 +15,7 @@ export function buildPrompt(filters: Filters): string {
     "score": 8,
     "socialMedia": {
       "linkedin": "https://linkedin.com/company/example",
-      "twitter": "https://twitter.com/example",
-      "facebook": "https://facebook.com/example",
-      "instagram": "https://instagram.com/example"
+      "twitter": "https://twitter.com/example"
     }
   }
 ]`;
@@ -39,15 +37,14 @@ export function buildPrompt(filters: Filters): string {
     }
   }
 
-  prompt += `\n\nATTENTION: 
-- Renvoie UNIQUEMENT le tableau JSON, sans texte avant ni après
-- Utilise TOUJOURS des guillemets doubles pour les noms de propriétés et les valeurs textuelles
-- Le score doit être un nombre entre 1 et 10
-- Tous les URLs doivent être des URLs valides commençant par "https://"
+  prompt += `\n\nRÈGLES STRICTES:
+- Renvoie UNIQUEMENT le tableau JSON, sans AUCUN texte avant ni après
+- Utilise UNIQUEMENT des guillemets doubles pour les noms de propriétés et les valeurs textuelles
+- Le score doit être un nombre entre 1 et 10 sans guillemets
+- Les URLs doivent commencer par "https://"
 - Les numéros de téléphone doivent être au format international ("+33...")
 - Chaque propriété doit être entourée de guillemets doubles
-- Vérifie que le JSON est valide avant de le renvoyer
-- Les valeurs numériques comme "score" ne doivent PAS avoir de guillemets`;
+- Vérifie que le JSON est valide avant de le renvoyer`;
 
   return prompt;
 }

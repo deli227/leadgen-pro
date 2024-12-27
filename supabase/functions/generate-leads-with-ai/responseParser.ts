@@ -6,7 +6,7 @@ export function parsePerplexityResponse(content: string): Lead[] {
   console.log('Type du contenu:', typeof content);
   console.log('Longueur du contenu:', content.length);
   
-  // Nettoyage et validation du contenu JSON
+  // Nettoyage initial
   let cleanedContent = content.trim();
   
   // Recherche du premier [ et du dernier ] pour extraire uniquement le JSON
@@ -28,7 +28,8 @@ export function parsePerplexityResponse(content: string): Lead[] {
     .replace(/\n/g, '') // Supprime les nouvelles lignes
     .replace(/,\s*([\]}])/g, '$1') // Supprime les virgules trailing
     .replace(/\\"/g, '"') // Gère les guillemets échappés
-    .replace(/"{2,}/g, '"'); // Remplace les guillemets doubles multiples par un seul
+    .replace(/"{2,}/g, '"') // Remplace les guillemets doubles multiples par un seul
+    .replace(/\s+/g, ' '); // Remplace les espaces multiples par un seul espace
 
   console.log('Contenu nettoyé avant parsing:', cleanedContent);
   
@@ -63,8 +64,9 @@ function validateAndFormatLeads(leads: any[]): Lead[] {
   }
 
   return leads.map((lead, index) => {
+    // Validation et nettoyage des données
     if (!lead.company || typeof lead.company !== 'string') {
-      console.warn(`Lead ${index} : company manquant ou invalide, utilisation d'une valeur par défaut`);
+      console.warn(`Lead ${index} : company manquant ou invalide`);
       lead.company = `Entreprise ${index + 1}`;
     }
 
@@ -82,13 +84,19 @@ function validateAndFormatLeads(leads: any[]): Lead[] {
     }
 
     // Valider le format des réseaux sociaux
-    if (lead.socialMedia) {
-      const socialMediaProperties = ['linkedin', 'twitter', 'facebook', 'instagram'];
-      socialMediaProperties.forEach(prop => {
-        if (lead.socialMedia[prop] && !lead.socialMedia[prop].startsWith('https://')) {
-          lead.socialMedia[prop] = `https://${lead.socialMedia[prop].replace(/^https?:\/\//, '')}`;
-        }
-      });
+    if (!lead.socialMedia) {
+      lead.socialMedia = { linkedin: '', twitter: '' };
+    }
+
+    ['linkedin', 'twitter'].forEach(platform => {
+      if (lead.socialMedia[platform] && !lead.socialMedia[platform].startsWith('https://')) {
+        lead.socialMedia[platform] = `https://${lead.socialMedia[platform].replace(/^https?:\/\//, '')}`;
+      }
+    });
+
+    // Valider le score
+    if (typeof lead.score !== 'number' || lead.score < 0 || lead.score > 10) {
+      lead.score = Math.floor(Math.random() * 10) + 1;
     }
 
     return {
@@ -98,12 +106,10 @@ function validateAndFormatLeads(leads: any[]): Lead[] {
       website: lead.website || '',
       address: lead.address || '',
       industry: lead.industry || '',
-      score: typeof lead.score === 'number' ? lead.score : 0,
+      score: lead.score,
       socialMedia: {
-        linkedin: lead.socialMedia?.linkedin || '',
-        twitter: lead.socialMedia?.twitter || '',
-        facebook: lead.socialMedia?.facebook || '',
-        instagram: lead.socialMedia?.instagram || ''
+        linkedin: lead.socialMedia.linkedin || '',
+        twitter: lead.socialMedia.twitter || ''
       }
     };
   });
