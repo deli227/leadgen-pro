@@ -51,8 +51,14 @@ const buildBasicSearchPrompt = (filters: any) => {
 }
 
 serve(async (req) => {
+  // Always handle CORS preflight requests first
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
+    return new Response(null, { 
+      headers: {
+        ...corsHeaders,
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      }
+    })
   }
 
   try {
@@ -65,6 +71,7 @@ serve(async (req) => {
       throw new Error('Clé API Perplexity non configurée')
     }
 
+    console.log('Envoi de la requête à Perplexity...')
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
       headers: {
@@ -96,9 +103,8 @@ serve(async (req) => {
     }
 
     const result = await response.json()
-    console.log('Réponse Perplexity reçue:', result)
+    console.log('Réponse Perplexity reçue')
 
-    // Extraction et formatage des leads depuis la réponse
     let generatedLeads
     try {
       const content = result.choices[0].message.content
