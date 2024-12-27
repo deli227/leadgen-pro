@@ -1,8 +1,8 @@
 export interface SocialMedia {
   linkedin: string;
   twitter: string;
-  facebook: string;
-  instagram: string;
+  facebook?: string;
+  instagram?: string;
 }
 
 export interface Lead {

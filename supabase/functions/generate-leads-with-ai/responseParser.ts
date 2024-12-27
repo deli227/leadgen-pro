@@ -42,7 +42,7 @@ export function parsePerplexityResponse(content: string): Lead[] {
         const linkedinUrl = formatSocialUrl(extractValue(trimmedLine), 'linkedin');
         if (linkedinUrl) {
           if (!currentLead.social_media) {
-            currentLead.social_media = { linkedin: '', twitter: '', facebook: '', instagram: '' };
+            currentLead.social_media = { linkedin: '', twitter: '' };
           }
           currentLead.social_media.linkedin = linkedinUrl;
         }
@@ -51,7 +51,7 @@ export function parsePerplexityResponse(content: string): Lead[] {
         const twitterUrl = formatSocialUrl(extractValue(trimmedLine), 'twitter');
         if (twitterUrl) {
           if (!currentLead.social_media) {
-            currentLead.social_media = { linkedin: '', twitter: '', facebook: '', instagram: '' };
+            currentLead.social_media = { linkedin: '', twitter: '' };
           }
           currentLead.social_media.twitter = twitterUrl;
         }
