@@ -12,6 +12,7 @@ import { supabase } from "@/integrations/supabase/client"
 import { toast } from "sonner"
 import { IndustrySelect } from "./filters/IndustrySelect"
 import { Lead } from "@/types/leads"
+import { generateLeads } from "@/utils/leadGeneration"
 
 interface LeadsFiltersProps {
   filters: {
@@ -54,33 +55,11 @@ export function LeadsFilters({
         return
       }
 
-      console.log('Génération de leads pour utilisateur:', session.user.id, 'avec filtres:', filters)
-
-      // S'assurer que tous les champs requis sont présents
-      const requestData = {
-        search: filters.search || "",  // Valeur par défaut si vide
-        leadCount: filters.leadCount || 10, // Valeur par défaut si non défini
-        industry: filters.industry || "all", // Valeur par défaut si non défini
-        country: filters.country || "all", // Valeur par défaut si non défini
-        city: filters.city || "all", // Valeur par défaut si non défini
-        userId: session.user.id
-      }
-
-      const response = await supabase.functions.invoke('generate-leads-with-ai', {
-        body: requestData,
-        headers: {
-          Authorization: `Bearer ${session.access_token}`
-        }
+      await generateLeads({
+        ...filters,
+        userId: session.user.id,
+        session
       })
-
-      if (response.error) {
-        console.error('Erreur lors de la génération:', response.error)
-        throw response.error
-      }
-
-      console.log('Leads générés avec succès')
-      toast.success("Recherche lancée avec succès")
-      window.location.reload()
     } catch (error) {
       console.error('Erreur:', error)
       toast.error("Impossible de lancer la recherche. Veuillez réessayer.")
