@@ -33,6 +33,10 @@ serve(async (req) => {
       )
     }
 
+    if (!PERPLEXITY_API_KEY) {
+      throw new Error('PERPLEXITY_API_KEY is not set')
+    }
+
     const supabase = createClient(
       SUPABASE_URL!,
       SUPABASE_ANON_KEY!
@@ -57,11 +61,11 @@ serve(async (req) => {
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${PERPLEXITY_API_KEY}`
+        'Authorization': `Bearer ${PERPLEXITY_API_KEY}`,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'mixtral-8x7b-instruct',
+        model: 'sonar-medium-online',
         messages: [
           {
             role: 'system',
@@ -72,9 +76,10 @@ serve(async (req) => {
             content: prompt
           }
         ],
-        max_tokens: 2000,
+        max_tokens: 4000,
         temperature: 0.7,
-        top_p: 0.9
+        top_p: 0.9,
+        stream: false
       })
     })
 
