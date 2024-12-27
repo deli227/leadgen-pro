@@ -1,10 +1,10 @@
-import { Lead, GenerateLeadsResponse } from './types/lead';
+import { Lead } from './types/lead';
 import { extractValue } from './utils/formatters';
 import { initializeEmptyLead, formatLead } from './utils/leadManager';
 import { formatWebsite, formatSocialUrl } from './utils/formatters';
 
 export function parsePerplexityResponse(content: string): Lead[] {
-  console.log('Contenu brut de la réponse:', content);
+  console.log('Parsing response content:', content);
   
   const lines = content.split('\n');
   const leads: Lead[] = [];
@@ -41,37 +41,19 @@ export function parsePerplexityResponse(content: string): Lead[] {
       else if (trimmedLine.includes('linkedin')) {
         const linkedinUrl = formatSocialUrl(extractValue(trimmedLine), 'linkedin');
         if (linkedinUrl) {
-          currentLead.social_media = {
-            ...currentLead.social_media,
-            linkedin: linkedinUrl
-          };
+          if (!currentLead.social_media) {
+            currentLead.social_media = { linkedin: '', twitter: '', facebook: '', instagram: '' };
+          }
+          currentLead.social_media.linkedin = linkedinUrl;
         }
       }
       else if (trimmedLine.includes('twitter')) {
         const twitterUrl = formatSocialUrl(extractValue(trimmedLine), 'twitter');
         if (twitterUrl) {
-          currentLead.social_media = {
-            ...currentLead.social_media,
-            twitter: twitterUrl
-          };
-        }
-      }
-      else if (trimmedLine.includes('facebook')) {
-        const facebookUrl = formatSocialUrl(extractValue(trimmedLine), 'facebook');
-        if (facebookUrl) {
-          currentLead.social_media = {
-            ...currentLead.social_media,
-            facebook: facebookUrl
-          };
-        }
-      }
-      else if (trimmedLine.includes('instagram')) {
-        const instagramUrl = formatSocialUrl(extractValue(trimmedLine), 'instagram');
-        if (instagramUrl) {
-          currentLead.social_media = {
-            ...currentLead.social_media,
-            instagram: instagramUrl
-          };
+          if (!currentLead.social_media) {
+            currentLead.social_media = { linkedin: '', twitter: '', facebook: '', instagram: '' };
+          }
+          currentLead.social_media.twitter = twitterUrl;
         }
       }
     } catch (error) {
@@ -88,20 +70,28 @@ export function parsePerplexityResponse(content: string): Lead[] {
   return leads;
 }
 
-export function formatResponse(leads: Lead[], filters: any): GenerateLeadsResponse {
-  return {
-    success: true,
-    data: {
-      leads,
-      metadata: {
-        totalLeads: leads.length,
-        generatedAt: new Date().toISOString(),
-        searchCriteria: {
-          industry: filters.industry,
-          country: filters.country,
-          leadCount: filters.leadCount
+export function formatResponse(leads: Lead[], filters: any): { success: boolean; data?: any; error?: string } {
+  try {
+    return {
+      success: true,
+      data: {
+        leads,
+        metadata: {
+          totalLeads: leads.length,
+          generatedAt: new Date().toISOString(),
+          searchCriteria: {
+            industry: filters.industry,
+            country: filters.country,
+            leadCount: filters.leadCount
+          }
         }
       }
-    }
-  };
+    };
+  } catch (error) {
+    console.error('Erreur lors du formatage de la réponse:', error);
+    return {
+      success: false,
+      error: 'Erreur lors du formatage de la réponse'
+    };
+  }
 }

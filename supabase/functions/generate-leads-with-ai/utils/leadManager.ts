@@ -20,6 +20,9 @@ export function initializeEmptyLead(): Partial<Lead> {
 
 export function formatLead(lead: Partial<Lead>): Lead {
   try {
+    console.log('Formatting lead:', lead);
+    
+    // Ensure social_media object exists with all required properties
     const social_media: SocialMedia = {
       linkedin: lead.social_media?.linkedin || '',
       twitter: lead.social_media?.twitter || '',
@@ -27,18 +30,22 @@ export function formatLead(lead: Partial<Lead>): Lead {
       instagram: lead.social_media?.instagram || ''
     };
 
-    return {
+    const formattedLead: Lead = {
       company: lead.company || '',
       email: lead.email || '',
       phone: lead.phone || '',
-      website: lead.website || '',
+      website: formatWebsite(lead.website || ''),
       address: lead.address || '',
       industry: lead.industry || '',
       score: Math.floor(Math.random() * 10) + 1,
       social_media
     };
+
+    console.log('Formatted lead:', formattedLead);
+    return formattedLead;
   } catch (error) {
-    console.error('Erreur lors du formatage du lead:', lead, error);
+    console.error('Erreur lors du formatage du lead:', error);
+    // Return a valid lead object with empty values in case of error
     return {
       company: lead.company || 'Unknown Company',
       email: '',
@@ -47,7 +54,12 @@ export function formatLead(lead: Partial<Lead>): Lead {
       address: '',
       industry: '',
       score: 1,
-      social_media: { linkedin: '', twitter: '', facebook: '', instagram: '' }
+      social_media: {
+        linkedin: '',
+        twitter: '',
+        facebook: '',
+        instagram: ''
+      }
     };
   }
 }
