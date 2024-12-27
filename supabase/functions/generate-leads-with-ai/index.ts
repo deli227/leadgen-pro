@@ -8,7 +8,15 @@ const corsHeaders = {
 const buildBasicSearchPrompt = (filters: any) => {
   const leadCount = Math.min(Math.max(filters.leadCount, 1), 50);
 
-  let prompt = `Je recherche EXACTEMENT ${leadCount} entreprises différentes`;
+  let prompt = `Je recherche ${leadCount} entreprises`;
+  
+  if (filters.search) {
+    prompt += ` correspondant à "${filters.search}"`;
+  }
+  
+  if (filters.industry !== 'all') {
+    prompt += ` dans le secteur ${filters.industry}`;
+  }
   
   if (filters.country !== 'all') {
     prompt += ` en ${filters.country}`;
@@ -16,41 +24,36 @@ const buildBasicSearchPrompt = (filters: any) => {
       prompt += `, plus précisément à ${filters.city}`;
     }
   }
-  
-  if (filters.industry !== 'all') {
-    prompt += ` dans le secteur ${filters.industry}`;
-  }
 
-  prompt += `\n\nPour chaque entreprise, fournis les informations suivantes dans ce format JSON précis :
+  prompt += `\n\nPour chaque entreprise, fournis les informations au format JSON suivant:
   {
     "company": "Nom de l'entreprise",
-    "email": "Email de contact principal",
-    "phone": "Numéro de téléphone",
-    "website": "Site web officiel",
+    "email": "Email de contact",
+    "phone": "Téléphone",
+    "website": "Site web",
     "address": "Adresse complète",
     "industry": "${filters.industry}",
-    "score": "Score sur 10 basé sur la présence en ligne et le potentiel commercial",
+    "score": "Note sur 10 basée sur la présence en ligne",
     "socialMedia": {
-      "linkedin": "URL LinkedIn si disponible",
-      "twitter": "URL Twitter si disponible",
-      "facebook": "URL Facebook si disponible",
-      "instagram": "URL Instagram si disponible"
+      "linkedin": "URL LinkedIn",
+      "twitter": "URL Twitter",
+      "facebook": "URL Facebook", 
+      "instagram": "URL Instagram"
     }
   }`;
-
-  prompt += `\n\nInstructions importantes:
-  - Tu DOIS renvoyer EXACTEMENT ${leadCount} entreprises, ni plus ni moins
-  - Chaque entreprise doit être unique
-  - Si tu ne trouves pas assez d'entreprises correspondant aux critères, élargis légèrement la recherche tout en restant pertinent
-  - Le nombre de résultats (${leadCount}) est une contrainte absolue`;
 
   return prompt;
 }
 
 serve(async (req) => {
-  // Handle CORS preflight requests
+  // Gestion des requêtes CORS preflight
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
+    return new Response(null, { 
+      headers: { 
+        ...corsHeaders,
+        'Content-Type': 'application/json'
+      } 
+    })
   }
 
   try {
@@ -60,7 +63,20 @@ serve(async (req) => {
 
     const perplexityApiKey = Deno.env.get('PERPLEXITY_API_KEY')
     if (!perplexityApiKey) {
-      throw new Error('Clé API Perplexity non configurée')
+      console.error('Clé API Perplexity manquante')
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Configuration API manquante' 
+        }),
+        { 
+          headers: { 
+            ...corsHeaders,
+            'Content-Type': 'application/json'
+          },
+          status: 500
+        }
+      )
     }
 
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
@@ -88,23 +104,46 @@ serve(async (req) => {
     });
 
     if (!response.ok) {
-      const error = await response.text()
-      console.error('Erreur Perplexity:', error)
-      throw new Error('Erreur lors de la génération des leads')
+      const errorText = await response.text()
+      console.error('Erreur Perplexity:', errorText)
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Erreur lors de la génération des leads' 
+        }),
+        { 
+          headers: { 
+            ...corsHeaders,
+            'Content-Type': 'application/json'
+          },
+          status: response.status
+        }
+      )
     }
 
     const result = await response.json()
     console.log('Réponse Perplexity reçue:', result)
 
-    // Extraction et formatage des leads depuis la réponse
     let generatedLeads
     try {
       const content = result.choices[0].message.content
-      // Tentative de parser le JSON de la réponse
       generatedLeads = JSON.parse(content)
+      console.log('Leads générés et parsés avec succès:', generatedLeads)
     } catch (error) {
       console.error('Erreur lors du parsing de la réponse:', error)
-      throw new Error('Format de réponse invalide')
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Format de réponse invalide' 
+        }),
+        { 
+          headers: { 
+            ...corsHeaders,
+            'Content-Type': 'application/json'
+          },
+          status: 400
+        }
+      )
     }
 
     return new Response(
@@ -116,15 +155,16 @@ serve(async (req) => {
         headers: { 
           ...corsHeaders,
           'Content-Type': 'application/json'
-        } 
+        }
       }
     )
+
   } catch (error) {
     console.error('Erreur:', error)
     return new Response(
       JSON.stringify({ 
         success: false, 
-        error: error.message 
+        error: error.message || 'Une erreur est survenue' 
       }),
       { 
         headers: { 
