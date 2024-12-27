@@ -8,50 +8,46 @@ const corsHeaders = {
 const buildBasicSearchPrompt = (filters: any) => {
   const leadCount = Math.min(Math.max(filters.leadCount, 1), 50);
 
-  let prompt = `Je recherche EXACTEMENT ${leadCount} entreprises différentes`;
+  let prompt = `Generate EXACTLY ${leadCount} unique company leads as a JSON array. The response MUST be a valid JSON array starting with [ and ending with ]. Each company should have this exact structure:
+  {
+    "company": "Company Name",
+    "email": "contact@company.com",
+    "phone": "+1234567890",
+    "website": "https://company.com",
+    "address": "Full Address",
+    "industry": "${filters.industry}",
+    "score": 8,
+    "socialMedia": {
+      "linkedin": "https://linkedin.com/company/...",
+      "twitter": "https://twitter.com/...",
+      "facebook": "https://facebook.com/...",
+      "instagram": "https://instagram.com/..."
+    }
+  }`;
   
   if (filters.country !== 'all') {
-    prompt += ` en ${filters.country}`;
+    prompt += `\nCompanies must be located in ${filters.country}`;
     if (filters.city !== 'all') {
-      prompt += `, plus précisément à ${filters.city}`;
+      prompt += `, specifically in ${filters.city}`;
     }
   }
   
   if (filters.industry !== 'all') {
-    prompt += ` dans le secteur ${filters.industry}`;
+    prompt += `\nCompanies must be in the ${filters.industry} industry`;
   }
 
-  prompt += `\n\nRenvoie un tableau JSON contenant EXACTEMENT ${leadCount} entreprises avec ce format précis :
-  [
-    {
-      "company": "Nom de l'entreprise",
-      "email": "Email de contact principal",
-      "phone": "Numéro de téléphone",
-      "website": "Site web officiel",
-      "address": "Adresse complète",
-      "industry": "${filters.industry}",
-      "score": "Score sur 10 basé sur la présence en ligne et le potentiel commercial",
-      "socialMedia": {
-        "linkedin": "URL LinkedIn si disponible",
-        "twitter": "URL Twitter si disponible",
-        "facebook": "URL Facebook si disponible",
-        "instagram": "URL Instagram si disponible"
-      }
-    }
-  ]`;
-
-  prompt += `\n\nInstructions importantes:
-  - Tu DOIS renvoyer EXACTEMENT ${leadCount} entreprises dans un tableau JSON
-  - Le tableau doit commencer par [ et finir par ]
-  - Chaque entreprise doit être unique
-  - Si tu ne trouves pas assez d'entreprises correspondant aux critères, élargis légèrement la recherche tout en restant pertinent
-  - Le nombre de résultats (${leadCount}) est une contrainte absolue`;
+  prompt += `\n\nCRITICAL REQUIREMENTS:
+  1. Return EXACTLY ${leadCount} companies
+  2. Response must be a valid JSON array
+  3. Start with [ and end with ]
+  4. Each company must be unique
+  5. All fields must use the exact names shown above
+  6. DO NOT include any text before or after the JSON array`;
 
   return prompt;
 }
 
 serve(async (req) => {
-  // Always handle CORS preflight requests first
   if (req.method === 'OPTIONS') {
     return new Response(null, { 
       headers: {
@@ -63,15 +59,15 @@ serve(async (req) => {
 
   try {
     const { filters, userId } = await req.json()
-    console.log('Filtres reçus:', filters)
-    console.log('ID utilisateur:', userId)
+    console.log('Filters received:', filters)
+    console.log('User ID:', userId)
 
     const perplexityApiKey = Deno.env.get('PERPLEXITY_API_KEY')
     if (!perplexityApiKey) {
-      throw new Error('Clé API Perplexity non configurée')
+      throw new Error('Perplexity API key not configured')
     }
 
-    console.log('Envoi de la requête à Perplexity...')
+    console.log('Sending request to Perplexity...')
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
       headers: {
@@ -83,7 +79,7 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'Tu es un expert en recherche d\'entreprises B2B. Tu fournis uniquement des informations vérifiables et à jour. Tu réponds TOUJOURS avec un tableau JSON valide.'
+            content: 'You are a JSON API that ONLY returns valid JSON arrays. Never include any explanatory text. Your response must always start with [ and end with ].'
           },
           {
             role: 'user',
@@ -97,38 +93,40 @@ serve(async (req) => {
     });
 
     if (!response.ok) {
-      const error = await response.text()
-      console.error('Erreur Perplexity:', error)
-      throw new Error('Erreur lors de la génération des leads')
+      console.error('Perplexity API error:', await response.text())
+      throw new Error('Error generating leads')
     }
 
     const result = await response.json()
-    console.log('Réponse Perplexity reçue')
-
+    console.log('Perplexity response received')
+    
     let generatedLeads
     try {
-      const content = result.choices[0].message.content
-      console.log('Contenu de la réponse:', content)
+      const content = result.choices[0].message.content.trim()
+      console.log('Raw content:', content)
       
-      // Nettoyage du contenu pour s'assurer qu'il commence et finit par des crochets
-      const cleanedContent = content.trim().replace(/^[^[]*(\[.*\])[^]*$/, '$1')
-      console.log('Contenu nettoyé:', cleanedContent)
-      
-      // Tentative de parser le JSON de la réponse
-      generatedLeads = JSON.parse(cleanedContent)
-      
-      // Vérification que c'est bien un tableau
-      if (!Array.isArray(generatedLeads)) {
-        throw new Error('La réponse n\'est pas un tableau')
+      // Ensure we only parse the JSON array part
+      const jsonStart = content.indexOf('[')
+      const jsonEnd = content.lastIndexOf(']') + 1
+      if (jsonStart === -1 || jsonEnd === 0) {
+        throw new Error('No JSON array found in response')
       }
       
-      // Vérification du nombre exact de leads
+      const jsonContent = content.slice(jsonStart, jsonEnd)
+      console.log('Cleaned JSON content:', jsonContent)
+      
+      generatedLeads = JSON.parse(jsonContent)
+      
+      if (!Array.isArray(generatedLeads)) {
+        throw new Error('Response is not an array')
+      }
+      
       if (generatedLeads.length !== filters.leadCount) {
-        throw new Error(`Nombre incorrect de leads: ${generatedLeads.length} au lieu de ${filters.leadCount}`)
+        throw new Error(`Incorrect number of leads: ${generatedLeads.length} instead of ${filters.leadCount}`)
       }
     } catch (error) {
-      console.error('Erreur lors du parsing de la réponse:', error)
-      throw new Error('Format de réponse invalide: ' + error.message)
+      console.error('Error parsing response:', error)
+      throw new Error('Invalid response format: ' + error.message)
     }
 
     return new Response(
@@ -144,7 +142,7 @@ serve(async (req) => {
       }
     )
   } catch (error) {
-    console.error('Erreur:', error)
+    console.error('Error:', error)
     return new Response(
       JSON.stringify({ 
         success: false, 
