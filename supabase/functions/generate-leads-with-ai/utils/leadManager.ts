@@ -1,4 +1,4 @@
-import { Lead } from '../types/lead';
+import { Lead } from '../types';
 import { formatWebsite } from './formatters';
 
 export function initializeEmptyLead(): Partial<Lead> {
@@ -11,9 +11,7 @@ export function initializeEmptyLead(): Partial<Lead> {
     industry: '',
     social_media: {
       linkedin: '',
-      twitter: '',
-      facebook: '',
-      instagram: ''
+      twitter: ''
     },
     score: 0,
     qualification: 0,
@@ -29,9 +27,7 @@ export function formatLead(lead: Partial<Lead>): Lead {
     // Ensure social_media object exists with all required properties
     const social_media = {
       linkedin: lead.social_media?.linkedin || '',
-      twitter: lead.social_media?.twitter || '',
-      facebook: lead.social_media?.facebook || '',
-      instagram: lead.social_media?.instagram || ''
+      twitter: lead.social_media?.twitter || ''
     };
 
     return {

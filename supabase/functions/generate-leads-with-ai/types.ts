@@ -1,23 +1,21 @@
-export interface Filters {
-  search?: string;
-  leadCount: number;
-  industry: string;
-  country: string;
-  city: string;
+export interface SocialMedia {
+  linkedin: string;
+  twitter: string;
 }
 
 export interface Lead {
+  id?: string;
   company: string;
-  email: string;
-  phone: string;
-  website: string;
-  address: string;
-  industry: string;
-  score: number;
-  social_media: {
-    linkedin: string;
-    twitter: string;
-  };
+  email?: string;
+  phone?: string;
+  website?: string;
+  address?: string;
+  qualification?: number;
+  social_media: SocialMedia;
+  score?: number;
+  industry?: string;
+  strengths?: string[];
+  weaknesses?: string[];
 }
 
 export interface GenerateLeadsResponse {
