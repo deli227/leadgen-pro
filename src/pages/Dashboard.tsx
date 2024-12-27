@@ -8,8 +8,7 @@ import { useLeadsData } from "@/hooks/useLeadsData"
 import { useToast } from "@/hooks/use-toast"
 import { Lead } from "@/types/leads"
 import { motion } from "framer-motion"
-import { LeadsTable } from "@/components/leads/LeadsTable"
-import { LeadsFilters } from "@/components/leads/LeadsFilters"
+import { DashboardTabs } from "@/components/dashboard/DashboardTabs"
 
 export function Dashboard() {
   const { toast } = useToast()
@@ -99,25 +98,18 @@ export function Dashboard() {
             />
           </motion.div>
         )}
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
-          <div className="lg:col-span-2">
-            <LeadsTable />
-          </div>
-          <div>
-            <LeadsFilters 
-              filters={filters}
-              setFilters={setFilters}
-              leads={leads}
-              analyticsLeads={filteredAnalyticsLeads}
-              onAddToAnalytics={handleAddToAnalytics}
-              onAddToExport={handleAddToExport}
-              exportLeads={filteredExportLeads}
-              onRemoveFromExport={handleRemoveFromExport}
-              onRemoveFromAnalytics={handleRemoveFromAnalytics}
-            />
-          </div>
-        </div>
+        
+        <DashboardTabs 
+          filters={filters}
+          setFilters={setFilters}
+          leads={leads}
+          analyticsLeads={filteredAnalyticsLeads}
+          onAddToAnalytics={handleAddToAnalytics}
+          onAddToExport={handleAddToExport}
+          exportLeads={filteredExportLeads}
+          onRemoveFromExport={handleRemoveFromExport}
+          onRemoveFromAnalytics={handleRemoveFromAnalytics}
+        />
       </div>
     </div>
   )

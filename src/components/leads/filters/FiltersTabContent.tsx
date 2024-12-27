@@ -41,39 +41,9 @@ export function FiltersTabContent({
     }
 
     setIsGenerating(true)
-    console.info("Session trouvée:", session)
-
+    
     try {
-      const params = {
-        search: filters.search,
-        leadCount: filters.leadCount,
-        industry: filters.industry,
-        country: filters.country,
-        city: filters.city,
-        userId: session.user.id
-      }
-
-      console.info("Envoi des paramètres à generate-leads:", params)
-
-      const { data, error } = await supabase.functions.invoke('generate-leads-with-ai', {
-        body: params
-      })
-
-      console.info("Réponse de generate-leads:", { data, error })
-
-      if (error) {
-        console.error("Erreur détaillée:", error)
-        throw error
-      }
-
-      if (!data?.leads || !Array.isArray(data.leads)) {
-        throw new Error("Format de réponse invalide")
-      }
-
-      // Invalidate the leads query to trigger a refresh
-      await queryClient.invalidateQueries({ queryKey: ['leads'] })
-      
-      toast.success(`${data.leads.length} leads ont été générés avec succès`)
+      toast.error("Fonctionnalité temporairement désactivée")
     } catch (error: any) {
       console.error("Erreur lors de la génération des leads:", error)
       toast.error(error.message || "Erreur lors de la génération des leads")
@@ -83,33 +53,53 @@ export function FiltersTabContent({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 bg-gradient-to-br from-black/80 to-secondary-dark/80 p-8 rounded-b-xl border border-primary/10 shadow-xl">
       <div className="space-y-4">
-        <SearchInput 
-          value={filters.search} 
-          onChange={(value) => setFilters({ ...filters, search: value })} 
-        />
+        <div className="p-4 rounded-lg bg-black/40 border border-primary/20">
+          <p className="text-primary-light/70 mb-4">
+            Recherchez une entreprise par son nom ou son secteur d'activité.
+          </p>
+          <SearchInput 
+            value={filters.search} 
+            onChange={(value) => setFilters({ ...filters, search: value })} 
+          />
+        </div>
         
-        <LeadCountSlider 
-          value={filters.leadCount} 
-          onChange={(value) => setFilters({ ...filters, leadCount: value })} 
-        />
+        <div className="p-4 rounded-lg bg-black/40 border border-primary/20">
+          <p className="text-primary-light/70 mb-4">
+            Ajustez le nombre de leads à générer.
+          </p>
+          <LeadCountSlider 
+            value={filters.leadCount} 
+            onChange={(value) => setFilters({ ...filters, leadCount: value })} 
+          />
+        </div>
         
-        <IndustrySelect 
-          value={filters.industry} 
-          onChange={(value) => setFilters({ ...filters, industry: value })} 
-        />
+        <div className="p-4 rounded-lg bg-black/40 border border-primary/20">
+          <p className="text-primary-light/70 mb-4">
+            Sélectionnez le secteur d'activité pour affiner votre recherche.
+          </p>
+          <IndustrySelect 
+            value={filters.industry} 
+            onChange={(value) => setFilters({ ...filters, industry: value })} 
+          />
+        </div>
         
-        <LocationFilters 
-          country={filters.country}
-          city={filters.city}
-          onCountryChange={(value) => setFilters({ ...filters, country: value })}
-          onCityChange={(value) => setFilters({ ...filters, city: value })}
-        />
+        <div className="p-4 rounded-lg bg-black/40 border border-primary/20">
+          <p className="text-primary-light/70 mb-4">
+            Filtrez par localisation.
+          </p>
+          <LocationFilters 
+            country={filters.country}
+            city={filters.city}
+            onCountryChange={(value) => setFilters({ ...filters, country: value })}
+            onCityChange={(value) => setFilters({ ...filters, city: value })}
+          />
+        </div>
 
         <Button 
           onClick={handleGenerateLeads} 
-          className="w-full"
+          className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
           disabled={isGenerating}
         >
           {isGenerating ? "Génération en cours..." : "Générer des leads"}
