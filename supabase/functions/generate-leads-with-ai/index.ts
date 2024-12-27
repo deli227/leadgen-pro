@@ -44,8 +44,13 @@ serve(async (req) => {
     3. A list of 3 company strengths
     4. A list of 3 areas for improvement
     5. A qualification score from 1-10
-    Format as JSON array with fields: company, industry, strengths (array), weaknesses (array), qualification (number).
-    Make sure to return valid JSON that can be parsed.`
+    Format the response as a valid JSON array where each object has these fields:
+    - company (string)
+    - industry (string)
+    - strengths (array of 3 strings)
+    - weaknesses (array of 3 strings)
+    - qualification (number between 1-10)
+    Ensure the response is a properly formatted JSON array that can be parsed.`
 
     console.log('Sending prompt to Perplexity:', prompt)
 
@@ -57,14 +62,19 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         model: 'mixtral-8x7b-instruct',
-        messages: [{
-          role: 'system',
-          content: 'You are a helpful assistant that generates business leads information in JSON format.'
-        }, {
-          role: 'user',
-          content: prompt
-        }],
-        max_tokens: 2000
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a helpful assistant that generates business leads information in valid JSON format only.'
+          },
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        max_tokens: 2000,
+        temperature: 0.7,
+        top_p: 0.9
       })
     })
 
@@ -78,13 +88,23 @@ serve(async (req) => {
     const data = await response.json()
     console.log('Perplexity API response:', data)
 
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      throw new Error('Invalid response format from Perplexity API')
+    }
+
     let leads = []
     try {
       const content = data.choices[0].message.content
       // Try to extract JSON if it's wrapped in backticks or has extra text
       const jsonMatch = content.match(/```json\n?(.*)\n?```/) || content.match(/\[(.*)\]/s)
       const jsonContent = jsonMatch ? jsonMatch[1] : content
-      leads = JSON.parse(jsonContent.includes('[') ? jsonContent : `[${jsonContent}]`)
+      const cleanedContent = jsonContent.trim().replace(/^[^[]*\[/, '[').replace(/][^]]*$/, ']')
+      leads = JSON.parse(cleanedContent)
+      
+      if (!Array.isArray(leads)) {
+        throw new Error('Generated content is not an array')
+      }
+      
       console.log('Parsed leads:', leads)
     } catch (error) {
       console.error('Error parsing leads:', error)
