@@ -13,9 +13,11 @@ serve(async (req) => {
 
   try {
     const { search, leadCount, industry, country, city, userId } = await req.json()
+    console.log('Received request with params:', { search, leadCount, industry, country, city, userId })
 
     // Validate required parameters
     if (!industry || !country || !city || !userId) {
+      console.error('Missing required filters:', { industry, country, city, userId })
       return new Response(
         JSON.stringify({
           success: false,
@@ -42,7 +44,10 @@ serve(async (req) => {
     3. A list of 3 company strengths
     4. A list of 3 areas for improvement
     5. A qualification score from 1-10
-    Format as JSON array with fields: company, industry, strengths (array), weaknesses (array), qualification (number).`
+    Format as JSON array with fields: company, industry, strengths (array), weaknesses (array), qualification (number).
+    Make sure to return valid JSON that can be parsed.`
+
+    console.log('Sending prompt to Perplexity:', prompt)
 
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
@@ -53,9 +58,13 @@ serve(async (req) => {
       body: JSON.stringify({
         model: 'mixtral-8x7b-instruct',
         messages: [{
+          role: 'system',
+          content: 'You are a helpful assistant that generates business leads information in JSON format.'
+        }, {
           role: 'user',
           content: prompt
-        }]
+        }],
+        max_tokens: 2000
       })
     })
 
@@ -67,12 +76,16 @@ serve(async (req) => {
     }
 
     const data = await response.json()
-    console.log('API Response:', data)
+    console.log('Perplexity API response:', data)
 
     let leads = []
     try {
       const content = data.choices[0].message.content
-      leads = JSON.parse(content)
+      // Try to extract JSON if it's wrapped in backticks or has extra text
+      const jsonMatch = content.match(/```json\n?(.*)\n?```/) || content.match(/\[(.*)\]/s)
+      const jsonContent = jsonMatch ? jsonMatch[1] : content
+      leads = JSON.parse(jsonContent.includes('[') ? jsonContent : `[${jsonContent}]`)
+      console.log('Parsed leads:', leads)
     } catch (error) {
       console.error('Error parsing leads:', error)
       throw new Error('Failed to parse generated leads')
@@ -94,6 +107,8 @@ serve(async (req) => {
       console.error('Error inserting leads:', insertError)
       throw insertError
     }
+
+    console.log('Successfully inserted leads:', insertedLeads?.length)
 
     return new Response(
       JSON.stringify({
