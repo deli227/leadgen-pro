@@ -35,12 +35,22 @@ export function parsePerplexityResponse(content: string): Lead[] {
       currentLead.industry = extractValue(trimmedLine);
     }
     else if (trimmedLine.includes('linkedin')) {
-      if (!currentLead.social_media) currentLead.social_media = { linkedin: '', twitter: '' };
-      currentLead.social_media.linkedin = formatSocialUrl(extractValue(trimmedLine), 'linkedin');
+      if (!currentLead.social_media) {
+        currentLead.social_media = { linkedin: '', twitter: '' };
+      }
+      const linkedinUrl = formatSocialUrl(extractValue(trimmedLine), 'linkedin');
+      if (linkedinUrl) {
+        currentLead.social_media.linkedin = linkedinUrl;
+      }
     }
     else if (trimmedLine.includes('twitter')) {
-      if (!currentLead.social_media) currentLead.social_media = { linkedin: '', twitter: '' };
-      currentLead.social_media.twitter = formatSocialUrl(extractValue(trimmedLine), 'twitter');
+      if (!currentLead.social_media) {
+        currentLead.social_media = { linkedin: '', twitter: '' };
+      }
+      const twitterUrl = formatSocialUrl(extractValue(trimmedLine), 'twitter');
+      if (twitterUrl) {
+        currentLead.social_media.twitter = twitterUrl;
+      }
     }
   }
 
@@ -71,20 +81,34 @@ function formatWebsite(url: string): string {
 
 function formatSocialUrl(url: string, platform: string): string {
   if (!url) return '';
-  if (!url.startsWith('http')) {
-    switch (platform) {
-      case 'linkedin':
-        return `https://linkedin.com/${url.replace(/^[/\\]+/, '')}`;
-      case 'twitter':
-        return `https://twitter.com/${url.replace(/^[/\\]+/, '')}`;
-      default:
-        return `https://${url}`;
-    }
+  
+  // Nettoyer l'URL
+  url = url.trim().toLowerCase();
+  
+  // Si l'URL est déjà complète, la retourner
+  if (url.startsWith('http')) {
+    return url;
   }
-  return url;
+  
+  // Enlever @ ou / au début si présent
+  url = url.replace(/^[@/\\]+/, '');
+  
+  // Construire l'URL complète selon la plateforme
+  switch (platform) {
+    case 'linkedin':
+      return `https://linkedin.com/in/${url}`;
+    case 'twitter':
+      return `https://twitter.com/${url}`;
+    default:
+      return `https://${url}`;
+  }
 }
 
 function formatLead(lead: Partial<Lead>): Lead {
+  // S'assurer que social_media existe avec des valeurs par défaut
+  const defaultSocialMedia = { linkedin: '', twitter: '' };
+  const social_media = lead.social_media || defaultSocialMedia;
+
   return {
     company: lead.company || '',
     email: lead.email || '',
@@ -94,8 +118,8 @@ function formatLead(lead: Partial<Lead>): Lead {
     industry: lead.industry || '',
     score: Math.floor(Math.random() * 10) + 1,
     social_media: {
-      linkedin: lead.social_media?.linkedin || '',
-      twitter: lead.social_media?.twitter || ''
+      linkedin: social_media.linkedin || '',
+      twitter: social_media.twitter || ''
     }
   };
 }
