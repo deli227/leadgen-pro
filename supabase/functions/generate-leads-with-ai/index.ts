@@ -34,6 +34,7 @@ serve(async (req) => {
     }
 
     if (!PERPLEXITY_API_KEY) {
+      console.error('PERPLEXITY_API_KEY is not set')
       throw new Error('PERPLEXITY_API_KEY is not set')
     }
 
