@@ -29,9 +29,18 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProp
     }
   };
 
+  // Fonction pour formater les URLs des réseaux sociaux
   const formatSocialUrl = (url: string) => {
     if (!url) return '';
     return url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
+  };
+
+  // Fonction pour vérifier si un réseau social existe et est valide
+  const hasSocialMedia = (platform: string) => {
+    return lead.social_media && 
+           lead.social_media[platform] && 
+           lead.social_media[platform] !== 'undefined' &&
+           lead.social_media[platform].length > 0;
   };
 
   return (
@@ -106,7 +115,7 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProp
 
         {lead.social_media && (
           <div className="pt-3 border-t border-primary/10 flex gap-3">
-            {lead.social_media.linkedin && (
+            {hasSocialMedia('linkedin') && (
               <a 
                 href={lead.social_media.linkedin}
                 target="_blank"
@@ -120,7 +129,7 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProp
                 </span>
               </a>
             )}
-            {lead.social_media.twitter && (
+            {hasSocialMedia('twitter') && (
               <a 
                 href={lead.social_media.twitter}
                 target="_blank"
@@ -134,7 +143,7 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProp
                 </span>
               </a>
             )}
-            {lead.social_media.facebook && (
+            {hasSocialMedia('facebook') && (
               <a 
                 href={lead.social_media.facebook}
                 target="_blank"
@@ -148,7 +157,7 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProp
                 </span>
               </a>
             )}
-            {lead.social_media.instagram && (
+            {hasSocialMedia('instagram') && (
               <a 
                 href={lead.social_media.instagram}
                 target="_blank"
