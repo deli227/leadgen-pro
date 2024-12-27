@@ -1,11 +1,14 @@
-import { Lead, GenerateLeadsResponse } from './types.ts';
+import { Lead, GenerateLeadsResponse } from './types/lead';
+import { extractValue } from './utils/formatters';
+import { initializeEmptyLead, formatLead } from './utils/leadManager';
+import { formatWebsite, formatSocialUrl } from './utils/formatters';
 
 export function parsePerplexityResponse(content: string): Lead[] {
   console.log('Contenu brut de la réponse:', content);
   
   const lines = content.split('\n');
   const leads: Lead[] = [];
-  let currentLead: Partial<Lead> = initializeEmptyLead();
+  let currentLead = initializeEmptyLead();
   
   for (const line of lines) {
     const trimmedLine = line.trim();
@@ -83,111 +86,6 @@ export function parsePerplexityResponse(content: string): Lead[] {
 
   console.log('Leads extraits:', leads);
   return leads;
-}
-
-function initializeEmptyLead(): Partial<Lead> {
-  return {
-    company: '',
-    email: '',
-    phone: '',
-    website: '',
-    address: '',
-    industry: '',
-    social_media: {
-      linkedin: '',
-      twitter: '',
-      facebook: '',
-      instagram: ''
-    }
-  };
-}
-
-function extractValue(line: string): string {
-  try {
-    const matches = line.match(/(?::|=|-)\s*([^,}\]]+)/);
-    if (matches && matches[1]) {
-      return matches[1].trim().replace(/['"]/g, '');
-    }
-    const words = line.split(/\s+/);
-    return words.slice(1).join(' ').replace(/['"]/g, '');
-  } catch (error) {
-    console.error('Erreur lors de l\'extraction de la valeur:', line, error);
-    return '';
-  }
-}
-
-function formatWebsite(url: string): string {
-  if (!url) return '';
-  try {
-    if (!url.startsWith('http')) {
-      return `https://${url.replace(/^[/\\]+/, '')}`;
-    }
-    return url;
-  } catch (error) {
-    console.error('Erreur lors du formatage du site web:', url, error);
-    return '';
-  }
-}
-
-function formatSocialUrl(url: string, platform: string): string {
-  if (!url) return '';
-  
-  try {
-    url = url.trim().toLowerCase();
-    url = url.replace(/^[@/\\]+/, '');
-    
-    if (url.startsWith('http')) {
-      return url;
-    }
-    
-    switch (platform) {
-      case 'linkedin':
-        return `https://linkedin.com/in/${url}`;
-      case 'twitter':
-        return `https://twitter.com/${url}`;
-      case 'facebook':
-        return `https://facebook.com/${url}`;
-      case 'instagram':
-        return `https://instagram.com/${url}`;
-      default:
-        return `https://${url}`;
-    }
-  } catch (error) {
-    console.error('Erreur lors du formatage de l\'URL sociale:', url, platform, error);
-    return '';
-  }
-}
-
-function formatLead(lead: Partial<Lead>): Lead {
-  try {
-    return {
-      company: lead.company || '',
-      email: lead.email || '',
-      phone: lead.phone || '',
-      website: lead.website || '',
-      address: lead.address || '',
-      industry: lead.industry || '',
-      score: Math.floor(Math.random() * 10) + 1,
-      social_media: {
-        linkedin: lead.social_media?.linkedin || '',
-        twitter: lead.social_media?.twitter || '',
-        facebook: lead.social_media?.facebook || '',
-        instagram: lead.social_media?.instagram || ''
-      }
-    };
-  } catch (error) {
-    console.error('Erreur lors du formatage du lead:', lead, error);
-    return {
-      company: lead.company || 'Unknown Company',
-      email: '',
-      phone: '',
-      website: '',
-      address: '',
-      industry: '',
-      score: 1,
-      social_media: { linkedin: '', twitter: '', facebook: '', instagram: '' }
-    };
-  }
 }
 
 export function formatResponse(leads: Lead[], filters: any): GenerateLeadsResponse {
