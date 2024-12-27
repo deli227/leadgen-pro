@@ -29,20 +29,6 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProp
     }
   };
 
-  // Fonction pour formater les URLs des réseaux sociaux
-  const formatSocialUrl = (url: string) => {
-    if (!url) return '';
-    return url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
-  };
-
-  // Fonction pour vérifier si un réseau social existe et est valide
-  const hasSocialMedia = (platform: string) => {
-    return lead.social_media && 
-           lead.social_media[platform] && 
-           lead.social_media[platform] !== 'undefined' &&
-           lead.social_media[platform].length > 0;
-  };
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -107,68 +93,56 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProp
                 rel="noopener noreferrer" 
                 className="text-sm hover:underline line-clamp-1"
               >
-                {formatSocialUrl(lead.website)}
+                {lead.website.replace('https://', '')}
               </a>
             </div>
           )}
         </div>
 
-        {lead.social_media && (
+        {lead.socialMedia && (
           <div className="pt-3 border-t border-primary/10 flex gap-3">
-            {hasSocialMedia('linkedin') && (
+            {lead.socialMedia.linkedin && (
               <a 
-                href={lead.social_media.linkedin}
+                href={lead.socialMedia.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary-light/70 hover:text-primary transition-colors group relative"
-                title={formatSocialUrl(lead.social_media.linkedin)}
+                className="text-primary-light/70 hover:text-primary transition-colors"
+                title="LinkedIn"
               >
                 <Linkedin className="h-4 w-4" />
-                <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs opacity-0 group-hover:opacity-100 whitespace-nowrap">
-                  {formatSocialUrl(lead.social_media.linkedin)}
-                </span>
               </a>
             )}
-            {hasSocialMedia('twitter') && (
+            {lead.socialMedia.twitter && (
               <a 
-                href={lead.social_media.twitter}
+                href={lead.socialMedia.twitter}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary-light/70 hover:text-primary transition-colors group relative"
-                title={formatSocialUrl(lead.social_media.twitter)}
+                className="text-primary-light/70 hover:text-primary transition-colors"
+                title="X (Twitter)"
               >
                 <Twitter className="h-4 w-4" />
-                <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs opacity-0 group-hover:opacity-100 whitespace-nowrap">
-                  {formatSocialUrl(lead.social_media.twitter)}
-                </span>
               </a>
             )}
-            {hasSocialMedia('facebook') && (
+            {lead.socialMedia.facebook && (
               <a 
-                href={lead.social_media.facebook}
+                href={lead.socialMedia.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary-light/70 hover:text-primary transition-colors group relative"
-                title={formatSocialUrl(lead.social_media.facebook)}
+                className="text-primary-light/70 hover:text-primary transition-colors"
+                title="Facebook"
               >
                 <Facebook className="h-4 w-4" />
-                <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs opacity-0 group-hover:opacity-100 whitespace-nowrap">
-                  {formatSocialUrl(lead.social_media.facebook)}
-                </span>
               </a>
             )}
-            {hasSocialMedia('instagram') && (
+            {lead.socialMedia.instagram && (
               <a 
-                href={lead.social_media.instagram}
+                href={lead.socialMedia.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary-light/70 hover:text-primary transition-colors group relative"
-                title={formatSocialUrl(lead.social_media.instagram)}
+                className="text-primary-light/70 hover:text-primary transition-colors"
+                title="Instagram"
               >
                 <Instagram className="h-4 w-4" />
-                <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs opacity-0 group-hover:opacity-100 whitespace-nowrap">
-                  {formatSocialUrl(lead.social_media.instagram)}
-                </span>
               </a>
             )}
           </div>
