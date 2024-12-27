@@ -1,8 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 import { corsHeaders } from './corsConfig.ts'
 import { buildPrompt } from './promptBuilder.ts'
 import { parsePerplexityResponse, formatResponse } from './responseParser.ts'
-import { createClient } from '@supabase/supabase-js'
 import type { GenerateLeadsResponse } from './types.ts'
 
 serve(async (req) => {
@@ -80,7 +80,9 @@ serve(async (req) => {
 
     try {
       const content = result.choices[0].message.content
+      console.log('Contenu de la réponse:', content)
       const leads = parsePerplexityResponse(content)
+      console.log('Leads parsés:', leads)
       
       // Création du client Supabase
       const supabaseUrl = Deno.env.get('SUPABASE_URL')

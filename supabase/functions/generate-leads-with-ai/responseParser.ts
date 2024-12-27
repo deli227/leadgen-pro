@@ -19,6 +19,31 @@ export function parsePerplexityResponse(content: string): Lead[] {
   try {
     const leads = JSON.parse(jsonContent);
     console.log('Leads parsés avec succès:', leads);
+    
+    // Validation du format des leads
+    if (!Array.isArray(leads)) {
+      throw new Error('La réponse n\'est pas un tableau');
+    }
+
+    // Validation de chaque lead
+    leads.forEach((lead, index) => {
+      if (!lead.company || typeof lead.company !== 'string') {
+        throw new Error(`Lead ${index} : company manquant ou invalide`);
+      }
+      // Ajout de valeurs par défaut si nécessaire
+      lead.email = lead.email || '';
+      lead.phone = lead.phone || '';
+      lead.website = lead.website || '';
+      lead.address = lead.address || '';
+      lead.industry = lead.industry || '';
+      lead.socialMedia = lead.socialMedia || {
+        linkedin: '',
+        twitter: '',
+        facebook: '',
+        instagram: ''
+      };
+    });
+
     return leads;
   } catch (error) {
     console.error('Erreur lors du parsing JSON:', error);
