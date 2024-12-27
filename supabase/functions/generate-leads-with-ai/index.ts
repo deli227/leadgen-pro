@@ -76,13 +76,16 @@ serve(async (req) => {
     }
 
     const result = await response.json()
-    console.log('Réponse Perplexity brute:', result)
+    console.log('Réponse Perplexity brute complète:', JSON.stringify(result, null, 2))
 
     try {
       const content = result.choices[0].message.content
-      console.log('Contenu de la réponse:', content)
+      console.log('Contenu brut de la réponse avant parsing:', content)
+      console.log('Type du contenu:', typeof content)
+      console.log('Longueur du contenu:', content.length)
+      
       const leads = parsePerplexityResponse(content)
-      console.log('Leads parsés:', leads)
+      console.log('Leads parsés avec succès:', leads)
       
       // Création du client Supabase
       const supabaseUrl = Deno.env.get('SUPABASE_URL')
