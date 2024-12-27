@@ -40,16 +40,16 @@ export function parsePerplexityResponse(content: string): Lead[] {
         currentLead.industry = extractValue(trimmedLine);
       }
       else if (trimmedLine.includes('linkedin')) {
-        if (!currentLead.social_media) {
-          currentLead.social_media = { linkedin: '', twitter: '' };
-        }
-        currentLead.social_media.linkedin = formatSocialUrl(extractValue(trimmedLine), 'linkedin');
+        currentLead.social_media = {
+          ...currentLead.social_media,
+          linkedin: formatSocialUrl(extractValue(trimmedLine), 'linkedin')
+        };
       }
       else if (trimmedLine.includes('twitter')) {
-        if (!currentLead.social_media) {
-          currentLead.social_media = { linkedin: '', twitter: '' };
-        }
-        currentLead.social_media.twitter = formatSocialUrl(extractValue(trimmedLine), 'twitter');
+        currentLead.social_media = {
+          ...currentLead.social_media,
+          twitter: formatSocialUrl(extractValue(trimmedLine), 'twitter')
+        };
       }
     } catch (error) {
       console.error('Erreur lors du parsing de la ligne:', trimmedLine, error);
