@@ -1,5 +1,4 @@
 import { Lead } from '../types';
-import { formatWebsite } from './formatters';
 
 export function initializeEmptyLead(): Partial<Lead> {
   return {
@@ -7,16 +6,11 @@ export function initializeEmptyLead(): Partial<Lead> {
     email: '',
     phone: '',
     website: '',
-    address: '',
     industry: '',
     social_media: {
       linkedin: '',
       twitter: ''
-    },
-    score: 0,
-    qualification: 0,
-    strengths: [],
-    weaknesses: []
+    }
   };
 }
 
@@ -24,24 +18,24 @@ export function formatLead(lead: Partial<Lead>): Lead {
   try {
     console.log('Formatting lead:', lead);
     
-    // Ensure social_media object exists with all required properties
+    // S'assurer que social_media existe avec les propriétés requises
     const social_media = {
       linkedin: lead.social_media?.linkedin || '',
       twitter: lead.social_media?.twitter || ''
     };
 
+    // Ne garder que les réseaux sociaux non vides
+    const filteredSocialMedia = Object.fromEntries(
+      Object.entries(social_media).filter(([_, value]) => value !== '')
+    );
+
     return {
       company: lead.company || '',
       email: lead.email || '',
       phone: lead.phone || '',
-      website: formatWebsite(lead.website || ''),
-      address: lead.address || '',
+      website: lead.website || '',
       industry: lead.industry || '',
-      score: Math.floor(Math.random() * 10) + 1,
-      qualification: Math.floor(Math.random() * 10) + 1,
-      social_media,
-      strengths: lead.strengths || [],
-      weaknesses: lead.weaknesses || []
+      social_media: Object.keys(filteredSocialMedia).length > 0 ? filteredSocialMedia : undefined
     };
   } catch (error) {
     console.error('Error formatting lead:', error);

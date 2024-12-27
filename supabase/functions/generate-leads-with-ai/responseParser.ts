@@ -1,7 +1,6 @@
 import { Lead, GenerateLeadsResponse } from './types';
 import { extractValue } from './utils/formatters';
 import { initializeEmptyLead, formatLead } from './utils/leadManager';
-import { formatWebsite, formatSocialUrl } from './utils/formatters';
 
 export function parsePerplexityResponse(content: string): Lead[] {
   console.log('Parsing response content:', content);
@@ -16,30 +15,15 @@ export function parsePerplexityResponse(content: string): Lead[] {
     if (!trimmedLine || trimmedLine.match(/^[.,\-\[\]{}()]*$/)) continue;
     
     try {
-      if (trimmedLine.includes('company') || trimmedLine.includes('entreprise') || trimmedLine.includes('société')) {
+      if (trimmedLine.includes('company') || trimmedLine.includes('entreprise')) {
         if (currentLead.company) {
           leads.push(formatLead(currentLead));
           currentLead = initializeEmptyLead();
         }
         currentLead.company = extractValue(trimmedLine);
       }
-      else if (trimmedLine.includes('email')) {
-        currentLead.email = extractValue(trimmedLine);
-      }
-      else if (trimmedLine.includes('phone') || trimmedLine.includes('téléphone')) {
-        currentLead.phone = extractValue(trimmedLine);
-      }
-      else if (trimmedLine.includes('website') || trimmedLine.includes('site')) {
-        currentLead.website = formatWebsite(extractValue(trimmedLine));
-      }
-      else if (trimmedLine.includes('address') || trimmedLine.includes('adresse')) {
-        currentLead.address = extractValue(trimmedLine);
-      }
-      else if (trimmedLine.includes('industry') || trimmedLine.includes('secteur')) {
-        currentLead.industry = extractValue(trimmedLine);
-      }
       else if (trimmedLine.includes('linkedin')) {
-        const linkedinUrl = formatSocialUrl(extractValue(trimmedLine), 'linkedin');
+        const linkedinUrl = extractValue(trimmedLine);
         if (linkedinUrl) {
           currentLead.social_media = {
             ...currentLead.social_media,
@@ -48,13 +32,26 @@ export function parsePerplexityResponse(content: string): Lead[] {
         }
       }
       else if (trimmedLine.includes('twitter')) {
-        const twitterUrl = formatSocialUrl(extractValue(trimmedLine), 'twitter');
+        const twitterUrl = extractValue(trimmedLine);
         if (twitterUrl) {
           currentLead.social_media = {
             ...currentLead.social_media,
             twitter: twitterUrl
           };
         }
+      }
+      // Autres champs basiques
+      else if (trimmedLine.includes('email')) {
+        currentLead.email = extractValue(trimmedLine);
+      }
+      else if (trimmedLine.includes('phone')) {
+        currentLead.phone = extractValue(trimmedLine);
+      }
+      else if (trimmedLine.includes('website')) {
+        currentLead.website = extractValue(trimmedLine);
+      }
+      else if (trimmedLine.includes('industry')) {
+        currentLead.industry = extractValue(trimmedLine);
       }
     } catch (error) {
       console.error('Erreur lors du parsing de la ligne:', trimmedLine, error);
@@ -71,27 +68,19 @@ export function parsePerplexityResponse(content: string): Lead[] {
 }
 
 export function formatResponse(leads: Lead[], filters: any): GenerateLeadsResponse {
-  try {
-    return {
-      success: true,
-      data: {
-        leads,
-        metadata: {
-          totalLeads: leads.length,
-          generatedAt: new Date().toISOString(),
-          searchCriteria: {
-            industry: filters.industry,
-            country: filters.country,
-            leadCount: filters.leadCount
-          }
+  return {
+    success: true,
+    data: {
+      leads,
+      metadata: {
+        totalLeads: leads.length,
+        generatedAt: new Date().toISOString(),
+        searchCriteria: {
+          industry: filters.industry,
+          country: filters.country,
+          leadCount: filters.leadCount
         }
       }
-    };
-  } catch (error) {
-    console.error('Erreur lors du formatage de la réponse:', error);
-    return {
-      success: false,
-      error: 'Erreur lors du formatage de la réponse'
-    };
-  }
+    }
+  };
 }
