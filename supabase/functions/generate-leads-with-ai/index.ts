@@ -48,7 +48,6 @@ const buildBasicSearchPrompt = (filters: any) => {
 }
 
 serve(async (req) => {
-  // Gestion des requêtes CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { 
       headers: corsHeaders
@@ -126,12 +125,39 @@ serve(async (req) => {
     let generatedLeads
     try {
       const content = result.choices[0].message.content
-      // Vérifie si la réponse commence par un crochet (tableau JSON)
       if (!content.trim().startsWith('[')) {
         throw new Error('Format de réponse invalide: la réponse doit être un tableau JSON')
       }
       generatedLeads = JSON.parse(content)
       console.log('Leads générés et parsés avec succès:', generatedLeads)
+
+      // Construction de la réponse au format demandé
+      const formattedResponse = {
+        success: true,
+        data: {
+          leads: generatedLeads,
+          metadata: {
+            totalLeads: generatedLeads.length,
+            generatedAt: new Date().toISOString(),
+            searchCriteria: {
+              industry: filters.industry,
+              country: filters.country,
+              leadCount: filters.leadCount
+            }
+          }
+        }
+      }
+
+      return new Response(
+        JSON.stringify(formattedResponse),
+        { 
+          headers: { 
+            ...corsHeaders,
+            'Content-Type': 'application/json'
+          }
+        }
+      )
+
     } catch (error) {
       console.error('Erreur lors du parsing de la réponse:', error)
       return new Response(
@@ -148,19 +174,6 @@ serve(async (req) => {
         }
       )
     }
-
-    return new Response(
-      JSON.stringify({ 
-        success: true, 
-        data: generatedLeads 
-      }),
-      { 
-        headers: { 
-          ...corsHeaders,
-          'Content-Type': 'application/json'
-        }
-      }
-    )
 
   } catch (error) {
     console.error('Erreur:', error)
