@@ -99,11 +99,11 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProp
           )}
         </div>
 
-        {lead.socialMedia && (
+        {lead.social_media && (
           <div className="pt-3 border-t border-primary/10 flex gap-3">
-            {lead.socialMedia.linkedin && (
+            {lead.social_media.linkedin && (
               <a 
-                href={lead.socialMedia.linkedin}
+                href={lead.social_media.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary-light/70 hover:text-primary transition-colors"
@@ -112,9 +112,9 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProp
                 <Linkedin className="h-4 w-4" />
               </a>
             )}
-            {lead.socialMedia.twitter && (
+            {lead.social_media.twitter && (
               <a 
-                href={lead.socialMedia.twitter}
+                href={lead.social_media.twitter}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary-light/70 hover:text-primary transition-colors"
@@ -123,9 +123,9 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProp
                 <Twitter className="h-4 w-4" />
               </a>
             )}
-            {lead.socialMedia.facebook && (
+            {lead.social_media.facebook && (
               <a 
-                href={lead.socialMedia.facebook}
+                href={lead.social_media.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary-light/70 hover:text-primary transition-colors"
@@ -134,9 +134,9 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProp
                 <Facebook className="h-4 w-4" />
               </a>
             )}
-            {lead.socialMedia.instagram && (
+            {lead.social_media.instagram && (
               <a 
-                href={lead.socialMedia.instagram}
+                href={lead.social_media.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary-light/70 hover:text-primary transition-colors"
