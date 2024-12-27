@@ -6,7 +6,7 @@ export function parsePerplexityResponse(content: string): Lead[] {
   const lines = content.split('\n');
   const leads: Lead[] = [];
   let currentLead: Partial<Lead> = {
-    social_media: { linkedin: '', twitter: '' }
+    social_media: { linkedin: '', twitter: '', facebook: '', instagram: '' }
   };
   
   for (const line of lines) {
@@ -19,7 +19,7 @@ export function parsePerplexityResponse(content: string): Lead[] {
         if (currentLead.company) {
           leads.push(formatLead(currentLead));
           currentLead = {
-            social_media: { linkedin: '', twitter: '' }
+            social_media: { linkedin: '', twitter: '', facebook: '', instagram: '' }
           };
         }
         currentLead.company = extractValue(trimmedLine);
@@ -40,16 +40,40 @@ export function parsePerplexityResponse(content: string): Lead[] {
         currentLead.industry = extractValue(trimmedLine);
       }
       else if (trimmedLine.includes('linkedin')) {
-        currentLead.social_media = {
-          ...currentLead.social_media,
-          linkedin: formatSocialUrl(extractValue(trimmedLine), 'linkedin')
-        };
+        const linkedinUrl = formatSocialUrl(extractValue(trimmedLine), 'linkedin');
+        if (linkedinUrl) {
+          currentLead.social_media = {
+            ...currentLead.social_media,
+            linkedin: linkedinUrl
+          };
+        }
       }
       else if (trimmedLine.includes('twitter')) {
-        currentLead.social_media = {
-          ...currentLead.social_media,
-          twitter: formatSocialUrl(extractValue(trimmedLine), 'twitter')
-        };
+        const twitterUrl = formatSocialUrl(extractValue(trimmedLine), 'twitter');
+        if (twitterUrl) {
+          currentLead.social_media = {
+            ...currentLead.social_media,
+            twitter: twitterUrl
+          };
+        }
+      }
+      else if (trimmedLine.includes('facebook')) {
+        const facebookUrl = formatSocialUrl(extractValue(trimmedLine), 'facebook');
+        if (facebookUrl) {
+          currentLead.social_media = {
+            ...currentLead.social_media,
+            facebook: facebookUrl
+          };
+        }
+      }
+      else if (trimmedLine.includes('instagram')) {
+        const instagramUrl = formatSocialUrl(extractValue(trimmedLine), 'instagram');
+        if (instagramUrl) {
+          currentLead.social_media = {
+            ...currentLead.social_media,
+            instagram: instagramUrl
+          };
+        }
       }
     } catch (error) {
       console.error('Erreur lors du parsing de la ligne:', trimmedLine, error);
@@ -108,6 +132,10 @@ function formatSocialUrl(url: string, platform: string): string {
         return `https://linkedin.com/in/${url}`;
       case 'twitter':
         return `https://twitter.com/${url}`;
+      case 'facebook':
+        return `https://facebook.com/${url}`;
+      case 'instagram':
+        return `https://instagram.com/${url}`;
       default:
         return `https://${url}`;
     }
@@ -129,7 +157,9 @@ function formatLead(lead: Partial<Lead>): Lead {
       score: Math.floor(Math.random() * 10) + 1,
       social_media: {
         linkedin: lead.social_media?.linkedin || '',
-        twitter: lead.social_media?.twitter || ''
+        twitter: lead.social_media?.twitter || '',
+        facebook: lead.social_media?.facebook || '',
+        instagram: lead.social_media?.instagram || ''
       }
     };
   } catch (error) {
@@ -142,7 +172,7 @@ function formatLead(lead: Partial<Lead>): Lead {
       address: '',
       industry: '',
       score: 1,
-      social_media: { linkedin: '', twitter: '' }
+      social_media: { linkedin: '', twitter: '', facebook: '', instagram: '' }
     };
   }
 }
