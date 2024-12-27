@@ -43,10 +43,11 @@ export function buildPrompt(filters: Filters): string {
 - Renvoie UNIQUEMENT le tableau JSON, sans texte avant ni après
 - Utilise TOUJOURS des guillemets doubles pour les noms de propriétés et les valeurs textuelles
 - Le score doit être un nombre entre 1 et 10
-- Tous les URLs doivent être des URLs valides commençant par "http://" ou "https://"
+- Tous les URLs doivent être des URLs valides commençant par "https://"
 - Les numéros de téléphone doivent être au format international ("+33...")
 - Chaque propriété doit être entourée de guillemets doubles
-- Vérifie que le JSON est valide avant de le renvoyer`;
+- Vérifie que le JSON est valide avant de le renvoyer
+- Les valeurs numériques comme "score" ne doivent PAS avoir de guillemets`;
 
   return prompt;
 }

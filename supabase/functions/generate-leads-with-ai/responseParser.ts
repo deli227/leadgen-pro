@@ -55,6 +55,29 @@ function validateAndFormatLeads(leads: any[]): Lead[] {
       lead.company = `Entreprise ${index + 1}`;
     }
 
+    // S'assurer que toutes les propriétés textuelles sont des chaînes
+    const textProperties = ['email', 'phone', 'website', 'address', 'industry'];
+    textProperties.forEach(prop => {
+      if (lead[prop] && typeof lead[prop] !== 'string') {
+        lead[prop] = String(lead[prop]);
+      }
+    });
+
+    // Valider et formater les URLs
+    if (lead.website && !lead.website.startsWith('https://')) {
+      lead.website = `https://${lead.website.replace(/^https?:\/\//, '')}`;
+    }
+
+    // Valider le format des réseaux sociaux
+    if (lead.socialMedia) {
+      const socialMediaProperties = ['linkedin', 'twitter', 'facebook', 'instagram'];
+      socialMediaProperties.forEach(prop => {
+        if (lead.socialMedia[prop] && !lead.socialMedia[prop].startsWith('https://')) {
+          lead.socialMedia[prop] = `https://${lead.socialMedia[prop].replace(/^https?:\/\//, '')}`;
+        }
+      });
+    }
+
     return {
       company: lead.company,
       email: lead.email || '',
