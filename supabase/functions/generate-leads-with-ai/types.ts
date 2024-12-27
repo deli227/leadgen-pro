@@ -1,5 +1,5 @@
 export interface Filters {
-  search: string
+  search?: string
   leadCount: number
   industry: string
   country: string
