@@ -29,6 +29,11 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProp
     }
   };
 
+  const formatSocialUrl = (url: string) => {
+    if (!url) return '';
+    return url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -93,7 +98,7 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProp
                 rel="noopener noreferrer" 
                 className="text-sm hover:underline line-clamp-1"
               >
-                {lead.website.replace('https://', '')}
+                {formatSocialUrl(lead.website)}
               </a>
             </div>
           )}
@@ -106,10 +111,13 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProp
                 href={lead.social_media.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary-light/70 hover:text-primary transition-colors"
-                title="LinkedIn"
+                className="text-primary-light/70 hover:text-primary transition-colors group relative"
+                title={formatSocialUrl(lead.social_media.linkedin)}
               >
                 <Linkedin className="h-4 w-4" />
+                <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs opacity-0 group-hover:opacity-100 whitespace-nowrap">
+                  {formatSocialUrl(lead.social_media.linkedin)}
+                </span>
               </a>
             )}
             {lead.social_media.twitter && (
@@ -117,10 +125,13 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProp
                 href={lead.social_media.twitter}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary-light/70 hover:text-primary transition-colors"
-                title="X (Twitter)"
+                className="text-primary-light/70 hover:text-primary transition-colors group relative"
+                title={formatSocialUrl(lead.social_media.twitter)}
               >
                 <Twitter className="h-4 w-4" />
+                <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs opacity-0 group-hover:opacity-100 whitespace-nowrap">
+                  {formatSocialUrl(lead.social_media.twitter)}
+                </span>
               </a>
             )}
             {lead.social_media.facebook && (
@@ -128,10 +139,13 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProp
                 href={lead.social_media.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary-light/70 hover:text-primary transition-colors"
-                title="Facebook"
+                className="text-primary-light/70 hover:text-primary transition-colors group relative"
+                title={formatSocialUrl(lead.social_media.facebook)}
               >
                 <Facebook className="h-4 w-4" />
+                <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs opacity-0 group-hover:opacity-100 whitespace-nowrap">
+                  {formatSocialUrl(lead.social_media.facebook)}
+                </span>
               </a>
             )}
             {lead.social_media.instagram && (
@@ -139,10 +153,13 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProp
                 href={lead.social_media.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary-light/70 hover:text-primary transition-colors"
-                title="Instagram"
+                className="text-primary-light/70 hover:text-primary transition-colors group relative"
+                title={formatSocialUrl(lead.social_media.instagram)}
               >
                 <Instagram className="h-4 w-4" />
+                <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs opacity-0 group-hover:opacity-100 whitespace-nowrap">
+                  {formatSocialUrl(lead.social_media.instagram)}
+                </span>
               </a>
             )}
           </div>
