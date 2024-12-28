@@ -1,72 +1,130 @@
-import { Book, Search, BarChart, Download, Settings, Shield, Mail } from "lucide-react";
+import { Search, Brain, FileDown, Target, Filter, Database, ArrowRight, Plus, ChartBar } from "lucide-react";
 import { motion } from "framer-motion";
+import { Button } from "./ui/button";
+import { ScrollArea } from "./ui/scroll-area";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 export const DocumentationSection = () => {
-  const docs = [
+  const sections = [
+    {
+      icon: Filter,
+      title: "Filtrage et Génération de Leads",
+      description: "Découvrez comment générer et filtrer vos leads efficacement",
+      steps: [
+        {
+          title: "Accéder aux filtres",
+          content: [
+            "Rendez-vous dans l'onglet 'Filtres' du tableau de bord",
+            "Définissez vos critères : pays, ville, secteur d'activité",
+            "Ajustez le nombre de leads souhaités avec le curseur",
+          ]
+        },
+        {
+          title: "Générer des leads",
+          content: [
+            "Cliquez sur 'Générer des leads' pour lancer la recherche",
+            "Notre IA analyse et qualifie automatiquement chaque lead",
+            "Les leads générés apparaissent dans votre tableau de bord",
+          ]
+        },
+        {
+          title: "Filtrer les résultats",
+          content: [
+            "Utilisez la barre de recherche pour filtrer par nom d'entreprise",
+            "Filtrez par score de qualification (1-10)",
+            "Triez par date, pertinence ou score",
+          ]
+        }
+      ]
+    },
+    {
+      icon: Brain,
+      title: "Analyse Approfondie des Leads",
+      description: "Analysez en détail chaque lead avec notre IA",
+      steps: [
+        {
+          title: "Lancer une analyse",
+          content: [
+            "Sélectionnez un lead dans votre liste",
+            "Cliquez sur le bouton 'Analyser' avec l'icône cerveau",
+            "Le lead est ajouté à l'onglet 'Analytique'",
+          ]
+        },
+        {
+          title: "Consulter l'analyse",
+          content: [
+            "Accédez à l'onglet 'Analytique'",
+            "Retrouvez une analyse détaillée : forces, faiblesses, opportunités",
+            "Visualisez le score de qualification et les recommandations personnalisées",
+          ]
+        },
+        {
+          title: "Utiliser les insights",
+          content: [
+            "Exploitez les recommandations stratégiques",
+            "Identifiez les meilleurs angles d'approche",
+            "Optimisez votre stratégie commerciale",
+          ]
+        }
+      ]
+    },
     {
       icon: Search,
-      title: "Recherche de leads",
-      description: "Apprenez à utiliser notre moteur de recherche IA pour trouver les meilleurs prospects.",
+      title: "Recherche d'Entreprise Spécifique",
+      description: "Recherchez et analysez une entreprise précise",
       steps: [
-        "Définissez vos critères de recherche (localisation, industrie)",
-        "Ajustez le nombre de leads souhaités",
-        "Lancez la recherche et attendez les résultats",
-        "Consultez la liste des leads générés"
+        {
+          title: "Effectuer une recherche",
+          content: [
+            "Accédez à l'onglet 'Recherche'",
+            "Entrez le nom de l'entreprise recherchée",
+            "Précisez la localisation si nécessaire",
+          ]
+        },
+        {
+          title: "Analyser les résultats",
+          content: [
+            "Examinez les informations trouvées",
+            "Cliquez sur 'Ajouter aux analyses' pour une étude approfondie",
+            "Retrouvez l'entreprise dans l'onglet 'Analytique'",
+          ]
+        }
       ]
     },
     {
-      icon: BarChart,
-      title: "Analyse des leads",
-      description: "Découvrez comment analyser et qualifier vos leads efficacement.",
+      icon: FileDown,
+      title: "Export des Leads",
+      description: "Exportez vos leads qualifiés dans différents formats",
       steps: [
-        "Consultez le score de qualification",
-        "Examinez l'analyse détaillée",
-        "Identifiez les points forts et faibles",
-        "Utilisez les recommandations personnalisées"
-      ]
-    },
-    {
-      icon: Download,
-      title: "Export et gestion",
-      description: "Gérez vos leads et exportez-les dans différents formats.",
-      steps: [
-        "Sélectionnez les leads à exporter",
-        "Choisissez le format d'export (PDF, CSV)",
-        "Téléchargez vos données",
-        "Importez dans votre CRM"
-      ]
-    },
-    {
-      icon: Mail,
-      title: "Automatisation emails",
-      description: "Configurez des séquences d'emails automatisées.",
-      steps: [
-        "Créez un nouveau modèle d'email",
-        "Définissez les critères de déclenchement",
-        "Personnalisez le contenu",
-        "Activez l'automatisation"
-      ]
-    },
-    {
-      icon: Settings,
-      title: "Configuration du compte",
-      description: "Personnalisez votre compte et vos préférences.",
-      steps: [
-        "Mettez à jour votre profil",
-        "Gérez votre abonnement",
-        "Configurez les notifications",
-        "Personnalisez l'interface"
-      ]
-    },
-    {
-      icon: Shield,
-      title: "Sécurité et confidentialité",
-      description: "Protégez vos données et gérez vos paramètres de confidentialité.",
-      steps: [
-        "Activez l'authentification à deux facteurs",
-        "Gérez les accès",
-        "Consultez l'historique de connexion",
-        "Configurez la sauvegarde des données"
+        {
+          title: "Sélectionner les leads",
+          content: [
+            "Choisissez les leads à exporter depuis votre tableau de bord",
+            "Cliquez sur 'Ajouter à l'export' pour chaque lead",
+            "Accédez à l'onglet 'Export'",
+          ]
+        },
+        {
+          title: "Choisir le format",
+          content: [
+            "Sélectionnez le format d'export souhaité (CSV, PDF)",
+            "Personnalisez les champs à inclure",
+            "Cliquez sur 'Télécharger' pour obtenir votre fichier",
+          ]
+        },
+        {
+          title: "Intégration CRM",
+          content: [
+            "Importez facilement les données dans votre CRM",
+            "Format compatible avec les principaux CRM du marché",
+            "Conservez toutes les informations importantes",
+          ]
+        }
       ]
     }
   ];
@@ -81,41 +139,57 @@ export const DocumentationSection = () => {
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-4xl font-bold mb-6 bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
-            Documentation Utilisateur
+            Guide d'Utilisation LeadGen Pro
           </h2>
-          <p className="text-gray-300 text-lg max-w-2xl mx-auto">
-            Tout ce dont vous avez besoin pour maîtriser LeadGen Pro et optimiser votre prospection commerciale.
+          <p className="text-gray-300 text-lg max-w-3xl mx-auto">
+            Découvrez comment utiliser efficacement LeadGen Pro pour optimiser votre prospection commerciale.
+            Suivez ce guide étape par étape pour maîtriser toutes les fonctionnalités.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {docs.map((doc, index) => (
+        <div className="grid grid-cols-1 gap-8 max-w-4xl mx-auto">
+          {sections.map((section, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="bg-secondary-dark/50 rounded-xl p-6 border border-primary/10 hover:border-primary/30 transition-all duration-300 group"
+              className="bg-secondary-dark/50 rounded-xl p-6 border border-primary/10 hover:border-primary/30 transition-all duration-300"
             >
               <div className="flex items-center gap-4 mb-4">
                 <div className="p-3 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
-                  <doc.icon className="w-6 h-6 text-primary" />
+                  <section.icon className="w-6 h-6 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold text-white">{doc.title}</h3>
+                <div>
+                  <h3 className="text-xl font-semibold text-white">{section.title}</h3>
+                  <p className="text-gray-400">{section.description}</p>
+                </div>
               </div>
-              
-              <p className="text-gray-300 mb-6">{doc.description}</p>
-              
-              <div className="space-y-3">
-                {doc.steps.map((step, stepIndex) => (
-                  <div key={stepIndex} className="flex items-start gap-2">
-                    <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <span className="text-primary text-sm">{stepIndex + 1}</span>
-                    </div>
-                    <p className="text-sm text-gray-300">{step}</p>
-                  </div>
+
+              <Accordion type="single" collapsible className="w-full">
+                {section.steps.map((step, stepIndex) => (
+                  <AccordionItem key={stepIndex} value={`step-${stepIndex}`}>
+                    <AccordionTrigger className="text-primary-light hover:text-primary">
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <span className="text-primary text-sm">{stepIndex + 1}</span>
+                        </div>
+                        {step.title}
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <ul className="space-y-2 pl-8">
+                        {step.content.map((item, itemIndex) => (
+                          <li key={itemIndex} className="flex items-start gap-2 text-gray-300">
+                            <ArrowRight className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </AccordionContent>
+                  </AccordionItem>
                 ))}
-              </div>
+              </Accordion>
             </motion.div>
           ))}
         </div>
@@ -126,10 +200,13 @@ export const DocumentationSection = () => {
           transition={{ duration: 0.6, delay: 0.6 }}
           className="mt-16 text-center"
         >
-          <div className="inline-flex items-center gap-2 text-primary hover:text-primary-light transition-colors cursor-pointer group">
-            <Book className="w-5 h-5" />
-            <span>Accéder à la documentation complète</span>
-          </div>
+          <Button
+            variant="outline"
+            className="bg-primary/10 hover:bg-primary/20 text-primary-light border-primary/30"
+          >
+            <Target className="w-4 h-4 mr-2" />
+            Commencer à générer des leads
+          </Button>
         </motion.div>
       </div>
     </section>
