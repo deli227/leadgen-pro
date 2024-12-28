@@ -41,7 +41,7 @@ export function Auth() {
       } else if (event === 'USER_UPDATED') {
         toast.success("Profil mis à jour avec succès");
         navigate("/dashboard");
-      } else if (event === 'RESET_PASSWORD_EMAIL_SENT') {
+      } else if (event === 'PASSWORD_RESET') {
         toast.info("Email de réinitialisation envoyé");
       }
     });
