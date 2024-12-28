@@ -3,15 +3,12 @@ import { LeadActions } from "../LeadActions"
 import { FilterLeadActions } from "../filters/FilterLeadActions"
 import { LeadScoreDisplay } from "../LeadScoreDisplay"
 import { Mail, MapPin, Phone, Globe, Facebook, Linkedin, Twitter, Instagram } from "lucide-react"
-import { supabase } from "@/integrations/supabase/client"
-import { toast } from "sonner"
 
 interface LeadCardProps {
   lead: Lead
   onAddToAnalytics?: (lead: Lead) => void
   onAddToExport?: (lead: Lead) => void
-  onDelete?: (lead: Lead) => void
-  onLeadDeleted?: () => Promise<void>
+  onDelete?: () => void
   showActions?: boolean
   filterView?: boolean
 }
@@ -21,35 +18,9 @@ export function LeadCard({
   onAddToAnalytics,
   onAddToExport,
   onDelete,
-  onLeadDeleted,
   showActions = true,
   filterView = false
 }: LeadCardProps) {
-  const handleDelete = async () => {
-    try {
-      const { error } = await supabase
-        .from('leads')
-        .delete()
-        .eq('id', lead.id)
-
-      if (error) {
-        console.error('Erreur lors de la suppression:', error)
-        toast.error("Erreur lors de la suppression", {
-          description: error.message
-        })
-        return
-      }
-
-      toast.success("Lead supprimé avec succès")
-      if (onDelete) {
-        onDelete(lead)
-      }
-    } catch (error: any) {
-      console.error('Erreur:', error)
-      toast.error("Une erreur est survenue")
-    }
-  }
-
   const renderSocialLink = (url: string | undefined, Icon: any, platform: string) => {
     if (!url) return null;
     
@@ -140,14 +111,14 @@ export function LeadCard({
             <FilterLeadActions
               lead={lead}
               onAnalyze={onAddToAnalytics}
-              onDelete={handleDelete}
+              onDelete={onDelete}
             />
           ) : (
             <LeadActions
               lead={lead}
               onAnalyze={onAddToAnalytics}
               onAddToExport={onAddToExport}
-              onDelete={handleDelete}
+              onDelete={onDelete}
             />
           )
         )}

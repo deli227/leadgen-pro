@@ -82,10 +82,19 @@ export function FiltersTabContent({
 
   const handleDelete = async (lead: Lead) => {
     try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        toast.error("Erreur d'authentification", {
+          description: "Veuillez vous reconnecter pour supprimer ce lead."
+        })
+        return
+      }
+
       const { error } = await supabase
         .from('leads')
         .delete()
         .eq('id', lead.id)
+        .eq('user_id', session.user.id)
 
       if (error) {
         console.error('Erreur lors de la suppression:', error)

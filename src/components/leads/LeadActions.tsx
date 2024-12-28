@@ -6,7 +6,7 @@ interface LeadActionsProps {
   lead: Lead
   onAnalyze: (lead: Lead) => void
   onAddToExport?: (lead: Lead) => void
-  onDelete: () => void
+  onDelete?: () => void
 }
 
 export function LeadActions({ lead, onAnalyze, onAddToExport, onDelete }: LeadActionsProps) {
@@ -34,15 +34,17 @@ export function LeadActions({ lead, onAnalyze, onAddToExport, onDelete }: LeadAc
         </Button>
       )}
 
-      <Button
-        onClick={onDelete}
-        variant="outline"
-        size="sm"
-        className="flex-1 sm:flex-none bg-gradient-to-r from-red-500 to-red-600 text-white border-none hover:opacity-90 text-xs sm:text-sm"
-      >
-        <Trash2 className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-        Supprimer
-      </Button>
+      {onDelete && (
+        <Button
+          onClick={onDelete}
+          variant="outline"
+          size="sm"
+          className="flex-1 sm:flex-none bg-gradient-to-r from-red-500 to-red-600 text-white border-none hover:opacity-90 text-xs sm:text-sm"
+        >
+          <Trash2 className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+          Supprimer
+        </Button>
+      )}
     </div>
   )
 }
