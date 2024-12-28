@@ -16,15 +16,18 @@ interface FiltersTabContentProps {
   setFilters: (filters: LeadFilters) => void
   leads: Lead[]
   onAddToAnalytics: (lead: Lead) => void
+  onLocalRemove?: (leadId: string) => void
 }
 
 export function FiltersTabContent({ 
   filters, 
   setFilters, 
   leads, 
-  onAddToAnalytics 
+  onAddToAnalytics,
+  onLocalRemove
 }: FiltersTabContentProps) {
   const [isGenerating, setIsGenerating] = useState(false)
+  const [removedLeads, setRemovedLeads] = useState<string[]>([])
 
   const handleGenerateLeads = async () => {
     try {
@@ -78,6 +81,18 @@ export function FiltersTabContent({
     }
   }
 
+  const handleDelete = (lead: Lead) => {
+    setRemovedLeads(prev => [...prev, lead.id])
+    if (onLocalRemove) {
+      onLocalRemove(lead.id)
+    }
+    toast.success("Lead supprimé", {
+      description: "Le lead a été retiré de la liste"
+    })
+  }
+
+  const filteredLeads = leads.filter(lead => !removedLeads.includes(lead.id))
+
   return (
     <div className="space-y-6 bg-gradient-to-br from-black/80 to-secondary-dark/80 p-8 rounded-b-xl border border-primary/10 shadow-xl">
       <motion.div 
@@ -122,8 +137,9 @@ export function FiltersTabContent({
       />
 
       <LeadsList 
-        leads={leads} 
+        leads={filteredLeads} 
         onAddToAnalytics={onAddToAnalytics}
+        onDelete={handleDelete}
         showActions={true}
         filterView={true}
       />

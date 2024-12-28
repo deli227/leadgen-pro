@@ -113,6 +113,7 @@ export function LeadCard({
             <FilterLeadActions
               lead={lead}
               onAnalyze={onAddToAnalytics}
+              onDelete={onDelete}
             />
           ) : (
             <LeadActions
