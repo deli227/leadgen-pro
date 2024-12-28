@@ -8,6 +8,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
 import jsPDF from 'jspdf'
+import { supabase } from "@/integrations/supabase/client"
 
 interface LeadsExportProps {
   leads: any[]
@@ -69,7 +70,7 @@ export function LeadsExport({ leads }: LeadsExportProps) {
     })
   }
 
-  const exportToPDF = () => {
+  const exportToPDF = async () => {
     if (leads.length === 0) {
       toast({
         variant: "destructive",
@@ -81,31 +82,159 @@ export function LeadsExport({ leads }: LeadsExportProps) {
 
     try {
       const pdf = new jsPDF()
+      let yPosition = 15
+      const pageHeight = pdf.internal.pageSize.height
       
-      // Add title
-      pdf.setFontSize(16)
-      pdf.text("Liste des Leads", 14, 15)
-      
-      // Add headers
-      pdf.setFontSize(12)
-      const headers = ["Entreprise", "Email", "Téléphone", "Score", "Secteur"]
-      pdf.text(headers.join("   "), 14, 25)
-      
-      // Add content
-      pdf.setFontSize(10)
-      leads.forEach((lead, index) => {
-        const y = 35 + (index * 10)
-        const row = [
-          lead.company,
-          lead.email,
-          lead.phone,
-          lead.score,
-          lead.industry
-        ]
-        pdf.text(row.join("   "), 14, y)
-      })
-      
-      pdf.save("leads.pdf")
+      for (const lead of leads) {
+        // En-tête du lead avec le logo et les informations principales
+        pdf.setFontSize(20)
+        pdf.setTextColor(66, 66, 66)
+        pdf.text(lead.company, 14, yPosition)
+        yPosition += 10
+
+        // Informations de contact
+        pdf.setFontSize(12)
+        pdf.setTextColor(100, 100, 100)
+        if (lead.email) {
+          pdf.text(`Email: ${lead.email}`, 14, yPosition)
+          yPosition += 7
+        }
+        if (lead.phone) {
+          pdf.text(`Téléphone: ${lead.phone}`, 14, yPosition)
+          yPosition += 7
+        }
+        if (lead.address) {
+          pdf.text(`Adresse: ${lead.address}`, 14, yPosition)
+          yPosition += 7
+        }
+        if (lead.website) {
+          pdf.text(`Site web: ${lead.website}`, 14, yPosition)
+          yPosition += 7
+        }
+
+        // Score et industrie
+        pdf.setFontSize(14)
+        pdf.setTextColor(155, 135, 245) // Couleur primary
+        pdf.text(`Score: ${lead.score}/10`, 14, yPosition)
+        yPosition += 7
+        pdf.text(`Secteur: ${lead.industry}`, 14, yPosition)
+        yPosition += 10
+
+        // Réseaux sociaux
+        if (lead.socialMedia) {
+          pdf.setFontSize(14)
+          pdf.setTextColor(66, 66, 66)
+          pdf.text("Réseaux sociaux", 14, yPosition)
+          yPosition += 7
+          pdf.setFontSize(12)
+          pdf.setTextColor(100, 100, 100)
+          
+          Object.entries(lead.socialMedia).forEach(([platform, url]) => {
+            if (url) {
+              pdf.text(`${platform}: ${url}`, 14, yPosition)
+              yPosition += 7
+            }
+          })
+          yPosition += 3
+        }
+
+        // Récupérer l'analyse IA si elle existe
+        const { data: analysis } = await supabase
+          .from('lead_analyses')
+          .select('*')
+          .eq('lead_id', lead.id)
+          .single()
+
+        if (analysis) {
+          // Nouvelle page pour l'analyse IA
+          pdf.addPage()
+          yPosition = 15
+
+          pdf.setFontSize(18)
+          pdf.setTextColor(66, 66, 66)
+          pdf.text("Analyse IA", 14, yPosition)
+          yPosition += 10
+
+          // Analyse de l'entreprise
+          if (analysis.company_analysis) {
+            pdf.setFontSize(14)
+            pdf.setTextColor(155, 135, 245)
+            pdf.text("Analyse de l'entreprise", 14, yPosition)
+            yPosition += 7
+            
+            pdf.setFontSize(12)
+            pdf.setTextColor(100, 100, 100)
+            Object.entries(analysis.company_analysis).forEach(([key, value]) => {
+              if (value && yPosition < pageHeight - 20) {
+                pdf.text(`${key}: ${value}`, 14, yPosition)
+                yPosition += 7
+              }
+            })
+            yPosition += 5
+          }
+
+          // Analyse technologique
+          if (analysis.tech_analysis) {
+            if (yPosition > pageHeight - 40) {
+              pdf.addPage()
+              yPosition = 15
+            }
+            
+            pdf.setFontSize(14)
+            pdf.setTextColor(155, 135, 245)
+            pdf.text("Analyse technologique", 14, yPosition)
+            yPosition += 7
+            
+            pdf.setFontSize(12)
+            pdf.setTextColor(100, 100, 100)
+            Object.entries(analysis.tech_analysis).forEach(([key, value]) => {
+              if (value && yPosition < pageHeight - 20) {
+                if (Array.isArray(value)) {
+                  pdf.text(`${key}: ${value.join(", ")}`, 14, yPosition)
+                } else {
+                  pdf.text(`${key}: ${value}`, 14, yPosition)
+                }
+                yPosition += 7
+              }
+            })
+            yPosition += 5
+          }
+
+          // Plan d'action
+          if (analysis.action_plan) {
+            if (yPosition > pageHeight - 40) {
+              pdf.addPage()
+              yPosition = 15
+            }
+            
+            pdf.setFontSize(14)
+            pdf.setTextColor(155, 135, 245)
+            pdf.text("Plan d'action", 14, yPosition)
+            yPosition += 7
+            
+            pdf.setFontSize(12)
+            pdf.setTextColor(100, 100, 100)
+            if (analysis.action_plan.steps) {
+              pdf.text("Étapes :", 14, yPosition)
+              yPosition += 7
+              analysis.action_plan.steps.forEach((step: string) => {
+                if (yPosition < pageHeight - 20) {
+                  pdf.text(`• ${step}`, 20, yPosition)
+                  yPosition += 7
+                }
+              })
+            }
+          }
+        }
+
+        // Ajouter une nouvelle page pour le prochain lead
+        if (lead !== leads[leads.length - 1]) {
+          pdf.addPage()
+          yPosition = 15
+        }
+      }
+
+      pdf.save("leads-export.pdf")
       
       toast({
         title: "Export réussi",
