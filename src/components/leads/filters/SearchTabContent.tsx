@@ -30,30 +30,23 @@ export function SearchTabContent({ filters, setFilters }: SearchTabContentProps)
     console.log("Envoi de la requête de recherche avec les filtres:", filters)
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/search-company`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      const { data: functionData, error: functionError } = await supabase.functions.invoke('search-company', {
+        body: {
           search: filters.search,
           country: filters.country,
           city: filters.city
-        })
+        }
       })
 
-      if (!response.ok) {
-        throw new Error(`Erreur HTTP: ${response.status}`)
+      if (functionError) {
+        throw new Error(`Erreur lors de la recherche: ${functionError.message}`)
       }
 
-      const { data, success } = await response.json()
-      
-      if (!success) {
+      if (!functionData.success) {
         throw new Error("Échec de la recherche d'entreprise")
       }
 
-      const companyData = JSON.parse(data)
+      const companyData = JSON.parse(functionData.data)
       console.log("Données de l'entreprise:", companyData)
 
       // Insérer le lead dans la base de données
@@ -80,7 +73,7 @@ export function SearchTabContent({ filters, setFilters }: SearchTabContentProps)
       setFilters({ ...filters, search: "" })
 
     } catch (error) {
-      console.error("Erreur lors de la sauvegarde:", error)
+      console.error("Erreur lors de la recherche:", error)
       toast.error("Une erreur est survenue lors de la recherche")
     } finally {
       setIsSearching(false)
