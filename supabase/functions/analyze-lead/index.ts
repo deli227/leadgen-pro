@@ -97,7 +97,7 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'Tu es un expert en analyse d\'entreprises. Fournis une analyse détaillée et professionnelle au format JSON demandé.'
+            content: 'Tu es un expert en analyse d\'entreprises. Fournis une analyse détaillée et professionnelle au format JSON demandé. Réponds uniquement avec le JSON, sans aucun texte avant ou après, ni formatage markdown.'
           },
           {
             role: 'user',
@@ -117,12 +117,20 @@ serve(async (req) => {
     const result = await response.json()
     console.log('Réponse Perplexity reçue')
 
+    // Nettoyer la réponse de tout formatage Markdown
+    const cleanContent = result.choices[0].message.content
+      .replace(/```json\n?/g, '')  // Enlever ```json
+      .replace(/```\n?/g, '')      // Enlever ```
+      .trim()                      // Enlever les espaces
+
     // S'assurer que la réponse est bien au format JSON
     let analysis
     try {
-      analysis = JSON.parse(result.choices[0].message.content)
+      analysis = JSON.parse(cleanContent)
+      console.log('Analyse parsée avec succès:', analysis)
     } catch (error) {
       console.error('Erreur lors du parsing JSON:', error)
+      console.error('Contenu reçu:', cleanContent)
       throw new Error('Format de réponse invalide de Perplexity')
     }
 
