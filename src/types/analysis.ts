@@ -42,6 +42,32 @@ export interface LeadAnalysis {
     sales_arguments: string[]
     optimal_timing: string
     required_resources: string[]
+    improvement_solutions: {
+      tech_solutions: Array<{
+        weakness: string
+        concrete_solution: string
+        implementation_steps: string[]
+        expected_benefits: string[]
+        estimated_cost: string
+        implementation_timeline: string
+      }>
+      marketing_solutions: Array<{
+        weakness: string
+        concrete_solution: string
+        implementation_steps: string[]
+        expected_benefits: string[]
+        estimated_cost: string
+        implementation_timeline: string
+      }>
+      business_solutions: Array<{
+        weakness: string
+        concrete_solution: string
+        implementation_steps: string[]
+        expected_benefits: string[]
+        estimated_cost: string
+        implementation_timeline: string
+      }>
+    }
   }
   action_plan: {
     steps: string[]
