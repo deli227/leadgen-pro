@@ -5,15 +5,15 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-const buildBasicSearchPrompt = (filters: any) => {
+const buildSimplePrompt = (filters: any) => {
   const leadCount = Math.min(Math.max(filters.leadCount, 1), 50);
-
-  let prompt = `Je recherche EXACTEMENT ${leadCount} entreprises différentes`;
+  
+  let prompt = `Je recherche ${leadCount} entreprises`;
   
   if (filters.country !== 'all') {
     prompt += ` en ${filters.country}`;
     if (filters.city !== 'all') {
-      prompt += `, plus précisément à ${filters.city}`;
+      prompt += ` à ${filters.city}`;
     }
   }
   
@@ -21,30 +21,34 @@ const buildBasicSearchPrompt = (filters: any) => {
     prompt += ` dans le secteur ${filters.industry}`;
   }
 
-  prompt += `\n\nPour chaque entreprise, fournis uniquement les informations trouvées dans ce format JSON :
+  prompt += `\n\nPour chaque entreprise, donne uniquement les informations suivantes au format JSON :
   {
     "company": "Nom de l'entreprise",
-    "email": "Email de contact principal (si trouvé)",
-    "phone": "Numéro de téléphone (si trouvé)",
-    "website": "Site web officiel (si trouvé)",
-    "address": "Adresse complète (si trouvée)",
+    "email": "Email si trouvé",
+    "phone": "Téléphone si trouvé",
+    "website": "Site web si trouvé",
+    "address": "Adresse si trouvée",
     "industry": "${filters.industry}",
-    "score": "Score sur 10 basé sur la présence en ligne",
+    "score": "Note sur 10 basée sur la présence en ligne",
     "socialMedia": {
-      // Inclure uniquement les réseaux sociaux trouvés
-      "linkedin": "URL LinkedIn (si trouvé)",
-      "twitter": "URL Twitter (si trouvé)"
+      "linkedin": "URL LinkedIn si trouvé",
+      "twitter": "URL Twitter si trouvé",
+      "facebook": "URL Facebook si trouvé"
     }
   }`;
 
-  prompt += `\n\nInstructions importantes:
-  - Renvoie EXACTEMENT ${leadCount} entreprises
-  - Chaque entreprise doit être unique
-  - N'inclus que les informations que tu as réellement trouvées
-  - Ne pas essayer de deviner ou d'inventer des informations manquantes
-  - Le nombre de résultats (${leadCount}) est une contrainte absolue`;
-
   return prompt;
+}
+
+const validateLeadData = (lead: any) => {
+  const requiredFields = ['company'];
+  for (const field of requiredFields) {
+    if (!lead[field]) {
+      console.error(`Champ requis manquant: ${field}`);
+      return false;
+    }
+  }
+  return true;
 }
 
 serve(async (req) => {
@@ -73,11 +77,11 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'Tu es un expert en recherche d\'entreprises B2B. Tu fournis uniquement des informations vérifiables et à jour.'
+            content: 'Tu es un expert en recherche d\'entreprises. Fournis uniquement des informations vérifiées.'
           },
           {
             role: 'user',
-            content: buildBasicSearchPrompt(filters)
+            content: buildSimplePrompt(filters)
           }
         ],
         temperature: 0.2,
@@ -87,20 +91,28 @@ serve(async (req) => {
     });
 
     if (!response.ok) {
-      const error = await response.text()
-      console.error('Erreur Perplexity:', error)
+      console.error('Erreur Perplexity:', await response.text())
       throw new Error('Erreur lors de la génération des leads')
     }
 
     const result = await response.json()
-    console.log('Réponse Perplexity reçue:', result)
+    console.log('Réponse Perplexity reçue')
 
     let generatedLeads
     try {
       const content = result.choices[0].message.content
       generatedLeads = JSON.parse(content)
+      
+      // Validation des données
+      if (Array.isArray(generatedLeads)) {
+        generatedLeads = generatedLeads.filter(lead => validateLeadData(lead))
+      } else if (validateLeadData(generatedLeads)) {
+        generatedLeads = [generatedLeads]
+      } else {
+        throw new Error('Format de données invalide')
+      }
     } catch (error) {
-      console.error('Erreur lors du parsing de la réponse:', error)
+      console.error('Erreur lors du parsing:', error)
       throw new Error('Format de réponse invalide')
     }
 

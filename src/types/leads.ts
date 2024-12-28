@@ -6,10 +6,9 @@ export interface Lead {
   address?: string;
   qualification?: number;
   socialMedia?: {
-    linkedin: string;
-    twitter: string;
+    linkedin?: string;
+    twitter?: string;
     facebook?: string;
-    instagram?: string;
   };
   score?: number;
   industry?: string;

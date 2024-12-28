@@ -18,6 +18,21 @@ export function LeadCard({
   onDelete,
   showActions = true
 }: LeadCardProps) {
+  const renderSocialLink = (url: string | undefined, Icon: any, platform: string) => {
+    if (!url) return null;
+    return (
+      <a 
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-primary-light/70 hover:text-primary transition-colors"
+        title={platform}
+      >
+        <Icon className="h-4 w-4" />
+      </a>
+    );
+  };
+
   return (
     <div className="p-4 border border-primary/20 rounded-xl bg-gradient-to-br from-black/40 to-secondary-dark/40 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 group">
       <div className="flex flex-col gap-3">
@@ -26,9 +41,11 @@ export function LeadCard({
             <h4 className="text-base font-semibold text-primary-light group-hover:text-white transition-colors line-clamp-1">
               {lead.company}
             </h4>
-            <p className="text-sm text-primary-light/70 line-clamp-1">
-              {lead.industry}
-            </p>
+            {lead.industry && (
+              <p className="text-sm text-primary-light/70 line-clamp-1">
+                {lead.industry}
+              </p>
+            )}
           </div>
           {lead.score && <LeadScoreDisplay score={lead.score} />}
         </div>
@@ -68,7 +85,7 @@ export function LeadCard({
                 rel="noopener noreferrer" 
                 className="text-sm hover:underline line-clamp-1"
               >
-                {lead.website.replace('https://', '')}
+                {lead.website.replace(/^https?:\/\//, '')}
               </a>
             </div>
           )}
@@ -76,28 +93,9 @@ export function LeadCard({
 
         {lead.socialMedia && (
           <div className="pt-3 border-t border-primary/10 flex gap-3">
-            {lead.socialMedia.linkedin && (
-              <a 
-                href={lead.socialMedia.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary-light/70 hover:text-primary transition-colors"
-                title="LinkedIn"
-              >
-                <Linkedin className="h-4 w-4" />
-              </a>
-            )}
-            {lead.socialMedia.twitter && (
-              <a 
-                href={lead.socialMedia.twitter}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary-light/70 hover:text-primary transition-colors"
-                title="X (Twitter)"
-              >
-                <Twitter className="h-4 w-4" />
-              </a>
-            )}
+            {renderSocialLink(lead.socialMedia.linkedin, Linkedin, "LinkedIn")}
+            {renderSocialLink(lead.socialMedia.twitter, Twitter, "Twitter")}
+            {renderSocialLink(lead.socialMedia.facebook, Facebook, "Facebook")}
           </div>
         )}
 
