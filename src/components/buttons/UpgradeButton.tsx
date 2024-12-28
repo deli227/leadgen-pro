@@ -1,14 +1,9 @@
-import { IconButton } from "./IconButton"
-import { Zap } from "lucide-react"
-import { toast } from "sonner"
 import { useState } from "react"
+import { toast } from "sonner"
 import { supabase } from "@/integrations/supabase/client"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import { Button } from "@/components/ui/button"
+import { Sparkles, Zap } from "lucide-react"
+import { motion } from "framer-motion"
 
 interface UpgradeButtonProps {
   className?: string
@@ -17,9 +12,10 @@ interface UpgradeButtonProps {
 export const UpgradeButton = ({ className }: UpgradeButtonProps) => {
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleUpgradeClick = async (priceId: string) => {
+  const handleUpgradeClick = async (priceId: string, plan: string) => {
     try {
       setIsLoading(true)
+      toast.loading(`Préparation de votre passage au plan ${plan}...`)
       
       const { data, error } = await supabase.functions.invoke('create-checkout', {
         body: { priceId }
@@ -44,33 +40,34 @@ export const UpgradeButton = ({ className }: UpgradeButtonProps) => {
   }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <IconButton
-          icon={Zap}
-          label={isLoading ? "Chargement..." : "Augmenter la limite"}
-          variant="outline"
-          disabled={isLoading}
-          className={`bg-gradient-to-r from-primary/20 to-primary/30 hover:from-primary/30 hover:to-primary/40 border-primary/50 text-primary font-medium shadow-sm hover:shadow-md transition-all duration-300 ${className}`}
-        />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent 
-        align="end" 
-        className="w-48 bg-secondary-dark border border-primary/20"
+    <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+      <motion.div
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
       >
-        <DropdownMenuItem 
-          onClick={() => handleUpgradeClick("price_1QYqRXB0B6nBBCbUR3iwskQu")}
-          className="cursor-pointer hover:bg-primary/10 text-gray-200"
+        <Button
+          onClick={() => handleUpgradeClick("price_1QYqRXB0B6nBBCbUR3iwskQu", "Pro")}
+          disabled={isLoading}
+          className="bg-gradient-to-r from-primary/80 to-primary hover:from-primary hover:to-primary/90 text-white font-medium px-6 py-2 rounded-lg flex items-center gap-2 min-w-[200px] justify-center"
         >
-          Version Pro (24,99€)
-        </DropdownMenuItem>
-        <DropdownMenuItem 
-          onClick={() => handleUpgradeClick("price_1QYqSJB0B6nBBCbUWCkn0Qn5")}
-          className="cursor-pointer hover:bg-primary/10 text-gray-200"
+          <Zap className="w-4 h-4" />
+          Passer au Pro
+        </Button>
+      </motion.div>
+
+      <motion.div
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+      >
+        <Button
+          onClick={() => handleUpgradeClick("price_1QYqSJB0B6nBBCbUWCkn0Qn5", "Premium")}
+          disabled={isLoading}
+          className="bg-gradient-to-r from-accent/80 to-accent hover:from-accent hover:to-accent/90 text-white font-medium px-6 py-2 rounded-lg flex items-center gap-2 min-w-[200px] justify-center"
         >
-          Version Premium (59,99€)
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+          <Sparkles className="w-4 h-4" />
+          Passer au Premium
+        </Button>
+      </motion.div>
+    </div>
   )
 }
