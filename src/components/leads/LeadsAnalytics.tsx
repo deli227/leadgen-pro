@@ -4,6 +4,7 @@ import { useLeadActions } from "@/hooks/useLeadActions"
 import { AIAnalysisWindow } from "./analysis/AIAnalysisWindow"
 import { useState } from "react"
 import { LeadsList } from "./shared/LeadsList"
+import { LeadAnalysis } from "@/types/analysis"
 
 interface LeadsAnalyticsProps {
   leads: Lead[]
@@ -20,6 +21,7 @@ export function LeadsAnalytics({
 }: LeadsAnalyticsProps) {
   const { handleAnalyze } = useLeadActions()
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
+  const [currentAnalysis, setCurrentAnalysis] = useState<LeadAnalysis | null>(null)
 
   const handleDelete = (lead: Lead) => {
     if (onRemoveFromAnalytics) {
@@ -28,8 +30,11 @@ export function LeadsAnalytics({
   }
 
   const handleAnalyzeLead = async (lead: Lead) => {
-    await handleAnalyze(lead)
     setSelectedLead(lead)
+    const analysis = await handleAnalyze(lead)
+    if (analysis) {
+      setCurrentAnalysis(analysis)
+    }
   }
 
   return (
@@ -44,7 +49,7 @@ export function LeadsAnalytics({
         />
       </div>
       
-      <AIAnalysisWindow lead={selectedLead} />
+      <AIAnalysisWindow lead={selectedLead} analysis={currentAnalysis} />
     </div>
   )
 }

@@ -2,12 +2,13 @@ import { useState } from "react"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
 import { Lead } from "@/types/leads"
+import { LeadAnalysis } from "@/types/analysis"
 
 export function useLeadActions() {
   const { toast } = useToast()
   const [isAnalyzing, setIsAnalyzing] = useState(false)
 
-  const handleAnalyze = async (lead: Lead) => {
+  const handleAnalyze = async (lead: Lead): Promise<LeadAnalysis | undefined> => {
     setIsAnalyzing(true)
     try {
       const session = await supabase.auth.getSession()
