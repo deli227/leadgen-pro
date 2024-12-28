@@ -18,23 +18,20 @@ export const UpgradeButton = ({ className }: UpgradeButtonProps) => {
       // Prix pour l'abonnement Pro
       const priceId = "price_1OqKHyKez0igoNdCnewVaA8M"
 
-      const response = await fetch('/api/create-checkout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
-        },
-        body: JSON.stringify({ priceId })
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: { priceId }
       })
 
-      const { url, error } = await response.json()
-
       if (error) {
-        throw new Error(error)
+        throw new Error(error.message)
       }
 
-      // Rediriger vers la page de paiement Stripe
-      window.location.href = url
+      if (data?.url) {
+        // Rediriger vers la page de paiement Stripe
+        window.location.href = data.url
+      } else {
+        throw new Error("URL de paiement non reçue")
+      }
     } catch (error) {
       console.error('Erreur lors de la création de la session de paiement:', error)
       toast.error("Une erreur est survenue lors de la création de la session de paiement")
