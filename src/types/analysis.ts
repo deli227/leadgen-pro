@@ -42,6 +42,21 @@ export interface LeadAnalysis {
     sales_arguments: string[]
     optimal_timing: string
     required_resources: string[]
+    improvement_suggestions: Array<{
+      priority: string
+      action: string
+      expected_impact: string
+      implementation_difficulty: string
+      estimated_timeframe: string
+      required_investment: string
+    }>
+    specific_solutions: Array<{
+      weakness: string
+      proposed_solutions: string[]
+      implementation_steps: string[]
+      expected_benefits: string[]
+      success_metrics: string[]
+    }>
   }
   action_plan: {
     steps: string[]
