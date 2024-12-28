@@ -167,7 +167,7 @@ export function LeadCard({
                 lead={lead}
                 onAnalyze={onAddToAnalytics!}
                 onAddToExport={onAddToExport}
-                onDelete={() => setIsDeleteDialogOpen(true)}
+                onDelete={() => onDelete && onDelete()}
               />
             )
           )}
