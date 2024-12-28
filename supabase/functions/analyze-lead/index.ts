@@ -117,7 +117,14 @@ serve(async (req) => {
     const result = await response.json()
     console.log('Réponse Perplexity reçue')
 
-    const analysis = JSON.parse(result.choices[0].message.content)
+    // S'assurer que la réponse est bien au format JSON
+    let analysis
+    try {
+      analysis = JSON.parse(result.choices[0].message.content)
+    } catch (error) {
+      console.error('Erreur lors du parsing JSON:', error)
+      throw new Error('Format de réponse invalide de Perplexity')
+    }
 
     // Configuration du client Supabase
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
