@@ -1,7 +1,8 @@
 export const extractJSONFromText = (text: string): any => {
-  console.log('Texte reçu de Perplexity:', text);
+  console.log('Extraction du JSON depuis le texte:', text);
   
   try {
+    // Recherche du premier crochet ouvrant et du dernier crochet fermant
     const start = text.indexOf('[');
     const end = text.lastIndexOf(']') + 1;
     
@@ -13,7 +14,13 @@ export const extractJSONFromText = (text: string): any => {
     const jsonStr = text.slice(start, end);
     console.log('JSON extrait:', jsonStr);
     
-    return JSON.parse(jsonStr);
+    const parsedData = JSON.parse(jsonStr);
+    
+    if (!Array.isArray(parsedData)) {
+      throw new Error('Le JSON extrait n\'est pas un tableau');
+    }
+    
+    return parsedData;
   } catch (error) {
     console.error('Erreur lors de l\'extraction du JSON:', error);
     throw new Error('Format de réponse invalide');

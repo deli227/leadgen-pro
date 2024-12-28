@@ -72,9 +72,14 @@ serve(async (req) => {
     console.log('Contenu brut reçu:', content);
     
     const generatedLeads = extractJSONFromText(content);
-    const validLeads = generatedLeads.filter(validateLead);
+    console.log('Leads extraits:', generatedLeads);
     
-    console.log(`${validLeads.length} leads valides générés`);
+    const validLeads = generatedLeads.filter(validateLead);
+    console.log(`${validLeads.length} leads valides générés:`, validLeads);
+
+    if (validLeads.length === 0) {
+      throw new Error('Aucun lead valide n\'a été généré');
+    }
 
     // Configuration du client Supabase
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -83,9 +88,15 @@ serve(async (req) => {
 
     // Préparation des leads pour l'insertion
     const leadsToInsert = validLeads.map(lead => ({
-      ...lead,
       user_id: userId,
-      social_media: lead.socialMedia
+      company: lead.company,
+      email: lead.email,
+      phone: lead.phone,
+      website: lead.website,
+      address: lead.address,
+      industry: lead.industry,
+      score: lead.score,
+      social_media: lead.socialMedia || null
     }));
 
     console.log('Tentative d\'insertion des leads:', leadsToInsert);
@@ -97,8 +108,12 @@ serve(async (req) => {
       .select();
 
     if (insertError) {
-      console.error('Erreur lors de l\'insertion des leads:', insertError);
-      throw new Error('Erreur lors de la sauvegarde des leads');
+      console.error('Erreur détaillée lors de l\'insertion:', insertError);
+      throw new Error(`Erreur lors de l'insertion des leads: ${JSON.stringify(insertError)}`);
+    }
+
+    if (!insertedLeads) {
+      throw new Error('Aucun lead n\'a été inséré');
     }
 
     console.log('Leads insérés avec succès:', insertedLeads);
@@ -116,7 +131,7 @@ serve(async (req) => {
       }
     )
   } catch (error) {
-    console.error('Erreur:', error)
+    console.error('Erreur détaillée:', error);
     return new Response(
       JSON.stringify({ 
         success: false, 
