@@ -37,7 +37,7 @@ export function FiltersTabContent({
       }
 
       console.log('Session trouvée:', session)
-      console.log('Envoi des paramètres à generate-leads:', filters)
+      console.log('Envoi des paramètres à generate-leads-with-ai:', filters)
 
       const { data, error } = await supabase.functions.invoke('generate-leads-with-ai', {
         body: { 
@@ -49,7 +49,7 @@ export function FiltersTabContent({
         }
       })
 
-      console.log('Réponse de generate-leads:', { data, error })
+      console.log('Réponse de generate-leads-with-ai:', { data, error })
 
       if (error) {
         console.error('Erreur détaillée:', error)
