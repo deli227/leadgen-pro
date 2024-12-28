@@ -17,7 +17,8 @@ export function useLeadsData(session: Session | null) {
       const { data, error } = await supabase
         .from('leads')
         .select('*')
-        .eq('user_id', session.user.id);
+        .eq('user_id', session.user.id)
+        .order('created_at', { ascending: false });
       
       if (error) {
         console.error('Error fetching leads:', error);
@@ -28,7 +29,10 @@ export function useLeadsData(session: Session | null) {
       console.log('Leads fetched successfully:', data?.length || 0, 'leads');
       return data;
     },
-    enabled: !!session?.user?.id
+    enabled: !!session?.user?.id,
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    staleTime: 1000
   });
 
   const leads: Lead[] = supabaseLeads.map(lead => ({
@@ -41,13 +45,14 @@ export function useLeadsData(session: Session | null) {
     socialMedia: {
       linkedin: (lead.social_media as any)?.linkedin || "",
       twitter: (lead.social_media as any)?.twitter || "",
-      facebook: (lead.social_media as any)?.facebook,
-      instagram: (lead.social_media as any)?.instagram
+      facebook: (lead.social_media as any)?.facebook || "",
+      instagram: (lead.social_media as any)?.instagram || ""
     },
     score: lead.score || 0,
     industry: lead.industry || "",
     strengths: lead.strengths || [],
-    weaknesses: lead.weaknesses || []
+    weaknesses: lead.weaknesses || [],
+    website: lead.website || ""
   }));
 
   return leads;

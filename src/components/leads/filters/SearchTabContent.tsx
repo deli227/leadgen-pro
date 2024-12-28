@@ -9,6 +9,7 @@ import { IconButton } from "@/components/buttons/IconButton"
 import { LeadFilters } from "@/types/filters"
 import { useState } from "react"
 import { useQueryClient } from "@tanstack/react-query"
+import { useSessionData } from "@/hooks/useSessionData"
 
 interface SearchTabContentProps {
   filters: LeadFilters
@@ -18,31 +19,13 @@ interface SearchTabContentProps {
 export function SearchTabContent({ filters, setFilters }: SearchTabContentProps) {
   const [isLoading, setIsLoading] = useState(false)
   const queryClient = useQueryClient()
-
-  const saveLeadsToDatabase = async (leads: any[], userId: string) => {
-    console.log('Sauvegarde des leads dans la base de données:', leads.length, 'leads')
-    
-    const { data, error } = await supabase
-      .from('leads')
-      .insert(leads.map(lead => ({
-        ...lead,
-        user_id: userId
-      })))
-
-    if (error) {
-      console.error('Erreur lors de la sauvegarde des leads:', error)
-      throw error
-    }
-
-    return data
-  }
+  const { data: session } = useSessionData()
 
   const handleSearch = async () => {
     try {
       setIsLoading(true)
       
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) {
+      if (!session?.user?.id) {
         toast.error("Erreur d'authentification", {
           description: "Veuillez vous connecter pour générer des leads"
         })
@@ -57,28 +40,19 @@ export function SearchTabContent({ filters, setFilters }: SearchTabContentProps)
         }
       })
 
-      if (generationError) {
-        console.error('Erreur lors de la génération:', generationError)
+      if (generationError || !generatedData?.success) {
+        console.error('Erreur lors de la génération:', generationError || generatedData?.error)
         toast.error("Erreur de génération", {
           description: "Une erreur est survenue lors de la génération des leads. Veuillez réessayer."
         })
         return
       }
 
-      if (!generatedData?.success || !generatedData?.data) {
-        toast.error("Erreur de génération", {
-          description: "La réponse du serveur est invalide. Veuillez réessayer."
-        })
-        return
-      }
-
-      // Sauvegarde des leads générés
-      await saveLeadsToDatabase(generatedData.data, session.user.id)
+      console.log('Leads générés avec succès:', generatedData.data)
       
       // Rafraîchir la liste des leads
       await queryClient.invalidateQueries({ queryKey: ['leads'] })
 
-      console.log('Leads générés et sauvegardés avec succès')
       toast.success("Génération réussie", {
         description: "Les leads ont été générés et sauvegardés avec succès."
       })
