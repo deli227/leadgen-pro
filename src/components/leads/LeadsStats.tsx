@@ -46,17 +46,12 @@ export function LeadsStats({
             className={`h-2 transition-all duration-300 ${
               isLow ? "bg-accent-dark/20" : "bg-primary/20"
             }`}
-            indicatorClassName={`${
-              isLow 
-                ? "bg-gradient-to-r from-accent to-accent-dark animate-pulse" 
-                : "bg-gradient-to-r from-primary to-primary-dark"
-            }`}
           />
           
           {subscriptionType === "free" && (
-            <div className="pt-2">
+            <div className="flex justify-center pt-2">
               <UpgradeButton 
-                className="w-full transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]" 
+                className="transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] max-w-[200px]" 
               />
             </div>
           )}
