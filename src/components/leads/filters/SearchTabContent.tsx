@@ -1,128 +1,109 @@
-import { motion } from "framer-motion"
-import { Search, Loader2 } from "lucide-react"
-import { supabase } from "@/integrations/supabase/client"
-import { toast } from "sonner"
-import { SearchInput } from "./SearchInput"
-import { LocationFilters } from "./LocationFilters"
-import { IconButton } from "@/components/buttons/IconButton"
-import { LeadFilters } from "@/types/filters"
 import { useState } from "react"
-import { useQueryClient } from "@tanstack/react-query"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { toast } from "sonner"
+import { supabase } from "@/integrations/supabase/client"
 import { useSessionData } from "@/hooks/useSessionData"
-import { Lead } from "@/types/leads"
 
 interface SearchTabContentProps {
-  filters: LeadFilters
-  setFilters: (filters: LeadFilters) => void
+  filters: {
+    search: string
+    leadCount: number
+    industry: string
+    country: string
+    city: string
+  }
+  setFilters: (filters: any) => void
 }
 
 export function SearchTabContent({ filters, setFilters }: SearchTabContentProps) {
-  const [isLoading, setIsLoading] = useState(false)
-  const queryClient = useQueryClient()
-  const { data: session } = useSessionData()
+  const [isSearching, setIsSearching] = useState(false)
+  const session = useSessionData()
 
   const handleSearch = async () => {
-    try {
-      setIsLoading(true)
-      
-      if (!session?.user?.id) {
-        toast.error("Erreur d'authentification", {
-          description: "Veuillez vous connecter pour rechercher des entreprises"
-        })
-        return
-      }
+    if (!filters.search) {
+      toast.error("Veuillez entrer un terme de recherche")
+      return
+    }
 
-      console.log('Envoi de la requête de recherche avec les filtres:', filters)
-      const { data: searchData, error: searchError } = await supabase.functions.invoke('search-company', {
-        body: { 
+    setIsSearching(true)
+    console.log("Envoi de la requête de recherche avec les filtres:", filters)
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/search-company`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           search: filters.search,
           country: filters.country,
           city: filters.city
-        }
+        })
       })
 
-      if (searchError || !searchData?.success) {
-        console.error('Erreur lors de la recherche:', searchError || searchData?.error)
-        toast.error("Erreur de recherche", {
-          description: "Une erreur est survenue lors de la recherche de l'entreprise. Veuillez réessayer."
-        })
-        return
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP: ${response.status}`)
       }
 
-      // Parsage des données JSON retournées par Perplexity
-      const leadData = JSON.parse(searchData.data)
-      console.log('Données de l\'entreprise:', leadData)
+      const { data, success } = await response.json()
+      
+      if (!success) {
+        throw new Error("Échec de la recherche d'entreprise")
+      }
 
-      // Sauvegarde du lead dans la base de données
-      const { data: savedLead, error: saveError } = await supabase
+      const companyData = JSON.parse(data)
+      console.log("Données de l'entreprise:", companyData)
+
+      // Insérer le lead dans la base de données
+      const { error: insertError } = await supabase
         .from('leads')
         .insert([{
-          user_id: session.user.id,
-          ...leadData
+          user_id: session.data?.user?.id,
+          company: companyData.company,
+          email: companyData.email,
+          phone: companyData.phone,
+          website: companyData.website,
+          address: companyData.address,
+          industry: companyData.industry,
+          score: companyData.score,
+          social_media: companyData.socialMedia
         }])
-        .select()
-        .single()
 
-      if (saveError) {
-        console.error('Erreur lors de la sauvegarde:', saveError)
-        toast.error("Erreur de sauvegarde", {
-          description: "Une erreur est survenue lors de la sauvegarde des informations. Veuillez réessayer."
-        })
-        return
+      if (insertError) {
+        console.error("Erreur lors de la sauvegarde:", insertError)
+        throw new Error("Erreur lors de la sauvegarde du lead")
       }
 
-      // Rafraîchir la liste des leads
-      await queryClient.invalidateQueries({ queryKey: ['leads'] })
+      toast.success("Lead ajouté avec succès")
+      setFilters({ ...filters, search: "" })
 
-      toast.success("Recherche réussie", {
-        description: "Les informations de l'entreprise ont été trouvées et sauvegardées avec succès."
-      })
     } catch (error) {
-      console.error('Erreur détaillée:', error)
-      toast.error("Erreur système", {
-        description: "Une erreur inattendue est survenue. Veuillez réessayer plus tard."
-      })
+      console.error("Erreur lors de la sauvegarde:", error)
+      toast.error("Une erreur est survenue lors de la recherche")
     } finally {
-      setIsLoading(false)
+      setIsSearching(false)
     }
   }
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className="space-y-6"
-    >
-      <div className="p-4 rounded-lg bg-black/40 border border-primary/20">
-        <p className="text-primary-light/70 mb-4">
-          Entrez le nom de l'entreprise pour obtenir toutes les informations détaillées la concernant.
-        </p>
-        <div className="space-y-4">
-          <SearchInput 
-            value={filters.search}
-            onChange={(value) => setFilters({ ...filters, search: value })}
-          />
-          <div className="flex justify-end">
-            <IconButton
-              icon={isLoading ? Loader2 : Search}
-              label="Lancer la recherche"
-              onClick={handleSearch}
-              disabled={isLoading || !filters.search}
-              className={`bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 ${
-                isLoading ? 'opacity-70 cursor-not-allowed' : ''
-              }`}
-            />
-          </div>
-        </div>
+    <div className="space-y-4">
+      <div className="flex gap-2">
+        <Input
+          placeholder="Rechercher une entreprise..."
+          value={filters.search}
+          onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+          className="bg-black/20"
+        />
+        <Button 
+          onClick={handleSearch}
+          disabled={isSearching}
+          className="bg-primary hover:bg-primary/90"
+        >
+          {isSearching ? "Recherche..." : "Rechercher"}
+        </Button>
       </div>
-
-      <LocationFilters 
-        country={filters.country}
-        city={filters.city}
-        onCountryChange={(value) => setFilters({ ...filters, country: value, city: "all" })}
-        onCityChange={(value) => setFilters({ ...filters, city: value })}
-      />
-    </motion.div>
+    </div>
   )
 }
