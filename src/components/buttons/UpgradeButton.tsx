@@ -48,7 +48,7 @@ export const UpgradeButton = ({ className }: UpgradeButtonProps) => {
       variant="outline"
       onClick={handleUpgradeClick}
       disabled={isLoading}
-      className={`bg-gradient-to-r from-primary/10 to-primary/20 hover:from-primary/20 hover:to-primary/30 border-primary/30 text-primary-light ${className}`}
+      className={`bg-gradient-to-r from-primary/20 to-primary/30 hover:from-primary/30 hover:to-primary/40 border-primary/50 text-primary font-medium shadow-sm hover:shadow-md transition-all duration-300 ${className}`}
     />
   )
 }
