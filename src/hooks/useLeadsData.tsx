@@ -43,10 +43,10 @@ export function useLeadsData(session: Session | null) {
     address: lead.address || undefined,
     qualification: lead.qualification || 0,
     socialMedia: {
-      linkedin: (lead.social_media as any)?.linkedin || "",
-      twitter: (lead.social_media as any)?.twitter || "",
-      facebook: (lead.social_media as any)?.facebook || "",
-      instagram: (lead.social_media as any)?.instagram || ""
+      linkedin: lead.social_media?.linkedin || "",
+      twitter: lead.social_media?.twitter || "",
+      facebook: lead.social_media?.facebook || "",
+      instagram: lead.social_media?.instagram || ""
     },
     score: lead.score || 0,
     industry: lead.industry || "",
