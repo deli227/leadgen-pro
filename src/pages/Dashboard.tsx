@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast"
 import { Lead } from "@/types/leads"
 import { motion } from "framer-motion"
 import { DashboardTabs } from "@/components/dashboard/DashboardTabs"
+import { Toaster } from "@/components/ui/toaster"
 
 export function Dashboard() {
   const { toast } = useToast()
@@ -110,6 +111,7 @@ export function Dashboard() {
           onRemoveFromAnalytics={handleRemoveFromAnalytics}
         />
       </div>
+      <Toaster />
     </div>
   )
 }
