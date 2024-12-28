@@ -13,7 +13,6 @@ export function Auth() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Vérifier la session au chargement
     const checkSession = async () => {
       const { data: { session }, error } = await supabase.auth.getSession();
       if (error) {
@@ -28,13 +27,17 @@ export function Auth() {
 
     checkSession();
 
-    // Écouter les changements d'état d'authentification
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log("Changement d'état d'authentification:", event, session);
-      if (session) {
+      if (event === 'PASSWORD_RECOVERY') {
+        toast.info("Veuillez réinitialiser votre mot de passe");
+      } else if (event === 'SIGNED_IN') {
+        toast.success("Connexion réussie");
         navigate("/dashboard");
+      } else if (event === 'SIGNED_OUT') {
+        toast.info("Déconnexion réussie");
       }
     });
 
@@ -105,6 +108,8 @@ export function Auth() {
                 }
               }}
               providers={[]}
+              view="sign_in"
+              showLinks={true}
               localization={{
                 variables: {
                   sign_in: {
@@ -114,6 +119,11 @@ export function Auth() {
                     loading_button_label: 'Connexion en cours...',
                     social_provider_text: 'Se connecter avec {{provider}}',
                     link_text: "Vous avez déjà un compte ? Connectez-vous",
+                    password_recovery: {
+                      button_label: "Réinitialiser le mot de passe",
+                      message: "Un email de réinitialisation vous sera envoyé.",
+                      confirmation_text: "Vérifiez vos emails pour le lien de réinitialisation",
+                    },
                   },
                   sign_up: {
                     email_label: 'Email',
@@ -122,7 +132,13 @@ export function Auth() {
                     loading_button_label: 'Inscription en cours...',
                     social_provider_text: "S'inscrire avec {{provider}}",
                     link_text: "Vous n'avez pas de compte ? Inscrivez-vous",
-                  }
+                    confirmation_text: "Vérifiez vos emails pour confirmer votre inscription",
+                  },
+                  forgotten_password: {
+                    button_label: "Envoyer les instructions",
+                    link_text: "Mot de passe oublié ?",
+                    confirmation_text: "Vérifiez vos emails pour réinitialiser votre mot de passe",
+                  },
                 },
               }}
             />
@@ -153,6 +169,7 @@ export function Auth() {
                 }
               }}
               providers={[]}
+              showLinks={true}
               localization={{
                 variables: {
                   sign_up: {
@@ -162,6 +179,7 @@ export function Auth() {
                     loading_button_label: 'Inscription en cours...',
                     social_provider_text: "S'inscrire avec {{provider}}",
                     link_text: "Vous n'avez pas de compte ? Inscrivez-vous",
+                    confirmation_text: "Vérifiez vos emails pour confirmer votre inscription",
                   }
                 },
               }}
