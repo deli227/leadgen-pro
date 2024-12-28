@@ -4,6 +4,8 @@ import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
 import { supabase } from "@/integrations/supabase/client"
 import { useSessionData } from "@/hooks/useSessionData"
+import { LeadCard } from "@/components/leads/shared/LeadCard"
+import { Lead } from "@/types/leads"
 
 interface SearchTabContentProps {
   filters: {
@@ -18,6 +20,7 @@ interface SearchTabContentProps {
 
 export function SearchTabContent({ filters, setFilters }: SearchTabContentProps) {
   const [isSearching, setIsSearching] = useState(false)
+  const [foundLead, setFoundLead] = useState<Lead | null>(null)
   const session = useSessionData()
 
   const handleSearch = async () => {
@@ -27,6 +30,7 @@ export function SearchTabContent({ filters, setFilters }: SearchTabContentProps)
     }
 
     setIsSearching(true)
+    setFoundLead(null)
     console.log("Envoi de la requête de recherche avec les filtres:", filters)
 
     try {
@@ -50,7 +54,7 @@ export function SearchTabContent({ filters, setFilters }: SearchTabContentProps)
       console.log("Données de l'entreprise:", companyData)
 
       // Insérer le lead dans la base de données
-      const { error: insertError } = await supabase
+      const { data: insertedLead, error: insertError } = await supabase
         .from('leads')
         .insert([{
           user_id: session.data?.user?.id,
@@ -63,12 +67,16 @@ export function SearchTabContent({ filters, setFilters }: SearchTabContentProps)
           score: companyData.score,
           social_media: companyData.socialMedia
         }])
+        .select()
+        .single()
 
       if (insertError) {
         console.error("Erreur lors de la sauvegarde:", insertError)
         throw new Error("Erreur lors de la sauvegarde du lead")
       }
 
+      // Afficher le lead trouvé
+      setFoundLead(insertedLead as Lead)
       toast.success("Lead ajouté avec succès")
       setFilters({ ...filters, search: "" })
 
@@ -81,7 +89,7 @@ export function SearchTabContent({ filters, setFilters }: SearchTabContentProps)
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="flex gap-2">
         <Input
           placeholder="Rechercher une entreprise..."
@@ -97,6 +105,18 @@ export function SearchTabContent({ filters, setFilters }: SearchTabContentProps)
           {isSearching ? "Recherche..." : "Rechercher"}
         </Button>
       </div>
+
+      {foundLead && (
+        <div className="mt-6">
+          <h3 className="text-lg font-semibold mb-4 text-primary-light">
+            Lead trouvé
+          </h3>
+          <LeadCard
+            lead={foundLead}
+            showActions={false}
+          />
+        </div>
+      )}
     </div>
   )
 }
