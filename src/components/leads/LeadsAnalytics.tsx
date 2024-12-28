@@ -24,12 +24,20 @@ export function LeadsAnalytics({
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
   const [currentAnalysis, setCurrentAnalysis] = useState<LeadAnalysis | null>(null)
   const { toast } = useToast()
+  const [removedLeads, setRemovedLeads] = useState<string[]>([])
 
   const handleDelete = (lead: Lead) => {
+    setRemovedLeads(prev => [...prev, lead.id])
     if (onRemoveFromAnalytics) {
       onRemoveFromAnalytics(lead.id)
     }
+    toast({
+      title: "Lead supprimé",
+      description: "Le lead a été retiré de la liste d'analyse"
+    })
   }
+
+  const filteredLeads = leads.filter(lead => !removedLeads.includes(lead.id))
 
   const handleAnalyzeLead = async (lead: Lead) => {
     try {
@@ -54,7 +62,7 @@ export function LeadsAnalytics({
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
       <div className="lg:col-span-2">
         <LeadsList 
-          leads={leads}
+          leads={filteredLeads}
           onAddToAnalytics={handleAnalyzeLead}
           onAddToExport={onAddToExport}
           onDelete={handleDelete}

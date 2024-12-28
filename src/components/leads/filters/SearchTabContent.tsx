@@ -21,9 +21,9 @@ interface SearchTabContentProps {
 
 export function SearchTabContent({ filters, setFilters }: SearchTabContentProps) {
   const [isSearching, setIsSearching] = useState(false)
+  const [removedLeads, setRemovedLeads] = useState<string[]>([])
   const session = useSessionData()
 
-  // Utiliser useQuery pour récupérer les leads de recherche persistants
   const { data: searchResults = [], refetch: refetchSearchResults } = useQuery({
     queryKey: ['search-leads', session.data?.user?.id],
     queryFn: async () => {
@@ -75,7 +75,6 @@ export function SearchTabContent({ filters, setFilters }: SearchTabContentProps)
       const companyData = JSON.parse(functionData.data)
       console.log("Données de l'entreprise:", companyData)
 
-      // Insérer le lead dans la base de données avec is_search_result = true
       const { data: insertedLead, error: insertError } = await supabase
         .from('leads')
         .insert([{
@@ -98,7 +97,6 @@ export function SearchTabContent({ filters, setFilters }: SearchTabContentProps)
         throw new Error("Erreur lors de la sauvegarde du lead")
       }
 
-      // Rafraîchir la liste des résultats
       refetchSearchResults()
       toast.success("Lead ajouté avec succès")
       setFilters({ ...filters, search: "" })
@@ -111,21 +109,22 @@ export function SearchTabContent({ filters, setFilters }: SearchTabContentProps)
     }
   }
 
-  const handleDelete = async (leadId: string) => {
+  const handleDelete = async (lead: Lead) => {
     try {
+      setRemovedLeads(prev => [...prev, lead.id])
       const { error } = await supabase
         .from('leads')
         .delete()
-        .eq('id', leadId)
+        .eq('id', lead.id)
 
       if (error) throw error
 
-      // Rafraîchir la liste après suppression
-      refetchSearchResults()
       toast.success("Lead supprimé avec succès")
     } catch (error) {
       console.error('Erreur lors de la suppression:', error)
       toast.error("Erreur lors de la suppression du lead")
+      // Restore the lead if deletion failed
+      setRemovedLeads(prev => prev.filter(id => id !== lead.id))
     }
   }
 
@@ -147,6 +146,8 @@ export function SearchTabContent({ filters, setFilters }: SearchTabContentProps)
     }
   }
 
+  const filteredSearchResults = searchResults.filter(lead => !removedLeads.includes(lead.id))
+
   return (
     <div className="space-y-6">
       <div className="flex gap-2">
@@ -165,18 +166,18 @@ export function SearchTabContent({ filters, setFilters }: SearchTabContentProps)
         </Button>
       </div>
 
-      {searchResults.length > 0 && (
+      {filteredSearchResults.length > 0 && (
         <div className="mt-6 space-y-6">
           <h3 className="text-lg font-semibold text-primary-light">
-            Leads trouvés ({searchResults.length})
+            Leads trouvés ({filteredSearchResults.length})
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {searchResults.map((lead) => (
+            {filteredSearchResults.map((lead) => (
               <LeadCard
                 key={lead.id}
                 lead={lead}
                 onAddToAnalytics={() => handleAddToAnalytics(lead)}
-                onDelete={() => handleDelete(lead.id)}
+                onDelete={() => handleDelete(lead)}
               />
             ))}
           </div>

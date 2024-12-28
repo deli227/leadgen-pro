@@ -8,6 +8,7 @@ interface LeadActionsProps {
   onShowNotes: (lead: Lead) => void;
   onAddToExport: (lead: Lead) => void;
   onDelete?: (lead: Lead) => void;
+  showDelete?: boolean;
 }
 
 export function LeadActions({ 
@@ -15,7 +16,8 @@ export function LeadActions({
   onAnalyze, 
   onShowNotes, 
   onAddToExport, 
-  onDelete 
+  onDelete,
+  showDelete = true
 }: LeadActionsProps) {
   return (
     <div className="flex flex-wrap gap-2 w-full sm:w-auto">
@@ -46,7 +48,7 @@ export function LeadActions({
         <FileDown className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
         Exporter
       </Button>
-      {onDelete && (
+      {showDelete && onDelete && (
         <Button
           onClick={() => onDelete(lead)}
           variant="outline"
