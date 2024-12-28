@@ -35,6 +35,13 @@ const citiesByCountry = {
     "Winnipeg", "Halifax", "Victoria", "Regina", "Saskatoon", "Gatineau", "Laval",
     "Sherbrooke", "Trois-Rivières", "Longueuil", "Saint-Jean-sur-Richelieu"
   ],
+  US: [
+    "New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphia",
+    "San Antonio", "San Diego", "Dallas", "San Jose", "Austin", "Jacksonville",
+    "Fort Worth", "Columbus", "San Francisco", "Charlotte", "Indianapolis",
+    "Seattle", "Denver", "Washington DC", "Boston", "Nashville", "Las Vegas",
+    "Portland", "Miami", "Atlanta", "New Orleans", "Minneapolis", "San Diego"
+  ],
   LU: [
     "Luxembourg", "Esch-sur-Alzette", "Differdange", "Dudelange", "Pétange",
     "Ettelbruck", "Diekirch", "Wiltz", "Echternach", "Remich", "Vianden"
@@ -83,6 +90,7 @@ export function LocationFilters({
           <SelectItem value="BE">Belgique</SelectItem>
           <SelectItem value="CH">Suisse</SelectItem>
           <SelectItem value="CA">Canada</SelectItem>
+          <SelectItem value="US">États-Unis</SelectItem>
           <SelectItem value="LU">Luxembourg</SelectItem>
           <SelectItem value="MC">Monaco</SelectItem>
           <SelectItem value="MA">Maroc</SelectItem>
