@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Loader2 } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 import { toast } from "sonner"
-import { LeadsList } from "./LeadsList"
+import { LeadsList } from "../shared/LeadsList"
 import { motion } from "framer-motion"
 import { useState } from "react"
 import { Lead } from "@/types/leads"
@@ -121,7 +121,10 @@ export function FiltersTabContent({
         onChange={(value) => setFilters({ ...filters, leadCount: value })}
       />
 
-      <LeadsList leads={leads} onAddToAnalytics={onAddToAnalytics} />
+      <LeadsList 
+        leads={leads} 
+        onAddToAnalytics={onAddToAnalytics} 
+      />
     </div>
   )
 }
