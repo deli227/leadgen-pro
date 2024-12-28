@@ -56,20 +56,25 @@ serve(async (req) => {
     const result = await response.json()
     console.log('Réponse Perplexity brute:', result.choices[0].message.content)
 
-    // Nettoyer la réponse des balises de code JSON si présentes
+    // Nettoyer et parser la réponse
     let cleanedContent = result.choices[0].message.content
-      .replace(/```json\n?/g, '')
-      .replace(/```\n?/g, '')
-      .trim()
+      .replace(/```json\s*/g, '')
+      .replace(/```\s*/g, '')
+      .replace(/^\s+|\s+$/g, '')
 
-    // Vérifier que le JSON est valide
     try {
+      // Tentative de parsing du JSON
       const parsedContent = JSON.parse(cleanedContent)
       
+      // Vérification de la structure attendue
+      if (!parsedContent.company || typeof parsedContent.company !== 'string') {
+        throw new Error('Structure JSON invalide : company manquant ou invalide')
+      }
+
       return new Response(
         JSON.stringify({ 
           success: true, 
-          data: JSON.stringify(parsedContent) // Double stringify pour garantir un JSON valide
+          data: JSON.stringify(parsedContent)
         }),
         { 
           headers: { 
@@ -78,8 +83,8 @@ serve(async (req) => {
           } 
         }
       )
-    } catch (error) {
-      console.error('Erreur de parsing JSON:', error, 'Content:', cleanedContent)
+    } catch (parseError) {
+      console.error('Erreur de parsing JSON:', parseError, 'Content:', cleanedContent)
       throw new Error('La réponse n\'est pas un JSON valide')
     }
   } catch (error) {
