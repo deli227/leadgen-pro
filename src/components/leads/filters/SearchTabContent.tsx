@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client"
 import { useSessionData } from "@/hooks/useSessionData"
 import { LeadCard } from "@/components/leads/shared/LeadCard"
 import { Lead } from "@/types/leads"
+import { useQuery } from "@tanstack/react-query"
 
 interface SearchTabContentProps {
   filters: {
@@ -20,8 +21,30 @@ interface SearchTabContentProps {
 
 export function SearchTabContent({ filters, setFilters }: SearchTabContentProps) {
   const [isSearching, setIsSearching] = useState(false)
-  const [searchResults, setSearchResults] = useState<Lead[]>([])
   const session = useSessionData()
+
+  // Utiliser useQuery pour récupérer les leads de recherche persistants
+  const { data: searchResults = [], refetch: refetchSearchResults } = useQuery({
+    queryKey: ['search-leads', session.data?.user?.id],
+    queryFn: async () => {
+      if (!session.data?.user?.id) return []
+      
+      const { data, error } = await supabase
+        .from('leads')
+        .select('*')
+        .eq('user_id', session.data.user.id)
+        .eq('is_search_result', true)
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        console.error("Erreur lors de la récupération des leads:", error)
+        throw error
+      }
+
+      return data as Lead[]
+    },
+    enabled: !!session.data?.user?.id
+  })
 
   const handleSearch = async () => {
     if (!filters.search) {
@@ -52,7 +75,7 @@ export function SearchTabContent({ filters, setFilters }: SearchTabContentProps)
       const companyData = JSON.parse(functionData.data)
       console.log("Données de l'entreprise:", companyData)
 
-      // Insérer le lead dans la base de données
+      // Insérer le lead dans la base de données avec is_search_result = true
       const { data: insertedLead, error: insertError } = await supabase
         .from('leads')
         .insert([{
@@ -64,7 +87,8 @@ export function SearchTabContent({ filters, setFilters }: SearchTabContentProps)
           address: companyData.address,
           industry: companyData.industry,
           score: companyData.score,
-          social_media: companyData.socialMedia
+          social_media: companyData.socialMedia,
+          is_search_result: true
         }])
         .select()
         .single()
@@ -74,8 +98,8 @@ export function SearchTabContent({ filters, setFilters }: SearchTabContentProps)
         throw new Error("Erreur lors de la sauvegarde du lead")
       }
 
-      // Ajouter le nouveau lead aux résultats existants
-      setSearchResults(prev => [insertedLead as Lead, ...prev])
+      // Rafraîchir la liste des résultats
+      refetchSearchResults()
       toast.success("Lead ajouté avec succès")
       setFilters({ ...filters, search: "" })
 
@@ -96,7 +120,8 @@ export function SearchTabContent({ filters, setFilters }: SearchTabContentProps)
 
       if (error) throw error
 
-      setSearchResults(prev => prev.filter(lead => lead.id !== leadId))
+      // Rafraîchir la liste après suppression
+      refetchSearchResults()
       toast.success("Lead supprimé avec succès")
     } catch (error) {
       console.error('Erreur lors de la suppression:', error)
@@ -106,7 +131,6 @@ export function SearchTabContent({ filters, setFilters }: SearchTabContentProps)
 
   const handleAddToAnalytics = async (lead: Lead) => {
     try {
-      // Rediriger vers l'onglet analytique avec le lead sélectionné
       const { error } = await supabase
         .from('lead_analyses')
         .insert([{
@@ -152,7 +176,7 @@ export function SearchTabContent({ filters, setFilters }: SearchTabContentProps)
                 key={lead.id}
                 lead={lead}
                 onAddToAnalytics={() => handleAddToAnalytics(lead)}
-                onLeadDeleted={() => handleDelete(lead.id)}
+                onDelete={() => handleDelete(lead.id)}
               />
             ))}
           </div>
