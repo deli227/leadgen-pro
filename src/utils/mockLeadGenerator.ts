@@ -31,8 +31,8 @@ const generateSocialMediaLinks = (companyName: string) => {
   return {
     linkedin: `https://linkedin.com/company/${sanitizedName}`,
     twitter: `https://twitter.com/${sanitizedName}`,
-    facebook: `https://facebook.com/${sanitizedName}`,
-    instagram: `https://instagram.com/${sanitizedName}`
+    facebook: Math.random() > 0.3 ? `https://facebook.com/${sanitizedName}` : undefined,
+    instagram: Math.random() > 0.5 ? `https://instagram.com/${sanitizedName}` : undefined
   };
 };
 
@@ -41,7 +41,7 @@ export const generateMockLead = () => {
   const domain = faker.internet.domainName();
   
   return {
-    id: faker.number.int({ min: 1000, max: 9999 }),
+    id: faker.string.uuid(),
     company,
     email: `contact@${domain}`,
     phone: faker.phone.number(),

@@ -40,7 +40,9 @@ export function useLeadsData(session: Session | null) {
     qualification: lead.qualification || 0,
     socialMedia: {
       linkedin: (lead.social_media as any)?.linkedin || "",
-      twitter: (lead.social_media as any)?.twitter || ""
+      twitter: (lead.social_media as any)?.twitter || "",
+      facebook: (lead.social_media as any)?.facebook,
+      instagram: (lead.social_media as any)?.instagram
     },
     score: lead.score || 0,
     industry: lead.industry || "",

@@ -8,6 +8,8 @@ export interface Lead {
   socialMedia?: {
     linkedin: string;
     twitter: string;
+    facebook?: string;
+    instagram?: string;
   };
   score?: number;
   industry?: string;
