@@ -4,12 +4,12 @@ import { supabase } from "@/integrations/supabase/client"
 import { toast } from "sonner"
 import { SearchInput } from "./SearchInput"
 import { LocationFilters } from "./LocationFilters"
-import { IndustrySelect } from "./IndustrySelect"
 import { IconButton } from "@/components/buttons/IconButton"
 import { LeadFilters } from "@/types/filters"
 import { useState } from "react"
 import { useQueryClient } from "@tanstack/react-query"
 import { useSessionData } from "@/hooks/useSessionData"
+import { Lead } from "@/types/leads"
 
 interface SearchTabContentProps {
   filters: LeadFilters
@@ -27,34 +27,55 @@ export function SearchTabContent({ filters, setFilters }: SearchTabContentProps)
       
       if (!session?.user?.id) {
         toast.error("Erreur d'authentification", {
-          description: "Veuillez vous connecter pour générer des leads"
+          description: "Veuillez vous connecter pour rechercher des entreprises"
         })
         return
       }
 
-      console.log('Envoi de la requête de génération avec les filtres:', filters)
-      const { data: generatedData, error: generationError } = await supabase.functions.invoke('generate-leads-with-ai', {
+      console.log('Envoi de la requête de recherche avec les filtres:', filters)
+      const { data: searchData, error: searchError } = await supabase.functions.invoke('search-company', {
         body: { 
-          filters,
-          userId: session.user.id
+          search: filters.search,
+          country: filters.country,
+          city: filters.city
         }
       })
 
-      if (generationError || !generatedData?.success) {
-        console.error('Erreur lors de la génération:', generationError || generatedData?.error)
-        toast.error("Erreur de génération", {
-          description: "Une erreur est survenue lors de la génération des leads. Veuillez réessayer."
+      if (searchError || !searchData?.success) {
+        console.error('Erreur lors de la recherche:', searchError || searchData?.error)
+        toast.error("Erreur de recherche", {
+          description: "Une erreur est survenue lors de la recherche de l'entreprise. Veuillez réessayer."
         })
         return
       }
 
-      console.log('Leads générés avec succès:', generatedData.data)
-      
+      // Parsage des données JSON retournées par Perplexity
+      const leadData = JSON.parse(searchData.data)
+      console.log('Données de l\'entreprise:', leadData)
+
+      // Sauvegarde du lead dans la base de données
+      const { data: savedLead, error: saveError } = await supabase
+        .from('leads')
+        .insert([{
+          user_id: session.user.id,
+          ...leadData
+        }])
+        .select()
+        .single()
+
+      if (saveError) {
+        console.error('Erreur lors de la sauvegarde:', saveError)
+        toast.error("Erreur de sauvegarde", {
+          description: "Une erreur est survenue lors de la sauvegarde des informations. Veuillez réessayer."
+        })
+        return
+      }
+
       // Rafraîchir la liste des leads
       await queryClient.invalidateQueries({ queryKey: ['leads'] })
 
-      toast.success("Génération réussie", {
-        description: "Les leads ont été générés et sauvegardés avec succès."
+      toast.success("Recherche réussie", {
+        description: "Les informations de l'entreprise ont été trouvées et sauvegardées avec succès."
       })
     } catch (error) {
       console.error('Erreur détaillée:', error)
@@ -87,7 +108,7 @@ export function SearchTabContent({ filters, setFilters }: SearchTabContentProps)
               icon={isLoading ? Loader2 : Search}
               label="Lancer la recherche"
               onClick={handleSearch}
-              disabled={isLoading}
+              disabled={isLoading || !filters.search}
               className={`bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 ${
                 isLoading ? 'opacity-70 cursor-not-allowed' : ''
               }`}
@@ -102,16 +123,6 @@ export function SearchTabContent({ filters, setFilters }: SearchTabContentProps)
         onCountryChange={(value) => setFilters({ ...filters, country: value, city: "all" })}
         onCityChange={(value) => setFilters({ ...filters, city: value })}
       />
-
-      <div className="p-4 rounded-lg bg-black/40 border border-primary/20">
-        <p className="text-primary-light/70 mb-4">
-          Sélectionnez le secteur d'activité pour affiner votre recherche.
-        </p>
-        <IndustrySelect 
-          value={filters.industry}
-          onChange={(value) => setFilters({ ...filters, industry: value })}
-        />
-      </div>
     </motion.div>
   )
 }
