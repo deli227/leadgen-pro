@@ -64,24 +64,24 @@ serve(async (req) => {
 
     // Vérifier que le JSON est valide
     try {
-      JSON.parse(cleanedContent)
+      const parsedContent = JSON.parse(cleanedContent)
+      
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          data: JSON.stringify(parsedContent) // Double stringify pour garantir un JSON valide
+        }),
+        { 
+          headers: { 
+            ...corsHeaders,
+            'Content-Type': 'application/json'
+          } 
+        }
+      )
     } catch (error) {
-      console.error('Erreur de parsing JSON:', error)
+      console.error('Erreur de parsing JSON:', error, 'Content:', cleanedContent)
       throw new Error('La réponse n\'est pas un JSON valide')
     }
-
-    return new Response(
-      JSON.stringify({ 
-        success: true, 
-        data: cleanedContent
-      }),
-      { 
-        headers: { 
-          ...corsHeaders,
-          'Content-Type': 'application/json'
-        } 
-      }
-    )
   } catch (error) {
     console.error('Erreur détaillée:', error)
     return new Response(
