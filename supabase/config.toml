@@ -5,6 +5,10 @@ name = "create-checkout"
 verify_jwt = true
 
 [[functions]]
+name = "generate-leads"
+verify_jwt = true
+
+[[functions]]
 name = "generate-leads-with-ai"
 verify_jwt = true
 
