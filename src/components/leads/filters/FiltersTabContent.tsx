@@ -123,7 +123,8 @@ export function FiltersTabContent({
 
       <LeadsList 
         leads={leads} 
-        onAddToAnalytics={onAddToAnalytics} 
+        onAddToAnalytics={onAddToAnalytics}
+        showActions={true}
       />
     </div>
   )
