@@ -20,16 +20,14 @@ export function DeleteLeadDialog({ isOpen, onClose, onConfirm }: DeleteLeadDialo
     <AlertDialog open={isOpen} onOpenChange={onClose}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Confirmation de suppression</AlertDialogTitle>
+          <AlertDialogTitle>Supprimer le lead définitivement ?</AlertDialogTitle>
           <AlertDialogDescription>
-            Êtes-vous sûr de vouloir supprimer ce lead définitivement ? Cette action est irréversible et le lead sera supprimé de tous les onglets.
+            Cette action est irréversible. Le lead sera supprimé définitivement de votre tableau de bord.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Annuler</AlertDialogCancel>
-          <AlertDialogAction onClick={onConfirm} className="bg-red-500 hover:bg-red-600">
-            Supprimer définitivement
-          </AlertDialogAction>
+          <AlertDialogCancel onClick={onClose}>Annuler</AlertDialogCancel>
+          <AlertDialogAction onClick={onConfirm}>Supprimer</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

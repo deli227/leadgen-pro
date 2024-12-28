@@ -27,7 +27,7 @@ export function LeadCard({
 }: LeadCardProps) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
-  const handleDelete = async () => {
+  const handlePermanentDelete = async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession()
       
@@ -65,6 +65,18 @@ export function LeadCard({
       console.error('Erreur lors de la suppression:', error)
       toast.error("Erreur système", {
         description: "Une erreur inattendue est survenue lors de la suppression."
+      })
+    }
+  }
+
+  const handleDelete = () => {
+    if (filterView) {
+      setIsDeleteDialogOpen(true)
+    } else if (onDelete) {
+      onDelete()
+      toast({
+        title: "Lead retiré",
+        description: "Le lead a été retiré de la liste"
       })
     }
   }
@@ -167,7 +179,7 @@ export function LeadCard({
                 lead={lead}
                 onAnalyze={onAddToAnalytics!}
                 onAddToExport={onAddToExport}
-                onDelete={() => onDelete && onDelete()}
+                onDelete={handleDelete}
               />
             )
           )}
@@ -177,7 +189,7 @@ export function LeadCard({
       <DeleteLeadDialog
         isOpen={isDeleteDialogOpen}
         onClose={() => setIsDeleteDialogOpen(false)}
-        onConfirm={handleDelete}
+        onConfirm={handlePermanentDelete}
       />
     </>
   )
