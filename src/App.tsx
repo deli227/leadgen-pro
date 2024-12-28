@@ -1,27 +1,24 @@
-import { HeroSection } from "./components/HeroSection";
-import { ExplanationSection } from "./components/ExplanationSection";
-import { FeaturesSection } from "./components/FeaturesSection";
-import { HowItWorksSection } from "./components/HowItWorksSection";
-import { DocumentationSection } from "./components/DocumentationSection";
-import { QualitySection } from "./components/QualitySection";
-import { PricingSection } from "./components/PricingSection";
-import { ContactSection } from "./components/ContactSection";
-import { FooterSection } from "./components/FooterSection";
+import { Routes, Route } from 'react-router-dom'
+import { Toaster } from "@/components/ui/toaster"
+import { Dashboard } from "@/pages/Dashboard"
+import { Documentation } from "@/pages/Documentation"
+import { Auth } from "@/pages/Auth"
+import { AdminDashboard } from "@/pages/AdminDashboard"
+import Index from "@/pages/Index"
 
 function App() {
   return (
-    <div className="min-h-screen bg-black">
-      <HeroSection />
-      <ExplanationSection />
-      <FeaturesSection />
-      <HowItWorksSection />
-      <DocumentationSection />
-      <QualitySection />
-      <PricingSection />
-      <ContactSection />
-      <FooterSection />
-    </div>
-  );
+    <>
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/documentation" element={<Documentation />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="/admin" element={<AdminDashboard />} />
+      </Routes>
+      <Toaster />
+    </>
+  )
 }
 
-export default App;
+export default App

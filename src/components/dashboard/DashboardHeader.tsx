@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button"
-import { LogOut } from "lucide-react"
+import { LogOut, Book } from "lucide-react"
 import { LeadsExport } from "../leads/LeadsExport"
 import { Lead } from "@/types/leads"
 import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
 
 interface DashboardHeaderProps {
   exportLeads: Lead[]
@@ -48,6 +48,13 @@ export function DashboardHeader({ exportLeads }: DashboardHeaderProps) {
         </p>
       </div>
       <div className="flex gap-2 md:gap-4 items-center w-full sm:w-auto justify-end">
+        <Link 
+          to="/documentation"
+          className="inline-flex items-center gap-2 px-3 py-2 text-xs sm:text-sm text-primary-light hover:text-white transition-colors"
+        >
+          <Book className="h-3 w-3 sm:h-4 sm:w-4" />
+          <span>Documentation</span>
+        </Link>
         <LeadsExport leads={exportLeads} />
         <Button
           onClick={handleLogout}
