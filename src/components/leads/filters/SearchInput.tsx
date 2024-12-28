@@ -15,7 +15,7 @@ export function SearchInput({ value, onChange }: SearchInputProps) {
         placeholder="Rechercher une entreprise..."
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="pl-10 bg-black/20 border-primary-light/20 text-primary-light placeholder:text-primary-light/50"
+        className="pl-10 bg-black/20 border-primary-light/20 text-white placeholder:text-primary-light/50"
       />
     </div>
   )

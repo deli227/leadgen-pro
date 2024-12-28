@@ -2,9 +2,9 @@ import { MessageCircle } from "lucide-react"
 import { motion } from "framer-motion"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { SolutionCard } from "./SolutionCard"
 
 interface ContactRecommendationsProps {
-  weaknesses?: string[]
   recommendations?: {
     approach_strategy: string
     entry_points: string[]
@@ -45,7 +45,7 @@ export function ContactRecommendations({ recommendations }: ContactRecommendatio
 
   const { improvement_solutions } = recommendations
 
-  const renderSolutionSection = (
+  const renderSolutionsSection = (
     title: string,
     solutions: Array<{
       weakness: string
@@ -58,65 +58,19 @@ export function ContactRecommendations({ recommendations }: ContactRecommendatio
     color: string
   ) => (
     <div className="space-y-4">
-      <h5 className="text-sm font-semibold text-primary-light/90">{title}</h5>
+      <h5 className="text-sm font-semibold text-white">{title}</h5>
       {solutions.map((solution, index) => (
-        <Card key={index} className="p-4 bg-black/40 border border-primary/20">
-          <div className="space-y-3">
-            <div className="flex items-start justify-between">
-              <Badge variant="outline" className={`${color} px-2 py-1`}>
-                Point faible identifié
-              </Badge>
-              <Badge variant="outline" className="bg-primary/5">
-                {solution.implementation_timeline}
-              </Badge>
-            </div>
-            
-            <p className="text-sm text-primary-light/90 font-medium">
-              {solution.weakness}
-            </p>
-            
-            <div>
-              <p className="text-xs text-primary-light/80 font-medium mb-1">
-                Solution proposée :
-              </p>
-              <p className="text-sm text-primary-light/70">
-                {solution.concrete_solution}
-              </p>
-            </div>
-
-            <div>
-              <p className="text-xs text-primary-light/80 font-medium mb-1">
-                Étapes d'implémentation :
-              </p>
-              <ul className="list-disc pl-4 space-y-1">
-                {solution.implementation_steps.map((step, stepIndex) => (
-                  <li key={stepIndex} className="text-sm text-primary-light/70">
-                    {step}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <p className="text-xs text-primary-light/80 font-medium mb-1">
-                Bénéfices attendus :
-              </p>
-              <ul className="list-disc pl-4 space-y-1">
-                {solution.expected_benefits.map((benefit, benefitIndex) => (
-                  <li key={benefitIndex} className="text-sm text-primary-light/70">
-                    {benefit}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="flex justify-between items-center pt-2">
-              <p className="text-xs text-primary-light/60">
-                Coût estimé : {solution.estimated_cost}
-              </p>
-            </div>
-          </div>
-        </Card>
+        <SolutionCard
+          key={index}
+          title={title}
+          weakness={solution.weakness}
+          solution={solution.concrete_solution}
+          steps={solution.implementation_steps}
+          benefits={solution.expected_benefits}
+          cost={solution.estimated_cost}
+          timeline={solution.implementation_timeline}
+          color={color}
+        />
       ))}
     </div>
   )
@@ -130,14 +84,14 @@ export function ContactRecommendations({ recommendations }: ContactRecommendatio
     >
       <div className="flex items-center gap-2 mb-4">
         <MessageCircle className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500" />
-        <h4 className="font-semibold text-sm sm:text-base text-primary-light">
+        <h4 className="font-semibold text-sm sm:text-base text-white">
           Solutions d'amélioration recommandées
         </h4>
       </div>
 
       <div className="space-y-6">
         {improvement_solutions.tech_solutions.length > 0 && (
-          renderSolutionSection(
+          renderSolutionsSection(
             "Solutions Techniques",
             improvement_solutions.tech_solutions,
             "text-blue-500"
@@ -145,7 +99,7 @@ export function ContactRecommendations({ recommendations }: ContactRecommendatio
         )}
 
         {improvement_solutions.marketing_solutions.length > 0 && (
-          renderSolutionSection(
+          renderSolutionsSection(
             "Solutions Marketing",
             improvement_solutions.marketing_solutions,
             "text-green-500"
@@ -153,7 +107,7 @@ export function ContactRecommendations({ recommendations }: ContactRecommendatio
         )}
 
         {improvement_solutions.business_solutions.length > 0 && (
-          renderSolutionSection(
+          renderSolutionsSection(
             "Solutions Business",
             improvement_solutions.business_solutions,
             "text-purple-500"
@@ -161,27 +115,27 @@ export function ContactRecommendations({ recommendations }: ContactRecommendatio
         )}
 
         <div className="space-y-4 mt-6">
-          <h5 className="text-sm font-semibold text-primary-light/90">
+          <h5 className="text-sm font-semibold text-white">
             Stratégie d'approche globale
           </h5>
           <Card className="p-4 bg-black/40 border border-primary/20">
             <div className="space-y-4">
               <div>
-                <p className="text-xs text-primary-light/80 font-medium mb-1">
+                <p className="text-xs text-primary-light font-medium mb-1">
                   Approche recommandée :
                 </p>
-                <p className="text-sm text-primary-light/70">
+                <p className="text-sm text-gray-200">
                   {recommendations.approach_strategy}
                 </p>
               </div>
 
               <div>
-                <p className="text-xs text-primary-light/80 font-medium mb-1">
+                <p className="text-xs text-primary-light font-medium mb-1">
                   Points d'entrée :
                 </p>
                 <ul className="list-disc pl-4 space-y-1">
                   {recommendations.entry_points.map((point, index) => (
-                    <li key={index} className="text-sm text-primary-light/70">
+                    <li key={index} className="text-sm text-gray-200">
                       {point}
                     </li>
                   ))}
@@ -189,12 +143,12 @@ export function ContactRecommendations({ recommendations }: ContactRecommendatio
               </div>
 
               <div>
-                <p className="text-xs text-primary-light/80 font-medium mb-1">
+                <p className="text-xs text-primary-light font-medium mb-1">
                   Arguments de vente :
                 </p>
                 <ul className="list-disc pl-4 space-y-1">
                   {recommendations.sales_arguments.map((arg, index) => (
-                    <li key={index} className="text-sm text-primary-light/70">
+                    <li key={index} className="text-sm text-gray-200">
                       {arg}
                     </li>
                   ))}
@@ -202,7 +156,7 @@ export function ContactRecommendations({ recommendations }: ContactRecommendatio
               </div>
 
               <div className="flex justify-between items-center pt-2">
-                <p className="text-xs text-primary-light/60">
+                <p className="text-xs text-gray-300">
                   Timing optimal : {recommendations.optimal_timing}
                 </p>
               </div>
