@@ -25,6 +25,27 @@ interface AIAnalysisWindowProps {
 export function AIAnalysisWindow({ lead, analysis, isAnalyzing }: AIAnalysisWindowProps) {
   if (!lead) return null
 
+  // Créer un objet de recommendations basique si nous n'avons pas d'analyse
+  const basicRecommendations = {
+    approach_strategy: "Approche personnalisée basée sur les points faibles identifiés",
+    entry_points: ["Contact initial par email"],
+    sales_arguments: ["Amélioration des points faibles identifiés"],
+    optimal_timing: "Dès que possible",
+    required_resources: ["Documentation des solutions"],
+    improvement_solutions: {
+      tech_solutions: lead.weaknesses?.map(weakness => ({
+        weakness,
+        concrete_solution: "Solution technique à définir",
+        implementation_steps: ["Analyse détaillée requise"],
+        expected_benefits: ["Amélioration des performances"],
+        estimated_cost: "À évaluer",
+        implementation_timeline: "À définir"
+      })) || [],
+      marketing_solutions: [],
+      business_solutions: []
+    }
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, x: 20 }}
@@ -65,7 +86,7 @@ export function AIAnalysisWindow({ lead, analysis, isAnalyzing }: AIAnalysisWind
                 <StrengthsList strengths={lead.strengths || []} />
                 <WeaknessesList weaknesses={lead.weaknesses || []} />
                 <SeoAnalysis score={lead.score || 0} weaknesses={lead.weaknesses || []} />
-                <ContactRecommendations weaknesses={lead.weaknesses || []} />
+                <ContactRecommendations recommendations={basicRecommendations} />
               </div>
             )}
           </div>
