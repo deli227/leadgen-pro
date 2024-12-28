@@ -4,9 +4,9 @@ import { FilterLeadActions } from "../filters/FilterLeadActions"
 import { LeadScoreDisplay } from "../LeadScoreDisplay"
 import { Mail, MapPin, Phone, Globe, Facebook, Linkedin, Twitter, Instagram } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
-import { toast } from "sonner"
 import { useState } from "react"
 import { DeleteLeadDialog } from "../DeleteLeadDialog"
+import { useToast } from "@/hooks/use-toast"
 
 interface LeadCardProps {
   lead: Lead
@@ -26,13 +26,16 @@ export function LeadCard({
   filterView = false
 }: LeadCardProps) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const { toast } = useToast()
 
   const handlePermanentDelete = async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession()
       
       if (!session) {
-        toast.error("Erreur d'authentification", {
+        toast({
+          variant: "destructive",
+          title: "Erreur d'authentification",
           description: "Vous devez être connecté pour supprimer un lead."
         })
         return
@@ -46,7 +49,9 @@ export function LeadCard({
 
       if (error) {
         console.error('Erreur lors de la suppression:', error)
-        toast.error("Erreur de suppression", {
+        toast({
+          variant: "destructive",
+          title: "Erreur de suppression",
           description: "Une erreur est survenue lors de la suppression du lead."
         })
         return
@@ -56,14 +61,17 @@ export function LeadCard({
         onDelete()
       }
 
-      toast.success("Lead supprimé", {
+      toast({
+        title: "Lead supprimé",
         description: "Le lead a été supprimé définitivement de votre tableau de bord."
       })
       
       setIsDeleteDialogOpen(false)
     } catch (error) {
       console.error('Erreur lors de la suppression:', error)
-      toast.error("Erreur système", {
+      toast({
+        variant: "destructive",
+        title: "Erreur système",
         description: "Une erreur inattendue est survenue lors de la suppression."
       })
     }
