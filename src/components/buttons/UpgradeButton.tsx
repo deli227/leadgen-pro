@@ -23,6 +23,7 @@ export const UpgradeButton = ({ className }: UpgradeButtonProps) => {
       })
 
       if (error) {
+        console.error('Erreur lors de la création de la session de paiement:', error)
         throw new Error(error.message)
       }
 
