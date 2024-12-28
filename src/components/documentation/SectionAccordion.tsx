@@ -6,6 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { LucideIcon } from "lucide-react";
 
 interface Step {
   title: string;
@@ -13,7 +14,7 @@ interface Step {
 }
 
 interface Section {
-  icon: React.ComponentType;
+  icon: LucideIcon;
   title: string;
   description: string;
   steps: Step[];
@@ -25,6 +26,8 @@ interface SectionAccordionProps {
 }
 
 export const SectionAccordion = ({ section, index }: SectionAccordionProps) => {
+  const Icon = section.icon;
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -34,7 +37,7 @@ export const SectionAccordion = ({ section, index }: SectionAccordionProps) => {
     >
       <div className="flex items-center gap-4 mb-4">
         <div className="p-3 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
-          <section.icon className="w-6 h-6 text-primary" />
+          <Icon className="w-6 h-6 text-primary" />
         </div>
         <div>
           <h3 className="text-xl font-semibold text-white">{section.title}</h3>
