@@ -17,9 +17,10 @@ interface SearchTabContentProps {
     city: string
   }
   setFilters: (filters: any) => void
+  onAddToAnalytics?: (lead: Lead) => void
 }
 
-export function SearchTabContent({ filters, setFilters }: SearchTabContentProps) {
+export function SearchTabContent({ filters, setFilters, onAddToAnalytics }: SearchTabContentProps) {
   const [isSearching, setIsSearching] = useState(false)
   const [removedLeads, setRemovedLeads] = useState<string[]>([])
   const session = useSessionData()
@@ -130,16 +131,10 @@ export function SearchTabContent({ filters, setFilters }: SearchTabContentProps)
 
   const handleAddToAnalytics = async (lead: Lead) => {
     try {
-      const { error } = await supabase
-        .from('lead_analyses')
-        .insert([{
-          lead_id: lead.id,
-          user_id: session.data?.user?.id
-        }])
-
-      if (error) throw error
-
-      toast.success("Lead ajouté aux analytiques avec succès")
+      if (onAddToAnalytics) {
+        onAddToAnalytics(lead)
+        toast.success("Lead ajouté aux analytiques avec succès")
+      }
     } catch (error) {
       console.error('Erreur lors de l\'ajout aux analytiques:', error)
       toast.error("Erreur lors de l'ajout aux analytiques")

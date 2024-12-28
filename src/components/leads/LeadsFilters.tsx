@@ -64,6 +64,7 @@ export function LeadsFilters({
         <SearchTabContent 
           filters={filters}
           setFilters={setFilters}
+          onAddToAnalytics={onAddToAnalytics}
         />
       </TabsContent>
 
