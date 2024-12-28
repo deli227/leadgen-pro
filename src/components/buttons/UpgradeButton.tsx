@@ -17,7 +17,7 @@ interface UpgradeButtonProps {
 export const UpgradeButton = ({ className }: UpgradeButtonProps) => {
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleUpgradeClick = async (priceId: string, planName: string) => {
+  const handleUpgradeClick = async (priceId: string) => {
     try {
       setIsLoading(true)
       
@@ -31,7 +31,6 @@ export const UpgradeButton = ({ className }: UpgradeButtonProps) => {
       }
 
       if (data?.url) {
-        // Rediriger vers la page de paiement Stripe
         window.location.href = data.url
       } else {
         throw new Error("URL de paiement non reçue")
@@ -55,16 +54,19 @@ export const UpgradeButton = ({ className }: UpgradeButtonProps) => {
           className={`bg-gradient-to-r from-primary/20 to-primary/30 hover:from-primary/30 hover:to-primary/40 border-primary/50 text-primary font-medium shadow-sm hover:shadow-md transition-all duration-300 ${className}`}
         />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48 bg-secondary-dark border border-primary/20">
+      <DropdownMenuContent 
+        align="end" 
+        className="w-48 bg-secondary-dark border border-primary/20"
+      >
         <DropdownMenuItem 
-          onClick={() => handleUpgradeClick("price_1QYqRXB0B6nBBCbUR3iwskQu", "Pro")}
-          className="cursor-pointer hover:bg-primary/10"
+          onClick={() => handleUpgradeClick("price_1QYqRXB0B6nBBCbUR3iwskQu")}
+          className="cursor-pointer hover:bg-primary/10 text-gray-200"
         >
           Version Pro (24,99€)
         </DropdownMenuItem>
         <DropdownMenuItem 
-          onClick={() => handleUpgradeClick("price_1QYqSJB0B6nBBCbUWCkn0Qn5", "Premium")}
-          className="cursor-pointer hover:bg-primary/10"
+          onClick={() => handleUpgradeClick("price_1QYqSJB0B6nBBCbUWCkn0Qn5")}
+          className="cursor-pointer hover:bg-primary/10 text-gray-200"
         >
           Version Premium (59,99€)
         </DropdownMenuItem>
