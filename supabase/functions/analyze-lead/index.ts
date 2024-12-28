@@ -93,7 +93,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama-3.1-sonar-large-128k-online',
+        model: 'llama-3.1-sonar-huge-128k-online',
         messages: [
           {
             role: 'system',
@@ -107,7 +107,7 @@ serve(async (req) => {
         temperature: 0.1,
         max_tokens: 4000
       }),
-    })
+    });
 
     if (!response.ok) {
       console.error('Erreur Perplexity:', await response.text())

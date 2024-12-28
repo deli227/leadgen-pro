@@ -33,7 +33,7 @@ serve(async (req) => {
     const prompt = buildPrompt(filters)
     console.log('Prompt généré:', prompt)
 
-    // Appel à l'API Perplexity
+    // Appel à l'API Perplexity avec le modèle le plus puissant
     console.log('Envoi de la requête à Perplexity');
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
@@ -42,7 +42,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama-3.1-sonar-small-128k-online',
+        model: 'llama-3.1-sonar-huge-128k-online',
         messages: [
           {
             role: 'system',
@@ -55,7 +55,7 @@ serve(async (req) => {
         ],
         temperature: 0.2,
         top_p: 0.9,
-        max_tokens: 1000
+        max_tokens: 4000
       }),
     });
 
