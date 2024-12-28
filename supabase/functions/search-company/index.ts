@@ -56,23 +56,34 @@ serve(async (req) => {
     const result = await response.json()
     console.log('Réponse Perplexity brute:', result.choices[0].message.content)
 
-    // Amélioration du nettoyage de la réponse JSON
+    // Amélioration du nettoyage et de la validation de la réponse JSON
     let cleanedContent = result.choices[0].message.content
       .replace(/```json\s*/g, '')
       .replace(/```\s*/g, '')
       .trim()
+
+    // Vérification de la présence des accolades
+    if (!cleanedContent.startsWith('{') || !cleanedContent.endsWith('}')) {
+      console.error('Format JSON invalide - accolades manquantes:', cleanedContent)
+      throw new Error('La réponse ne contient pas un objet JSON valide')
+    }
+
+    // Nettoyage approfondi
+    cleanedContent = cleanedContent
       .replace(/^\s*{\s*/, '{')
       .replace(/\s*}\s*$/, '}')
-      .replace(/[\u200B-\u200D\uFEFF]/g, '') // Supprime les caractères invisibles
-      .replace(/\n/g, ' ') // Remplace les sauts de ligne par des espaces
-      .replace(/,\s*}/g, '}') // Supprime la virgule finale si présente
-      .replace(/,\s*,/g, ',') // Supprime les virgules doubles
-      .replace(/\s+/g, ' ') // Normalise les espaces
+      .replace(/[\u200B-\u200D\uFEFF]/g, '')
+      .replace(/\n/g, ' ')
+      .replace(/,\s*}/g, '}')
+      .replace(/,\s*,/g, ',')
+      .replace(/\s+/g, ' ')
+      .replace(/([{,])\s*"(\w+)":/g, '$1"$2":') // Normalise les clés JSON
+      .replace(/:\s*"([^"]+)"\s*([,}])/g, ':"$1"$2') // Normalise les valeurs JSON
 
-    console.log('Contenu nettoyé:', cleanedContent)
+    console.log('Contenu JSON nettoyé:', cleanedContent)
 
     try {
-      // Validation stricte de la structure JSON
+      // Première tentative de parsing
       const parsedContent = JSON.parse(cleanedContent)
       
       // Validation des champs requis
@@ -89,6 +100,7 @@ serve(async (req) => {
         throw new Error('Structure JSON invalide : socialMedia manquant ou invalide')
       }
 
+      // Validation réussie, on peut retourner les données
       return new Response(
         JSON.stringify({ 
           success: true, 
