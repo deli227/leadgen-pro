@@ -128,28 +128,13 @@ export const DocumentationSection = () => {
     <section className="bg-gradient-to-b from-secondary-dark to-black py-24">
       <div className="container mx-auto px-4">
         <DocumentationHeader />
-
         <div className="grid grid-cols-1 gap-8 max-w-4xl mx-auto">
           {sections.map((section, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="bg-secondary-dark/50 rounded-xl p-6 border border-primary/10 hover:border-primary/30 transition-all duration-300"
-            >
-              <div className="flex items-center gap-4 mb-4">
-                <div className="p-3 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
-                  <section.icon className="w-6 h-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-white">{section.title}</h3>
-                  <p className="text-gray-400">{section.description}</p>
-                </div>
-              </div>
-
-              <SectionAccordion steps={section.steps} />
-            </motion.div>
+            <SectionAccordion 
+              key={index} 
+              section={section} 
+              index={index}
+            />
           ))}
         </div>
 
