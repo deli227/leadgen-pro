@@ -31,7 +31,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama-3.1-sonar-small-128k-online',
+        model: 'llama-3.1-sonar-huge-128k-online',
         messages: [
           {
             role: 'system',
@@ -56,19 +56,32 @@ serve(async (req) => {
     const result = await response.json()
     console.log('Réponse Perplexity brute:', result.choices[0].message.content)
 
-    // Nettoyer et parser la réponse
+    // Amélioration du nettoyage de la réponse JSON
     let cleanedContent = result.choices[0].message.content
       .replace(/```json\s*/g, '')
       .replace(/```\s*/g, '')
-      .replace(/^\s+|\s+$/g, '')
+      .trim()
+      .replace(/^\s*{\s*/, '{')
+      .replace(/\s*}\s*$/, '}')
+      .replace(/[\u200B-\u200D\uFEFF]/g, '') // Supprime les caractères invisibles
+      .replace(/\n/g, ' ') // Remplace les sauts de ligne par des espaces
 
     try {
-      // Tentative de parsing du JSON
+      // Validation stricte de la structure JSON
       const parsedContent = JSON.parse(cleanedContent)
       
-      // Vérification de la structure attendue
-      if (!parsedContent.company || typeof parsedContent.company !== 'string') {
-        throw new Error('Structure JSON invalide : company manquant ou invalide')
+      // Validation des champs requis
+      const requiredFields = ['company', 'email', 'phone', 'website', 'address', 'industry', 'score', 'socialMedia']
+      const missingFields = requiredFields.filter(field => !parsedContent[field])
+      
+      if (missingFields.length > 0) {
+        console.error('Champs manquants dans la réponse:', missingFields)
+        throw new Error(`Structure JSON invalide : champs manquants - ${missingFields.join(', ')}`)
+      }
+
+      // Validation du format socialMedia
+      if (!parsedContent.socialMedia || typeof parsedContent.socialMedia !== 'object') {
+        throw new Error('Structure JSON invalide : socialMedia manquant ou invalide')
       }
 
       return new Response(
@@ -84,7 +97,7 @@ serve(async (req) => {
         }
       )
     } catch (parseError) {
-      console.error('Erreur de parsing JSON:', parseError, 'Content:', cleanedContent)
+      console.error('Erreur de parsing JSON:', parseError, 'Contenu nettoyé:', cleanedContent)
       throw new Error('La réponse n\'est pas un JSON valide')
     }
   } catch (error) {

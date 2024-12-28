@@ -5,7 +5,7 @@ interface SearchFilters {
 }
 
 export const buildPrompt = (filters: SearchFilters): string => {
-  let prompt = `En tant qu'expert en développement commercial B2B, recherche des informations détaillées sur des clients potentiels correspondant à "${filters.search}"`
+  let prompt = `En tant qu'expert en développement commercial B2B, effectue une recherche approfondie sur Google et Bing pour trouver des informations détaillées sur des clients potentiels correspondant à "${filters.search}"`
   
   if (filters.country && filters.country !== 'all') {
     prompt += ` en ${filters.country}`
@@ -14,7 +14,13 @@ export const buildPrompt = (filters: SearchFilters): string => {
     }
   }
 
-  prompt += `\n\nPoints clés à identifier :
+  prompt += `\n\nUtilise Google et Bing pour :
+- Trouver les informations de contact les plus récentes
+- Vérifier la présence en ligne et la réputation
+- Identifier les actualités récentes et les développements
+- Valider les informations à travers plusieurs sources
+
+Points clés à identifier :
 - Taille et structure de l'entreprise
 - Besoins potentiels et points de douleur
 - Cycle de décision et budget potentiel
@@ -37,20 +43,20 @@ Vérifie particulièrement :
 - Les signaux d'intention d'achat
 
 Réponds UNIQUEMENT avec un objet JSON valide contenant les informations de l'entreprise avec exactement ces champs (ne pas inclure de balises \`\`\`json ou \`\`\`) :
-  {
-    "company": "Nom de l'entreprise",
-    "email": "email@professionnel.com",
-    "phone": "+33123456789",
-    "website": "site-web.com",
-    "address": "Adresse complète",
-    "industry": "Secteur d'activité",
-    "score": 8,
-    "socialMedia": {
-      "linkedin": "linkedin.com/company/...",
-      "twitter": "twitter.com/...",
-      "facebook": "facebook.com/..."
-    }
-  }`
+{
+  "company": "Nom de l'entreprise",
+  "email": "email@professionnel.com",
+  "phone": "+33123456789",
+  "website": "site-web.com",
+  "address": "Adresse complète",
+  "industry": "Secteur d'activité",
+  "score": 8,
+  "socialMedia": {
+    "linkedin": "linkedin.com/company/...",
+    "twitter": "twitter.com/...",
+    "facebook": "facebook.com/..."
+  }
+}`
 
   return prompt
 }
