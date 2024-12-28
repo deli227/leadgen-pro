@@ -27,6 +27,7 @@ export function Dashboard() {
   const { data: session } = useSessionData()
   const { data: profile } = useProfileData(session)
   const { data: limits } = useSubscriptionLimits(profile?.subscription_type)
+
   const leads = useLeadsData(session)
 
   const handleAddToAnalytics = (lead: Lead) => {
