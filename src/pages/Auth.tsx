@@ -118,12 +118,7 @@ export function Auth() {
                     button_label: 'Se connecter',
                     loading_button_label: 'Connexion en cours...',
                     social_provider_text: 'Se connecter avec {{provider}}',
-                    link_text: "Vous avez déjà un compte ? Connectez-vous",
-                    password_recovery: {
-                      button_label: "Réinitialiser le mot de passe",
-                      message: "Un email de réinitialisation vous sera envoyé.",
-                      confirmation_text: "Vérifiez vos emails pour le lien de réinitialisation",
-                    },
+                    link_text: "Vous avez déjà un compte ? Connectez-vous"
                   },
                   sign_up: {
                     email_label: 'Email',
@@ -132,14 +127,14 @@ export function Auth() {
                     loading_button_label: 'Inscription en cours...',
                     social_provider_text: "S'inscrire avec {{provider}}",
                     link_text: "Vous n'avez pas de compte ? Inscrivez-vous",
-                    confirmation_text: "Vérifiez vos emails pour confirmer votre inscription",
+                    confirmation_text: "Vérifiez vos emails pour confirmer votre inscription"
                   },
                   forgotten_password: {
                     button_label: "Envoyer les instructions",
                     link_text: "Mot de passe oublié ?",
-                    confirmation_text: "Vérifiez vos emails pour réinitialiser votre mot de passe",
-                  },
-                },
+                    confirmation_text: "Vérifiez vos emails pour réinitialiser votre mot de passe"
+                  }
+                }
               }}
             />
           </TabsContent>
@@ -179,9 +174,9 @@ export function Auth() {
                     loading_button_label: 'Inscription en cours...',
                     social_provider_text: "S'inscrire avec {{provider}}",
                     link_text: "Vous n'avez pas de compte ? Inscrivez-vous",
-                    confirmation_text: "Vérifiez vos emails pour confirmer votre inscription",
+                    confirmation_text: "Vérifiez vos emails pour confirmer votre inscription"
                   }
-                },
+                }
               }}
             />
           </TabsContent>
