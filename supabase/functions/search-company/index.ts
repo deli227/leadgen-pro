@@ -22,7 +22,7 @@ serve(async (req) => {
     }
 
     const prompt = buildPrompt({ search, country, city })
-    console.log('Prompt généré:', prompt)
+    console.log('Prompt envoyé:', prompt)
 
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
@@ -65,6 +65,11 @@ serve(async (req) => {
       .replace(/\s*}\s*$/, '}')
       .replace(/[\u200B-\u200D\uFEFF]/g, '') // Supprime les caractères invisibles
       .replace(/\n/g, ' ') // Remplace les sauts de ligne par des espaces
+      .replace(/,\s*}/g, '}') // Supprime la virgule finale si présente
+      .replace(/,\s*,/g, ',') // Supprime les virgules doubles
+      .replace(/\s+/g, ' ') // Normalise les espaces
+
+    console.log('Contenu nettoyé:', cleanedContent)
 
     try {
       // Validation stricte de la structure JSON
