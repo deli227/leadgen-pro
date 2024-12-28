@@ -103,7 +103,7 @@ export function Auth() {
                   }
                 },
                 className: {
-                  input: 'text-white',
+                  input: 'text-white bg-black/30 border-white/20 placeholder-white/50',
                   label: 'text-white',
                   button: 'text-white bg-primary hover:bg-primary-dark',
                   anchor: 'text-primary hover:text-primary-dark',
@@ -160,7 +160,7 @@ export function Auth() {
                   }
                 },
                 className: {
-                  input: 'text-white',
+                  input: 'text-white bg-black/30 border-white/20 placeholder-white/50',
                   label: 'text-white',
                   button: 'text-white bg-primary hover:bg-primary-dark',
                   anchor: 'text-primary hover:text-primary-dark',
