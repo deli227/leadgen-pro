@@ -32,7 +32,7 @@ export function useLeadActions() {
 
       console.log("Analyse reçue:", data)
 
-      if (!data) {
+      if (!data || !data.data) {
         throw new Error("Aucune donnée reçue de l'analyse")
       }
 
@@ -41,7 +41,7 @@ export function useLeadActions() {
         description: "L'analyse du lead a été effectuée avec succès"
       })
 
-      return data
+      return data.data as LeadAnalysis
     } catch (error) {
       console.error('Erreur lors de l\'analyse:', error)
       toast({

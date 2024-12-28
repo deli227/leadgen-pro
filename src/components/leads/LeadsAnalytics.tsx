@@ -5,6 +5,7 @@ import { AIAnalysisWindow } from "./analysis/AIAnalysisWindow"
 import { useState } from "react"
 import { LeadsList } from "./shared/LeadsList"
 import { LeadAnalysis } from "@/types/analysis"
+import { useToast } from "@/hooks/use-toast"
 
 interface LeadsAnalyticsProps {
   leads: Lead[]
@@ -22,6 +23,7 @@ export function LeadsAnalytics({
   const { handleAnalyze, isAnalyzing } = useLeadActions()
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
   const [currentAnalysis, setCurrentAnalysis] = useState<LeadAnalysis | null>(null)
+  const { toast } = useToast()
 
   const handleDelete = (lead: Lead) => {
     if (onRemoveFromAnalytics) {
@@ -30,12 +32,21 @@ export function LeadsAnalytics({
   }
 
   const handleAnalyzeLead = async (lead: Lead) => {
-    setSelectedLead(lead)
-    setCurrentAnalysis(null) // Reset l'analyse précédente
-    const analysis = await handleAnalyze(lead)
-    if (analysis) {
-      console.log("Mise à jour de l'analyse:", analysis)
-      setCurrentAnalysis(analysis)
+    try {
+      setSelectedLead(lead)
+      setCurrentAnalysis(null)
+      const analysis = await handleAnalyze(lead)
+      if (analysis) {
+        console.log("Analyse reçue:", analysis)
+        setCurrentAnalysis(analysis)
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'analyse:", error)
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors de l'analyse du lead",
+        variant: "destructive"
+      })
     }
   }
 

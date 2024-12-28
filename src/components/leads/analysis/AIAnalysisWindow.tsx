@@ -49,15 +49,15 @@ export function AIAnalysisWindow({ lead, analysis, isAnalyzing }: AIAnalysisWind
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                 <p className="text-primary-light text-sm">Analyse en cours...</p>
               </div>
-            ) : analysis ? (
+            ) : analysis && analysis.company_analysis ? (
               <div className="space-y-3 sm:space-y-4">
-                <CompanyAnalysis analysis={analysis.company_analysis} />
-                <TechAnalysis analysis={analysis.tech_analysis} />
-                <MarketingAnalysis analysis={analysis.marketing_analysis} />
-                <FinancialAnalysis analysis={analysis.financial_analysis} />
-                <CompetitiveAnalysis analysis={analysis.competitive_analysis} />
-                <ContactRecommendations recommendations={analysis.recommendations} />
-                <ActionPlan plan={analysis.action_plan} />
+                {analysis.company_analysis && <CompanyAnalysis analysis={analysis.company_analysis} />}
+                {analysis.tech_analysis && <TechAnalysis analysis={analysis.tech_analysis} />}
+                {analysis.marketing_analysis && <MarketingAnalysis analysis={analysis.marketing_analysis} />}
+                {analysis.financial_analysis && <FinancialAnalysis analysis={analysis.financial_analysis} />}
+                {analysis.competitive_analysis && <CompetitiveAnalysis analysis={analysis.competitive_analysis} />}
+                {analysis.recommendations && <ContactRecommendations recommendations={analysis.recommendations} />}
+                {analysis.action_plan && <ActionPlan plan={analysis.action_plan} />}
               </div>
             ) : (
               <div className="space-y-3 sm:space-y-4">
