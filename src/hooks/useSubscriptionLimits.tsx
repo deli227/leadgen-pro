@@ -8,7 +8,7 @@ export function useSubscriptionLimits(subscriptionType: string | undefined) {
       if (!subscriptionType) return null
       const { data, error } = await supabase
         .from('subscription_limits')
-        .select('daily_leads_limit, monthly_leads_limit')
+        .select('monthly_leads_limit')
         .eq('subscription_type', subscriptionType)
         .single()
       
