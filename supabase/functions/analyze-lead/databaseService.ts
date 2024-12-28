@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0'
 import { LeadAnalysis } from './types.ts'
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
@@ -6,6 +6,8 @@ const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 const supabase = createClient(supabaseUrl, supabaseKey)
 
 export async function saveAnalysis(analysis: LeadAnalysis) {
+  console.log('Sauvegarde de l\'analyse:', analysis)
+  
   const { data: savedAnalysis, error: insertError } = await supabase
     .from('lead_analyses')
     .insert({
