@@ -21,7 +21,6 @@ export function LeadCard({
   const renderSocialLink = (url: string | undefined, Icon: any, platform: string) => {
     if (!url) return null;
     
-    // Assurez-vous que l'URL commence par http:// ou https://
     const validUrl = url.startsWith('http') ? url : `https://${url}`;
     
     return (
@@ -104,13 +103,13 @@ export function LeadCard({
           </div>
         )}
 
-        {showActions && onAddToAnalytics && onAddToExport && (
+        {showActions && onAddToAnalytics && (
           <LeadActions
             lead={lead}
-            onAnalyze={() => onAddToAnalytics(lead)}
+            onAnalyze={onAddToAnalytics}
             onShowNotes={() => {}}
-            onAddToExport={() => onAddToExport(lead)}
-            onDelete={onDelete ? () => onDelete(lead) : undefined}
+            onAddToExport={onAddToExport}
+            onDelete={onDelete}
           />
         )}
       </div>
