@@ -8,18 +8,28 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  // Gérer les requêtes CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    // Initialize Supabase client
+    // Récupérer le body de la requête
+    const { priceId } = await req.json();
+
+    if (!priceId) {
+      throw new Error('priceId est requis');
+    }
+
+    console.log('Prix reçu:', priceId);
+
+    // Initialiser le client Supabase
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
     );
 
-    // Get user from auth header
+    // Récupérer l'utilisateur depuis le header d'authentification
     const authHeader = req.headers.get('Authorization')!;
     const token = authHeader.replace('Bearer ', '');
     const { data: { user } } = await supabaseClient.auth.getUser(token);
@@ -28,11 +38,13 @@ serve(async (req) => {
       throw new Error('Utilisateur non authentifié');
     }
 
+    console.log('Création de session pour:', user.email);
+
     const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
       apiVersion: '2023-10-16',
     });
 
-    // Check if customer exists
+    // Vérifier si le client existe déjà
     const customers = await stripe.customers.list({
       email: user.email,
       limit: 1
@@ -41,7 +53,7 @@ serve(async (req) => {
     let customerId = undefined;
     if (customers.data.length > 0) {
       customerId = customers.data[0].id;
-      // Check if already subscribed
+      // Vérifier si déjà abonné
       const subscriptions = await stripe.subscriptions.list({
         customer: customers.data[0].id,
         status: 'active',
