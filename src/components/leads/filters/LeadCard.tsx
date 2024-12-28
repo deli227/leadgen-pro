@@ -1,6 +1,5 @@
 import { Mail, MapPin, Phone, Globe, Facebook, Instagram, Linkedin, Twitter, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { LeadScoreDisplay } from "../LeadScoreDisplay"
 import { motion } from "framer-motion"
 import { toast } from "sonner"
 import { supabase } from "@/integrations/supabase/client"
@@ -56,8 +55,6 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProp
           </Button>
         </div>
 
-        <LeadScoreDisplay score={lead.score} />
-        
         <div className="space-y-2">
           {lead.email && (
             <div className="flex items-center gap-2 text-primary-light/80 hover:text-primary-light transition-colors">
