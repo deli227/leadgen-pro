@@ -47,7 +47,7 @@ export const UpgradeButton = ({ className }: UpgradeButtonProps) => {
 
   return (
     <TooltipProvider delayDuration={0}>
-      <div className="flex flex-col sm:flex-row gap-4 justify-center items-center relative">
+      <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
         <Tooltip>
           <TooltipTrigger asChild>
             <motion.div
@@ -65,10 +65,11 @@ export const UpgradeButton = ({ className }: UpgradeButtonProps) => {
             </motion.div>
           </TooltipTrigger>
           <TooltipContent 
-            side="right"
-            align="start"
-            className="w-[300px] p-4 bg-secondary-dark border border-primary/20 z-[100] fixed"
+            side="left"
+            align="center"
+            className="w-[300px] p-4 bg-secondary-dark border border-primary/20 z-[100]"
             sideOffset={15}
+            avoidCollisions={true}
           >
             <div className="space-y-2">
               <p className="font-semibold text-primary">Version Pro - 24,99€/mois</p>
@@ -117,10 +118,11 @@ export const UpgradeButton = ({ className }: UpgradeButtonProps) => {
             </motion.div>
           </TooltipTrigger>
           <TooltipContent 
-            side="right"
-            align="start"
-            className="w-[300px] p-4 bg-secondary-dark border border-primary/20 z-[100] fixed"
+            side="left"
+            align="center"
+            className="w-[300px] p-4 bg-secondary-dark border border-primary/20 z-[100]"
             sideOffset={15}
+            avoidCollisions={true}
           >
             <div className="space-y-2">
               <p className="font-semibold text-accent">Version Premium - 59,99€/mois</p>
