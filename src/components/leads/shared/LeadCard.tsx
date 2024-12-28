@@ -48,13 +48,13 @@ export function LeadCard({
         return
       }
 
-      toast.success("Lead supprimé", {
-        description: "Le lead a été supprimé avec succès."
-      })
-
       if (onDelete) {
         onDelete()
       }
+
+      toast.success("Lead supprimé", {
+        description: "Le lead a été supprimé avec succès."
+      })
     } catch (error) {
       console.error('Erreur lors de la suppression:', error)
       toast.error("Erreur système", {
@@ -139,7 +139,7 @@ export function LeadCard({
           )}
         </div>
 
-        {lead.socialMedia && (
+        {lead.socialMedia && Object.values(lead.socialMedia).some(value => value) && (
           <div className="pt-3 border-t border-primary/10 flex gap-3">
             {renderSocialLink(lead.socialMedia.linkedin, Linkedin, "LinkedIn")}
             {renderSocialLink(lead.socialMedia.twitter, Twitter, "Twitter")}

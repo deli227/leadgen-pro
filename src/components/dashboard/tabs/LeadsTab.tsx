@@ -3,6 +3,8 @@ import { LeadsFilters } from "@/components/leads/LeadsFilters"
 import { Lead } from "@/types/leads"
 import { LeadFilters } from "@/types/filters"
 import { useState } from "react"
+import { supabase } from "@/integrations/supabase/client"
+import { toast } from "sonner"
 
 interface LeadsTabProps {
   filters: LeadFilters
@@ -29,19 +31,49 @@ export function LeadsTab({
 }: LeadsTabProps) {
   const [removedLeads, setRemovedLeads] = useState<string[]>([])
 
-  const filteredLeads = leads.filter(lead => !removedLeads.includes(lead.id))
+  const handleLocalRemove = async (leadId: string) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      
+      if (!session) {
+        toast.error("Erreur d'authentification")
+        return
+      }
 
-  const handleLocalRemove = (leadId: string) => {
-    setRemovedLeads(prev => [...prev, leadId])
-    // Si le lead est dans les analytics, on le retire aussi
-    if (analyticsLeads.find(lead => lead.id === leadId)) {
-      onRemoveFromAnalytics(leadId)
-    }
-    // Si le lead est dans l'export, on le retire aussi
-    if (exportLeads.find(lead => lead.id === leadId)) {
-      onRemoveFromExport(leadId)
+      // Supprimer de la base de données
+      const { error } = await supabase
+        .from('leads')
+        .delete()
+        .eq('id', leadId)
+        .eq('user_id', session.user.id)
+
+      if (error) {
+        console.error('Erreur lors de la suppression:', error)
+        toast.error("Erreur lors de la suppression")
+        return
+      }
+
+      // Mettre à jour l'état local
+      setRemovedLeads(prev => [...prev, leadId])
+
+      // Si le lead est dans les analytics, on le retire aussi
+      if (analyticsLeads.find(lead => lead.id === leadId)) {
+        onRemoveFromAnalytics(leadId)
+      }
+
+      // Si le lead est dans l'export, on le retire aussi
+      if (exportLeads.find(lead => lead.id === leadId)) {
+        onRemoveFromExport(leadId)
+      }
+
+      toast.success("Lead supprimé avec succès")
+    } catch (error) {
+      console.error('Erreur:', error)
+      toast.error("Une erreur est survenue")
     }
   }
+
+  const filteredLeads = leads.filter(lead => !removedLeads.includes(lead.id))
 
   return (
     <motion.div 
