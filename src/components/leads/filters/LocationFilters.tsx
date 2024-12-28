@@ -64,6 +64,49 @@ const citiesByCountry = {
   CI: [
     "Abidjan", "Yamoussoukro", "Bouaké", "Korhogo", "San-Pédro", "Daloa",
     "Man", "Divo", "Gagnoa", "Grand-Bassam", "Dabou", "Séguéla", "Abengourou"
+  ],
+  DE: [
+    "Berlin", "Hambourg", "Munich", "Cologne", "Francfort", "Stuttgart", 
+    "Düsseldorf", "Dortmund", "Essen", "Leipzig", "Dresde", "Hanovre", 
+    "Nuremberg", "Duisbourg", "Bochum", "Wuppertal", "Bielefeld", "Bonn"
+  ],
+  ES: [
+    "Madrid", "Barcelone", "Valence", "Séville", "Saragosse", "Malaga",
+    "Murcie", "Palma", "Las Palmas", "Bilbao", "Alicante", "Cordoue",
+    "Valladolid", "Vigo", "Gijón", "Grenade", "La Corogne", "Vitoria"
+  ],
+  IT: [
+    "Rome", "Milan", "Naples", "Turin", "Palerme", "Gênes", "Bologne",
+    "Florence", "Bari", "Catane", "Venise", "Vérone", "Messine", "Padoue",
+    "Trieste", "Brescia", "Parme", "Tarente", "Prato", "Modène"
+  ],
+  PT: [
+    "Lisbonne", "Porto", "Vila Nova de Gaia", "Amadora", "Braga", "Coimbra",
+    "Funchal", "Setúbal", "Aveiro", "Évora", "Faro", "Viseu", "Guimarães"
+  ],
+  IE: [
+    "Dublin", "Cork", "Limerick", "Galway", "Waterford", "Drogheda", "Dundalk",
+    "Swords", "Bray", "Navan", "Kilkenny", "Ennis", "Carlow", "Tralee"
+  ],
+  NL: [
+    "Amsterdam", "Rotterdam", "La Haye", "Utrecht", "Eindhoven", "Groningue",
+    "Tilburg", "Almere", "Breda", "Nimègue", "Apeldoorn", "Haarlem", "Zaanstad"
+  ],
+  GR: [
+    "Athènes", "Thessalonique", "Le Pirée", "Patras", "Héraklion", "Larissa",
+    "Volos", "Rhodes", "Ioannina", "Chania", "Chalcis", "Kavala", "Lamia"
+  ],
+  SE: [
+    "Stockholm", "Göteborg", "Malmö", "Uppsala", "Västerås", "Örebro",
+    "Linköping", "Helsingborg", "Jönköping", "Norrköping", "Lund", "Umeå"
+  ],
+  DK: [
+    "Copenhague", "Aarhus", "Odense", "Aalborg", "Frederiksberg", "Esbjerg",
+    "Randers", "Kolding", "Horsens", "Vejle", "Roskilde", "Herning"
+  ],
+  NO: [
+    "Oslo", "Bergen", "Trondheim", "Stavanger", "Drammen", "Fredrikstad",
+    "Kristiansand", "Sandnes", "Tromsø", "Sarpsborg", "Skien", "Ålesund"
   ]
 }
 
@@ -97,6 +140,16 @@ export function LocationFilters({
           <SelectItem value="TN">Tunisie</SelectItem>
           <SelectItem value="SN">Sénégal</SelectItem>
           <SelectItem value="CI">Côte d'Ivoire</SelectItem>
+          <SelectItem value="DE">Allemagne</SelectItem>
+          <SelectItem value="ES">Espagne</SelectItem>
+          <SelectItem value="IT">Italie</SelectItem>
+          <SelectItem value="PT">Portugal</SelectItem>
+          <SelectItem value="IE">Irlande</SelectItem>
+          <SelectItem value="NL">Pays-Bas</SelectItem>
+          <SelectItem value="GR">Grèce</SelectItem>
+          <SelectItem value="SE">Suède</SelectItem>
+          <SelectItem value="DK">Danemark</SelectItem>
+          <SelectItem value="NO">Norvège</SelectItem>
         </SelectContent>
       </Select>
 
