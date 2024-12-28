@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { LocationFilters } from "./LocationFilters"
 import { IndustrySelect } from "./IndustrySelect"
 import { LeadCountSlider } from "./LeadCountSlider"
@@ -7,7 +8,6 @@ import { supabase } from "@/integrations/supabase/client"
 import { toast } from "sonner"
 import { LeadsList } from "../shared/LeadsList"
 import { motion } from "framer-motion"
-import { useState } from "react"
 import { Lead } from "@/types/leads"
 import { LeadFilters } from "@/types/filters"
 
@@ -27,7 +27,6 @@ export function FiltersTabContent({
   onLocalRemove
 }: FiltersTabContentProps) {
   const [isGenerating, setIsGenerating] = useState(false)
-  const [removedLeads, setRemovedLeads] = useState<string[]>([])
 
   const handleGenerateLeads = async () => {
     try {
@@ -81,17 +80,35 @@ export function FiltersTabContent({
     }
   }
 
-  const handleDelete = (lead: Lead) => {
-    setRemovedLeads(prev => [...prev, lead.id])
-    if (onLocalRemove) {
-      onLocalRemove(lead.id)
-    }
-    toast.success("Lead supprimé", {
-      description: "Le lead a été retiré de la liste"
-    })
-  }
+  const handleDelete = async (lead: Lead) => {
+    try {
+      const { error } = await supabase
+        .from('leads')
+        .delete()
+        .eq('id', lead.id)
 
-  const filteredLeads = leads.filter(lead => !removedLeads.includes(lead.id))
+      if (error) {
+        console.error('Erreur lors de la suppression:', error)
+        toast.error("Erreur de suppression", {
+          description: "Une erreur est survenue lors de la suppression du lead."
+        })
+        return
+      }
+
+      if (onLocalRemove) {
+        onLocalRemove(lead.id)
+      }
+      
+      toast.success("Lead supprimé", {
+        description: "Le lead a été supprimé définitivement"
+      })
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error)
+      toast.error("Erreur système", {
+        description: "Une erreur inattendue est survenue lors de la suppression."
+      })
+    }
+  }
 
   return (
     <div className="space-y-6 bg-gradient-to-br from-black/80 to-secondary-dark/80 p-8 rounded-b-xl border border-primary/10 shadow-xl">
@@ -137,7 +154,7 @@ export function FiltersTabContent({
       />
 
       <LeadsList 
-        leads={filteredLeads} 
+        leads={leads} 
         onAddToAnalytics={onAddToAnalytics}
         onDelete={handleDelete}
         showActions={true}
