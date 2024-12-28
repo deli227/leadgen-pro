@@ -38,6 +38,11 @@ export function Auth() {
         navigate("/dashboard");
       } else if (event === 'SIGNED_OUT') {
         toast.info("Déconnexion réussie");
+      } else if (event === 'USER_UPDATED') {
+        toast.success("Profil mis à jour avec succès");
+        navigate("/dashboard");
+      } else if (event === 'RESET_PASSWORD_EMAIL_SENT') {
+        toast.info("Email de réinitialisation envoyé");
       }
     });
 
@@ -118,7 +123,7 @@ export function Auth() {
                     button_label: 'Se connecter',
                     loading_button_label: 'Connexion en cours...',
                     social_provider_text: 'Se connecter avec {{provider}}',
-                    link_text: "Vous avez déjà un compte ? Connectez-vous"
+                    link_text: "Vous n'avez pas de compte ? Inscrivez-vous",
                   },
                   sign_up: {
                     email_label: 'Email',
@@ -126,13 +131,14 @@ export function Auth() {
                     button_label: "S'inscrire",
                     loading_button_label: 'Inscription en cours...',
                     social_provider_text: "S'inscrire avec {{provider}}",
-                    link_text: "Vous n'avez pas de compte ? Inscrivez-vous",
+                    link_text: "Vous avez déjà un compte ? Connectez-vous",
                     confirmation_text: "Vérifiez vos emails pour confirmer votre inscription"
                   },
                   forgotten_password: {
-                    button_label: "Envoyer les instructions",
-                    link_text: "Mot de passe oublié ?",
-                    confirmation_text: "Vérifiez vos emails pour réinitialiser votre mot de passe"
+                    email_label: 'Email',
+                    button_label: 'Envoyer les instructions',
+                    link_text: 'Mot de passe oublié ?',
+                    confirmation_text: 'Vérifiez vos emails pour réinitialiser votre mot de passe'
                   }
                 }
               }}
@@ -173,7 +179,7 @@ export function Auth() {
                     button_label: "S'inscrire",
                     loading_button_label: 'Inscription en cours...',
                     social_provider_text: "S'inscrire avec {{provider}}",
-                    link_text: "Vous n'avez pas de compte ? Inscrivez-vous",
+                    link_text: "Vous avez déjà un compte ? Connectez-vous",
                     confirmation_text: "Vérifiez vos emails pour confirmer votre inscription"
                   }
                 }
