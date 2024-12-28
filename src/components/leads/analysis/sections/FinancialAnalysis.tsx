@@ -26,22 +26,22 @@ export function FinancialAnalysis({ analysis }: FinancialAnalysisProps) {
       <div className="space-y-3">
         <div>
           <span className="text-sm font-medium text-primary-light">Chiffre d'affaires estimé :</span>
-          <p className="text-sm text-primary-light/70">{analysis.estimated_revenue}</p>
+          <p className="text-sm text-primary-light mt-1">{analysis.estimated_revenue}</p>
         </div>
         
         <div>
           <span className="text-sm font-medium text-primary-light">Potentiel d'investissement :</span>
-          <p className="text-sm text-primary-light/70">{analysis.investment_potential}</p>
+          <p className="text-sm text-primary-light mt-1">{analysis.investment_potential}</p>
         </div>
         
         <div>
           <span className="text-sm font-medium text-primary-light">Capacité de financement :</span>
-          <p className="text-sm text-primary-light/70">{analysis.funding_capacity}</p>
+          <p className="text-sm text-primary-light mt-1">{analysis.funding_capacity}</p>
         </div>
         
         <div>
           <span className="text-sm font-medium text-primary-light">Santé financière :</span>
-          <p className="text-sm text-primary-light/70">{analysis.financial_health}</p>
+          <p className="text-sm text-primary-light mt-1">{analysis.financial_health}</p>
         </div>
       </div>
     </motion.div>

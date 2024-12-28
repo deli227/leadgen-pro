@@ -31,7 +31,7 @@ export function TechAnalysis({ analysis }: TechAnalysisProps) {
             {analysis.tech_stack.map((tech, index) => (
               <span
                 key={index}
-                className="px-2 py-1 text-xs rounded-full bg-blue-500/10 text-blue-400"
+                className="px-2 py-1 text-xs rounded-full bg-blue-500/20 text-primary-light"
               >
                 {tech}
               </span>
@@ -41,22 +41,22 @@ export function TechAnalysis({ analysis }: TechAnalysisProps) {
         
         <div>
           <span className="text-sm font-medium text-primary-light">Maturité digitale :</span>
-          <p className="text-sm text-primary-light/70">{analysis.digital_maturity}</p>
+          <p className="text-sm text-primary-light mt-1">{analysis.digital_maturity}</p>
         </div>
         
         <div>
           <span className="text-sm font-medium text-primary-light">Présence en ligne :</span>
-          <p className="text-sm text-primary-light/70">{analysis.online_presence}</p>
+          <p className="text-sm text-primary-light mt-1">{analysis.online_presence}</p>
         </div>
         
         <div>
           <span className="text-sm font-medium text-primary-light">Performance du site web :</span>
-          <p className="text-sm text-primary-light/70">{analysis.website_performance}</p>
+          <p className="text-sm text-primary-light mt-1">{analysis.website_performance}</p>
         </div>
         
         <div>
           <span className="text-sm font-medium text-primary-light">Sécurité et conformité :</span>
-          <p className="text-sm text-primary-light/70">{analysis.security_compliance}</p>
+          <p className="text-sm text-primary-light mt-1">{analysis.security_compliance}</p>
         </div>
       </div>
     </motion.div>
