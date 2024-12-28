@@ -1,7 +1,7 @@
 import { Lead } from "@/types/leads"
 import { LeadActions } from "../LeadActions"
 import { LeadScoreDisplay } from "../LeadScoreDisplay"
-import { Mail, MapPin, Phone, Globe, Facebook, Instagram, Linkedin, Twitter } from "lucide-react"
+import { Mail, MapPin, Phone, Globe, Facebook, Linkedin, Twitter } from "lucide-react"
 
 interface LeadCardProps {
   lead: Lead
@@ -74,7 +74,7 @@ export function LeadCard({
           )}
         </div>
 
-        {lead.socialMedia && Object.keys(lead.socialMedia).length > 0 && (
+        {lead.socialMedia && (
           <div className="pt-3 border-t border-primary/10 flex gap-3">
             {lead.socialMedia.linkedin && (
               <a 
@@ -96,28 +96,6 @@ export function LeadCard({
                 title="X (Twitter)"
               >
                 <Twitter className="h-4 w-4" />
-              </a>
-            )}
-            {lead.socialMedia.facebook && (
-              <a 
-                href={lead.socialMedia.facebook}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary-light/70 hover:text-primary transition-colors"
-                title="Facebook"
-              >
-                <Facebook className="h-4 w-4" />
-              </a>
-            )}
-            {lead.socialMedia.instagram && (
-              <a 
-                href={lead.socialMedia.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary-light/70 hover:text-primary transition-colors"
-                title="Instagram"
-              >
-                <Instagram className="h-4 w-4" />
               </a>
             )}
           </div>

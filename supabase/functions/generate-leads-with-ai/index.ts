@@ -21,34 +21,33 @@ const buildBasicSearchPrompt = (filters: any) => {
     prompt += ` dans le secteur ${filters.industry}`;
   }
 
-  prompt += `\n\nPour chaque entreprise, fournis les informations suivantes dans ce format JSON précis :
+  prompt += `\n\nPour chaque entreprise, fournis uniquement les informations trouvées dans ce format JSON :
   {
     "company": "Nom de l'entreprise",
-    "email": "Email de contact principal",
-    "phone": "Numéro de téléphone",
-    "website": "Site web officiel",
-    "address": "Adresse complète",
+    "email": "Email de contact principal (si trouvé)",
+    "phone": "Numéro de téléphone (si trouvé)",
+    "website": "Site web officiel (si trouvé)",
+    "address": "Adresse complète (si trouvée)",
     "industry": "${filters.industry}",
-    "score": "Score sur 10 basé sur la présence en ligne et le potentiel commercial",
+    "score": "Score sur 10 basé sur la présence en ligne",
     "socialMedia": {
-      "linkedin": "URL LinkedIn si disponible",
-      "twitter": "URL Twitter si disponible",
-      "facebook": "URL Facebook si disponible",
-      "instagram": "URL Instagram si disponible"
+      // Inclure uniquement les réseaux sociaux trouvés
+      "linkedin": "URL LinkedIn (si trouvé)",
+      "twitter": "URL Twitter (si trouvé)"
     }
   }`;
 
   prompt += `\n\nInstructions importantes:
-  - Tu DOIS renvoyer EXACTEMENT ${leadCount} entreprises, ni plus ni moins
+  - Renvoie EXACTEMENT ${leadCount} entreprises
   - Chaque entreprise doit être unique
-  - Si tu ne trouves pas assez d'entreprises correspondant aux critères, élargis légèrement la recherche tout en restant pertinent
+  - N'inclus que les informations que tu as réellement trouvées
+  - Ne pas essayer de deviner ou d'inventer des informations manquantes
   - Le nombre de résultats (${leadCount}) est une contrainte absolue`;
 
   return prompt;
 }
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
@@ -96,11 +95,9 @@ serve(async (req) => {
     const result = await response.json()
     console.log('Réponse Perplexity reçue:', result)
 
-    // Extraction et formatage des leads depuis la réponse
     let generatedLeads
     try {
       const content = result.choices[0].message.content
-      // Tentative de parser le JSON de la réponse
       generatedLeads = JSON.parse(content)
     } catch (error) {
       console.error('Erreur lors du parsing de la réponse:', error)
