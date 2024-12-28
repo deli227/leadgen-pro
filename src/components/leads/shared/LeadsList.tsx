@@ -9,6 +9,7 @@ interface LeadsListProps {
   onAddToExport?: (lead: Lead) => void
   onDelete?: (lead: Lead) => void
   showActions?: boolean
+  filterView?: boolean
   title?: string
 }
 
@@ -18,6 +19,7 @@ export function LeadsList({
   onAddToExport,
   onDelete,
   showActions = true,
+  filterView = false,
   title = "Leads générés"
 }: LeadsListProps) {
   if (leads.length === 0) {
@@ -48,6 +50,7 @@ export function LeadsList({
                 onAddToExport={onAddToExport}
                 onDelete={onDelete}
                 showActions={showActions}
+                filterView={filterView}
               />
             </motion.div>
           ))}
