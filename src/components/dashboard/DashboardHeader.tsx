@@ -40,8 +40,11 @@ export function DashboardHeader({ exportLeads }: DashboardHeaderProps) {
   return (
     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 md:mb-8 w-full">
       <div className="space-y-2 w-full sm:w-auto">
-        <h1 className="text-xl sm:text-2xl md:text-4xl font-bold bg-gradient-to-r from-primary-light via-primary to-accent bg-clip-text text-transparent">
+        <h1 className="text-xl sm:text-2xl md:text-4xl font-bold bg-gradient-to-r from-primary-light via-primary to-accent bg-clip-text text-transparent flex items-center gap-2">
           Tableau de bord
+          <span className="text-xs sm:text-sm md:text-base font-normal text-primary-light/80 bg-primary-dark/10 px-2 py-1 rounded-md">
+            Beta
+          </span>
         </h1>
         <p className="text-xs sm:text-sm md:text-base text-primary-light/70">
           Gérez et analysez vos leads en temps réel
