@@ -1,7 +1,7 @@
 import { Lead } from "@/types/leads"
 import { LeadActions } from "../LeadActions"
 import { LeadScoreDisplay } from "../LeadScoreDisplay"
-import { Mail, MapPin, Phone, Globe, Facebook, Linkedin, Twitter } from "lucide-react"
+import { Mail, MapPin, Phone, Globe, Facebook, Linkedin, Twitter, Instagram } from "lucide-react"
 
 interface LeadCardProps {
   lead: Lead
@@ -20,9 +20,13 @@ export function LeadCard({
 }: LeadCardProps) {
   const renderSocialLink = (url: string | undefined, Icon: any, platform: string) => {
     if (!url) return null;
+    
+    // Assurez-vous que l'URL commence par http:// ou https://
+    const validUrl = url.startsWith('http') ? url : `https://${url}`;
+    
     return (
       <a 
-        href={url}
+        href={validUrl}
         target="_blank"
         rel="noopener noreferrer"
         className="text-primary-light/70 hover:text-primary transition-colors"
@@ -80,7 +84,7 @@ export function LeadCard({
             <div className="flex items-center gap-2 text-primary-light/80 hover:text-primary-light transition-colors">
               <Globe className="h-4 w-4 flex-shrink-0" />
               <a 
-                href={lead.website} 
+                href={lead.website.startsWith('http') ? lead.website : `https://${lead.website}`}
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="text-sm hover:underline line-clamp-1"
@@ -96,6 +100,7 @@ export function LeadCard({
             {renderSocialLink(lead.socialMedia.linkedin, Linkedin, "LinkedIn")}
             {renderSocialLink(lead.socialMedia.twitter, Twitter, "Twitter")}
             {renderSocialLink(lead.socialMedia.facebook, Facebook, "Facebook")}
+            {renderSocialLink(lead.socialMedia.instagram, Instagram, "Instagram")}
           </div>
         )}
 
