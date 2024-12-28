@@ -20,41 +20,41 @@ export function CompanyAnalysis({ analysis }: CompanyAnalysisProps) {
       transition={{ delay: 0.2 }}
       className="p-3 sm:p-4 rounded-lg bg-black/40 border border-primary/20"
     >
-      <div className="flex items-center gap-2 mb-2">
+      <div className="flex items-center gap-2 mb-4">
         <Signal className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-        <h4 className="font-semibold text-sm sm:text-base text-primary-light">Analyse de l'entreprise</h4>
+        <h4 className="font-semibold text-sm sm:text-base text-white">Analyse de l'entreprise</h4>
       </div>
       
-      <div className="space-y-3">
+      <div className="space-y-4">
         <div className="flex items-center gap-2">
           <span className="text-xl sm:text-2xl font-bold text-primary">{analysis.qualification_score}/10</span>
-          <span className="text-sm text-primary-light/70">Score de qualification</span>
+          <span className="text-sm text-white/90">Score de qualification</span>
         </div>
 
-        <div className="space-y-2">
-          <div>
-            <span className="text-sm font-medium text-primary-light">Position sur le marché :</span>
-            <p className="text-sm text-primary-light/70">{analysis.market_position}</p>
+        <div className="space-y-3">
+          <div className="bg-black/20 p-3 rounded-lg">
+            <span className="text-sm font-medium text-white block mb-1">Position sur le marché :</span>
+            <p className="text-sm text-white/90">{analysis.market_position}</p>
           </div>
           
-          <div>
-            <span className="text-sm font-medium text-primary-light">Taille de l'entreprise :</span>
-            <p className="text-sm text-primary-light/70">{analysis.company_size}</p>
+          <div className="bg-black/20 p-3 rounded-lg">
+            <span className="text-sm font-medium text-white block mb-1">Taille de l'entreprise :</span>
+            <p className="text-sm text-white/90">{analysis.company_size}</p>
           </div>
           
-          <div>
-            <span className="text-sm font-medium text-primary-light">Stade de développement :</span>
-            <p className="text-sm text-primary-light/70">{analysis.development_stage}</p>
+          <div className="bg-black/20 p-3 rounded-lg">
+            <span className="text-sm font-medium text-white block mb-1">Stade de développement :</span>
+            <p className="text-sm text-white/90">{analysis.development_stage}</p>
           </div>
           
-          <div>
-            <span className="text-sm font-medium text-primary-light">Potentiel de croissance :</span>
-            <p className="text-sm text-primary-light/70">{analysis.growth_potential}</p>
+          <div className="bg-black/20 p-3 rounded-lg">
+            <span className="text-sm font-medium text-white block mb-1">Potentiel de croissance :</span>
+            <p className="text-sm text-white/90">{analysis.growth_potential}</p>
           </div>
           
-          <div>
-            <span className="text-sm font-medium text-primary-light">Justification détaillée :</span>
-            <p className="text-sm text-primary-light/70">{analysis.detailed_justification}</p>
+          <div className="bg-black/20 p-3 rounded-lg">
+            <span className="text-sm font-medium text-white block mb-1">Justification détaillée :</span>
+            <p className="text-sm text-white/90">{analysis.detailed_justification}</p>
           </div>
         </div>
       </div>
