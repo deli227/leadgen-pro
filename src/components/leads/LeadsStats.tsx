@@ -6,38 +6,18 @@ import { UpgradeButton } from "../buttons/UpgradeButton"
 type SubscriptionType = Database["public"]["Enums"]["subscription_type"]
 
 interface LeadsStatsProps {
-  dailyLeadsLeft: number
   monthlyLeadsLeft: number
-  totalDailyLeads: number
   totalMonthlyLeads: number
   subscriptionType: SubscriptionType
 }
 
 export function LeadsStats({
-  dailyLeadsLeft,
   monthlyLeadsLeft,
-  totalDailyLeads,
   totalMonthlyLeads,
   subscriptionType,
 }: LeadsStatsProps) {
   return (
-    <div className="grid gap-4 md:grid-cols-2">
-      <Card className="p-4 md:p-6 bg-secondary-dark/80 border-primary/10">
-        <div className="space-y-2">
-          <h3 className="text-lg font-medium text-primary-light">Leads quotidiens restants</h3>
-          <div className="flex items-center justify-between text-sm text-primary-light/70">
-            <span>{dailyLeadsLeft} leads restants</span>
-            <span>{totalDailyLeads} leads au total</span>
-          </div>
-          <Progress
-            value={(dailyLeadsLeft / totalDailyLeads) * 100}
-            className="h-2"
-          />
-          {subscriptionType === "free" && (
-            <UpgradeButton className="w-full mt-4" />
-          )}
-        </div>
-      </Card>
+    <div className="grid gap-4">
       <Card className="p-4 md:p-6 bg-secondary-dark/80 border-primary/10">
         <div className="space-y-2">
           <h3 className="text-lg font-medium text-primary-light">Leads mensuels restants</h3>

@@ -252,17 +252,14 @@ export type Database = {
       }
       subscription_limits: {
         Row: {
-          daily_leads_limit: number
           monthly_leads_limit: number
           subscription_type: Database["public"]["Enums"]["subscription_type"]
         }
         Insert: {
-          daily_leads_limit: number
           monthly_leads_limit: number
           subscription_type: Database["public"]["Enums"]["subscription_type"]
         }
         Update: {
-          daily_leads_limit?: number
           monthly_leads_limit?: number
           subscription_type?: Database["public"]["Enums"]["subscription_type"]
         }
