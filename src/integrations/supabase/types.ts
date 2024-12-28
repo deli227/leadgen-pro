@@ -145,6 +145,7 @@ export type Database = {
           email: string | null
           id: string
           industry: string | null
+          is_search_result: boolean | null
           phone: string | null
           qualification: number | null
           score: number | null
@@ -161,6 +162,7 @@ export type Database = {
           email?: string | null
           id?: string
           industry?: string | null
+          is_search_result?: boolean | null
           phone?: string | null
           qualification?: number | null
           score?: number | null
@@ -177,6 +179,7 @@ export type Database = {
           email?: string | null
           id?: string
           industry?: string | null
+          is_search_result?: boolean | null
           phone?: string | null
           qualification?: number | null
           score?: number | null
