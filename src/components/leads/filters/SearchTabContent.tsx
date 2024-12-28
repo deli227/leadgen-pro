@@ -7,6 +7,7 @@ import { useSessionData } from "@/hooks/useSessionData"
 import { LeadCard } from "@/components/leads/shared/LeadCard"
 import { Lead } from "@/types/leads"
 import { useQuery } from "@tanstack/react-query"
+import { LocationFilters } from "@/components/leads/filters/LocationFilters"
 
 interface SearchTabContentProps {
   filters: {
@@ -145,17 +146,25 @@ export function SearchTabContent({ filters, setFilters, onAddToAnalytics }: Sear
 
   return (
     <div className="space-y-6">
-      <div className="flex gap-2">
+      <div className="space-y-4">
         <Input
           placeholder="Rechercher une entreprise..."
           value={filters.search}
           onChange={(e) => setFilters({ ...filters, search: e.target.value })}
           className="bg-black/20"
         />
+        
+        <LocationFilters
+          country={filters.country}
+          city={filters.city}
+          onCountryChange={(value) => setFilters({ ...filters, country: value, city: "all" })}
+          onCityChange={(value) => setFilters({ ...filters, city: value })}
+        />
+
         <Button 
           onClick={handleSearch}
           disabled={isSearching}
-          className="bg-primary hover:bg-primary/90"
+          className="w-full bg-primary hover:bg-primary/90"
         >
           {isSearching ? "Recherche..." : "Rechercher"}
         </Button>
