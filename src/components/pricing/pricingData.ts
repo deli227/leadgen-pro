@@ -31,7 +31,7 @@ export const plans = [
     buttonText: "Commencer",
     type: "pro",
     popular: true,
-    priceId: "price_1OqKHyKez0igoNdCnewVaA8M",
+    priceId: "price_1QYqRXB0B6nBBCbUR3iwskQu",
   },
   {
     name: "Premium",
@@ -51,5 +51,6 @@ export const plans = [
     ],
     buttonText: "Commencer",
     type: "enterprise",
+    priceId: "price_1QYqSJB0B6nBBCbUWCkn0Qn5",
   },
 ];
