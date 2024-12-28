@@ -1,5 +1,5 @@
 import { motion } from "framer-motion"
-import { Search } from "lucide-react"
+import { Search, Loader2 } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 import { toast } from "sonner"
 import { SearchInput } from "./SearchInput"
@@ -7,6 +7,7 @@ import { LocationFilters } from "./LocationFilters"
 import { IndustrySelect } from "./IndustrySelect"
 import { IconButton } from "@/components/buttons/IconButton"
 import { LeadFilters } from "@/types/filters"
+import { useState } from "react"
 
 interface SearchTabContentProps {
   filters: LeadFilters
@@ -14,8 +15,12 @@ interface SearchTabContentProps {
 }
 
 export function SearchTabContent({ filters, setFilters }: SearchTabContentProps) {
+  const [isLoading, setIsLoading] = useState(false)
+
   const handleSearch = async () => {
     try {
+      setIsLoading(true)
+      
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) {
         toast.error("Erreur d'authentification", {
@@ -24,13 +29,11 @@ export function SearchTabContent({ filters, setFilters }: SearchTabContentProps)
         return
       }
 
+      console.log('Envoi de la requête de génération avec les filtres:', filters)
       const response = await supabase.functions.invoke('generate-leads-with-ai', {
         body: { 
           filters,
           userId: session.user.id
-        },
-        headers: {
-          Authorization: `Bearer ${session.access_token}`
         }
       })
 
@@ -49,8 +52,9 @@ export function SearchTabContent({ filters, setFilters }: SearchTabContentProps)
         return
       }
 
-      toast.success("Recherche lancée avec succès", {
-        description: "Les leads ont été générés et seront bientôt disponibles."
+      console.log('Leads générés avec succès:', response.data)
+      toast.success("Génération réussie", {
+        description: "Les leads ont été générés avec succès."
       })
       
       window.location.reload()
@@ -59,6 +63,8 @@ export function SearchTabContent({ filters, setFilters }: SearchTabContentProps)
       toast.error("Erreur système", {
         description: "Une erreur inattendue est survenue. Veuillez réessayer plus tard."
       })
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -80,10 +86,13 @@ export function SearchTabContent({ filters, setFilters }: SearchTabContentProps)
           />
           <div className="flex justify-end">
             <IconButton
-              icon={Search}
+              icon={isLoading ? Loader2 : Search}
               label="Lancer la recherche"
               onClick={handleSearch}
-              className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
+              disabled={isLoading}
+              className={`bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 ${
+                isLoading ? 'opacity-70 cursor-not-allowed' : ''
+              }`}
             />
           </div>
         </div>

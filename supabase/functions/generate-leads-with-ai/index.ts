@@ -8,7 +8,7 @@ const corsHeaders = {
 const buildSimplePrompt = (filters: any) => {
   const leadCount = Math.min(Math.max(filters.leadCount, 1), 50);
   
-  let prompt = `Je recherche ${leadCount} entreprises`;
+  let prompt = `Génère ${leadCount} entreprises`;
   
   if (filters.country !== 'all') {
     prompt += ` en ${filters.country}`;
@@ -21,51 +21,74 @@ const buildSimplePrompt = (filters: any) => {
     prompt += ` dans le secteur ${filters.industry}`;
   }
 
-  prompt += `\n\nPour chaque entreprise, donne uniquement les informations suivantes au format JSON :
+  prompt += `\n\nRéponds uniquement avec un tableau JSON contenant les entreprises avec ces champs :
   {
     "company": "Nom de l'entreprise",
-    "email": "Email si trouvé",
-    "phone": "Téléphone si trouvé",
-    "website": "Site web si trouvé",
-    "address": "Adresse si trouvée",
+    "email": "Email professionnel",
+    "phone": "Téléphone",
+    "website": "Site web",
+    "address": "Adresse complète",
     "industry": "${filters.industry}",
-    "score": "Note sur 10 basée sur la présence en ligne",
+    "score": "Note sur 10",
     "socialMedia": {
-      "linkedin": "URL LinkedIn si trouvé",
-      "twitter": "URL Twitter si trouvé",
-      "facebook": "URL Facebook si trouvé"
+      "linkedin": "URL LinkedIn",
+      "twitter": "URL Twitter",
+      "facebook": "URL Facebook"
     }
   }`;
 
   return prompt;
 }
 
-const validateLeadData = (lead: any) => {
-  const requiredFields = ['company'];
-  for (const field of requiredFields) {
-    if (!lead[field]) {
-      console.error(`Champ requis manquant: ${field}`);
+const validateLead = (lead: any): boolean => {
+  // Validation basique des champs requis
+  if (!lead.company || typeof lead.company !== 'string') {
+    console.error('Champ company invalide');
+    return false;
+  }
+
+  // Validation du score
+  if (lead.score) {
+    const score = Number(lead.score);
+    if (isNaN(score) || score < 0 || score > 10) {
+      console.error('Score invalide');
       return false;
     }
   }
+
+  // Validation des URLs
+  if (lead.website && !lead.website.startsWith('http')) {
+    lead.website = 'https://' + lead.website;
+  }
+
+  if (lead.socialMedia) {
+    ['linkedin', 'twitter', 'facebook'].forEach(platform => {
+      if (lead.socialMedia[platform] && !lead.socialMedia[platform].startsWith('http')) {
+        lead.socialMedia[platform] = 'https://' + lead.socialMedia[platform];
+      }
+    });
+  }
+
   return true;
 }
 
 serve(async (req) => {
+  // Gestion du CORS
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
 
   try {
+    console.log('Début de la génération de leads');
     const { filters, userId } = await req.json()
     console.log('Filtres reçus:', filters)
-    console.log('ID utilisateur:', userId)
 
     const perplexityApiKey = Deno.env.get('PERPLEXITY_API_KEY')
     if (!perplexityApiKey) {
       throw new Error('Clé API Perplexity non configurée')
     }
 
+    console.log('Envoi de la requête à Perplexity');
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
       headers: {
@@ -77,7 +100,7 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'Tu es un expert en recherche d\'entreprises. Fournis uniquement des informations vérifiées.'
+            content: 'Tu es un expert en recherche d\'entreprises. Fournis uniquement des informations vérifiées au format JSON demandé.'
           },
           {
             role: 'user',
@@ -96,21 +119,25 @@ serve(async (req) => {
     }
 
     const result = await response.json()
-    console.log('Réponse Perplexity reçue')
+    console.log('Réponse Perplexity reçue');
 
-    let generatedLeads
+    let generatedLeads;
     try {
-      const content = result.choices[0].message.content
-      generatedLeads = JSON.parse(content)
+      const content = result.choices[0].message.content;
+      console.log('Contenu brut reçu:', content);
       
-      // Validation des données
-      if (Array.isArray(generatedLeads)) {
-        generatedLeads = generatedLeads.filter(lead => validateLeadData(lead))
-      } else if (validateLeadData(generatedLeads)) {
-        generatedLeads = [generatedLeads]
-      } else {
-        throw new Error('Format de données invalide')
+      // Tentative de parsing du JSON
+      generatedLeads = JSON.parse(content);
+      
+      // Normalisation en tableau
+      if (!Array.isArray(generatedLeads)) {
+        generatedLeads = [generatedLeads];
       }
+      
+      // Validation et nettoyage des leads
+      generatedLeads = generatedLeads.filter(lead => validateLead(lead));
+      
+      console.log(`${generatedLeads.length} leads valides générés`);
     } catch (error) {
       console.error('Erreur lors du parsing:', error)
       throw new Error('Format de réponse invalide')

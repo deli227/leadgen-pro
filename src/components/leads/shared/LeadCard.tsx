@@ -110,5 +110,5 @@ export function LeadCard({
         )}
       </div>
     </div>
-  );
+  )
 }
