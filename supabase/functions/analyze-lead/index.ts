@@ -26,64 +26,109 @@ serve(async (req) => {
     }
 
     // Construction du prompt pour l'analyse
-    const prompt = `Analyse complète et détaillée de l'entreprise suivante:
-    Nom: ${lead.company}
-    Site web: ${lead.website || 'Non spécifié'}
-    Industrie: ${lead.industry || 'Non spécifié'}
-    Email: ${lead.email || 'Non spécifié'}
-    Téléphone: ${lead.phone || 'Non spécifié'}
-    Adresse: ${lead.address || 'Non spécifié'}
-    
-    Format de réponse souhaité (JSON) :
-    {
-      "company_analysis": {
-        "qualification_score": number (1-10),
-        "market_position": string,
-        "company_size": string,
-        "development_stage": string,
-        "growth_potential": string,
-        "detailed_justification": string
-      },
-      "tech_analysis": {
-        "tech_stack": string[],
-        "digital_maturity": string,
-        "online_presence": string,
-        "website_performance": string,
-        "security_compliance": string
-      },
-      "marketing_analysis": {
-        "content_strategy": string,
-        "social_media_presence": string,
-        "seo_score": number (1-10),
-        "brand_strategy": string,
-        "market_positioning": string
-      },
-      "financial_analysis": {
-        "estimated_revenue": string,
-        "investment_potential": string,
-        "funding_capacity": string,
-        "financial_health": string
-      },
-      "competitive_analysis": {
-        "market_position": string,
-        "competitive_advantages": string[],
-        "potential_threats": string[],
-        "development_opportunities": string[]
-      },
-      "recommendations": {
-        "approach_strategy": string,
-        "entry_points": string[],
-        "sales_arguments": string[],
-        "optimal_timing": string,
-        "required_resources": string[]
-      },
-      "action_plan": {
-        "steps": string[],
-        "timeline": string,
-        "kpis": string[],
-        "vigilance_points": string[]
-      }
-    }`
+
+const prompt = `En tant que consultant stratégique senior spécialisé en développement commercial, réalise une analyse approfondie et actionnables de :
+
+Entreprise : ${lead.company}
+Site web : ${lead.website || 'Non spécifié'}
+Industrie : ${lead.industry || 'Non spécifié'}
+Email : ${lead.email || 'Non spécifié'}
+Téléphone : ${lead.phone || 'Non spécifié'}
+Adresse : ${lead.address || 'Non spécifié'}
+
+Pour chaque section de l'analyse :
+1. Company Analysis :
+   - Évalue le potentiel réel de conversion
+   - Identifie les cycles de décision
+   - Analyse la capacité d'investissement
+   - Évalue la maturité pour notre solution
+
+2. Tech Analysis :
+   - Examine la stack technique en détail
+   - Identifie les opportunités d'intégration
+   - Évalue les besoins techniques non satisfaits
+   - Analyse la compatibilité avec nos solutions
+
+3. Marketing Analysis :
+   - Analyse les canaux de communication préférés
+   - Identifie les messages qui résonnent
+   - Évalue la réceptivité aux nouvelles solutions
+   - Examine leur stratégie de contenu
+
+4. Financial Analysis :
+   - Évalue la santé financière réelle
+   - Identifie les cycles budgétaires
+   - Analyse la capacité d'investissement
+   - Examine les priorités d'investissement
+
+5. Competitive Analysis :
+   - Compare avec les leaders du marché
+   - Identifie les avantages concurrentiels réels
+   - Analyse les menaces immédiates
+   - Trouve les opportunités inexploitées
+
+6. Recommendations :
+   - Propose des actions concrètes et immédiates
+   - Identifie les quick wins
+   - Suggère des approches personnalisées
+   - Définit un plan d'action détaillé
+
+7. Action Plan :
+   - Établit un calendrier réaliste
+   - Définit des objectifs mesurables
+   - Identifie les ressources nécessaires
+   - Prévoit les points de contrôle
+
+Format de réponse souhaité (JSON) :
+{
+  "company_analysis": {
+    "qualification_score": number (1-10),
+    "market_position": string,
+    "company_size": string,
+    "development_stage": string,
+    "growth_potential": string,
+    "detailed_justification": string
+  },
+  "tech_analysis": {
+    "tech_stack": string[],
+    "digital_maturity": string,
+    "online_presence": string,
+    "website_performance": string,
+    "security_compliance": string
+  },
+  "marketing_analysis": {
+    "content_strategy": string,
+    "social_media_presence": string,
+    "seo_score": number (1-10),
+    "brand_strategy": string,
+    "market_positioning": string
+  },
+  "financial_analysis": {
+    "estimated_revenue": string,
+    "investment_potential": string,
+    "funding_capacity": string,
+    "financial_health": string
+  },
+  "competitive_analysis": {
+    "market_position": string,
+    "competitive_advantages": string[],
+    "potential_threats": string[],
+    "development_opportunities": string[]
+  },
+  "recommendations": {
+    "approach_strategy": string,
+    "entry_points": string[],
+    "sales_arguments": string[],
+    "optimal_timing": string,
+    "required_resources": string[]
+  },
+  "action_plan": {
+    "steps": string[],
+    "timeline": string,
+    "kpis": string[],
+    "vigilance_points": string[]
+  }
+}`
 
     console.log('Envoi de la requête à Perplexity')
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
@@ -192,3 +237,4 @@ serve(async (req) => {
     )
   }
 })
+
