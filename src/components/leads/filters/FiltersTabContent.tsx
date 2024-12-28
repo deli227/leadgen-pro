@@ -10,6 +10,7 @@ import { motion } from "framer-motion"
 import { useState } from "react"
 import { Lead } from "@/types/leads"
 import { LeadFilters } from "@/types/filters"
+import { useNavigate } from "react-router-dom"
 
 interface FiltersTabContentProps {
   filters: LeadFilters
@@ -28,6 +29,7 @@ export function FiltersTabContent({
 }: FiltersTabContentProps) {
   const [isGenerating, setIsGenerating] = useState(false)
   const [removedLeads, setRemovedLeads] = useState<string[]>([])
+  const navigate = useNavigate()
 
   const handleGenerateLeads = async () => {
     try {
@@ -55,6 +57,19 @@ export function FiltersTabContent({
         console.error('Erreur détaillée:', error)
         toast.error("Erreur de génération", {
           description: error.message || "Une erreur est survenue lors de la génération des leads."
+        })
+        return
+      }
+
+      // Si la limite est atteinte
+      if (data?.limitReached) {
+        toast.error("Limite de leads atteinte", {
+          description: "Vous avez atteint votre limite de leads pour ce mois. Passez à un plan supérieur pour générer plus de leads.",
+          action: {
+            label: "Passer au premium",
+            onClick: () => navigate("/#pricing-section")
+          },
+          duration: 10000
         })
         return
       }
