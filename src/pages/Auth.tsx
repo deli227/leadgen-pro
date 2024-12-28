@@ -13,26 +13,22 @@ export function Auth() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // Vérifier la session au chargement
     const checkSession = async () => {
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        if (error) {
-          console.error("Erreur lors de la vérification de la session:", error);
-          toast.error("Erreur de connexion");
-        }
-        if (session) {
-          navigate("/dashboard");
-        }
-      } catch (error) {
-        console.error("Erreur inattendue:", error);
-        toast.error("Une erreur est survenue");
-      } finally {
-        setIsLoading(false);
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) {
+        console.error("Erreur lors de la vérification de la session:", error);
+        toast.error("Erreur de connexion");
       }
+      if (session) {
+        navigate("/dashboard");
+      }
+      setIsLoading(false);
     };
 
     checkSession();
 
+    // Écouter les changements d'état d'authentification
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -73,13 +69,13 @@ export function Auth() {
           <TabsList className="grid w-full grid-cols-2 mb-8 bg-black/20">
             <TabsTrigger 
               value="login" 
-              className="text-white data-[state=inactive]:text-white/70 data-[state=inactive]:bg-transparent"
+              className="text-white data-[state=inactive]:text-white data-[state=inactive]:bg-transparent"
             >
               Connexion
             </TabsTrigger>
             <TabsTrigger 
               value="signup"
-              className="text-white data-[state=inactive]:text-white/70 data-[state=inactive]:bg-transparent"
+              className="text-white data-[state=inactive]:text-white data-[state=inactive]:bg-transparent"
             >
               Inscription
             </TabsTrigger>
@@ -103,14 +99,12 @@ export function Auth() {
                   }
                 },
                 className: {
-                  input: 'text-white bg-black/30 border-white/20 placeholder-white/50',
+                  input: 'text-white',
                   label: 'text-white',
                   button: 'text-white bg-primary hover:bg-primary-dark',
-                  anchor: 'text-primary hover:text-primary-dark',
                 }
               }}
               providers={[]}
-              redirectTo={window.location.origin}
               localization={{
                 variables: {
                   sign_in: {
@@ -128,14 +122,7 @@ export function Auth() {
                     loading_button_label: 'Inscription en cours...',
                     social_provider_text: "S'inscrire avec {{provider}}",
                     link_text: "Vous n'avez pas de compte ? Inscrivez-vous",
-                  },
-                  forgotten_password: {
-                    email_label: 'Email',
-                    password_label: 'Mot de passe',
-                    button_label: 'Envoyer les instructions',
-                    loading_button_label: 'Envoi en cours...',
-                    link_text: 'Mot de passe oublié ?',
-                  },
+                  }
                 },
               }}
             />
@@ -160,14 +147,12 @@ export function Auth() {
                   }
                 },
                 className: {
-                  input: 'text-white bg-black/30 border-white/20 placeholder-white/50',
+                  input: 'text-white',
                   label: 'text-white',
                   button: 'text-white bg-primary hover:bg-primary-dark',
-                  anchor: 'text-primary hover:text-primary-dark',
                 }
               }}
               providers={[]}
-              redirectTo={window.location.origin}
               localization={{
                 variables: {
                   sign_up: {
