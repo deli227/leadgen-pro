@@ -65,7 +65,18 @@ export function AIAnalysisWindow({ lead, analysis, isAnalyzing }: AIAnalysisWind
                 <StrengthsList strengths={lead.strengths || []} />
                 <WeaknessesList weaknesses={lead.weaknesses || []} />
                 <SeoAnalysis score={lead.score || 0} weaknesses={lead.weaknesses || []} />
-                <ContactRecommendations weaknesses={lead.weaknesses || []} />
+                <ContactRecommendations recommendations={{
+                  approach_strategy: "",
+                  entry_points: [],
+                  sales_arguments: [],
+                  optimal_timing: "",
+                  required_resources: [],
+                  improvement_solutions: {
+                    tech_solutions: [],
+                    marketing_solutions: [],
+                    business_solutions: []
+                  }
+                }} />
               </div>
             )}
           </div>
