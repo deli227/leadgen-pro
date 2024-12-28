@@ -8,7 +8,7 @@ export function useLeadActions() {
   const { toast } = useToast()
   const [isAnalyzing, setIsAnalyzing] = useState(false)
 
-  const handleAnalyze = async (lead: Lead): Promise<LeadAnalysis | undefined> => {
+  const handleAnalyze = async (lead: Lead): Promise<LeadAnalysis | null> => {
     setIsAnalyzing(true)
     try {
       const session = await supabase.auth.getSession()
@@ -16,6 +16,8 @@ export function useLeadActions() {
         throw new Error("Non authentifié")
       }
 
+      console.log("Début de l'analyse pour:", lead.company)
+      
       const { data, error } = await supabase.functions.invoke('analyze-lead', {
         body: {
           lead,
@@ -23,7 +25,16 @@ export function useLeadActions() {
         }
       })
 
-      if (error) throw error
+      if (error) {
+        console.error("Erreur lors de l'analyse:", error)
+        throw error
+      }
+
+      console.log("Analyse reçue:", data)
+
+      if (!data) {
+        throw new Error("Aucune donnée reçue de l'analyse")
+      }
 
       toast({
         title: "Analyse terminée",
@@ -38,6 +49,7 @@ export function useLeadActions() {
         description: "Une erreur est survenue lors de l'analyse du lead",
         variant: "destructive"
       })
+      return null
     } finally {
       setIsAnalyzing(false)
     }

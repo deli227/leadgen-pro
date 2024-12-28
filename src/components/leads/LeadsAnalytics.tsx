@@ -19,7 +19,7 @@ export function LeadsAnalytics({
   onLocalRemove,
   onRemoveFromAnalytics 
 }: LeadsAnalyticsProps) {
-  const { handleAnalyze } = useLeadActions()
+  const { handleAnalyze, isAnalyzing } = useLeadActions()
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
   const [currentAnalysis, setCurrentAnalysis] = useState<LeadAnalysis | null>(null)
 
@@ -31,8 +31,10 @@ export function LeadsAnalytics({
 
   const handleAnalyzeLead = async (lead: Lead) => {
     setSelectedLead(lead)
+    setCurrentAnalysis(null) // Reset l'analyse précédente
     const analysis = await handleAnalyze(lead)
     if (analysis) {
+      console.log("Mise à jour de l'analyse:", analysis)
       setCurrentAnalysis(analysis)
     }
   }
@@ -49,7 +51,11 @@ export function LeadsAnalytics({
         />
       </div>
       
-      <AIAnalysisWindow lead={selectedLead} analysis={currentAnalysis} />
+      <AIAnalysisWindow 
+        lead={selectedLead} 
+        analysis={currentAnalysis} 
+        isAnalyzing={isAnalyzing}
+      />
     </div>
   )
 }

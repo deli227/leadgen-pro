@@ -15,24 +15,14 @@ import { FinancialAnalysis } from "./sections/FinancialAnalysis"
 import { CompetitiveAnalysis } from "./sections/CompetitiveAnalysis"
 import { ActionPlan } from "./sections/ActionPlan"
 import { LeadAnalysis } from "@/types/analysis"
-import { useLeadActions } from "@/hooks/useLeadActions"
-import { useState, useEffect } from "react"
 
 interface AIAnalysisWindowProps {
   lead: Lead | null
-  analysis?: LeadAnalysis | null
+  analysis: LeadAnalysis | null
+  isAnalyzing: boolean
 }
 
-export function AIAnalysisWindow({ lead }: AIAnalysisWindowProps) {
-  const { isAnalyzing } = useLeadActions()
-  const [currentAnalysis, setCurrentAnalysis] = useState<LeadAnalysis | null>(null)
-
-  useEffect(() => {
-    if (!lead) {
-      setCurrentAnalysis(null)
-    }
-  }, [lead])
-
+export function AIAnalysisWindow({ lead, analysis, isAnalyzing }: AIAnalysisWindowProps) {
   if (!lead) return null
 
   return (
@@ -48,7 +38,9 @@ export function AIAnalysisWindow({ lead }: AIAnalysisWindowProps) {
         <ScrollArea className="h-[80vh] lg:h-full">
           <div className="relative p-4 sm:p-6 space-y-4 sm:space-y-6">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg sm:text-xl font-bold text-primary-light">Analyse IA</h3>
+              <h3 className="text-lg sm:text-xl font-bold text-primary-light">
+                Analyse IA - {lead.company}
+              </h3>
               <CircuitBoard className={`h-5 w-5 sm:h-6 sm:w-6 text-primary ${isAnalyzing ? 'animate-pulse' : ''}`} />
             </div>
 
@@ -57,27 +49,23 @@ export function AIAnalysisWindow({ lead }: AIAnalysisWindowProps) {
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                 <p className="text-primary-light text-sm">Analyse en cours...</p>
               </div>
+            ) : analysis ? (
+              <div className="space-y-3 sm:space-y-4">
+                <CompanyAnalysis analysis={analysis.company_analysis} />
+                <TechAnalysis analysis={analysis.tech_analysis} />
+                <MarketingAnalysis analysis={analysis.marketing_analysis} />
+                <FinancialAnalysis analysis={analysis.financial_analysis} />
+                <CompetitiveAnalysis analysis={analysis.competitive_analysis} />
+                <ContactRecommendations recommendations={analysis.recommendations} />
+                <ActionPlan plan={analysis.action_plan} />
+              </div>
             ) : (
               <div className="space-y-3 sm:space-y-4">
-                {currentAnalysis ? (
-                  <>
-                    <CompanyAnalysis analysis={currentAnalysis.company_analysis} />
-                    <TechAnalysis analysis={currentAnalysis.tech_analysis} />
-                    <MarketingAnalysis analysis={currentAnalysis.marketing_analysis} />
-                    <FinancialAnalysis analysis={currentAnalysis.financial_analysis} />
-                    <CompetitiveAnalysis analysis={currentAnalysis.competitive_analysis} />
-                    <ContactRecommendations recommendations={currentAnalysis.recommendations} />
-                    <ActionPlan plan={currentAnalysis.action_plan} />
-                  </>
-                ) : (
-                  <>
-                    <QualificationScore qualification={lead.qualification || 0} />
-                    <StrengthsList strengths={lead.strengths || []} />
-                    <WeaknessesList weaknesses={lead.weaknesses || []} />
-                    <SeoAnalysis score={lead.score || 0} weaknesses={lead.weaknesses || []} />
-                    <ContactRecommendations weaknesses={lead.weaknesses || []} />
-                  </>
-                )}
+                <QualificationScore qualification={lead.qualification || 0} />
+                <StrengthsList strengths={lead.strengths || []} />
+                <WeaknessesList weaknesses={lead.weaknesses || []} />
+                <SeoAnalysis score={lead.score || 0} weaknesses={lead.weaknesses || []} />
+                <ContactRecommendations weaknesses={lead.weaknesses || []} />
               </div>
             )}
           </div>
