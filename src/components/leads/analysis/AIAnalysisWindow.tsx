@@ -56,15 +56,7 @@ export function AIAnalysisWindow({ lead, analysis, isAnalyzing }: AIAnalysisWind
                 {analysis.marketing_analysis && <MarketingAnalysis analysis={analysis.marketing_analysis} />}
                 {analysis.financial_analysis && <FinancialAnalysis analysis={analysis.financial_analysis} />}
                 {analysis.competitive_analysis && <CompetitiveAnalysis analysis={analysis.competitive_analysis} />}
-                {analysis.recommendations && (
-                  <ContactRecommendations 
-                    recommendations={{
-                      ...analysis.recommendations,
-                      improvement_suggestions: analysis.recommendations.improvement_suggestions || [],
-                      specific_solutions: analysis.recommendations.specific_solutions || []
-                    }} 
-                  />
-                )}
+                {analysis.recommendations && <ContactRecommendations recommendations={analysis.recommendations} />}
                 {analysis.action_plan && <ActionPlan plan={analysis.action_plan} />}
               </div>
             ) : (
