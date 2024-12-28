@@ -5,7 +5,7 @@ interface SearchFilters {
 }
 
 export const buildPrompt = (filters: SearchFilters): string => {
-  let prompt = `En tant qu'expert en développement commercial B2B, effectue une recherche approfondie sur Google et Bing pour trouver des informations détaillées sur des clients potentiels correspondant à "${filters.search}"`
+  let prompt = `En tant qu'expert chevronné en recherche d'entreprises B2B, effectue une recherche exhaustive et approfondie sur toutes les sources disponibles (Google, Bing, LinkedIn, Pages Jaunes, registres du commerce, annuaires professionnels, sites d'entreprises) pour trouver des informations détaillées sur "${filters.search}"`
   
   if (filters.country && filters.country !== 'all') {
     prompt += ` en ${filters.country}`
@@ -14,11 +14,15 @@ export const buildPrompt = (filters: SearchFilters): string => {
     }
   }
 
-  prompt += `\n\nUtilise Google et Bing pour :
-- Trouver les informations de contact les plus récentes
-- Vérifier la présence en ligne et la réputation
-- Identifier les actualités récentes et les développements
-- Valider les informations à travers plusieurs sources
+  prompt += `\n\nUtilise toutes les sources possibles pour :
+- Trouver IMPÉRATIVEMENT un numéro de téléphone valide (vérifier plusieurs sources)
+- Identifier le site web officiel de l'entreprise
+- Localiser TOUS les réseaux sociaux actifs (LinkedIn, Twitter, Facebook, Instagram)
+- Croiser et valider les informations entre différentes sources
+- Vérifier la cohérence des coordonnées trouvées
+- Explorer les annuaires professionnels spécialisés
+- Consulter les registres de commerce et bases légales
+- Analyser les mentions dans la presse et médias
 
 Points clés à identifier :
 - Taille et structure de l'entreprise
@@ -54,7 +58,8 @@ Réponds UNIQUEMENT avec un objet JSON valide contenant les informations de l'en
   "socialMedia": {
     "linkedin": "linkedin.com/company/...",
     "twitter": "twitter.com/...",
-    "facebook": "facebook.com/..."
+    "facebook": "facebook.com/...",
+    "instagram": "instagram.com/..."
   }
 }`
 
