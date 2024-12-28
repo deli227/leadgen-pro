@@ -164,11 +164,11 @@ serve(async (req) => {
       const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
       const supabase = createClient(supabaseUrl, supabaseKey);
 
-      // Préparation des leads pour l'insertion
+      // Préparation des leads pour l'insertion avec le bon format de colonne
       const leadsToInsert = generatedLeads.map(lead => ({
         ...lead,
         user_id: userId,
-        social_media: lead.socialMedia
+        social_media: lead.socialMedia // Renommage de la propriété pour correspondre au nom de la colonne
       }));
 
       console.log('Insertion des leads dans la base de données:', leadsToInsert);
