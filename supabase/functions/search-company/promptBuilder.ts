@@ -14,7 +14,7 @@ export const buildPrompt = (filters: SearchFilters): string => {
     }
   }
 
-  prompt += `\n\nRéponds UNIQUEMENT avec un objet JSON valide contenant les informations de l'entreprise avec exactement ces champs :
+  prompt += `\n\nRéponds UNIQUEMENT avec un objet JSON valide contenant les informations de l'entreprise avec exactement ces champs (ne pas inclure de balises \`\`\`json ou \`\`\`) :
   {
     "company": "Nom de l'entreprise",
     "email": "email@professionnel.com",

@@ -35,7 +35,7 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'Tu es un expert en recherche d\'entreprises. Fournis uniquement les informations au format JSON demandé, sans texte supplémentaire.'
+            content: 'Tu es un expert en recherche d\'entreprises. Fournis uniquement les informations au format JSON demandé, sans texte supplémentaire ni balises de code.'
           },
           {
             role: 'user',
@@ -54,12 +54,26 @@ serve(async (req) => {
     }
 
     const result = await response.json()
-    console.log('Réponse Perplexity reçue')
+    console.log('Réponse Perplexity brute:', result.choices[0].message.content)
+
+    // Nettoyer la réponse des balises de code JSON si présentes
+    let cleanedContent = result.choices[0].message.content
+      .replace(/```json\n?/g, '')
+      .replace(/```\n?/g, '')
+      .trim()
+
+    // Vérifier que le JSON est valide
+    try {
+      JSON.parse(cleanedContent)
+    } catch (error) {
+      console.error('Erreur de parsing JSON:', error)
+      throw new Error('La réponse n\'est pas un JSON valide')
+    }
 
     return new Response(
       JSON.stringify({ 
         success: true, 
-        data: result.choices[0].message.content 
+        data: cleanedContent
       }),
       { 
         headers: { 
