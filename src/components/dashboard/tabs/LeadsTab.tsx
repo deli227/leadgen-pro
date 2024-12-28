@@ -33,26 +33,6 @@ export function LeadsTab({
 
   const handleLocalRemove = async (leadId: string) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      
-      if (!session) {
-        toast.error("Erreur d'authentification")
-        return
-      }
-
-      // Supprimer de la base de données
-      const { error } = await supabase
-        .from('leads')
-        .delete()
-        .eq('id', leadId)
-        .eq('user_id', session.user.id)
-
-      if (error) {
-        console.error('Erreur lors de la suppression:', error)
-        toast.error("Erreur lors de la suppression")
-        return
-      }
-
       // Mettre à jour l'état local
       setRemovedLeads(prev => [...prev, leadId])
 
@@ -66,7 +46,6 @@ export function LeadsTab({
         onRemoveFromExport(leadId)
       }
 
-      toast.success("Lead supprimé avec succès")
     } catch (error) {
       console.error('Erreur:', error)
       toast.error("Une erreur est survenue")
