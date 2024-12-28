@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Brain, Trash2 } from "lucide-react"
 import { Lead } from "@/types/leads"
+import { useToast } from "@/hooks/use-toast"
 
 interface FilterLeadActionsProps {
   lead: Lead
@@ -9,10 +10,22 @@ interface FilterLeadActionsProps {
 }
 
 export function FilterLeadActions({ lead, onAnalyze, onDelete }: FilterLeadActionsProps) {
+  const { toast } = useToast()
+
+  const handleAnalyzeClick = () => {
+    toast({
+      title: "Analyse IA avancée",
+      description: "Rendez-vous dans l'onglet 'Analytique' pour lancer l'analyse IA avancée de ce lead !",
+      className: "bg-gradient-to-br from-primary/90 to-primary-dark/90 text-primary-light border-primary/20",
+      duration: 5000,
+    })
+    onAnalyze(lead)
+  }
+
   return (
     <div className="flex flex-wrap gap-2 w-full sm:w-auto mt-4">
       <Button
-        onClick={() => onAnalyze(lead)}
+        onClick={handleAnalyzeClick}
         variant="outline"
         size="sm"
         className="flex-1 sm:flex-none bg-gradient-to-r from-primary to-primary-dark text-primary-light border-none hover:opacity-90 text-xs sm:text-sm"
