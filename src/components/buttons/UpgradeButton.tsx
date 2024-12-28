@@ -15,8 +15,8 @@ export const UpgradeButton = ({ className }: UpgradeButtonProps) => {
     try {
       setIsLoading(true)
       
-      // Prix pour l'abonnement Pro
-      const priceId = "price_1OqKHyKez0igoNdCnewVaA8M"
+      // Prix pour l'abonnement Pro - à remplacer par votre ID de prix Stripe
+      const priceId = "price_1OqKHyKez0igoNdCnewVaA8M" // Vous devrez remplacer cet ID
 
       const { data, error } = await supabase.functions.invoke('create-checkout', {
         body: { priceId }

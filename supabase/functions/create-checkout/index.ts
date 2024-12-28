@@ -13,8 +13,6 @@ serve(async (req) => {
   }
 
   try {
-    const { priceId } = await req.json();
-    
     // Initialize Supabase client
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
