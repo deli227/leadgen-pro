@@ -55,7 +55,7 @@ export function LeadCard({
               </p>
             )}
           </div>
-          {lead.score && <LeadScoreDisplay score={lead.score} />}
+          {!filterView && lead.score && <LeadScoreDisplay score={lead.score} />}
         </div>
 
         <div className="space-y-2">
@@ -119,7 +119,6 @@ export function LeadCard({
             <LeadActions
               lead={lead}
               onAnalyze={onAddToAnalytics}
-              onShowNotes={() => {}}
               onAddToExport={onAddToExport}
               onDelete={onDelete}
             />

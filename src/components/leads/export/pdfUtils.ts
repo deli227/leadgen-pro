@@ -1,9 +1,9 @@
 import jsPDF from 'jspdf'
 import { Lead } from '@/types/leads'
 
-const PRIMARY_COLOR = [155, 135, 245] // #9b87f5
-const SECONDARY_COLOR = [110, 89, 165] // #6E59A5
-const TEXT_COLOR = [60, 60, 60]
+const PRIMARY_COLOR: [number, number, number] = [155, 135, 245] // #9b87f5
+const SECONDARY_COLOR: [number, number, number] = [110, 89, 165] // #6E59A5
+const TEXT_COLOR: [number, number, number] = [60, 60, 60]
 
 export const truncateText = (text: string | undefined, maxLength: number): string => {
   if (!text) return ''
