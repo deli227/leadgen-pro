@@ -33,6 +33,14 @@ export function LeadsTab({
 
   const handleLocalRemove = (leadId: string) => {
     setRemovedLeads(prev => [...prev, leadId])
+    // Si le lead est dans les analytics, on le retire aussi
+    if (analyticsLeads.find(lead => lead.id === leadId)) {
+      onRemoveFromAnalytics(leadId)
+    }
+    // Si le lead est dans l'export, on le retire aussi
+    if (exportLeads.find(lead => lead.id === leadId)) {
+      onRemoveFromExport(leadId)
+    }
   }
 
   return (

@@ -3,6 +3,8 @@ import { LeadActions } from "../LeadActions"
 import { FilterLeadActions } from "../filters/FilterLeadActions"
 import { LeadScoreDisplay } from "../LeadScoreDisplay"
 import { Mail, MapPin, Phone, Globe, Facebook, Linkedin, Twitter, Instagram } from "lucide-react"
+import { supabase } from "@/integrations/supabase/client"
+import { toast } from "sonner"
 
 interface LeadCardProps {
   lead: Lead
@@ -21,6 +23,46 @@ export function LeadCard({
   showActions = true,
   filterView = false
 }: LeadCardProps) {
+  const handleDelete = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      
+      if (!session) {
+        toast.error("Erreur d'authentification", {
+          description: "Vous devez être connecté pour supprimer un lead."
+        })
+        return
+      }
+
+      const { error } = await supabase
+        .from('leads')
+        .delete()
+        .eq('id', lead.id)
+        .eq('user_id', session.user.id)
+
+      if (error) {
+        console.error('Erreur lors de la suppression:', error)
+        toast.error("Erreur de suppression", {
+          description: "Une erreur est survenue lors de la suppression du lead."
+        })
+        return
+      }
+
+      toast.success("Lead supprimé", {
+        description: "Le lead a été supprimé avec succès."
+      })
+
+      if (onDelete) {
+        onDelete()
+      }
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error)
+      toast.error("Erreur système", {
+        description: "Une erreur inattendue est survenue lors de la suppression."
+      })
+    }
+  }
+
   const renderSocialLink = (url: string | undefined, Icon: any, platform: string) => {
     if (!url) return null;
     
@@ -106,19 +148,19 @@ export function LeadCard({
           </div>
         )}
 
-        {showActions && onAddToAnalytics && (
+        {showActions && (
           filterView ? (
             <FilterLeadActions
               lead={lead}
-              onAnalyze={onAddToAnalytics}
-              onDelete={onDelete}
+              onAnalyze={onAddToAnalytics!}
+              onDelete={handleDelete}
             />
           ) : (
             <LeadActions
               lead={lead}
-              onAnalyze={onAddToAnalytics}
+              onAnalyze={onAddToAnalytics!}
               onAddToExport={onAddToExport}
-              onDelete={onDelete}
+              onDelete={handleDelete}
             />
           )
         )}
