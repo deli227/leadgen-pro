@@ -3,16 +3,13 @@ import { LeadActions } from "../LeadActions"
 import { FilterLeadActions } from "../filters/FilterLeadActions"
 import { LeadScoreDisplay } from "../LeadScoreDisplay"
 import { Mail, MapPin, Phone, Globe, Facebook, Linkedin, Twitter, Instagram } from "lucide-react"
-import { supabase } from "@/integrations/supabase/client"
-import { useState } from "react"
-import { DeleteLeadDialog } from "../DeleteLeadDialog"
-import { useToast } from "@/hooks/use-toast"
 
 interface LeadCardProps {
   lead: Lead
   onAddToAnalytics?: (lead: Lead) => void
   onAddToExport?: (lead: Lead) => void
-  onDelete?: () => void
+  onDelete?: (lead: Lead) => void
+  onLeadDeleted?: () => Promise<void>
   showActions?: boolean
   filterView?: boolean
 }
@@ -22,73 +19,10 @@ export function LeadCard({
   onAddToAnalytics,
   onAddToExport,
   onDelete,
+  onLeadDeleted,
   showActions = true,
   filterView = false
 }: LeadCardProps) {
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
-  const { toast } = useToast()
-
-  const handlePermanentDelete = async () => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession()
-      
-      if (!session) {
-        toast({
-          variant: "destructive",
-          title: "Erreur d'authentification",
-          description: "Vous devez être connecté pour supprimer un lead."
-        })
-        return
-      }
-
-      const { error } = await supabase
-        .from('leads')
-        .delete()
-        .eq('id', lead.id)
-        .eq('user_id', session.user.id)
-
-      if (error) {
-        console.error('Erreur lors de la suppression:', error)
-        toast({
-          variant: "destructive",
-          title: "Erreur de suppression",
-          description: "Une erreur est survenue lors de la suppression du lead."
-        })
-        return
-      }
-
-      if (onDelete) {
-        onDelete()
-      }
-
-      toast({
-        title: "Lead supprimé",
-        description: "Le lead a été supprimé définitivement de votre tableau de bord."
-      })
-      
-      setIsDeleteDialogOpen(false)
-    } catch (error) {
-      console.error('Erreur lors de la suppression:', error)
-      toast({
-        variant: "destructive",
-        title: "Erreur système",
-        description: "Une erreur inattendue est survenue lors de la suppression."
-      })
-    }
-  }
-
-  const handleDelete = () => {
-    if (filterView) {
-      setIsDeleteDialogOpen(true)
-    } else if (onDelete) {
-      onDelete()
-      toast({
-        title: "Lead retiré",
-        description: "Le lead a été retiré de la liste"
-      })
-    }
-  }
-
   const renderSocialLink = (url: string | undefined, Icon: any, platform: string) => {
     if (!url) return null;
     
@@ -108,97 +42,89 @@ export function LeadCard({
   };
 
   return (
-    <>
-      <div className="p-4 border border-primary/20 rounded-xl bg-gradient-to-br from-black/40 to-secondary-dark/40 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 group">
-        <div className="flex flex-col gap-3">
-          <div className="flex justify-between items-start">
-            <div className="space-y-1">
-              <h4 className="text-base font-semibold text-primary-light group-hover:text-white transition-colors line-clamp-1">
-                {lead.company}
-              </h4>
-              {lead.industry && (
-                <p className="text-sm text-primary-light/70 line-clamp-1">
-                  {lead.industry}
-                </p>
-              )}
+    <div className="p-4 border border-primary/20 rounded-xl bg-gradient-to-br from-black/40 to-secondary-dark/40 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 group">
+      <div className="flex flex-col gap-3">
+        <div className="flex justify-between items-start">
+          <div className="space-y-1">
+            <h4 className="text-base font-semibold text-primary-light group-hover:text-white transition-colors line-clamp-1">
+              {lead.company}
+            </h4>
+            {lead.industry && (
+              <p className="text-sm text-primary-light/70 line-clamp-1">
+                {lead.industry}
+              </p>
+            )}
+          </div>
+          {!filterView && lead.score && <LeadScoreDisplay score={lead.score} />}
+        </div>
+
+        <div className="space-y-2">
+          {lead.email && (
+            <div className="flex items-center gap-2 text-primary-light/80 hover:text-primary-light transition-colors">
+              <Mail className="h-4 w-4 flex-shrink-0" />
+              <a href={`mailto:${lead.email}`} className="text-sm hover:underline line-clamp-1 break-all">
+                {lead.email}
+              </a>
             </div>
-            {!filterView && lead.score && <LeadScoreDisplay score={lead.score} />}
-          </div>
-
-          <div className="space-y-2">
-            {lead.email && (
-              <div className="flex items-center gap-2 text-primary-light/80 hover:text-primary-light transition-colors">
-                <Mail className="h-4 w-4 flex-shrink-0" />
-                <a href={`mailto:${lead.email}`} className="text-sm hover:underline line-clamp-1 break-all">
-                  {lead.email}
-                </a>
-              </div>
-            )}
-            
-            {lead.phone && (
-              <div className="flex items-center gap-2 text-primary-light/80 hover:text-primary-light transition-colors">
-                <Phone className="h-4 w-4 flex-shrink-0" />
-                <a href={`tel:${lead.phone}`} className="text-sm hover:underline line-clamp-1">
-                  {lead.phone}
-                </a>
-              </div>
-            )}
-            
-            {lead.address && (
-              <div className="flex items-center gap-2 text-primary-light/80 hover:text-primary-light transition-colors">
-                <MapPin className="h-4 w-4 flex-shrink-0" />
-                <span className="text-sm line-clamp-1">{lead.address}</span>
-              </div>
-            )}
-
-            {lead.website && (
-              <div className="flex items-center gap-2 text-primary-light/80 hover:text-primary-light transition-colors">
-                <Globe className="h-4 w-4 flex-shrink-0" />
-                <a 
-                  href={lead.website.startsWith('http') ? lead.website : `https://${lead.website}`}
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="text-sm hover:underline line-clamp-1"
-                >
-                  {lead.website.replace(/^https?:\/\//, '')}
-                </a>
-              </div>
-            )}
-          </div>
-
-          {lead.socialMedia && Object.values(lead.socialMedia).some(value => value) && (
-            <div className="pt-3 border-t border-primary/10 flex gap-3">
-              {renderSocialLink(lead.socialMedia.linkedin, Linkedin, "LinkedIn")}
-              {renderSocialLink(lead.socialMedia.twitter, Twitter, "Twitter")}
-              {renderSocialLink(lead.socialMedia.facebook, Facebook, "Facebook")}
-              {renderSocialLink(lead.socialMedia.instagram, Instagram, "Instagram")}
+          )}
+          
+          {lead.phone && (
+            <div className="flex items-center gap-2 text-primary-light/80 hover:text-primary-light transition-colors">
+              <Phone className="h-4 w-4 flex-shrink-0" />
+              <a href={`tel:${lead.phone}`} className="text-sm hover:underline line-clamp-1">
+                {lead.phone}
+              </a>
+            </div>
+          )}
+          
+          {lead.address && (
+            <div className="flex items-center gap-2 text-primary-light/80 hover:text-primary-light transition-colors">
+              <MapPin className="h-4 w-4 flex-shrink-0" />
+              <span className="text-sm line-clamp-1">{lead.address}</span>
             </div>
           )}
 
-          {showActions && (
-            filterView ? (
-              <FilterLeadActions
-                lead={lead}
-                onAnalyze={onAddToAnalytics!}
-                onDelete={() => setIsDeleteDialogOpen(true)}
-              />
-            ) : (
-              <LeadActions
-                lead={lead}
-                onAnalyze={onAddToAnalytics!}
-                onAddToExport={onAddToExport}
-                onDelete={handleDelete}
-              />
-            )
+          {lead.website && (
+            <div className="flex items-center gap-2 text-primary-light/80 hover:text-primary-light transition-colors">
+              <Globe className="h-4 w-4 flex-shrink-0" />
+              <a 
+                href={lead.website.startsWith('http') ? lead.website : `https://${lead.website}`}
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-sm hover:underline line-clamp-1"
+              >
+                {lead.website.replace(/^https?:\/\//, '')}
+              </a>
+            </div>
           )}
         </div>
-      </div>
 
-      <DeleteLeadDialog
-        isOpen={isDeleteDialogOpen}
-        onClose={() => setIsDeleteDialogOpen(false)}
-        onConfirm={handlePermanentDelete}
-      />
-    </>
+        {lead.socialMedia && (
+          <div className="pt-3 border-t border-primary/10 flex gap-3">
+            {renderSocialLink(lead.socialMedia.linkedin, Linkedin, "LinkedIn")}
+            {renderSocialLink(lead.socialMedia.twitter, Twitter, "Twitter")}
+            {renderSocialLink(lead.socialMedia.facebook, Facebook, "Facebook")}
+            {renderSocialLink(lead.socialMedia.instagram, Instagram, "Instagram")}
+          </div>
+        )}
+
+        {showActions && onAddToAnalytics && (
+          filterView ? (
+            <FilterLeadActions
+              lead={lead}
+              onAnalyze={onAddToAnalytics}
+              onDelete={onDelete}
+            />
+          ) : (
+            <LeadActions
+              lead={lead}
+              onAnalyze={onAddToAnalytics}
+              onAddToExport={onAddToExport}
+              onDelete={onDelete}
+            />
+          )
+        )}
+      </div>
+    </div>
   )
 }

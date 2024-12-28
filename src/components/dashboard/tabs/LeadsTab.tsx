@@ -3,8 +3,6 @@ import { LeadsFilters } from "@/components/leads/LeadsFilters"
 import { Lead } from "@/types/leads"
 import { LeadFilters } from "@/types/filters"
 import { useState } from "react"
-import { supabase } from "@/integrations/supabase/client"
-import { toast } from "sonner"
 
 interface LeadsTabProps {
   filters: LeadFilters
@@ -31,28 +29,11 @@ export function LeadsTab({
 }: LeadsTabProps) {
   const [removedLeads, setRemovedLeads] = useState<string[]>([])
 
-  const handleLocalRemove = async (leadId: string) => {
-    try {
-      // Mettre à jour l'état local
-      setRemovedLeads(prev => [...prev, leadId])
-
-      // Si le lead est dans les analytics, on le retire aussi
-      if (analyticsLeads.find(lead => lead.id === leadId)) {
-        onRemoveFromAnalytics(leadId)
-      }
-
-      // Si le lead est dans l'export, on le retire aussi
-      if (exportLeads.find(lead => lead.id === leadId)) {
-        onRemoveFromExport(leadId)
-      }
-
-    } catch (error) {
-      console.error('Erreur:', error)
-      toast.error("Une erreur est survenue")
-    }
-  }
-
   const filteredLeads = leads.filter(lead => !removedLeads.includes(lead.id))
+
+  const handleLocalRemove = (leadId: string) => {
+    setRemovedLeads(prev => [...prev, leadId])
+  }
 
   return (
     <motion.div 

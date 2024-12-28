@@ -48,7 +48,7 @@ export function LeadsList({
                 lead={lead}
                 onAddToAnalytics={onAddToAnalytics}
                 onAddToExport={onAddToExport}
-                onDelete={onDelete ? () => onDelete(lead) : undefined}
+                onDelete={onDelete}
                 showActions={showActions}
                 filterView={filterView}
               />
