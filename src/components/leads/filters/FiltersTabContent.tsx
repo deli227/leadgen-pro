@@ -125,6 +125,7 @@ export function FiltersTabContent({
         leads={leads} 
         onAddToAnalytics={onAddToAnalytics}
         showActions={true}
+        filterView={true}
       />
     </div>
   )

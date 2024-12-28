@@ -1,5 +1,6 @@
 import { Lead } from "@/types/leads"
 import { LeadActions } from "../LeadActions"
+import { FilterLeadActions } from "../filters/FilterLeadActions"
 import { LeadScoreDisplay } from "../LeadScoreDisplay"
 import { Mail, MapPin, Phone, Globe, Facebook, Linkedin, Twitter, Instagram } from "lucide-react"
 
@@ -9,6 +10,7 @@ interface LeadCardProps {
   onAddToExport?: (lead: Lead) => void
   onDelete?: (lead: Lead) => void
   showActions?: boolean
+  filterView?: boolean
 }
 
 export function LeadCard({
@@ -16,7 +18,8 @@ export function LeadCard({
   onAddToAnalytics,
   onAddToExport,
   onDelete,
-  showActions = true
+  showActions = true,
+  filterView = false
 }: LeadCardProps) {
   const renderSocialLink = (url: string | undefined, Icon: any, platform: string) => {
     if (!url) return null;
@@ -104,13 +107,20 @@ export function LeadCard({
         )}
 
         {showActions && onAddToAnalytics && (
-          <LeadActions
-            lead={lead}
-            onAnalyze={onAddToAnalytics}
-            onShowNotes={() => {}}
-            onAddToExport={onAddToExport}
-            onDelete={onDelete}
-          />
+          filterView ? (
+            <FilterLeadActions
+              lead={lead}
+              onAnalyze={onAddToAnalytics}
+            />
+          ) : (
+            <LeadActions
+              lead={lead}
+              onAnalyze={onAddToAnalytics}
+              onShowNotes={() => {}}
+              onAddToExport={onAddToExport}
+              onDelete={onDelete}
+            />
+          )
         )}
       </div>
     </div>
