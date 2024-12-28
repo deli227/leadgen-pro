@@ -8,12 +8,20 @@ import { StrengthsList } from "./sections/StrengthsList"
 import { WeaknessesList } from "./sections/WeaknessesList"
 import { SeoAnalysis } from "./sections/SeoAnalysis"
 import { ContactRecommendations } from "./sections/ContactRecommendations"
+import { CompanyAnalysis } from "./sections/CompanyAnalysis"
+import { TechAnalysis } from "./sections/TechAnalysis"
+import { MarketingAnalysis } from "./sections/MarketingAnalysis"
+import { FinancialAnalysis } from "./sections/FinancialAnalysis"
+import { CompetitiveAnalysis } from "./sections/CompetitiveAnalysis"
+import { ActionPlan } from "./sections/ActionPlan"
+import { LeadAnalysis } from "@/types/analysis"
 
 interface AIAnalysisWindowProps {
   lead: Lead | null
+  analysis?: LeadAnalysis | null
 }
 
-export function AIAnalysisWindow({ lead }: AIAnalysisWindowProps) {
+export function AIAnalysisWindow({ lead, analysis }: AIAnalysisWindowProps) {
   if (!lead) return null
 
   return (
@@ -34,11 +42,25 @@ export function AIAnalysisWindow({ lead }: AIAnalysisWindowProps) {
             </div>
 
             <div className="space-y-3 sm:space-y-4">
-              <QualificationScore qualification={lead.qualification || 0} />
-              <StrengthsList strengths={lead.strengths || []} />
-              <WeaknessesList weaknesses={lead.weaknesses || []} />
-              <SeoAnalysis score={lead.score || 0} weaknesses={lead.weaknesses || []} />
-              <ContactRecommendations weaknesses={lead.weaknesses || []} />
+              {analysis ? (
+                <>
+                  <CompanyAnalysis analysis={analysis.company_analysis} />
+                  <TechAnalysis analysis={analysis.tech_analysis} />
+                  <MarketingAnalysis analysis={analysis.marketing_analysis} />
+                  <FinancialAnalysis analysis={analysis.financial_analysis} />
+                  <CompetitiveAnalysis analysis={analysis.competitive_analysis} />
+                  <ContactRecommendations recommendations={analysis.recommendations} />
+                  <ActionPlan plan={analysis.action_plan} />
+                </>
+              ) : (
+                <>
+                  <QualificationScore qualification={lead.qualification || 0} />
+                  <StrengthsList strengths={lead.strengths || []} />
+                  <WeaknessesList weaknesses={lead.weaknesses || []} />
+                  <SeoAnalysis score={lead.score || 0} weaknesses={lead.weaknesses || []} />
+                  <ContactRecommendations weaknesses={lead.weaknesses || []} />
+                </>
+              )}
             </div>
           </div>
         </ScrollArea>

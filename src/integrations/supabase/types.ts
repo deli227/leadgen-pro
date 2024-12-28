@@ -77,6 +77,66 @@ export type Database = {
           },
         ]
       }
+      lead_analyses: {
+        Row: {
+          action_plan: Json | null
+          company_analysis: Json | null
+          competitive_analysis: Json | null
+          created_at: string
+          financial_analysis: Json | null
+          id: string
+          lead_id: string
+          marketing_analysis: Json | null
+          recommendations: Json | null
+          tech_analysis: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          action_plan?: Json | null
+          company_analysis?: Json | null
+          competitive_analysis?: Json | null
+          created_at?: string
+          financial_analysis?: Json | null
+          id?: string
+          lead_id: string
+          marketing_analysis?: Json | null
+          recommendations?: Json | null
+          tech_analysis?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          action_plan?: Json | null
+          company_analysis?: Json | null
+          competitive_analysis?: Json | null
+          created_at?: string
+          financial_analysis?: Json | null
+          id?: string
+          lead_id?: string
+          marketing_analysis?: Json | null
+          recommendations?: Json | null
+          tech_analysis?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_analyses_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_analyses_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leads: {
         Row: {
           address: string | null
