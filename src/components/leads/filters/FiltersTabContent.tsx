@@ -8,12 +8,14 @@ import { toast } from "sonner"
 import { LeadsList } from "./LeadsList"
 import { motion } from "framer-motion"
 import { useState } from "react"
+import { Lead } from "@/types/leads"
+import { LeadFilters } from "@/types/filters"
 
 interface FiltersTabContentProps {
-  filters: any
-  setFilters: (filters: any) => void
-  leads: any[]
-  onAddToAnalytics: (lead: any) => void
+  filters: LeadFilters
+  setFilters: (filters: LeadFilters) => void
+  leads: Lead[]
+  onAddToAnalytics: (lead: Lead) => void
 }
 
 export function FiltersTabContent({ 
@@ -31,13 +33,10 @@ export function FiltersTabContent({
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) {
         toast.error("Erreur d'authentification", {
-          description: "Veuillez vous reconnecter."
+          description: "Veuillez vous reconnecter pour générer des leads."
         })
         return
       }
-
-      console.log('Session trouvée:', session)
-      console.log('Envoi des paramètres à generate-leads-with-ai:', filters)
 
       const { data, error } = await supabase.functions.invoke('generate-leads-with-ai', {
         body: { 
@@ -49,8 +48,6 @@ export function FiltersTabContent({
         }
       })
 
-      console.log('Réponse de generate-leads-with-ai:', { data, error })
-
       if (error) {
         console.error('Erreur détaillée:', error)
         toast.error("Erreur de génération", {
@@ -59,9 +56,9 @@ export function FiltersTabContent({
         return
       }
 
-      if (!data || !data.success) {
+      if (!data?.success) {
         toast.error("Erreur de génération", {
-          description: "La réponse de l'API est invalide"
+          description: "La réponse de l'API est invalide. Veuillez réessayer."
         })
         return
       }
@@ -73,8 +70,8 @@ export function FiltersTabContent({
       window.location.reload()
     } catch (error: any) {
       console.error('Erreur complète:', error)
-      toast.error("Erreur de génération", {
-        description: error.message || "Une erreur est survenue lors de la génération des leads."
+      toast.error("Erreur système", {
+        description: "Une erreur inattendue est survenue. Veuillez réessayer plus tard."
       })
     } finally {
       setIsGenerating(false)
@@ -93,7 +90,6 @@ export function FiltersTabContent({
           country={filters.country}
           city={filters.city}
           onCountryChange={(value) => {
-            console.log("Changement de pays:", value)
             setFilters({ ...filters, country: value, city: "all" })
           }}
           onCityChange={(value) => setFilters({ ...filters, city: value })}

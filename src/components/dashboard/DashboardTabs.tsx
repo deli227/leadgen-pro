@@ -4,17 +4,12 @@ import { LeadsTab } from "@/components/dashboard/tabs/LeadsTab"
 import { AutomationTab } from "@/components/dashboard/tabs/AutomationTab"
 import { useTranslation } from "react-i18next"
 import { Lead } from "@/types/leads"
+import { LeadFilters } from "@/types/filters"
 import { useIsMobile } from "@/hooks/use-mobile"
 
 interface DashboardTabsProps {
-  filters: {
-    search: string
-    leadCount: number
-    industry: string
-    country: string
-    city: string
-  }
-  setFilters: (filters: any) => void
+  filters: LeadFilters
+  setFilters: (filters: LeadFilters) => void
   leads: Lead[]
   analyticsLeads: Lead[]
   onAddToAnalytics: (lead: Lead) => void

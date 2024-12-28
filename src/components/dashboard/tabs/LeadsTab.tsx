@@ -1,17 +1,12 @@
 import { motion } from "framer-motion"
 import { LeadsFilters } from "@/components/leads/LeadsFilters"
 import { Lead } from "@/types/leads"
+import { LeadFilters } from "@/types/filters"
 import { useState } from "react"
 
 interface LeadsTabProps {
-  filters: {
-    search: string
-    leadCount: number
-    industry: string
-    country: string
-    city: string
-  }
-  setFilters: (filters: any) => void
+  filters: LeadFilters
+  setFilters: (filters: LeadFilters) => void
   leads: Lead[]
   analyticsLeads: Lead[]
   onAddToAnalytics: (lead: Lead) => void
