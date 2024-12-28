@@ -9,7 +9,7 @@ export async function analyzeWithPerplexity(prompt: string) {
     throw new Error('Clé API Perplexity non configurée')
   }
 
-  console.log('Envoi de la requête à Perplexity')
+  console.log('Envoi de la requête à Perplexity avec le prompt enrichi')
   const response = await fetch('https://api.perplexity.ai/chat/completions', {
     method: 'POST',
     headers: {
@@ -21,7 +21,7 @@ export async function analyzeWithPerplexity(prompt: string) {
       messages: [
         {
           role: 'system',
-          content: 'Tu es un expert en analyse d\'entreprises. Fournis une analyse détaillée et professionnelle au format JSON demandé. Réponds uniquement avec le JSON, sans aucun texte avant ou après, ni formatage markdown.'
+          content: 'Tu es un expert en analyse commerciale et stratégique. Fournis des analyses détaillées et concrètes, en faisant des déductions logiques basées sur le contexte quand l\'information n\'est pas directement disponible. Ne réponds jamais "Inconnu" sans proposer une analyse ou des hypothèses.'
         },
         {
           role: 'user',
@@ -29,7 +29,7 @@ export async function analyzeWithPerplexity(prompt: string) {
         }
       ],
       temperature: 0.1,
-      max_tokens: 4000
+      max_tokens: 4000,
     }),
   })
 

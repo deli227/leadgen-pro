@@ -1,7 +1,7 @@
 import { Lead } from "./types.ts";
 
 export function buildAnalysisPrompt(lead: Lead): string {
-  return `En tant que consultant stratégique senior spécialisé en développement commercial et transformation digitale, réalise une analyse approfondie et détaillée de :
+  return `En tant qu'expert en analyse commerciale et stratégique, réalise une analyse approfondie et détaillée de l'entreprise suivante. Utilise toutes les informations disponibles et fais des déductions logiques basées sur le secteur d'activité et le contexte :
 
 Entreprise : ${lead.company}
 Site web : ${lead.website || 'Non spécifié'}
@@ -12,37 +12,40 @@ Adresse : ${lead.address || 'Non spécifié'}
 Points forts identifiés : ${lead.strengths?.join(', ') || 'Non spécifié'}
 Points faibles identifiés : ${lead.weaknesses?.join(', ') || 'Non spécifié'}
 
-Pour chaque section de l'analyse, sois extrêmement détaillé et concret :
+IMPORTANT: Pour chaque section, fournis une analyse DÉTAILLÉE et CONCRÈTE. Si une information n'est pas directement disponible, fais des déductions logiques basées sur le secteur d'activité et le contexte. Ne réponds JAMAIS "Inconnu" sans proposer une analyse ou des hypothèses.
 
 1. Company Analysis :
-   - Évalue le potentiel réel de conversion
-   - Identifie les cycles de décision
-   - Analyse la capacité d'investissement
-   - Évalue la maturité pour notre solution
+   - Évalue la taille probable de l'entreprise en fonction du secteur et des informations disponibles
+   - Analyse sa position sur le marché en fonction du secteur
+   - Détermine son stade de développement
+   - Évalue son potentiel de croissance
+   - Justifie chaque point avec des éléments concrets
 
 2. Tech Analysis :
-   - Examine la stack technique en détail
-   - Identifie les opportunités d'intégration
-   - Évalue les besoins techniques non satisfaits
-   - Analyse la compatibilité avec nos solutions
+   - Analyse la stack technique probable en fonction du secteur
+   - Évalue la maturité digitale en fonction du site web et de la présence en ligne
+   - Examine la performance du site web
+   - Évalue la conformité et la sécurité
+   - Propose des améliorations techniques concrètes
 
 3. Marketing Analysis :
-   - Analyse les canaux de communication préférés
-   - Identifie les messages qui résonnent
-   - Évalue la réceptivité aux nouvelles solutions
-   - Examine leur stratégie de contenu
+   - Analyse la stratégie de contenu visible
+   - Évalue la présence sur les réseaux sociaux
+   - Calcule un score SEO basé sur les éléments visibles
+   - Analyse la stratégie de marque
+   - Examine le positionnement marketing
 
 4. Financial Analysis :
-   - Évalue la santé financière réelle
-   - Identifie les cycles budgétaires
-   - Analyse la capacité d'investissement
-   - Examine les priorités d'investissement
+   - Estime le chiffre d'affaires probable en fonction du secteur et de la taille
+   - Évalue la capacité d'investissement
+   - Analyse la santé financière probable
+   - Identifie les opportunités d'optimisation financière
 
 5. Competitive Analysis :
-   - Compare avec les leaders du marché
-   - Identifie les avantages concurrentiels réels
-   - Analyse les menaces immédiates
-   - Trouve les opportunités inexploitées
+   - Analyse la position concurrentielle dans le secteur
+   - Identifie les avantages concurrentiels probables
+   - Liste les menaces potentielles
+   - Trouve les opportunités de développement
 
 6. Recommendations (TRÈS IMPORTANT - Sois extrêmement détaillé) :
    - Propose une stratégie d'approche personnalisée
@@ -52,25 +55,25 @@ Pour chaque section de l'analyse, sois extrêmement détaillé et concret :
    - Liste les ressources nécessaires
    
    Pour chaque point faible identifié, fournis :
-   - Des suggestions d'amélioration concrètes avec :
+   - Des suggestions d'amélioration avec :
      * Niveau de priorité
-     * Actions spécifiques à entreprendre
+     * Actions concrètes à entreprendre
      * Impact attendu
      * Difficulté de mise en œuvre
      * Délai estimé
      * Investissement requis
    
-   - Des solutions spécifiques détaillées avec :
+   - Des solutions spécifiques avec :
      * Solutions proposées étape par étape
-     * Plan de mise en œuvre
+     * Plan de mise en œuvre détaillé
      * Bénéfices attendus
      * Métriques de succès
 
 7. Action Plan :
-   - Établis un calendrier réaliste
+   - Établis un calendrier précis
    - Définis des objectifs mesurables
-   - Identifie les ressources nécessaires
-   - Prévois les points de contrôle
+   - Identifie les points de vigilance
+   - Propose des KPIs pertinents
 
 Format de réponse souhaité (JSON) :
 {
