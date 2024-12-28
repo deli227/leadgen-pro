@@ -6,6 +6,86 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+interface AnalysisData {
+  company_analysis: {
+    qualification_score: number;
+    market_position: string;
+    company_size: string;
+    development_stage: string;
+    growth_potential: string;
+    detailed_justification: string;
+  };
+  tech_analysis: {
+    tech_stack: string[];
+    digital_maturity: string;
+    online_presence: string;
+    website_performance: string;
+    security_compliance: string;
+  };
+  marketing_analysis: {
+    content_strategy: string;
+    social_media_presence: string;
+    seo_score: number;
+    brand_strategy: string;
+    market_positioning: string;
+  };
+  financial_analysis: {
+    estimated_revenue: string;
+    investment_potential: string;
+    funding_capacity: string;
+    financial_health: string;
+  };
+  competitive_analysis: {
+    market_position: string;
+    competitive_advantages: string[];
+    potential_threats: string[];
+    development_opportunities: string[];
+  };
+  recommendations: {
+    approach_strategy: string;
+    entry_points: string[];
+    sales_arguments: string[];
+    optimal_timing: string;
+    required_resources: string[];
+  };
+  action_plan: {
+    steps: string[];
+    timeline: string;
+    kpis: string[];
+    vigilance_points: string[];
+  };
+}
+
+function validateAnalysisData(data: any): data is AnalysisData {
+  try {
+    // Validation basique des champs requis
+    if (!data.company_analysis || !data.tech_analysis || !data.marketing_analysis ||
+        !data.financial_analysis || !data.competitive_analysis || !data.recommendations ||
+        !data.action_plan) {
+      return false;
+    }
+
+    // Validation des tableaux
+    if (!Array.isArray(data.tech_analysis.tech_stack) ||
+        !Array.isArray(data.competitive_analysis.competitive_advantages) ||
+        !Array.isArray(data.competitive_analysis.potential_threats) ||
+        !Array.isArray(data.competitive_analysis.development_opportunities) ||
+        !Array.isArray(data.recommendations.entry_points) ||
+        !Array.isArray(data.recommendations.sales_arguments) ||
+        !Array.isArray(data.recommendations.required_resources) ||
+        !Array.isArray(data.action_plan.steps) ||
+        !Array.isArray(data.action_plan.kpis) ||
+        !Array.isArray(data.action_plan.vigilance_points)) {
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Erreur de validation:', error);
+    return false;
+  }
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
@@ -26,8 +106,7 @@ serve(async (req) => {
     }
 
     // Construction du prompt pour l'analyse
-
-const prompt = `En tant que consultant stratégique senior spécialisé en développement commercial, réalise une analyse approfondie et actionnables de :
+    const prompt = `En tant que consultant stratégique senior spécialisé en développement commercial, réalise une analyse approfondie et actionnables de :
 
 Entreprise : ${lead.company}
 Site web : ${lead.website || 'Non spécifié'}
@@ -36,99 +115,14 @@ Email : ${lead.email || 'Non spécifié'}
 Téléphone : ${lead.phone || 'Non spécifié'}
 Adresse : ${lead.address || 'Non spécifié'}
 
-Pour chaque section de l'analyse :
-1. Company Analysis :
-   - Évalue le potentiel réel de conversion
-   - Identifie les cycles de décision
-   - Analyse la capacité d'investissement
-   - Évalue la maturité pour notre solution
-
-2. Tech Analysis :
-   - Examine la stack technique en détail
-   - Identifie les opportunités d'intégration
-   - Évalue les besoins techniques non satisfaits
-   - Analyse la compatibilité avec nos solutions
-
-3. Marketing Analysis :
-   - Analyse les canaux de communication préférés
-   - Identifie les messages qui résonnent
-   - Évalue la réceptivité aux nouvelles solutions
-   - Examine leur stratégie de contenu
-
-4. Financial Analysis :
-   - Évalue la santé financière réelle
-   - Identifie les cycles budgétaires
-   - Analyse la capacité d'investissement
-   - Examine les priorités d'investissement
-
-5. Competitive Analysis :
-   - Compare avec les leaders du marché
-   - Identifie les avantages concurrentiels réels
-   - Analyse les menaces immédiates
-   - Trouve les opportunités inexploitées
-
-6. Recommendations :
-   - Propose des actions concrètes et immédiates
-   - Identifie les quick wins
-   - Suggère des approches personnalisées
-   - Définit un plan d'action détaillé
-
-7. Action Plan :
-   - Établit un calendrier réaliste
-   - Définit des objectifs mesurables
-   - Identifie les ressources nécessaires
-   - Prévoit les points de contrôle
-
-Format de réponse souhaité (JSON) :
-{
-  "company_analysis": {
-    "qualification_score": number (1-10),
-    "market_position": string,
-    "company_size": string,
-    "development_stage": string,
-    "growth_potential": string,
-    "detailed_justification": string
-  },
-  "tech_analysis": {
-    "tech_stack": string[],
-    "digital_maturity": string,
-    "online_presence": string,
-    "website_performance": string,
-    "security_compliance": string
-  },
-  "marketing_analysis": {
-    "content_strategy": string,
-    "social_media_presence": string,
-    "seo_score": number (1-10),
-    "brand_strategy": string,
-    "market_positioning": string
-  },
-  "financial_analysis": {
-    "estimated_revenue": string,
-    "investment_potential": string,
-    "funding_capacity": string,
-    "financial_health": string
-  },
-  "competitive_analysis": {
-    "market_position": string,
-    "competitive_advantages": string[],
-    "potential_threats": string[],
-    "development_opportunities": string[]
-  },
-  "recommendations": {
-    "approach_strategy": string,
-    "entry_points": string[],
-    "sales_arguments": string[],
-    "optimal_timing": string,
-    "required_resources": string[]
-  },
-  "action_plan": {
-    "steps": string[],
-    "timeline": string,
-    "kpis": string[],
-    "vigilance_points": string[]
-  }
-}`
+Format de réponse souhaité (JSON) avec les sections suivantes :
+- Company Analysis (qualification_score, market_position, company_size, development_stage, growth_potential, detailed_justification)
+- Tech Analysis (tech_stack array, digital_maturity, online_presence, website_performance, security_compliance)
+- Marketing Analysis (content_strategy, social_media_presence, seo_score, brand_strategy, market_positioning)
+- Financial Analysis (estimated_revenue, investment_potential, funding_capacity, financial_health)
+- Competitive Analysis (market_position, competitive_advantages array, potential_threats array, development_opportunities array)
+- Recommendations (approach_strategy, entry_points array, sales_arguments array, optimal_timing, required_resources array)
+- Action Plan (steps array, timeline, kpis array, vigilance_points array)`
 
     console.log('Envoi de la requête à Perplexity')
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
@@ -152,7 +146,7 @@ Format de réponse souhaité (JSON) :
         temperature: 0.1,
         max_tokens: 4000
       }),
-    });
+    })
 
     if (!response.ok) {
       console.error('Erreur Perplexity:', await response.text())
@@ -162,29 +156,29 @@ Format de réponse souhaité (JSON) :
     const result = await response.json()
     console.log('Réponse Perplexity reçue')
 
-    // Nettoyer la réponse de tout formatage Markdown
     const cleanContent = result.choices[0].message.content
-      .replace(/```json\n?/g, '')  // Enlever ```json
-      .replace(/```\n?/g, '')      // Enlever ```
-      .trim()                      // Enlever les espaces
+      .replace(/```json\n?/g, '')
+      .replace(/```\n?/g, '')
+      .trim()
 
-    // S'assurer que la réponse est bien au format JSON
     let analysis
     try {
       analysis = JSON.parse(cleanContent)
       console.log('Analyse parsée avec succès:', analysis)
+      
+      if (!validateAnalysisData(analysis)) {
+        throw new Error('Format de données invalide')
+      }
     } catch (error) {
       console.error('Erreur lors du parsing JSON:', error)
       console.error('Contenu reçu:', cleanContent)
       throw new Error('Format de réponse invalide de Perplexity')
     }
 
-    // Configuration du client Supabase
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const supabase = createClient(supabaseUrl, supabaseKey)
 
-    // Sauvegarde de l'analyse
     const { data: savedAnalysis, error: insertError } = await supabase
       .from('lead_analyses')
       .insert({
@@ -237,4 +231,3 @@ Format de réponse souhaité (JSON) :
     )
   }
 })
-
