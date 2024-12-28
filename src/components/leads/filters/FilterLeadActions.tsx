@@ -1,77 +1,50 @@
 import { Button } from "@/components/ui/button"
-import { useToast } from "@/hooks/use-toast"
+import { Brain, Trash2 } from "lucide-react"
 import { Lead } from "@/types/leads"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import { useState } from "react"
+import { useToast } from "@/hooks/use-toast"
 
 interface FilterLeadActionsProps {
   lead: Lead
-  onAddToAnalytics: (lead: Lead) => void
-  onAddToExport: (lead: Lead) => void
+  onAnalyze: (lead: Lead) => void
+  onDelete?: (lead: Lead) => void
 }
 
-export function FilterLeadActions({
-  lead,
-  onAddToAnalytics,
-  onAddToExport,
-}: FilterLeadActionsProps) {
+export function FilterLeadActions({ lead, onAnalyze, onDelete }: FilterLeadActionsProps) {
   const { toast } = useToast()
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
 
-  const handleAnalyze = () => {
-    onAddToAnalytics(lead)
-    setIsDialogOpen(true)
-  }
-
-  const handleExport = () => {
-    onAddToExport(lead)
+  const handleAnalyzeClick = () => {
     toast({
-      title: "Ajout à l'export",
-      description: "Le lead a été ajouté à l'export avec succès"
+      title: "Analyse IA avancée",
+      description: "Rendez-vous dans l'onglet 'Analytique' pour lancer l'analyse IA avancée de ce lead !",
+      className: "bg-gradient-to-br from-primary/90 to-primary-dark/90 text-primary-light border-primary/20",
+      duration: 5000,
     })
+    onAnalyze(lead)
   }
 
   return (
-    <div className="flex gap-2">
+    <div className="flex flex-wrap gap-2 w-full sm:w-auto mt-4">
       <Button
-        onClick={handleAnalyze}
+        onClick={handleAnalyzeClick}
         variant="outline"
-        className="bg-gradient-to-r from-primary to-primary-dark text-white hover:from-primary-dark hover:to-primary border-none"
+        size="sm"
+        className="flex-1 sm:flex-none bg-gradient-to-r from-primary to-primary-dark text-primary-light border-none hover:opacity-90 text-xs sm:text-sm"
       >
+        <Brain className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
         Analyser
       </Button>
-      <Button
-        onClick={handleExport}
-        variant="outline"
-        className="bg-gradient-to-r from-accent to-accent-dark text-white hover:from-accent-dark hover:to-accent border-none"
-      >
-        Exporter
-      </Button>
-
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="bg-gradient-to-br from-secondary via-secondary-dark to-black text-white border-primary/20">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">
-              Analyse IA Avancée
-            </DialogTitle>
-            <DialogDescription className="text-gray-300 mt-4">
-              <p className="mb-4">
-                Pour lancer l'analyse IA avancée de {lead.company}, rendez-vous dans l'onglet "Analytiques" !
-              </p>
-              <p className="text-sm opacity-80">
-                Notre intelligence artificielle y effectuera une analyse approfondie de l'entreprise, 
-                incluant son positionnement marketing, sa présence technique, et générera des recommandations personnalisées.
-              </p>
-            </DialogDescription>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
+      
+      {onDelete && (
+        <Button
+          onClick={() => onDelete(lead)}
+          variant="outline"
+          size="sm"
+          className="flex-1 sm:flex-none bg-gradient-to-r from-red-500 to-red-600 text-white border-none hover:opacity-90 text-xs sm:text-sm"
+        >
+          <Trash2 className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+          Supprimer
+        </Button>
+      )}
     </div>
   )
 }
