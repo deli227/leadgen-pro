@@ -20,7 +20,7 @@ interface SearchTabContentProps {
 
 export function SearchTabContent({ filters, setFilters }: SearchTabContentProps) {
   const [isSearching, setIsSearching] = useState(false)
-  const [foundLead, setFoundLead] = useState<Lead | null>(null)
+  const [searchResults, setSearchResults] = useState<Lead[]>([])
   const session = useSessionData()
 
   const handleSearch = async () => {
@@ -30,7 +30,6 @@ export function SearchTabContent({ filters, setFilters }: SearchTabContentProps)
     }
 
     setIsSearching(true)
-    setFoundLead(null)
     console.log("Envoi de la requête de recherche avec les filtres:", filters)
 
     try {
@@ -75,8 +74,8 @@ export function SearchTabContent({ filters, setFilters }: SearchTabContentProps)
         throw new Error("Erreur lors de la sauvegarde du lead")
       }
 
-      // Afficher le lead trouvé
-      setFoundLead(insertedLead as Lead)
+      // Ajouter le nouveau lead aux résultats existants
+      setSearchResults(prev => [insertedLead as Lead, ...prev])
       toast.success("Lead ajouté avec succès")
       setFilters({ ...filters, search: "" })
 
@@ -85,6 +84,42 @@ export function SearchTabContent({ filters, setFilters }: SearchTabContentProps)
       toast.error("Une erreur est survenue lors de la recherche")
     } finally {
       setIsSearching(false)
+    }
+  }
+
+  const handleDelete = async (leadId: string) => {
+    try {
+      const { error } = await supabase
+        .from('leads')
+        .delete()
+        .eq('id', leadId)
+
+      if (error) throw error
+
+      setSearchResults(prev => prev.filter(lead => lead.id !== leadId))
+      toast.success("Lead supprimé avec succès")
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error)
+      toast.error("Erreur lors de la suppression du lead")
+    }
+  }
+
+  const handleAddToAnalytics = async (lead: Lead) => {
+    try {
+      // Rediriger vers l'onglet analytique avec le lead sélectionné
+      const { error } = await supabase
+        .from('lead_analyses')
+        .insert([{
+          lead_id: lead.id,
+          user_id: session.data?.user?.id
+        }])
+
+      if (error) throw error
+
+      toast.success("Lead ajouté aux analytiques avec succès")
+    } catch (error) {
+      console.error('Erreur lors de l\'ajout aux analytiques:', error)
+      toast.error("Erreur lors de l'ajout aux analytiques")
     }
   }
 
@@ -106,15 +141,21 @@ export function SearchTabContent({ filters, setFilters }: SearchTabContentProps)
         </Button>
       </div>
 
-      {foundLead && (
-        <div className="mt-6">
-          <h3 className="text-lg font-semibold mb-4 text-primary-light">
-            Lead trouvé
+      {searchResults.length > 0 && (
+        <div className="mt-6 space-y-6">
+          <h3 className="text-lg font-semibold text-primary-light">
+            Leads trouvés ({searchResults.length})
           </h3>
-          <LeadCard
-            lead={foundLead}
-            showActions={false}
-          />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {searchResults.map((lead) => (
+              <LeadCard
+                key={lead.id}
+                lead={lead}
+                onAddToAnalytics={() => handleAddToAnalytics(lead)}
+                onLeadDeleted={() => handleDelete(lead.id)}
+              />
+            ))}
+          </div>
         </div>
       )}
     </div>
