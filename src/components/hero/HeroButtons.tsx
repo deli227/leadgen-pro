@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, LayoutDashboard } from "lucide-react";
 import { Button } from "../ui/button";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -49,6 +49,16 @@ export const HeroButtons = () => {
         aria-label="Voir nos tarifs"
       >
         Nos tarifs
+      </Button>
+
+      <Button
+        size="lg"
+        onClick={handleAuthRedirect}
+        className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-primary hover:bg-primary-dark text-white shadow-lg hover:shadow-xl transition-all duration-300"
+        aria-label="Accéder au tableau de bord"
+      >
+        <LayoutDashboard className="mr-2 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
+        Accéder à mon tableau de bord
       </Button>
     </div>
   );
