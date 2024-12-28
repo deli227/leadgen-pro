@@ -24,6 +24,57 @@ serve(async (req) => {
       throw new Error('UserId non fourni')
     }
 
+    // Création du client Supabase
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Vérification des limites
+    console.log('Vérification des limites pour l\'utilisateur:', userId);
+    
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('subscription_type, leads_generated_this_month')
+      .eq('id', userId)
+      .single();
+
+    if (profileError) {
+      console.error('Erreur lors de la récupération du profil:', profileError);
+      throw new Error('Erreur lors de la vérification des limites');
+    }
+
+    const { data: limits, error: limitsError } = await supabase
+      .from('subscription_limits')
+      .select('monthly_leads_limit')
+      .eq('subscription_type', profile.subscription_type)
+      .single();
+
+    if (limitsError) {
+      console.error('Erreur lors de la récupération des limites:', limitsError);
+      throw new Error('Erreur lors de la vérification des limites');
+    }
+
+    console.log('Leads générés ce mois:', profile.leads_generated_this_month);
+    console.log('Limite mensuelle:', limits.monthly_leads_limit);
+
+    if (profile.leads_generated_this_month >= limits.monthly_leads_limit) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: 'Limite de leads atteinte',
+          limitReached: true,
+          currentPlan: profile.subscription_type
+        }),
+        {
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'application/json'
+          },
+          status: 403
+        }
+      )
+    }
+
     const perplexityApiKey = Deno.env.get('PERPLEXITY_API_KEY')
     if (!perplexityApiKey) {
       throw new Error('Clé API Perplexity non configurée')
@@ -81,11 +132,6 @@ serve(async (req) => {
       throw new Error('Aucun lead valide n\'a été généré');
     }
 
-    // Configuration du client Supabase
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
     // Préparation des leads pour l'insertion
     const leadsToInsert = validLeads.map(lead => ({
       user_id: userId,
@@ -117,6 +163,20 @@ serve(async (req) => {
     }
 
     console.log('Leads insérés avec succès:', insertedLeads);
+
+    // Mise à jour du compteur de leads
+    const { error: updateError } = await supabase
+      .from('profiles')
+      .update({
+        leads_generated_this_month: profile.leads_generated_this_month + validLeads.length,
+        last_lead_generation_date: new Date().toISOString()
+      })
+      .eq('id', userId);
+
+    if (updateError) {
+      console.error('Erreur lors de la mise à jour du profil:', updateError);
+      throw new Error('Erreur lors de la mise à jour du compteur de leads');
+    }
 
     return new Response(
       JSON.stringify({ 
