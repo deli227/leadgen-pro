@@ -67,13 +67,29 @@ export const UpgradeButton = ({ className }: UpgradeButtonProps) => {
           <TooltipContent className="max-w-[300px] p-4 bg-secondary-dark border border-primary/20">
             <div className="space-y-2">
               <p className="font-semibold text-primary">Version Pro - 24,99€/mois</p>
+              <div className="bg-primary/10 p-3 rounded-lg mb-3 text-center">
+                <p className="text-xl font-bold text-primary animate-pulse">
+                  200 leads garantis/mois
+                </p>
+                <p className="text-sm text-primary-light">Seulement 0,125 €/lead</p>
+              </div>
               <ul className="text-sm space-y-1 text-gray-200">
-                <li>• 200 leads garantis par mois</li>
-                <li>• Analyse IA avancée</li>
-                <li>• Export multi-formats</li>
-                <li>• Accès API</li>
-                <li>• Support prioritaire</li>
-                <li>• Seulement 0,125 €/lead</li>
+                <li className="flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-primary" />
+                  Analyse IA avancée
+                </li>
+                <li className="flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-primary" />
+                  Export multi-formats
+                </li>
+                <li className="flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-primary" />
+                  Accès API
+                </li>
+                <li className="flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-primary" />
+                  Support prioritaire
+                </li>
               </ul>
             </div>
           </TooltipContent>
@@ -98,15 +114,33 @@ export const UpgradeButton = ({ className }: UpgradeButtonProps) => {
           <TooltipContent className="max-w-[300px] p-4 bg-secondary-dark border border-primary/20">
             <div className="space-y-2">
               <p className="font-semibold text-accent">Version Premium - 59,99€/mois</p>
+              <div className="bg-accent/10 p-3 rounded-lg mb-3 text-center">
+                <p className="text-xl font-bold text-accent animate-pulse">
+                  500 leads garantis/mois
+                </p>
+                <p className="text-sm text-accent/90">Seulement 0,12 €/lead</p>
+              </div>
               <ul className="text-sm space-y-1 text-gray-200">
-                <li>• 500 leads garantis par mois</li>
-                <li>• Analyse IA avancée et personnalisée</li>
-                <li>• Export multi-formats</li>
-                <li>• API dédiée pour automatisation</li>
-                <li>• Support prioritaire expert</li>
-                <li>• Seulement 0,12 €/lead</li>
-                <li>• Automatisations illimitées (Bientôt)</li>
-                <li>• Enrichissement des leads automatique (Bientôt)</li>
+                <li className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-accent" />
+                  Analyse IA avancée et personnalisée
+                </li>
+                <li className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-accent" />
+                  API dédiée pour automatisation
+                </li>
+                <li className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-accent" />
+                  Support prioritaire expert
+                </li>
+                <li className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-accent" />
+                  Automatisations illimitées (Bientôt)
+                </li>
+                <li className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-accent" />
+                  Enrichissement des leads automatique (Bientôt)
+                </li>
               </ul>
             </div>
           </TooltipContent>
