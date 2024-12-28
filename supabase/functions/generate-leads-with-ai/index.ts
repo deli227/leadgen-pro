@@ -21,27 +21,31 @@ const buildSimplePrompt = (filters: any) => {
     prompt += ` dans le secteur ${filters.industry}`;
   }
 
-  prompt += `\n\nRéponds uniquement avec un tableau JSON contenant les entreprises avec ces champs :
-  {
-    "company": "Nom de l'entreprise",
-    "email": "Email professionnel",
-    "phone": "Téléphone",
-    "website": "Site web",
-    "address": "Adresse complète",
-    "industry": "${filters.industry}",
-    "score": "Note sur 10",
-    "socialMedia": {
-      "linkedin": "URL LinkedIn",
-      "twitter": "URL Twitter",
-      "facebook": "URL Facebook"
+  prompt += `\n\nRéponds UNIQUEMENT avec un tableau JSON valide contenant les entreprises. Chaque entreprise doit avoir exactement ces champs, pas plus pas moins :
+  [
+    {
+      "company": "Nom de l'entreprise",
+      "email": "email@professionnel.com",
+      "phone": "+33123456789",
+      "website": "https://site-web.com",
+      "address": "Adresse complète",
+      "industry": "${filters.industry}",
+      "score": 8,
+      "socialMedia": {
+        "linkedin": "https://linkedin.com/company/...",
+        "twitter": "https://twitter.com/...",
+        "facebook": "https://facebook.com/..."
+      }
     }
-  }`;
+  ]`;
 
   return prompt;
 }
 
 const validateLead = (lead: any): boolean => {
-  // Validation basique des champs requis
+  console.log('Validation du lead:', lead);
+
+  // Validation des champs requis
   if (!lead.company || typeof lead.company !== 'string') {
     console.error('Champ company invalide');
     return false;
@@ -72,6 +76,29 @@ const validateLead = (lead: any): boolean => {
   return true;
 }
 
+const extractJSONFromText = (text: string): any => {
+  console.log('Texte reçu de Perplexity:', text);
+  
+  try {
+    // Recherche du premier [ et du dernier ]
+    const start = text.indexOf('[');
+    const end = text.lastIndexOf(']') + 1;
+    
+    if (start === -1 || end === 0) {
+      console.error('Aucun tableau JSON trouvé dans la réponse');
+      throw new Error('Format de réponse invalide');
+    }
+    
+    const jsonStr = text.slice(start, end);
+    console.log('JSON extrait:', jsonStr);
+    
+    return JSON.parse(jsonStr);
+  } catch (error) {
+    console.error('Erreur lors de l\'extraction du JSON:', error);
+    throw new Error('Format de réponse invalide');
+  }
+}
+
 serve(async (req) => {
   // Gestion du CORS
   if (req.method === 'OPTIONS') {
@@ -100,7 +127,7 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'Tu es un expert en recherche d\'entreprises. Fournis uniquement des informations vérifiées au format JSON demandé.'
+            content: 'Tu es un expert en génération de données d\'entreprises. Fournis uniquement des données au format JSON demandé, sans texte supplémentaire.'
           },
           {
             role: 'user',
@@ -126,13 +153,8 @@ serve(async (req) => {
       const content = result.choices[0].message.content;
       console.log('Contenu brut reçu:', content);
       
-      // Tentative de parsing du JSON
-      generatedLeads = JSON.parse(content);
-      
-      // Normalisation en tableau
-      if (!Array.isArray(generatedLeads)) {
-        generatedLeads = [generatedLeads];
-      }
+      // Extraction et parsing du JSON
+      generatedLeads = extractJSONFromText(content);
       
       // Validation et nettoyage des leads
       generatedLeads = generatedLeads.filter(lead => validateLead(lead));
