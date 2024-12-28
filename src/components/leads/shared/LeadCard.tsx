@@ -9,6 +9,7 @@ interface LeadCardProps {
   onAddToAnalytics?: (lead: Lead) => void
   onAddToExport?: (lead: Lead) => void
   onDelete?: (lead: Lead) => void
+  onLeadDeleted?: () => Promise<void>
   showActions?: boolean
   filterView?: boolean
 }
@@ -18,6 +19,7 @@ export function LeadCard({
   onAddToAnalytics,
   onAddToExport,
   onDelete,
+  onLeadDeleted,
   showActions = true,
   filterView = false
 }: LeadCardProps) {
