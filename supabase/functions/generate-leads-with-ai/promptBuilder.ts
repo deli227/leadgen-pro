@@ -4,6 +4,7 @@ interface Filters {
   city?: string;
   industry?: string;
   search?: string;
+  companySize?: string;
 }
 
 export const buildPrompt = (filters: Filters): string => {
@@ -24,6 +25,16 @@ export const buildPrompt = (filters: Filters): string => {
   
   if (filters.industry && filters.industry !== 'all') {
     prompt += ` dans le secteur ${filters.industry}`;
+  }
+
+  if (filters.companySize && filters.companySize !== 'all') {
+    const sizeMappings = {
+      'large': 'grandes entreprises (250+ employés)',
+      'medium': 'moyennes entreprises (50-249 employés)',
+      'small': 'petites entreprises (10-49 employés)',
+      'micro': 'micro-entreprises (1-9 employés)'
+    };
+    prompt += ` de type ${sizeMappings[filters.companySize as keyof typeof sizeMappings] || filters.companySize}`;
   }
 
   prompt += `\n\nRéponds UNIQUEMENT avec un tableau JSON valide contenant les entreprises. Chaque entreprise doit avoir exactement ces champs :
