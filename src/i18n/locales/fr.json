@@ -3,16 +3,22 @@
     "leads": "Leads",
     "automation": "Automation",
     "comingSoon": "Bientôt disponible",
-    "all": "Tous"
+    "all": "Tous",
+    "generating": "Génération en cours...",
+    "generateLeads": "Générer les leads"
   },
   "filters": {
-    "companySize": "Taille de l'entreprise"
+    "companySize": "Taille de l'entreprise",
+    "industry": "Industrie",
+    "country": "Pays",
+    "city": "Ville",
+    "search": "Rechercher"
   },
   "companySize": {
-    "large": "Grande (250+ employés)",
-    "medium": "Moyenne (50-249 employés)",
-    "small": "Petite (10-49 employés)",
-    "micro": "Micro (1-9 employés)",
-    "unknown": "Inconnue"
+    "large": "Grande entreprise",
+    "medium": "Moyenne entreprise",
+    "small": "Petite entreprise",
+    "micro": "Micro-entreprise",
+    "unknown": "Taille inconnue"
   }
 }
