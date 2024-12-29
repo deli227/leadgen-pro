@@ -76,9 +76,9 @@ export function LeadsAnalytics({
   }
 
   return (
-    <div className="flex flex-col xl:flex-row gap-8 p-4 xl:p-8 min-h-[calc(100vh-8rem)] max-w-[1920px] mx-auto">
-      <div className="xl:w-1/3 2xl:w-1/4 space-y-6">
-        <div className="bg-gradient-to-br from-black/40 to-secondary/20 rounded-2xl backdrop-blur-sm border border-primary/10 shadow-xl hover:shadow-primary/5 transition-all duration-300 p-6">
+    <div className="flex flex-col xl:flex-row gap-8 p-4 xl:p-8 min-h-[calc(100vh-8rem)] max-w-[2400px] mx-auto">
+      <div className="xl:w-1/4 2xl:w-1/5">
+        <div className="bg-gradient-to-br from-black/40 to-secondary/20 rounded-2xl backdrop-blur-sm border border-primary/10 shadow-xl hover:shadow-primary/5 transition-all duration-300 p-6 xl:p-8">
           <LeadsList 
             leads={filteredLeads}
             onAddToAnalytics={handleAnalyzeLead}
