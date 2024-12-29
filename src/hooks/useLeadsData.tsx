@@ -26,38 +26,34 @@ export function useLeadsData(session: Session | null) {
         async (payload) => {
           console.log('Changement détecté dans les leads:', payload);
 
-          // Force le rafraîchissement immédiat des données
-          queryClient.setQueryData(['leads', session.user.id], (oldData: any) => {
-            if (payload.eventType === 'INSERT') {
-              // Ajoute le nouveau lead au début de la liste
-              return [payload.new, ...(oldData || [])];
-            }
-            if (payload.eventType === 'DELETE') {
-              // Filtre le lead supprimé
-              return oldData?.filter((lead: Lead) => lead.id !== payload.old.id) || [];
-            }
-            // Pour les autres événements, force un rafraîchissement complet
-            return queryClient.fetchQuery({
-              queryKey: ['leads', session.user.id],
-              queryFn: async () => {
-                const { data } = await supabase
-                  .from('leads')
-                  .select('*')
-                  .eq('user_id', session.user.id)
-                  .order('created_at', { ascending: false });
-                return data || [];
-              }
-            });
-          });
+          // Récupère les données actuelles du cache
+          const currentData = queryClient.getQueryData(['leads', session.user.id]) as Lead[] || [];
+
+          if (payload.eventType === 'INSERT') {
+            // Ajoute le nouveau lead au début de la liste
+            queryClient.setQueryData(['leads', session.user.id], [payload.new, ...currentData]);
+            toast.success('Nouveau lead généré');
+          } else if (payload.eventType === 'DELETE') {
+            // Filtre le lead supprimé
+            queryClient.setQueryData(
+              ['leads', session.user.id], 
+              currentData.filter((lead: Lead) => lead.id !== payload.old.id)
+            );
+          } else {
+            // Pour les autres événements, met à jour les données
+            const { data } = await supabase
+              .from('leads')
+              .select('*')
+              .eq('user_id', session.user.id)
+              .order('created_at', { ascending: false });
+            
+            queryClient.setQueryData(['leads', session.user.id], data || []);
+          }
 
           // Rafraîchit également les données du profil
           await queryClient.invalidateQueries({
             queryKey: ['profile', session.user.id]
           });
-
-          if (payload.eventType === 'INSERT') {
-            toast.success('Nouveau lead généré');
-          }
         }
       )
       .subscribe((status) => {
@@ -92,7 +88,7 @@ export function useLeadsData(session: Session | null) {
       }
       
       console.log('Leads récupérés avec succès:', data?.length || 0, 'leads');
-      return data;
+      return data || [];
     },
     enabled: !!session?.user?.id,
     refetchOnWindowFocus: true,
