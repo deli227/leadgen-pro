@@ -1,65 +1,95 @@
-import { Lead } from './types.ts';
+export function buildAnalysisPrompt(lead: any) {
+  return `En tant que consultant stratégique senior spécialisé en développement commercial et transformation digitale, réalise une analyse approfondie et TRÈS CONCRÈTE de :
 
-export function buildPrompt(lead: Lead): string {
-  return `
-Analyse détaillée pour l'entreprise ${lead.company}
+Entreprise : ${lead.company}
+Site web : ${lead.website || 'Non spécifié'}
+Industrie : ${lead.industry || 'Non spécifié'}
+Email : ${lead.email || 'Non spécifié'}
+Téléphone : ${lead.phone || 'Non spécifié'}
+Adresse : ${lead.address || 'Non spécifié'}
 
-Fournir une analyse complète et structurée au format JSON avec les sections suivantes :
+IMPORTANT : Pour chaque point faible identifié, propose des solutions TRÈS CONCRÈTES et IMMÉDIATEMENT APPLICABLES.
 
+Format de réponse souhaité (JSON) :
 {
   "company_analysis": {
-    "market_position": "...",
-    "company_size": "...",
-    "development_stage": "...",
-    "growth_potential": "...",
-    "detailed_justification": "..."
+    "qualification_score": number (1-10),
+    "market_position": string,
+    "company_size": string,
+    "development_stage": string,
+    "growth_potential": string,
+    "detailed_justification": string
   },
   "tech_analysis": {
-    "tech_stack": ["..."],
-    "digital_maturity": "...",
-    "online_presence": "...",
-    "website_performance": "...",
-    "security_compliance": "..."
+    "tech_stack": string[],
+    "digital_maturity": string,
+    "online_presence": string,
+    "website_performance": string,
+    "security_compliance": string
   },
   "marketing_analysis": {
-    "content_strategy": "...",
-    "social_media_presence": "...",
-    "seo_score": 7,
-    "brand_strategy": "...",
-    "market_positioning": "..."
+    "content_strategy": string,
+    "social_media_presence": string,
+    "seo_score": number (1-10),
+    "brand_strategy": string,
+    "market_positioning": string
   },
   "financial_analysis": {
-    "estimated_revenue": "...",
-    "investment_potential": "...",
-    "funding_capacity": "...",
-    "financial_health": "..."
+    "estimated_revenue": string,
+    "investment_potential": string,
+    "funding_capacity": string,
+    "financial_health": string
   },
   "competitive_analysis": {
-    "market_position": "...",
-    "competitive_advantages": ["..."],
-    "potential_threats": ["..."],
-    "development_opportunities": ["..."]
+    "market_position": string,
+    "competitive_advantages": string[],
+    "potential_threats": string[],
+    "development_opportunities": string[]
   },
   "recommendations": {
-    "approach_strategy": "...",
-    "entry_points": ["..."],
-    "sales_arguments": ["..."],
-    "optimal_timing": "...",
-    "required_resources": ["..."],
+    "approach_strategy": string,
+    "entry_points": string[],
+    "sales_arguments": string[],
+    "optimal_timing": string,
+    "required_resources": string[],
     "improvement_solutions": {
-      "tech_solutions": ["..."],
-      "marketing_solutions": ["..."],
-      "business_solutions": ["..."]
+      "tech_solutions": [
+        {
+          "weakness": string,
+          "concrete_solution": string,
+          "implementation_steps": string[],
+          "expected_benefits": string[],
+          "estimated_cost": string,
+          "implementation_timeline": string
+        }
+      ],
+      "marketing_solutions": [
+        {
+          "weakness": string,
+          "concrete_solution": string,
+          "implementation_steps": string[],
+          "expected_benefits": string[],
+          "estimated_cost": string,
+          "implementation_timeline": string
+        }
+      ],
+      "business_solutions": [
+        {
+          "weakness": string,
+          "concrete_solution": string,
+          "implementation_steps": string[],
+          "expected_benefits": string[],
+          "estimated_cost": string,
+          "implementation_timeline": string
+        }
+      ]
     }
   },
   "action_plan": {
-    "steps": ["..."],
-    "timeline": "...",
-    "kpis": ["..."],
-    "vigilance_points": ["..."]
+    "steps": string[],
+    "timeline": string,
+    "kpis": string[],
+    "vigilance_points": string[]
   }
-}
-
-Utilise toutes les informations disponibles sur l'entreprise pour fournir une analyse détaillée et pertinente.
-Assure-toi que la réponse est un JSON valide et suit exactement la structure fournie.`;
+}`
 }

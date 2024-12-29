@@ -1,72 +1,85 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { corsHeaders } from '../_shared/cors.ts'
-import { buildPrompt } from './promptBuilder.ts'
+import { buildAnalysisPrompt } from './promptBuilder.ts'
 
-const PERPLEXITY_API_KEY = Deno.env.get('PERPLEXITY_API_KEY')
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response(null, { headers: corsHeaders })
   }
 
   try {
     const { lead, userId } = await req.json()
+    console.log('Analyse du lead:', lead)
+    console.log('UserId:', userId)
 
-    if (!lead || !userId) {
-      throw new Error('Lead et userId sont requis')
+    if (!userId || !lead) {
+      throw new Error('UserId et lead requis')
     }
 
-    console.log("Début de l'analyse pour:", lead.company)
+    const perplexityApiKey = Deno.env.get('PERPLEXITY_API_KEY')
+    if (!perplexityApiKey) {
+      throw new Error('Clé API Perplexity non configurée')
+    }
 
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
-
-    const prompt = buildPrompt(lead)
-    console.log("Prompt envoyé:", prompt)
+    const prompt = buildAnalysisPrompt(lead)
+    console.log('Envoi de la requête à Perplexity avec le prompt enrichi')
 
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
       headers: {
+        'Authorization': `Bearer ${perplexityApiKey}`,
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${PERPLEXITY_API_KEY}`
       },
       body: JSON.stringify({
-        model: 'mixtral-8x7b-instruct',
+        model: 'llama-3.1-sonar-huge-128k-online',
         messages: [
           {
             role: 'system',
-            content: 'Tu es un expert en analyse d\'entreprise. Tu fournis des analyses détaillées et structurées au format JSON uniquement, sans texte additionnel.'
+            content: 'Tu es un expert en analyse d\'entreprises et transformation digitale. Fournis une analyse détaillée, concrète et immédiatement actionnable au format JSON demandé. Réponds uniquement avec le JSON, sans aucun texte avant ou après.'
           },
           {
             role: 'user',
             content: prompt
           }
         ],
-        max_tokens: 4000,
-        temperature: 0.7,
-        top_p: 0.9
-      })
-    })
+        temperature: 0.1,
+        max_tokens: 4000
+      }),
+    });
 
     if (!response.ok) {
-      console.error("Erreur API Perplexity:", response.status, await response.text())
-      throw new Error(`Erreur API Perplexity: ${response.statusText}`)
+      console.error('Erreur Perplexity:', await response.text())
+      throw new Error('Erreur lors de l\'analyse du lead')
     }
 
-    const data = await response.json()
-    console.log("Réponse brute de l'API:", data)
-    
-    if (!data.choices?.[0]?.message?.content) {
-      throw new Error("Format de réponse invalide de l'API")
+    const result = await response.json()
+    console.log('Réponse Perplexity reçue')
+
+    const cleanContent = result.choices[0].message.content
+      .replace(/```json\n?/g, '')
+      .replace(/```\n?/g, '')
+      .trim()
+
+    let analysis
+    try {
+      analysis = JSON.parse(cleanContent)
+      console.log('Analyse parsée avec succès:', analysis)
+    } catch (error) {
+      console.error('Erreur lors du parsing JSON:', error)
+      console.error('Contenu reçu:', cleanContent)
+      throw new Error('Format de réponse invalide de Perplexity')
     }
 
-    const analysis = JSON.parse(data.choices[0].message.content)
-    console.log("Analyse parsée:", analysis)
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    const supabase = createClient(supabaseUrl, supabaseKey)
 
-    const { data: savedAnalysis, error: saveError } = await supabaseClient
+    const { data: savedAnalysis, error: insertError } = await supabase
       .from('lead_analyses')
       .insert({
         lead_id: lead.id,
@@ -82,20 +95,39 @@ serve(async (req) => {
       .select()
       .single()
 
-    if (saveError) {
-      throw saveError
+    if (insertError) {
+      console.error('Erreur lors de la sauvegarde:', insertError)
+      throw new Error('Erreur lors de la sauvegarde de l\'analyse')
     }
 
-    return new Response(
-      JSON.stringify({ success: true, data: savedAnalysis }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
+    console.log('Analyse sauvegardée avec succès:', savedAnalysis)
 
-  } catch (error) {
-    console.error("Erreur complète:", error)
     return new Response(
-      JSON.stringify({ success: false, error: error.message }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      JSON.stringify({ 
+        success: true, 
+        data: savedAnalysis 
+      }),
+      { 
+        headers: { 
+          ...corsHeaders,
+          'Content-Type': 'application/json'
+        } 
+      }
+    )
+  } catch (error) {
+    console.error('Erreur détaillée:', error)
+    return new Response(
+      JSON.stringify({ 
+        success: false, 
+        error: error.message 
+      }),
+      { 
+        headers: { 
+          ...corsHeaders,
+          'Content-Type': 'application/json'
+        },
+        status: 400
+      }
     )
   }
 })

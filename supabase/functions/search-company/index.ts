@@ -42,7 +42,8 @@ serve(async (req) => {
             content: prompt
           }
         ],
-        temperature: 0.1,
+        temperature: 0.2,
+        top_p: 0.9,
         max_tokens: 1000
       }),
     })
@@ -55,9 +56,20 @@ serve(async (req) => {
     const result = await response.json()
     console.log('Réponse Perplexity brute:', result.choices[0].message.content)
 
+    // Amélioration du nettoyage et de la validation de la réponse JSON
     let cleanedContent = result.choices[0].message.content
       .replace(/```json\s*/g, '')
       .replace(/```\s*/g, '')
+      .trim()
+
+    // Vérification de la présence des accolades
+    if (!cleanedContent.startsWith('{') || !cleanedContent.endsWith('}')) {
+      console.error('Format JSON invalide - accolades manquantes:', cleanedContent)
+      throw new Error('La réponse ne contient pas un objet JSON valide')
+    }
+
+    // Nettoyage approfondi
+    cleanedContent = cleanedContent
       .replace(/^\s*{\s*/, '{')
       .replace(/\s*}\s*$/, '}')
       .replace(/[\u200B-\u200D\uFEFF]/g, '')
@@ -65,54 +77,34 @@ serve(async (req) => {
       .replace(/,\s*}/g, '}')
       .replace(/,\s*,/g, ',')
       .replace(/\s+/g, ' ')
-      .replace(/([{,])\s*"(\w+)":/g, '$1"$2":')
-      .replace(/:\s*"([^"]+)"\s*([,}])/g, ':"$1"$2')
-      .replace(/([{,])\s+/g, '$1')
-      .replace(/\s+([}])/g, '$1')
-      .replace(/"\s+:/g, '":')
-      .replace(/:\s+"/g, ':"')
-      .replace(/null/g, '""')
+      .replace(/([{,])\s*"(\w+)":/g, '$1"$2":') // Normalise les clés JSON
+      .replace(/:\s*"([^"]+)"\s*([,}])/g, ':"$1"$2') // Normalise les valeurs JSON
 
     console.log('Contenu JSON nettoyé:', cleanedContent)
 
     try {
+      // Première tentative de parsing
       const parsedContent = JSON.parse(cleanedContent)
       
-      // Validation des champs requis avec valeurs par défaut
-      const defaultValues = {
-        company: '',
-        email: '',
-        phone: '',
-        website: '',
-        address: '',
-        industry: '',
-        score: 0,
-        socialMedia: {
-          linkedin: '',
-          twitter: '',
-          facebook: '',
-          instagram: ''
-        }
+      // Validation des champs requis
+      const requiredFields = ['company', 'email', 'phone', 'website', 'address', 'industry', 'score', 'socialMedia']
+      const missingFields = requiredFields.filter(field => !parsedContent[field])
+      
+      if (missingFields.length > 0) {
+        console.error('Champs manquants dans la réponse:', missingFields)
+        throw new Error(`Structure JSON invalide : champs manquants - ${missingFields.join(', ')}`)
       }
 
-      const validatedContent = {
-        ...defaultValues,
-        ...parsedContent,
-        socialMedia: {
-          ...defaultValues.socialMedia,
-          ...(parsedContent.socialMedia || {})
-        }
+      // Validation du format socialMedia
+      if (!parsedContent.socialMedia || typeof parsedContent.socialMedia !== 'object') {
+        throw new Error('Structure JSON invalide : socialMedia manquant ou invalide')
       }
 
-      // Vérification finale des types
-      if (typeof validatedContent.score !== 'number') {
-        validatedContent.score = parseInt(validatedContent.score) || 0
-      }
-
+      // Validation réussie, on peut retourner les données
       return new Response(
         JSON.stringify({ 
           success: true, 
-          data: JSON.stringify(validatedContent)
+          data: JSON.stringify(parsedContent)
         }),
         { 
           headers: { 
