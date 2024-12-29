@@ -76,8 +76,8 @@ export function LeadsAnalytics({
   }
 
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 sm:gap-6 min-h-[calc(100vh-12rem)]">
-      <div className="xl:col-span-4 xl:border-r xl:border-primary/10 xl:pr-4">
+    <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 sm:gap-6">
+      <div className="xl:col-span-5 xl:max-h-[calc(100vh-12rem)] xl:overflow-y-auto">
         <LeadsList 
           leads={filteredLeads}
           onAddToAnalytics={handleAnalyzeLead}
@@ -87,7 +87,7 @@ export function LeadsAnalytics({
         />
       </div>
       
-      <div className="xl:col-span-8">
+      <div className="xl:col-span-7 xl:sticky xl:top-24">
         <AIAnalysisWindow 
           lead={selectedLead} 
           analysis={currentAnalysis} 

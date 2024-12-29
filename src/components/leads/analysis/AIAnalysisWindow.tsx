@@ -30,12 +30,12 @@ export function AIAnalysisWindow({ lead, analysis, isAnalyzing }: AIAnalysisWind
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 20 }}
-      className="w-full h-full"
+      className="w-full h-full xl:h-[calc(100vh-12rem)] xl:sticky xl:top-24"
     >
       <Card className="h-full bg-black/60 border border-primary/20 backdrop-blur-sm overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5" />
         
-        <ScrollArea className="h-[calc(100vh-14rem)]">
+        <ScrollArea className="h-[80vh] xl:h-full">
           <div className="relative p-4 sm:p-6 space-y-4 sm:space-y-6">
             <div className="flex items-center justify-between">
               <h3 className="text-lg sm:text-xl font-bold text-primary-light">
