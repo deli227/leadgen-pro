@@ -50,27 +50,27 @@ export function DashboardHeader({ exportLeads }: DashboardHeaderProps) {
           Gérez et analysez vos leads en temps réel
         </p>
       </div>
-      <div className="flex flex-wrap gap-2 md:gap-4 items-center w-full sm:w-auto justify-end">
+      <div className="flex gap-2 md:gap-4 items-center w-full sm:w-auto justify-end">
         <Link 
           to="/documentation"
           className="inline-flex items-center gap-2 px-3 py-2 text-xs sm:text-sm text-primary-light hover:text-white transition-colors"
         >
           <Book className="h-3 w-3 sm:h-4 sm:w-4" />
-          <span className="whitespace-nowrap">Documentation</span>
+          <span>Documentation</span>
         </Link>
         <Link 
           to="/profile"
           className="inline-flex items-center gap-2 px-3 py-2 text-xs sm:text-sm text-primary-light hover:text-white transition-colors"
         >
           <User className="h-3 w-3 sm:h-4 sm:w-4" />
-          <span className="whitespace-nowrap">Profil</span>
+          <span>Profil</span>
         </Link>
         <LeadsExport leads={exportLeads} />
         <Button
           onClick={handleLogout}
           variant="outline"
           size="sm"
-          className="bg-gradient-to-r from-primary/20 to-primary-dark/20 text-primary-light border-primary-light/20 hover:bg-primary/30 hover:text-white transition-all duration-300 text-xs sm:text-sm whitespace-nowrap"
+          className="bg-gradient-to-r from-primary/20 to-primary-dark/20 text-primary-light border-primary-light/20 hover:bg-primary/30 hover:text-white transition-all duration-300 text-xs sm:text-sm"
         >
           <LogOut className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
           <span className="hidden sm:inline">Déconnexion</span>

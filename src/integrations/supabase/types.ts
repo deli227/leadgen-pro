@@ -342,50 +342,6 @@ export type Database = {
           },
         ]
       }
-      payments: {
-        Row: {
-          amount: number
-          created_at: string
-          currency: string
-          id: string
-          payment_method: string | null
-          status: string
-          stripe_customer_id: string | null
-          stripe_payment_id: string
-          user_id: string
-        }
-        Insert: {
-          amount: number
-          created_at?: string
-          currency?: string
-          id?: string
-          payment_method?: string | null
-          status: string
-          stripe_customer_id?: string | null
-          stripe_payment_id: string
-          user_id: string
-        }
-        Update: {
-          amount?: number
-          created_at?: string
-          currency?: string
-          id?: string
-          payment_method?: string | null
-          status?: string
-          stripe_customer_id?: string | null
-          stripe_payment_id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "payments_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       profiles: {
         Row: {
           created_at: string

@@ -24,25 +24,26 @@ export function LeadsList({
 }: LeadsListProps) {
   if (leads.length === 0) {
     return (
-      <div className="text-center p-4 text-primary-light/70">
+      <div className="text-center p-4 sm:p-8 text-primary-light/70">
         Aucun lead disponible
       </div>
     )
   }
 
   return (
-    <div>
-      <h3 className="text-lg font-semibold mb-6 bg-gradient-to-r from-primary-light to-accent bg-clip-text text-transparent">
+    <div className="mt-4">
+      <h3 className="text-base sm:text-lg font-semibold mb-4 bg-gradient-to-r from-primary-light to-accent bg-clip-text text-transparent">
         {title}
       </h3>
-      <ScrollArea className="h-[calc(100vh-16rem)]">
-        <div className="space-y-4 pr-4">
+      <ScrollArea className="h-[calc(100vh-20rem)] pr-2">
+        <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {leads.map((lead) => (
             <motion.div
               key={lead.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
+              className="w-full"
             >
               <LeadCard
                 lead={lead}

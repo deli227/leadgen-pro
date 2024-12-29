@@ -17,7 +17,7 @@ export const HeroTitle = () => {
         {t('hero.title')}
       </h2>
       <p className="mt-8 text-base sm:text-lg md:text-xl leading-8 text-gray-300">
-        Notre IA révolutionnaire explore chaque recoin, traque chaque détail et dévoile tout : forces à exploiter, faiblesses à convertir, opportunités à capturer. Avec des insights aussi puissants, vos prospects n'auront d'autre choix que de dire oui. Prêt à pulvériser la concurrence et régner sur votre marché ?
+        {t('hero.mainText')}
       </p>
       <CountdownTimer />
     </div>

@@ -76,26 +76,22 @@ export function LeadsAnalytics({
   }
 
   return (
-    <div className="flex flex-col xl:flex-row gap-8 p-4 xl:p-8 min-h-[calc(100vh-8rem)] max-w-[2400px] mx-auto">
-      <div className="xl:w-1/4 2xl:w-1/5">
-        <div className="bg-gradient-to-br from-black/40 to-secondary/20 rounded-2xl backdrop-blur-sm border border-primary/10 shadow-xl hover:shadow-primary/5 transition-all duration-300 p-6 xl:p-8">
-          <LeadsList 
-            leads={filteredLeads}
-            onAddToAnalytics={handleAnalyzeLead}
-            onAddToExport={onAddToExport}
-            onDelete={handleDelete}
-            title="Leads en analyse"
-          />
-        </div>
-      </div>
-      
-      <div className="xl:flex-1">
-        <AIAnalysisWindow 
-          lead={selectedLead} 
-          analysis={currentAnalysis} 
-          isAnalyzing={isAnalyzing}
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+      <div className="lg:col-span-2">
+        <LeadsList 
+          leads={filteredLeads}
+          onAddToAnalytics={handleAnalyzeLead}
+          onAddToExport={onAddToExport}
+          onDelete={handleDelete}
+          title="Leads en analyse"
         />
       </div>
+      
+      <AIAnalysisWindow 
+        lead={selectedLead} 
+        analysis={currentAnalysis} 
+        isAnalyzing={isAnalyzing}
+      />
     </div>
   )
 }
