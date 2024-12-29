@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom"
 import { LeadCountSlider } from "./LeadCountSlider"
 import { BaseFilters } from "./BaseFilters"
 import { FilterActions } from "./FilterActions"
+import { handleLeadDeletion } from "@/utils/leadUtils"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -42,6 +43,38 @@ export function FiltersTabContent({
   const [userLimit, setUserLimit] = useState(0)
   const queryClient = useQueryClient()
   const navigate = useNavigate()
+
+  const handleDelete = async (lead: Lead) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        toast.error("Erreur d'authentification", {
+          description: "Veuillez vous reconnecter pour supprimer des leads."
+        })
+        navigate('/auth')
+        return
+      }
+
+      const error = await handleLeadDeletion(lead.id)
+      
+      if (error) {
+        console.error('Erreur lors de la suppression:', error)
+        toast.error("Erreur lors de la suppression du lead")
+        return
+      }
+
+      await queryClient.invalidateQueries({ queryKey: ['leads'] })
+      
+      toast.success("Lead supprimé avec succès")
+      
+      if (onLocalRemove) {
+        onLocalRemove(lead.id)
+      }
+    } catch (error) {
+      console.error('Erreur système lors de la suppression:', error)
+      toast.error("Une erreur est survenue lors de la suppression")
+    }
+  }
 
   const handleGenerateLeads = async () => {
     try {
@@ -141,41 +174,6 @@ export function FiltersTabContent({
       })
     } finally {
       setIsGenerating(false)
-    }
-  }
-
-  const handleDelete = async (lead: Lead) => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) {
-        toast.error("Erreur d'authentification", {
-          description: "Veuillez vous reconnecter pour supprimer des leads."
-        })
-        navigate('/auth')
-        return
-      }
-
-      const { error } = await supabase
-        .from('leads')
-        .delete()
-        .eq('id', lead.id)
-
-      if (error) {
-        console.error('Erreur lors de la suppression:', error)
-        toast.error("Erreur lors de la suppression du lead")
-        return
-      }
-
-      await queryClient.invalidateQueries({ queryKey: ['leads'] })
-      
-      toast.success("Lead supprimé avec succès")
-      
-      if (onLocalRemove) {
-        onLocalRemove(lead.id)
-      }
-    } catch (error) {
-      console.error('Erreur système lors de la suppression:', error)
-      toast.error("Une erreur est survenue lors de la suppression")
     }
   }
 

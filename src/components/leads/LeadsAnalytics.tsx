@@ -6,7 +6,7 @@ import { useState } from "react"
 import { LeadsList } from "./shared/LeadsList"
 import { LeadAnalysis } from "@/types/analysis"
 import { useToast } from "@/hooks/use-toast"
-import { supabase } from "@/integrations/supabase/client"
+import { handleLeadDeletion } from "@/utils/leadUtils"
 
 interface LeadsAnalyticsProps {
   leads: Lead[]
@@ -29,23 +29,17 @@ export function LeadsAnalytics({
 
   const handleDelete = async (lead: Lead) => {
     try {
-      // D'abord supprimer les références dans analytics_leads
-      const { error: analyticsError } = await supabase
-        .from('analytics_leads')
-        .delete()
-        .eq('lead_id', lead.id)
+      const error = await handleLeadDeletion(lead.id)
 
-      if (analyticsError) {
-        console.error("Erreur lors de la suppression des analytics:", analyticsError)
+      if (error) {
+        console.error("Erreur lors de la suppression:", error)
+        toast({
+          title: "Erreur",
+          description: "Une erreur est survenue lors de la suppression du lead",
+          variant: "destructive"
+        })
+        return
       }
-
-      // Ensuite supprimer le lead
-      const { error } = await supabase
-        .from('leads')
-        .delete()
-        .eq('id', lead.id)
-
-      if (error) throw error
 
       setRemovedLeads(prev => [...prev, lead.id])
       if (onRemoveFromAnalytics) {

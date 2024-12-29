@@ -2,11 +2,11 @@ import { Mail, MapPin, Phone, Globe, Facebook, Instagram, Linkedin, Twitter, Tra
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import { toast } from "sonner"
-import { supabase } from "@/integrations/supabase/client"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { LeadNotes } from "@/components/leads/LeadNotes"
 import { useState } from "react"
 import { TagsManager } from "./tags/TagsManager"
+import { handleLeadDeletion } from "@/utils/leadUtils"
 
 interface LeadCardProps {
   lead: any
@@ -19,23 +19,13 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProp
 
   const handleDelete = async () => {
     try {
-      // D'abord supprimer les références dans analytics_leads
-      const { error: analyticsError } = await supabase
-        .from('analytics_leads')
-        .delete()
-        .eq('lead_id', lead.id)
+      const error = await handleLeadDeletion(lead.id)
 
-      if (analyticsError) {
-        console.error('Erreur lors de la suppression des analytics:', analyticsError)
+      if (error) {
+        console.error('Erreur lors de la suppression:', error)
+        toast.error("Erreur lors de la suppression du lead")
+        return
       }
-
-      // Ensuite supprimer le lead
-      const { error } = await supabase
-        .from('leads')
-        .delete()
-        .eq('id', lead.id)
-
-      if (error) throw error
 
       toast.success("Lead supprimé avec succès")
       onLeadDeleted()
