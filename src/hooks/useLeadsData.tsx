@@ -23,7 +23,7 @@ export function useLeadsData(session: Session | null) {
           table: 'leads',
           filter: `user_id=eq.${session.user.id}`
         },
-        async (payload) => {
+        (payload) => {
           console.log('Changement détecté dans les leads:', payload);
 
           if (payload.eventType === 'INSERT') {
@@ -82,8 +82,7 @@ export function useLeadsData(session: Session | null) {
     },
     enabled: !!session?.user?.id,
     refetchOnWindowFocus: true,
-    refetchOnMount: true,
-    staleTime: 0
+    refetchOnMount: true
   });
 
   return {
