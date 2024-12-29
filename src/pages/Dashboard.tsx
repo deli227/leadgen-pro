@@ -47,13 +47,13 @@ export function Dashboard() {
         .select('id')
         .eq('user_id', session.user.id)
         .eq('lead_id', lead.id)
-        .single()
 
-      if (checkError && checkError.code !== 'PGRST116') {
+      if (checkError) {
         throw checkError
       }
 
-      if (existingAnalytics) {
+      // Vérifier si des résultats ont été trouvés
+      if (existingAnalytics && existingAnalytics.length > 0) {
         toast({
           title: "Information",
           description: "Ce lead est déjà dans vos analytiques"
