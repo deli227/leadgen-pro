@@ -41,19 +41,20 @@ export function Dashboard() {
     }
 
     try {
-      // Vérifier si le lead existe déjà dans analytics_leads
-      const { data: existingAnalytics, error: checkError } = await supabase
+      // Vérifier si le lead existe déjà dans analytics_leads avec maybeSingle()
+      const { data: existingAnalytic, error: checkError } = await supabase
         .from('analytics_leads')
-        .select('id')
+        .select('*')
         .eq('user_id', session.user.id)
         .eq('lead_id', lead.id)
+        .maybeSingle()
 
       if (checkError) {
         throw checkError
       }
 
-      // Vérifier si des résultats ont été trouvés
-      if (existingAnalytics && existingAnalytics.length > 0) {
+      // Si un résultat a été trouvé
+      if (existingAnalytic) {
         toast({
           title: "Information",
           description: "Ce lead est déjà dans vos analytiques"
