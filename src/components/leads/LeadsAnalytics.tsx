@@ -6,6 +6,7 @@ import { useState } from "react"
 import { LeadsList } from "./shared/LeadsList"
 import { LeadAnalysis } from "@/types/analysis"
 import { useToast } from "@/hooks/use-toast"
+import { supabase } from "@/integrations/supabase/client"
 
 interface LeadsAnalyticsProps {
   leads: Lead[]
@@ -26,15 +27,31 @@ export function LeadsAnalytics({
   const { toast } = useToast()
   const [removedLeads, setRemovedLeads] = useState<string[]>([])
 
-  const handleDelete = (lead: Lead) => {
-    setRemovedLeads(prev => [...prev, lead.id])
-    if (onRemoveFromAnalytics) {
-      onRemoveFromAnalytics(lead.id)
+  const handleDelete = async (lead: Lead) => {
+    try {
+      const { error } = await supabase
+        .from('leads')
+        .delete()
+        .eq('id', lead.id)
+
+      if (error) throw error
+
+      setRemovedLeads(prev => [...prev, lead.id])
+      if (onRemoveFromAnalytics) {
+        onRemoveFromAnalytics(lead.id)
+      }
+      toast({
+        title: "Lead supprimé",
+        description: "Le lead a été supprimé avec succès"
+      })
+    } catch (error) {
+      console.error("Erreur lors de la suppression:", error)
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la suppression du lead",
+        variant: "destructive"
+      })
     }
-    toast({
-      title: "Lead supprimé",
-      description: "Le lead a été retiré de la liste d'analyse"
-    })
   }
 
   const filteredLeads = leads.filter(lead => !removedLeads.includes(lead.id))

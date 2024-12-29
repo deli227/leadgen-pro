@@ -41,6 +41,12 @@ export function LeadCard({
     );
   };
 
+  const handleDelete = async () => {
+    if (onDelete) {
+      await onDelete(lead);
+    }
+  };
+
   return (
     <div className="p-4 border border-primary/20 rounded-xl bg-gradient-to-br from-black/40 to-secondary-dark/40 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 group">
       <div className="flex flex-col gap-3">
@@ -113,14 +119,14 @@ export function LeadCard({
             <FilterLeadActions
               lead={lead}
               onAnalyze={onAddToAnalytics}
-              onDelete={onDelete}
+              onDelete={handleDelete}
             />
           ) : (
             <LeadActions
               lead={lead}
               onAnalyze={onAddToAnalytics}
               onAddToExport={onAddToExport}
-              onDelete={onDelete}
+              onDelete={handleDelete}
             />
           )
         )}
