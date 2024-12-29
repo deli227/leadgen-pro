@@ -26,21 +26,38 @@ export function useLeadsData(session: Session | null) {
         async (payload) => {
           console.log('Changement détecté dans les leads:', payload);
 
-          // Récupère les données actuelles du cache
+          // Force une mise à jour immédiate du cache
           const currentData = queryClient.getQueryData(['leads', session.user.id]) as Lead[] || [];
 
           if (payload.eventType === 'INSERT') {
-            // Ajoute le nouveau lead au début de la liste
-            queryClient.setQueryData(['leads', session.user.id], [payload.new, ...currentData]);
+            const newLead = payload.new as Lead;
+            console.log('Ajout du nouveau lead:', newLead);
+            
+            // Mise à jour optimiste du cache
+            queryClient.setQueryData(['leads', session.user.id], (old: Lead[] | undefined) => {
+              const updatedLeads = [newLead, ...(old || [])];
+              console.log('Cache mis à jour avec:', updatedLeads.length, 'leads');
+              return updatedLeads;
+            });
+
+            // Force un re-fetch pour s'assurer de la synchronisation
+            await queryClient.invalidateQueries({
+              queryKey: ['leads', session.user.id],
+              exact: true,
+              refetchType: 'active'
+            });
+
             toast.success('Nouveau lead généré');
           } else if (payload.eventType === 'DELETE') {
-            // Filtre le lead supprimé
+            console.log('Suppression du lead:', payload.old.id);
+            
             queryClient.setQueryData(
               ['leads', session.user.id], 
               currentData.filter((lead: Lead) => lead.id !== payload.old.id)
             );
           } else {
-            // Pour les autres événements, met à jour les données
+            console.log('Mise à jour complète des leads');
+            
             const { data } = await supabase
               .from('leads')
               .select('*')
