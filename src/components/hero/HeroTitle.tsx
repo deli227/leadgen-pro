@@ -1,5 +1,4 @@
 import { RobotMascot } from "../RobotMascot";
-import { CountdownTimer } from "./CountdownTimer";
 import { useTranslation } from "react-i18next";
 
 export const HeroTitle = () => {
@@ -19,7 +18,6 @@ export const HeroTitle = () => {
       <p className="mt-8 text-base sm:text-lg md:text-xl leading-8 text-gray-300">
         {t('hero.mainText')}
       </p>
-      <CountdownTimer />
     </div>
   );
 };
