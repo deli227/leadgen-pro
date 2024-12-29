@@ -21,9 +21,13 @@ export function useLeadsData(session: Session | null) {
           table: 'leads',
           filter: `user_id=eq.${session.user.id}`
         }, 
-        (payload) => {
+        async (payload) => {
           console.log('Lead change detected:', payload);
-          queryClient.invalidateQueries({ queryKey: ['leads', session.user.id] });
+          // Invalider à la fois les leads et le profil pour mettre à jour les compteurs
+          await Promise.all([
+            queryClient.invalidateQueries({ queryKey: ['leads', session.user.id] }),
+            queryClient.invalidateQueries({ queryKey: ['profile', session.user.id] })
+          ]);
         }
       )
       .subscribe();

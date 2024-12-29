@@ -43,11 +43,16 @@ export function useProfileData(session: Session | null) {
         .eq('id', session.user.id)
         .single();
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching profile:', error);
+        throw error;
+      }
       console.log('Profile data fetched:', data);
       return data;
     },
     enabled: !!session?.user?.id,
-    staleTime: 1000
+    staleTime: 1000,
+    refetchOnWindowFocus: true,
+    refetchOnMount: true
   });
 }
