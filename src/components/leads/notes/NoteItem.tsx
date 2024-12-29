@@ -30,9 +30,6 @@ export function NoteItem({ note, onNoteDeleted }: NoteItemProps) {
   }
 
   const handleDeleteNote = async () => {
-    if (isDeleting) return
-    setIsDeleting(true)
-
     try {
       const { error } = await supabase
         .from('lead_notes')
@@ -53,8 +50,6 @@ export function NoteItem({ note, onNoteDeleted }: NoteItemProps) {
         description: "Une erreur est survenue lors de la suppression de la note",
         variant: "destructive"
       })
-    } finally {
-      setIsDeleting(false)
     }
   }
 
@@ -70,32 +65,29 @@ export function NoteItem({ note, onNoteDeleted }: NoteItemProps) {
             variant="ghost"
             size="icon"
             className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-500/10"
-            disabled={isDeleting}
           >
             <Trash2 className="h-4 w-4 text-red-500" />
           </Button>
         </AlertDialogTrigger>
-        <div className="fixed inset-0 z-[999999]">
-          <AlertDialogContent className="bg-black border border-primary-light z-[9999999]">
-            <AlertDialogHeader>
-              <AlertDialogTitle className="text-primary-light">Confirmer la suppression</AlertDialogTitle>
-              <AlertDialogDescription className="text-primary-light/70">
-                Êtes-vous sûr de vouloir supprimer cette note ? Cette action est irréversible.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel className="border-primary-light text-primary-light hover:bg-primary-light/10">
-                Annuler
-              </AlertDialogCancel>
-              <AlertDialogAction
-                onClick={handleDeleteNote}
-                className="bg-red-500 hover:bg-red-600 text-white border-none"
-              >
-                Supprimer
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </div>
+        <AlertDialogContent className="bg-black border border-primary-light">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-primary-light">Confirmer la suppression</AlertDialogTitle>
+            <AlertDialogDescription className="text-primary-light/70">
+              Êtes-vous sûr de vouloir supprimer cette note ? Cette action est irréversible.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="border-primary-light text-primary-light hover:bg-primary-light/10">
+              Annuler
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteNote}
+              className="bg-red-500 hover:bg-red-600 text-white border-none"
+            >
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
       </AlertDialog>
     </div>
   )
