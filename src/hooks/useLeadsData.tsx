@@ -1,10 +1,39 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Session } from "@supabase/supabase-js";
 import { Lead } from "@/types/leads";
 import { toast } from "sonner";
+import { useEffect } from "react";
 
 export function useLeadsData(session: Session | null) {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (!session?.user?.id) return;
+
+    console.log('Setting up realtime subscription for leads');
+    const channel = supabase
+      .channel('public:leads')
+      .on('postgres_changes', 
+        { 
+          event: '*', 
+          schema: 'public', 
+          table: 'leads',
+          filter: `user_id=eq.${session.user.id}`
+        }, 
+        (payload) => {
+          console.log('Lead change detected:', payload);
+          queryClient.invalidateQueries({ queryKey: ['leads', session.user.id] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      console.log('Cleaning up leads subscription');
+      supabase.removeChannel(channel);
+    };
+  }, [session?.user?.id, queryClient]);
+
   const { data: supabaseLeads = [], error } = useQuery({
     queryKey: ['leads', session?.user?.id],
     queryFn: async () => {
