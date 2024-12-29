@@ -11,40 +11,43 @@ export function useLeadsData(session: Session | null) {
   useEffect(() => {
     if (!session?.user?.id) return;
 
-    console.log('Setting up realtime subscription for leads');
+    console.log('Configuration de la souscription temps réel pour les leads');
+    
     const channel = supabase
       .channel('leads-changes')
-      .on('postgres_changes', 
-        { 
-          event: '*', 
-          schema: 'public', 
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
           table: 'leads',
           filter: `user_id=eq.${session.user.id}`
-        }, 
+        },
         async (payload) => {
-          console.log('Lead change detected:', payload);
-          
-          // Forcer le rafraîchissement des données
-          await queryClient.invalidateQueries({ 
-            queryKey: ['leads', session.user.id],
-            refetchType: 'active',
-            exact: true
+          console.log('Changement détecté dans les leads:', payload);
+
+          // Invalider et rafraîchir les requêtes
+          await queryClient.invalidateQueries({
+            queryKey: ['leads', session.user.id]
           });
-          
-          // Forcer le rafraîchissement du profil
-          await queryClient.invalidateQueries({ 
-            queryKey: ['profile', session.user.id],
-            refetchType: 'active',
-            exact: true
+
+          // Invalider aussi les données du profil pour mettre à jour les compteurs
+          await queryClient.invalidateQueries({
+            queryKey: ['profile', session.user.id]
           });
+
+          // Notification à l'utilisateur
+          if (payload.eventType === 'INSERT') {
+            toast.success('Nouveau lead généré');
+          }
         }
       )
       .subscribe((status) => {
-        console.log('Subscription status:', status);
+        console.log('Statut de la souscription:', status);
       });
 
     return () => {
-      console.log('Cleaning up leads subscription');
+      console.log('Nettoyage de la souscription aux leads');
       supabase.removeChannel(channel);
     };
   }, [session?.user?.id, queryClient]);
@@ -53,11 +56,11 @@ export function useLeadsData(session: Session | null) {
     queryKey: ['leads', session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) {
-        console.error('No user ID available');
-        throw new Error('No user ID');
+        console.error('Aucun ID utilisateur disponible');
+        throw new Error('Aucun ID utilisateur');
       }
 
-      console.log('Fetching leads for user:', session.user.id);
+      console.log('Récupération des leads pour l\'utilisateur:', session.user.id);
       const { data, error } = await supabase
         .from('leads')
         .select('*')
@@ -65,12 +68,12 @@ export function useLeadsData(session: Session | null) {
         .order('created_at', { ascending: false });
       
       if (error) {
-        console.error('Error fetching leads:', error);
+        console.error('Erreur lors de la récupération des leads:', error);
         toast.error('Erreur lors du chargement des leads');
         throw error;
       }
       
-      console.log('Leads fetched successfully:', data?.length || 0, 'leads');
+      console.log('Leads récupérés avec succès:', data?.length || 0, 'leads');
       return data;
     },
     enabled: !!session?.user?.id,
