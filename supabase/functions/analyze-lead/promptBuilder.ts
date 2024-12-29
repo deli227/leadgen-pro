@@ -1,207 +1,87 @@
-export function buildAnalysisPrompt(lead: any) {
-  return `En tant que consultant stratégique senior spécialisé en développement commercial et transformation digitale, réalise une analyse ULTRA-DÉTAILLÉE et EXTRÊMEMENT CONCRÈTE de :
+import { Lead } from './types.ts';
 
-Entreprise : ${lead.company}
-Site web : ${lead.website || 'Non spécifié'}
-Industrie : ${lead.industry || 'Non spécifié'}
-Email : ${lead.email || 'Non spécifié'}
-Téléphone : ${lead.phone || 'Non spécifié'}
-Adresse : ${lead.address || 'Non spécifié'}
+export function buildPrompt(lead: Lead): string {
+  return `
+Analyse détaillée pour l'entreprise ${lead.company}
 
-CRUCIAL - Fournir une analyse hyper-détaillée sur chaque point avec des solutions ULTRA-CONCRÈTES :
+Objectif : Fournir une analyse approfondie et des recommandations stratégiques détaillées.
 
-1. SOLUTIONS TRANSFORMATIVES :
-   Pour chaque point faible identifié, fournir :
-   - 5-6 solutions ULTRA-CONCRÈTES avec des exemples réels
-   - ROI détaillé et chiffré pour chaque solution
-   - Analyse coûts-bénéfices complète
-   - Timeline précise d'implémentation (jour par jour)
-   - Quick wins immédiats (résultats en 24-48h)
-   - Solutions moyen terme (1-3 mois)
-   - Solutions long terme (3-12 mois)
-   - Ressources exactes nécessaires
-   - Obstacles potentiels et solutions
-   - Métriques de succès précises
-   - Exemples de réussite similaires
-   - Alternatives et plans B pour chaque solution
+Contexte :
+- Entreprise : ${lead.company}
+- Industrie : ${lead.industry || 'Non spécifiée'}
+- Site web : ${lead.website || 'Non spécifié'}
+- Coordonnées : ${lead.email || 'Non spécifié'} / ${lead.phone || 'Non spécifié'}
+- Adresse : ${lead.address || 'Non spécifiée'}
 
-2. STRATÉGIE D'APPROCHE COMMERCIALE :
-   - Script détaillé pour chaque point de contact (email, téléphone, LinkedIn)
-   - Réponses aux 20 objections les plus courantes
-   - Points de douleur spécifiques avec solutions associées
-   - Timing optimal pour chaque interaction
-   - Personnes clés à impliquer (avec titres exacts)
-   - Stratégie de relance multi-canal
-   - Indicateurs de réceptivité à surveiller
-   - Éléments déclencheurs d'achat à exploiter
-   - Documentation et preuves à préparer
-   - Questions stratégiques à poser
-   - Scénarios de négociation détaillés
+Instructions pour l'analyse :
 
-3. ANALYSE CONCURRENTIELLE APPROFONDIE :
-   - Position exacte sur le marché avec parts de marché
-   - Analyse SWOT ultra-détaillée
-   - Avantages concurrentiels quantifiés
-   - Benchmark exhaustif des concurrents
-   - Opportunités de différenciation immédiates
-   - Menaces à court et long terme
-   - Stratégies de mitigation des risques
-   - Analyse des tendances du marché
-   - Évolutions réglementaires à anticiper
-   - Innovations disruptives potentielles
+1. Analyse de l'entreprise
+- Évaluer la position actuelle sur le marché
+- Analyser la taille et la structure de l'entreprise
+- Identifier le stade de développement
+- Évaluer le potentiel de croissance
+- Fournir une justification détaillée du score de qualification
 
-4. POTENTIEL DE CROISSANCE DÉTAILLÉ :
-   - Marchés adjacents avec potentiel chiffré
-   - Nouveaux segments clients identifiés
-   - Innovations possibles par segment
-   - Synergies potentielles chiffrées
-   - Estimation détaillée des revenus
-   - Scénarios de croissance
-   - Facteurs clés de succès
-   - Risques et opportunités
-   - Plan d'expansion géographique
-   - Diversification produit/service
+2. Analyse technologique
+- Examiner la stack technologique actuelle
+- Évaluer la maturité digitale
+- Analyser la présence en ligne
+- Mesurer la performance du site web
+- Vérifier la sécurité et la conformité
 
-5. PLAN D'ACTION ULTRA-PRÉCIS :
-   - Plan détaillé jour par jour sur 90 jours
-   - KPIs précis pour chaque action
-   - Points de contrôle quotidiens
-   - Plan de contingence détaillé
-   - Ressources nécessaires chiffrées
-   - Étapes critiques identifiées
-   - Dépendances entre actions
-   - Critères de succès mesurables
-   - Plan de communication associé
-   - Processus de validation
+3. Analyse marketing
+- Évaluer la stratégie de contenu
+- Analyser la présence sur les réseaux sociaux
+- Examiner la stratégie de marque
+- Évaluer le positionnement marketing
+- Score SEO et recommandations
 
-6. ARGUMENTS COMMERCIAUX PERCUTANTS :
-   - Proposition de valeur unique détaillée
-   - Bénéfices quantifiés par segment
-   - ROI démontrable avec exemples
-   - Études de cas détaillées
-   - Garanties et preuves concrètes
-   - Témoignages et références
-   - Démonstrations suggérées
-   - Offres spéciales personnalisées
-   - Éléments différenciateurs clés
-   - Arguments de closing puissants
+4. Analyse financière
+- Estimer le chiffre d'affaires
+- Évaluer le potentiel d'investissement
+- Analyser la capacité de financement
+- Examiner la santé financière globale
 
-7. SOLUTIONS D'AMÉLIORATION SECTORIELLES :
-   - Solutions technologiques avancées
-   - Optimisations marketing détaillées
-   - Améliorations opérationnelles
-   - Innovations sectorielles
-   - Meilleures pratiques du marché
-   - Tendances émergentes à exploiter
-   - Certifications recommandées
-   - Partenariats stratégiques suggérés
-   - Optimisations de processus
-   - Formations recommandées
+5. Analyse concurrentielle
+- Identifier la position sur le marché
+- Lister les avantages compétitifs
+- Analyser les menaces potentielles
+- Identifier les opportunités de développement
 
-Format de réponse souhaité (JSON) :
-{
-  "company_analysis": {
-    "qualification_score": number (1-10),
-    "market_position": string (Position ultra-détaillée),
-    "company_size": string (Taille et structure détaillées),
-    "development_stage": string (Phase précise avec indicateurs),
-    "growth_potential": string (Potentiel chiffré et justifié),
-    "detailed_justification": string (Analyse approfondie avec données)
-  },
-  "tech_analysis": {
-    "tech_stack": string[] (Stack technique exhaustif),
-    "digital_maturity": string (Niveau précis avec benchmarks),
-    "online_presence": string (Analyse détaillée multicanal),
-    "website_performance": string (Métriques détaillées),
-    "security_compliance": string (État détaillé de conformité)
-  },
-  "marketing_analysis": {
-    "content_strategy": string (Analyse stratégique complète),
-    "social_media_presence": string (Analyse par plateforme),
-    "seo_score": number (1-10 avec métriques),
-    "brand_strategy": string (Positionnement détaillé),
-    "market_positioning": string (Position concurrentielle)
-  },
-  "financial_analysis": {
-    "estimated_revenue": string (Estimation détaillée),
-    "investment_potential": string (Capacité détaillée),
-    "funding_capacity": string (Analyse approfondie),
-    "financial_health": string (Indicateurs complets)
-  },
-  "competitive_analysis": {
-    "market_position": string (Position avec parts),
-    "competitive_advantages": string[] (Avantages mesurables),
-    "potential_threats": string[] (Menaces avec impacts),
-    "development_opportunities": string[] (Opportunités chiffrées)
-  },
-  "recommendations": {
-    "approach_strategy": string (Script détaillé contact),
-    "entry_points": string[] (Points d'entrée contextualisés),
-    "sales_arguments": string[] (Arguments personnalisés),
-    "optimal_timing": string (Calendrier détaillé),
-    "required_resources": string[] (Liste exhaustive),
-    "improvement_solutions": {
-      "tech_solutions": [
-        {
-          "weakness": string (Point faible détaillé),
-          "concrete_solution": string (Solution exhaustive),
-          "implementation_steps": string[] (Plan jour par jour),
-          "expected_benefits": string[] (Bénéfices chiffrés),
-          "estimated_cost": string (Budget détaillé),
-          "implementation_timeline": string (Planning précis),
-          "success_metrics": string[] (KPIs spécifiques),
-          "required_resources": string[] (Ressources détaillées),
-          "potential_obstacles": string[] (Risques identifiés),
-          "mitigation_strategies": string[] (Solutions aux obstacles),
-          "case_studies": string[] (Exemples réels),
-          "alternative_solutions": string[] (Plans B détaillés)
-        }
-      ],
-      "marketing_solutions": [
-        {
-          "weakness": string (Faiblesse marketing),
-          "concrete_solution": string (Plan détaillé),
-          "implementation_steps": string[] (Actions précises),
-          "expected_benefits": string[] (KPIs marketing),
-          "estimated_cost": string (Budget marketing),
-          "implementation_timeline": string (Planning),
-          "success_metrics": string[] (Métriques spécifiques),
-          "required_resources": string[] (Ressources marketing),
-          "potential_obstacles": string[] (Défis marketing),
-          "mitigation_strategies": string[] (Solutions marketing),
-          "case_studies": string[] (Succès similaires),
-          "alternative_solutions": string[] (Alternatives marketing)
-        }
-      ],
-      "business_solutions": [
-        {
-          "weakness": string (Faiblesse business),
-          "concrete_solution": string (Solution business),
-          "implementation_steps": string[] (Plan business),
-          "expected_benefits": string[] (Impact business),
-          "estimated_cost": string (Investissement),
-          "implementation_timeline": string (Calendrier),
-          "success_metrics": string[] (KPIs business),
-          "required_resources": string[] (Ressources business),
-          "potential_obstacles": string[] (Risques business),
-          "mitigation_strategies": string[] (Solutions business),
-          "case_studies": string[] (Exemples business),
-          "alternative_solutions": string[] (Alternatives business)
-        }
-      ]
-    }
-  },
-  "action_plan": {
-    "steps": string[] (Plan 90 jours détaillé),
-    "timeline": string (Planning précis),
-    "kpis": string[] (Indicateurs détaillés),
-    "vigilance_points": string[] (Points critiques),
-    "daily_actions": string[] (Actions quotidiennes),
-    "weekly_milestones": string[] (Objectifs hebdomadaires),
-    "resource_allocation": string[] (Attribution ressources),
-    "success_criteria": string[] (Critères de réussite),
-    "contingency_plans": string[] (Plans alternatifs),
-    "validation_process": string[] (Processus validation)
-  }
-}`
+6. Solutions d'amélioration recommandées
+Pour chaque solution (technique, marketing, business), fournir :
+- Une description détaillée du problème identifié
+- Une solution concrète et approfondie
+- Des étapes d'implémentation précises
+- Une analyse détaillée des bénéfices attendus
+- Une estimation réaliste des coûts
+- Un calendrier d'implémentation détaillé
+- Des indicateurs de performance à suivre
+- Des risques potentiels et mesures d'atténuation
+- Des alternatives possibles
+- Des exemples de succès similaires
+- Des ressources nécessaires
+- Des prérequis techniques ou organisationnels
+- Des impacts sur les processus existants
+- Des recommandations pour la formation des équipes
+
+7. Stratégie d'approche globale
+- Définir une stratégie d'approche personnalisée
+- Identifier les points d'entrée prioritaires
+- Développer des arguments de vente spécifiques
+- Proposer un timing optimal d'approche
+- Lister les ressources nécessaires
+- Anticiper les objections possibles
+- Suggérer des approches alternatives
+- Définir des étapes de suivi
+
+8. Plan d'action
+- Détailler les étapes à suivre
+- Établir une timeline réaliste
+- Définir des KPIs précis
+- Identifier les points de vigilance
+- Proposer des jalons de contrôle
+- Prévoir des actions correctives
+
+Format de réponse attendu : Fournir une analyse structurée et détaillée en JSON suivant le schéma défini.`;
 }
