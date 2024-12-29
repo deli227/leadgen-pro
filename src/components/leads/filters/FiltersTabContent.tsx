@@ -97,9 +97,31 @@ export function FiltersTabContent({
     }
   }
 
-  const handleDelete = (lead: Lead) => {
-    if (onLocalRemove) {
-      onLocalRemove(lead.id)
+  const handleDelete = async (lead: Lead) => {
+    try {
+      const { error } = await supabase
+        .from('leads')
+        .delete()
+        .eq('id', lead.id)
+
+      if (error) {
+        console.error('Erreur lors de la suppression:', error)
+        toast.error("Erreur lors de la suppression du lead")
+        return
+      }
+
+      // Invalider le cache pour forcer un rechargement des leads
+      await queryClient.invalidateQueries({ queryKey: ['leads'] })
+      
+      toast.success("Lead supprimé avec succès")
+      
+      // Appeler onLocalRemove si fourni
+      if (onLocalRemove) {
+        onLocalRemove(lead.id)
+      }
+    } catch (error) {
+      console.error('Erreur système lors de la suppression:', error)
+      toast.error("Une erreur est survenue lors de la suppression")
     }
   }
 
