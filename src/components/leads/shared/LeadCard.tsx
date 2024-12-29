@@ -1,81 +1,68 @@
-import { Mail, MapPin, Phone, Globe, Facebook, Instagram, Linkedin, Twitter, Trash2, NotebookPen } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { motion } from "framer-motion"
-import { toast } from "sonner"
-import { supabase } from "@/integrations/supabase/client"
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
-import { LeadNotes } from "@/components/leads/LeadNotes"
-import { useState } from "react"
-import { TagsManager } from "./tags/TagsManager"
+import { Lead } from "@/types/leads"
+import { LeadActions } from "../LeadActions"
+import { FilterLeadActions } from "../filters/FilterLeadActions"
+import { LeadScoreDisplay } from "../LeadScoreDisplay"
+import { Mail, MapPin, Phone, Globe, Facebook, Linkedin, Twitter, Instagram } from "lucide-react"
+import { TagsManager } from "../tags/TagsManager"
 
 interface LeadCardProps {
-  lead: any
-  onAddToAnalytics: (lead: any) => void
-  onLeadDeleted: () => void
-  showTags?: boolean // Nouveau prop pour contrôler l'affichage des tags
+  lead: Lead
+  onAddToAnalytics?: (lead: Lead) => void
+  onAddToExport?: (lead: Lead) => void
+  onDelete?: (lead: Lead) => void
+  onLeadDeleted?: () => Promise<void>
+  showActions?: boolean
+  filterView?: boolean
 }
 
-export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted, showTags = false }: LeadCardProps) {
-  const [isNotesOpen, setIsNotesOpen] = useState(false)
+export function LeadCard({
+  lead,
+  onAddToAnalytics,
+  onAddToExport,
+  onDelete,
+  onLeadDeleted,
+  showActions = true,
+  filterView = false
+}: LeadCardProps) {
+  const renderSocialLink = (url: string | undefined, Icon: any, platform: string) => {
+    if (!url) return null;
+    
+    const validUrl = url.startsWith('http') ? url : `https://${url}`;
+    
+    return (
+      <a 
+        href={validUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-primary-light/70 hover:text-primary transition-colors"
+        title={platform}
+      >
+        <Icon className="h-4 w-4" />
+      </a>
+    );
+  };
 
   const handleDelete = async () => {
-    try {
-      const { error } = await supabase
-        .from('leads')
-        .delete()
-        .eq('id', lead.id)
-
-      if (error) throw error
-
-      toast.success("Lead supprimé avec succès")
-      onLeadDeleted()
-    } catch (error) {
-      console.error('Erreur lors de la suppression:', error)
-      toast.error("Erreur lors de la suppression du lead")
+    if (onDelete) {
+      await onDelete(lead);
     }
-  }
+  };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className="p-4 border border-primary/20 rounded-xl bg-gradient-to-br from-black/40 to-secondary-dark/40 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 group"
-    >
+    <div className="p-4 border border-primary/20 rounded-xl bg-gradient-to-br from-black/40 to-secondary-dark/40 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 group">
       <div className="flex flex-col gap-3">
         <div className="flex justify-between items-start">
           <div className="space-y-1">
             <h4 className="text-base font-semibold text-primary-light group-hover:text-white transition-colors line-clamp-1">
               {lead.company}
             </h4>
-            <p className="text-sm text-primary-light/70 line-clamp-1">
-              {lead.industry}
-            </p>
+            {lead.industry && (
+              <p className="text-sm text-primary-light/70 line-clamp-1">
+                {lead.industry}
+              </p>
+            )}
           </div>
-          <div className="flex gap-2">
-            <Dialog open={isNotesOpen} onOpenChange={setIsNotesOpen}>
-              <DialogTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-primary-light/70 hover:text-primary hover:bg-primary/10"
-                >
-                  <NotebookPen className="h-4 w-4" />
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[600px] bg-transparent border-none p-0">
-                <LeadNotes lead={lead} onClose={() => setIsNotesOpen(false)} />
-              </DialogContent>
-            </Dialog>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-primary-light/70 hover:text-red-500 hover:bg-red-500/10"
-              onClick={handleDelete}
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </div>
+          {!filterView && lead.score && <LeadScoreDisplay score={lead.score} />}
         </div>
 
         <div className="space-y-2">
@@ -121,68 +108,34 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted, showTags = fal
 
         {lead.socialMedia && (
           <div className="pt-3 border-t border-primary/10 flex gap-3">
-            {lead.socialMedia.linkedin && (
-              <a 
-                href={lead.socialMedia.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary-light/70 hover:text-primary transition-colors"
-                title="LinkedIn"
-              >
-                <Linkedin className="h-4 w-4" />
-              </a>
-            )}
-            {lead.socialMedia.twitter && (
-              <a 
-                href={lead.socialMedia.twitter}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary-light/70 hover:text-primary transition-colors"
-                title="X (Twitter)"
-              >
-                <Twitter className="h-4 w-4" />
-              </a>
-            )}
-            {lead.socialMedia.facebook && (
-              <a 
-                href={lead.socialMedia.facebook}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary-light/70 hover:text-primary transition-colors"
-                title="Facebook"
-              >
-                <Facebook className="h-4 w-4" />
-              </a>
-            )}
-            {lead.socialMedia.instagram && (
-              <a 
-                href={lead.socialMedia.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary-light/70 hover:text-primary transition-colors"
-                title="Instagram"
-              >
-                <Instagram className="h-4 w-4" />
-              </a>
-            )}
+            {renderSocialLink(lead.socialMedia.linkedin, Linkedin, "LinkedIn")}
+            {renderSocialLink(lead.socialMedia.twitter, Twitter, "Twitter")}
+            {renderSocialLink(lead.socialMedia.facebook, Facebook, "Facebook")}
+            {renderSocialLink(lead.socialMedia.instagram, Instagram, "Instagram")}
           </div>
         )}
 
-        {showTags && (
-          <div className="mt-2">
-            <TagsManager leadId={lead.id} />
-          </div>
-        )}
+        <div className="mt-2">
+          <TagsManager leadId={lead.id} />
+        </div>
 
-        <Button
-          onClick={() => onAddToAnalytics(lead)}
-          variant="outline"
-          size="sm"
-          className="w-full bg-gradient-to-r from-primary to-primary-dark text-white border-none hover:opacity-90 shadow-lg hover:shadow-xl transition-all duration-300 text-sm"
-        >
-          Ajouter aux analytiques
-        </Button>
+        {showActions && onAddToAnalytics && (
+          filterView ? (
+            <FilterLeadActions
+              lead={lead}
+              onAnalyze={onAddToAnalytics}
+              onDelete={handleDelete}
+            />
+          ) : (
+            <LeadActions
+              lead={lead}
+              onAnalyze={onAddToAnalytics}
+              onAddToExport={onAddToExport}
+              onDelete={handleDelete}
+            />
+          )
+        )}
       </div>
-    </motion.div>
+    </div>
   )
 }
