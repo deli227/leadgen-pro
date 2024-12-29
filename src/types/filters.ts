@@ -4,4 +4,5 @@ export interface LeadFilters {
   industry: string
   country: string
   city: string
+  companySize?: string
 }

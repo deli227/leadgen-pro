@@ -251,6 +251,7 @@ export type Database = {
         Row: {
           address: string | null
           company: string
+          company_size: Database["public"]["Enums"]["company_size_type"] | null
           created_at: string
           email: string | null
           id: string
@@ -268,6 +269,7 @@ export type Database = {
         Insert: {
           address?: string | null
           company: string
+          company_size?: Database["public"]["Enums"]["company_size_type"] | null
           created_at?: string
           email?: string | null
           id?: string
@@ -285,6 +287,7 @@ export type Database = {
         Update: {
           address?: string | null
           company?: string
+          company_size?: Database["public"]["Enums"]["company_size_type"] | null
           created_at?: string
           email?: string | null
           id?: string
@@ -481,6 +484,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      company_size_type: "large" | "medium" | "small" | "micro" | "unknown"
       subscription_type: "free" | "pro" | "enterprise"
       waitlist_status: "pending" | "notified"
     }

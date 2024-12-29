@@ -1,30 +1,20 @@
 {
   "common": {
     "leads": "Leads",
-    "analytics": "Analytiques",
-    "automation": "Automatisation",
-    "comingSoon": "Prochainement disponible",
-    "search": "Rechercher",
-    "export": "Exporter",
-    "filters": "Filtres",
-    "dailyLeads": "Leads quotidiens",
-    "monthlyLeads": "Leads mensuels",
-    "remaining": "restants",
-    "upgrade": "Améliorer",
-    "profile": "Profil",
-    "logout": "Déconnexion"
+    "automation": "Automation",
+    "comingSoon": "Bientôt disponible",
+    "all": "Tous",
+    "generating": "Génération en cours...",
+    "generateLeads": "Générer les leads"
   },
-  "hero": {
-    "title": "Une première mondiale en prospection B2B",
-    "mainText": "Propulsez votre marketing et votre prospection dans une nouvelle dimension avec notre IA révolutionnaire ! Repérez vos leads qualifiés en un instant et obtenez une vision à 360° : forces à exploiter, faiblesses à dépasser, opportunités à saisir. Transformez chaque prospect en succès grâce à des insights percutants et un avantage imbattable. Prêt à dominer votre marché ? Passez à la vitesse supérieure dès maintenant !"
+  "filters": {
+    "companySize": "Taille de l'entreprise"
   },
-  "leads": {
-    "addToAnalytics": "Ajouter aux analytiques",
-    "addToExport": "Ajouter à l'export",
-    "company": "Entreprise",
-    "email": "Email",
-    "phone": "Téléphone",
-    "score": "Score",
-    "industry": "Industrie"
+  "companySize": {
+    "large": "Grande (250+ employés)",
+    "medium": "Moyenne (50-249 employés)",
+    "small": "Petite (10-49 employés)",
+    "micro": "Micro (1-9 employés)",
+    "unknown": "Inconnue"
   }
 }

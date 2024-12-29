@@ -1,10 +1,6 @@
-import { LocationFilters } from "./LocationFilters"
-import { IndustrySelect } from "./IndustrySelect"
-import { LeadCountSlider } from "./LeadCountSlider"
 import { Button } from "@/components/ui/button"
-import { Loader2 } from "lucide-react"
-import { supabase } from "@/integrations/supabase/client"
 import { toast } from "sonner"
+import { supabase } from "@/integrations/supabase/client"
 import { LeadsList } from "../shared/LeadsList"
 import { motion } from "framer-motion"
 import { useState } from "react"
@@ -12,6 +8,9 @@ import { Lead } from "@/types/leads"
 import { LeadFilters } from "@/types/filters"
 import { useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "react-router-dom"
+import { LeadCountSlider } from "./LeadCountSlider"
+import { BaseFilters } from "./BaseFilters"
+import { FilterActions } from "./FilterActions"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -55,7 +54,6 @@ export function FiltersTabContent({
         return
       }
 
-      // Vérifier la limite de l'utilisateur
       const { data: profile } = await supabase
         .from('profiles')
         .select('subscription_type')
@@ -127,7 +125,6 @@ export function FiltersTabContent({
         return
       }
 
-      // Forcer une mise à jour immédiate des données
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['leads', session.user.id] }),
         queryClient.invalidateQueries({ queryKey: ['profile', session.user.id] })
@@ -188,36 +185,10 @@ export function FiltersTabContent({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="flex flex-wrap gap-4"
+        className="space-y-4"
       >
-        <LocationFilters 
-          country={filters.country}
-          city={filters.city}
-          onCountryChange={(value) => {
-            setFilters({ ...filters, country: value, city: "all" })
-          }}
-          onCityChange={(value) => setFilters({ ...filters, city: value })}
-        />
-        
-        <IndustrySelect 
-          value={filters.industry}
-          onChange={(value) => setFilters({ ...filters, industry: value })}
-        />
-
-        <Button
-          onClick={handleGenerateLeads}
-          disabled={isGenerating}
-          className="ml-auto bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white shadow-lg hover:shadow-xl transition-all duration-300"
-        >
-          {isGenerating ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Génération...
-            </>
-          ) : (
-            'Générer les leads'
-          )}
-        </Button>
+        <BaseFilters filters={filters} setFilters={setFilters} />
+        <FilterActions isGenerating={isGenerating} onGenerate={handleGenerateLeads} />
       </motion.div>
 
       <LeadCountSlider 
