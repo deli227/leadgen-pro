@@ -1,5 +1,5 @@
 export function buildAnalysisPrompt(lead: any) {
-  return `En tant que consultant stratégique senior spécialisé en développement commercial et transformation digitale, réalise une analyse approfondie et TRÈS CONCRÈTE de :
+  return `En tant que consultant stratégique senior spécialisé en développement commercial et transformation digitale, réalise une analyse TRÈS DÉTAILLÉE et CONCRÈTE de :
 
 Entreprise : ${lead.company}
 Site web : ${lead.website || 'Non spécifié'}
@@ -8,7 +8,14 @@ Email : ${lead.email || 'Non spécifié'}
 Téléphone : ${lead.phone || 'Non spécifié'}
 Adresse : ${lead.address || 'Non spécifié'}
 
-IMPORTANT : Pour chaque point faible identifié, propose des solutions TRÈS CONCRÈTES et IMMÉDIATEMENT APPLICABLES.
+IMPORTANT :
+1. Pour chaque point faible identifié, propose des solutions TRÈS CONCRÈTES et IMMÉDIATEMENT APPLICABLES.
+2. Fournis des recommandations détaillées sur la manière d'approcher et de convaincre ce lead.
+3. Inclus un plan d'action clair et chronologique.
+4. Mets l'accent sur la valeur ajoutée immédiate que nous pouvons apporter.
+5. Détaille les bénéfices chiffrés attendus pour chaque solution proposée.
+6. Fournis des arguments de vente spécifiques basés sur leur secteur d'activité.
+7. Identifie les opportunités d'amélioration rapide avec un fort impact.
 
 Format de réponse souhaité (JSON) :
 {
@@ -47,20 +54,20 @@ Format de réponse souhaité (JSON) :
     "development_opportunities": string[]
   },
   "recommendations": {
-    "approach_strategy": string,
-    "entry_points": string[],
-    "sales_arguments": string[],
-    "optimal_timing": string,
-    "required_resources": string[],
+    "approach_strategy": string (Détaille précisément comment aborder ce lead),
+    "entry_points": string[] (Points d'entrée concrets pour initier la discussion),
+    "sales_arguments": string[] (Arguments de vente spécifiques et chiffrés),
+    "optimal_timing": string (Meilleur moment pour les contacter),
+    "required_resources": string[] (Ressources nécessaires pour concrétiser),
     "improvement_solutions": {
       "tech_solutions": [
         {
-          "weakness": string,
-          "concrete_solution": string,
-          "implementation_steps": string[],
-          "expected_benefits": string[],
-          "estimated_cost": string,
-          "implementation_timeline": string
+          "weakness": string (Point faible identifié),
+          "concrete_solution": string (Solution détaillée et chiffrée),
+          "implementation_steps": string[] (Étapes précises de mise en œuvre),
+          "expected_benefits": string[] (Bénéfices chiffrés et mesurables),
+          "estimated_cost": string (Coût estimé),
+          "implementation_timeline": string (Délai de mise en place)
         }
       ],
       "marketing_solutions": [
@@ -86,10 +93,10 @@ Format de réponse souhaité (JSON) :
     }
   },
   "action_plan": {
-    "steps": string[],
-    "timeline": string,
-    "kpis": string[],
-    "vigilance_points": string[]
+    "steps": string[] (Plan d'action détaillé et chronologique),
+    "timeline": string (Planning de mise en œuvre),
+    "kpis": string[] (Indicateurs clés à suivre),
+    "vigilance_points": string[] (Points de vigilance spécifiques)
   }
 }`
 }
