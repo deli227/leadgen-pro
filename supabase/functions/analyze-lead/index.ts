@@ -17,6 +17,8 @@ serve(async (req) => {
       throw new Error('Lead et userId sont requis')
     }
 
+    console.log("Début de l'analyse pour:", lead.company)
+
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
@@ -50,7 +52,10 @@ serve(async (req) => {
     }
 
     const data = await response.json()
+    console.log("Réponse brute de l'API:", data)
+    
     const analysis = JSON.parse(data.choices[0].message.content)
+    console.log("Analyse parsée:", analysis)
 
     const { data: savedAnalysis, error: saveError } = await supabaseClient
       .from('lead_analyses')
@@ -78,9 +83,10 @@ serve(async (req) => {
     )
 
   } catch (error) {
+    console.error("Erreur complète:", error)
     return new Response(
       JSON.stringify({ success: false, error: error.message }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
     )
   }
 })
