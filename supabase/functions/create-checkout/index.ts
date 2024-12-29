@@ -1,76 +1,44 @@
-import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import Stripe from 'https://esm.sh/stripe@14.21.0';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
+import { serve } from "https://deno.land/std@0.190.0/http/server.ts"
+import Stripe from 'https://esm.sh/stripe@14.21.0'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+}
 
 serve(async (req) => {
-  // Gérer les requêtes CORS preflight
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: corsHeaders })
   }
 
   try {
-    // Récupérer le body de la requête
-    const { priceId } = await req.json();
+    const { priceId, email } = await req.json()
 
     if (!priceId) {
-      throw new Error('priceId est requis');
+      throw new Error('Price ID is required')
     }
-
-    console.log('Prix reçu:', priceId);
-
-    // Initialiser le client Supabase
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-    );
-
-    // Récupérer l'utilisateur depuis le header d'authentification
-    const authHeader = req.headers.get('Authorization')!;
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user } } = await supabaseClient.auth.getUser(token);
-
-    if (!user?.email) {
-      throw new Error('Utilisateur non authentifié');
-    }
-
-    console.log('Création de session pour:', user.email);
 
     const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
       apiVersion: '2023-10-16',
-    });
+    })
 
-    // Vérifier si le client existe déjà
-    const customers = await stripe.customers.list({
-      email: user.email,
-      limit: 1
-    });
-
-    let customerId = undefined;
-    if (customers.data.length > 0) {
-      customerId = customers.data[0].id;
-      // Vérifier si déjà abonné
-      const subscriptions = await stripe.subscriptions.list({
-        customer: customers.data[0].id,
-        status: 'active',
-        price: priceId,
+    let customer_id = undefined
+    
+    if (email) {
+      const customers = await stripe.customers.list({
+        email: email,
         limit: 1
-      });
+      })
 
-      if (subscriptions.data.length > 0) {
-        throw new Error("Vous êtes déjà abonné à ce plan");
+      if (customers.data.length > 0) {
+        customer_id = customers.data[0].id
       }
     }
 
-    console.log('Création de la session de paiement...');
+    console.log('Creating checkout session...')
     const session = await stripe.checkout.sessions.create({
-      customer: customerId,
-      customer_email: customerId ? undefined : user.email,
-      billing_address_collection: 'required',
+      customer: customer_id,
+      customer_email: customer_id ? undefined : email,
       line_items: [
         {
           price: priceId,
@@ -78,28 +46,26 @@ serve(async (req) => {
         },
       ],
       mode: 'subscription',
-      success_url: `${req.headers.get('origin')}/dashboard?success=true`,
-      cancel_url: `${req.headers.get('origin')}/dashboard?canceled=true`,
-      allow_promotion_codes: true,
-      locale: 'fr',
-    });
+      success_url: `${req.headers.get('origin')}/dashboard`,
+      cancel_url: `${req.headers.get('origin')}/`,
+    })
 
-    console.log('Session de paiement créée:', session.id);
+    console.log('Checkout session created:', session.id)
     return new Response(
       JSON.stringify({ url: session.url }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
       }
-    );
+    )
   } catch (error) {
-    console.error('Erreur lors de la création de la session:', error);
+    console.error('Error creating checkout session:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 500,
       }
-    );
+    )
   }
-});
+})

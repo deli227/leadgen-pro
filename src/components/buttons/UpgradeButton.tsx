@@ -23,8 +23,13 @@ export const UpgradeButton = ({ className }: UpgradeButtonProps) => {
       setIsLoading(true)
       toast.loading(`Préparation de votre passage au plan ${plan}...`)
       
+      const { data: { session } } = await supabase.auth.getSession()
+      
       const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { priceId }
+        body: { 
+          priceId,
+          email: session?.user?.email 
+        }
       })
 
       if (error) {
