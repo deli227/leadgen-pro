@@ -10,7 +10,9 @@ interface Filters {
 export const buildPrompt = (filters: Filters): string => {
   const leadCount = Math.min(Math.max(filters.leadCount || 10, 1), 50);
   
-  let prompt = `Génère ${leadCount} entreprises`;
+  let prompt = `Tu es un expert avec plus de 40 ans d'expérience dans la recherche de leads qualifiés et le repérage d'opportunités clients. Tu as une connaissance approfondie des marchés B2B et une expertise pointue dans l'identification des entreprises à fort potentiel.
+
+Utilise ton expertise pour me générer ${leadCount} entreprises`;
   
   if (filters.search) {
     prompt += ` similaires à "${filters.search}"`;
@@ -50,7 +52,8 @@ export const buildPrompt = (filters: Filters): string => {
       "socialMedia": {
         "linkedin": "linkedin.com/company/...",
         "twitter": "twitter.com/...",
-        "facebook": "facebook.com/..."
+        "facebook": "facebook.com/...",
+        "instagram": "instagram.com/..."
       }
     }
   ]`;
