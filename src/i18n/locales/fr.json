@@ -3,9 +3,7 @@
     "leads": "Leads",
     "automation": "Automation",
     "comingSoon": "Bientôt disponible",
-    "all": "Tous",
-    "generating": "Génération en cours...",
-    "generateLeads": "Générer les leads"
+    "all": "Tous"
   },
   "filters": {
     "companySize": "Taille de l'entreprise"
