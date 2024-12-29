@@ -1,8 +1,11 @@
-import { Mail, MapPin, Phone, Globe, Facebook, Instagram, Linkedin, Twitter, Trash2 } from "lucide-react"
+import { Mail, MapPin, Phone, Globe, Facebook, Instagram, Linkedin, Twitter, Trash2, NotebookPen } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import { toast } from "sonner"
 import { supabase } from "@/integrations/supabase/client"
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
+import { LeadNotes } from "@/components/leads/LeadNotes"
+import { useState } from "react"
 
 interface LeadCardProps {
   lead: any
@@ -11,22 +14,24 @@ interface LeadCardProps {
 }
 
 export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProps) {
+  const [isNotesOpen, setIsNotesOpen] = useState(false)
+
   const handleDelete = async () => {
     try {
       const { error } = await supabase
         .from('leads')
         .delete()
-        .eq('id', lead.id);
+        .eq('id', lead.id)
 
-      if (error) throw error;
+      if (error) throw error
 
-      toast.success("Lead supprimé avec succès");
-      onLeadDeleted();
+      toast.success("Lead supprimé avec succès")
+      onLeadDeleted()
     } catch (error) {
-      console.error('Erreur lors de la suppression:', error);
-      toast.error("Erreur lors de la suppression du lead");
+      console.error('Erreur lors de la suppression:', error)
+      toast.error("Erreur lors de la suppression du lead")
     }
-  };
+  }
 
   return (
     <motion.div
@@ -45,14 +50,30 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProp
               {lead.industry}
             </p>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-primary-light/70 hover:text-red-500 hover:bg-red-500/10"
-            onClick={handleDelete}
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
+          <div className="flex gap-2">
+            <Dialog open={isNotesOpen} onOpenChange={setIsNotesOpen}>
+              <DialogTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-primary-light/70 hover:text-primary hover:bg-primary/10"
+                >
+                  <NotebookPen className="h-4 w-4" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[600px] bg-transparent border-none p-0">
+                <LeadNotes lead={lead} onClose={() => setIsNotesOpen(false)} />
+              </DialogContent>
+            </Dialog>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-primary-light/70 hover:text-red-500 hover:bg-red-500/10"
+              onClick={handleDelete}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
         <div className="space-y-2">
@@ -85,12 +106,12 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProp
             <div className="flex items-center gap-2 text-primary-light/80 hover:text-primary-light transition-colors">
               <Globe className="h-4 w-4 flex-shrink-0" />
               <a 
-                href={lead.website} 
+                href={lead.website.startsWith('http') ? lead.website : `https://${lead.website}`}
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="text-sm hover:underline line-clamp-1"
               >
-                {lead.website.replace('https://', '')}
+                {lead.website.replace(/^https?:\/\//, '')}
               </a>
             </div>
           )}
@@ -155,5 +176,5 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProp
         </Button>
       </div>
     </motion.div>
-  );
+  )
 }
