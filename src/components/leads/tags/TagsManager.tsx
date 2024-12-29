@@ -129,6 +129,24 @@ export function TagsManager({ leadId }: TagsManagerProps) {
     }
   }
 
+  const handleDeleteTag = async (tagId: string) => {
+    try {
+      const { error } = await supabase
+        .from('lead_tags')
+        .delete()
+        .eq('id', tagId)
+
+      if (error) throw error
+
+      toast.success("Tag supprimé avec succès")
+      refetchTags()
+      refetchLeadTags()
+    } catch (error) {
+      console.error('Error deleting tag:', error)
+      toast.error("Erreur lors de la suppression du tag")
+    }
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap gap-2">
@@ -171,6 +189,8 @@ export function TagsManager({ leadId }: TagsManagerProps) {
               key={tag.id} 
               tag={tag}
               onRemove={() => handleAddTagToLead(tag.id)}
+              showDelete
+              onDelete={() => handleDeleteTag(tag.id)}
             />
           ))}
       </div>
