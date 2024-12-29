@@ -9,9 +9,11 @@ import { useToast } from "@/hooks/use-toast"
 import { Lead } from "@/types/leads"
 import { motion } from "framer-motion"
 import { DashboardTabs } from "@/components/dashboard/DashboardTabs"
+import { useQueryClient } from "@tanstack/react-query"
 
 export function Dashboard() {
   const { toast } = useToast()
+  const queryClient = useQueryClient()
   const [filters, setFilters] = useState({
     search: "",
     leadCount: 10,
@@ -25,7 +27,7 @@ export function Dashboard() {
   const { data: session } = useSessionData()
   const { data: profile } = useProfileData(session)
   const { data: limits } = useSubscriptionLimits(profile?.subscription_type)
-  const { leads, isLoading } = useLeadsData(session)
+  const { leads, isLoading, refetch } = useLeadsData(session)
 
   const handleAddToAnalytics = (lead: Lead) => {
     if (!analyticsLeads.find(l => l.id === lead.id)) {
@@ -33,6 +35,11 @@ export function Dashboard() {
       toast({
         title: "Ajout aux analytiques",
         description: "Le lead a été ajouté aux analytiques avec succès"
+      })
+      // Force le rafraîchissement du cache après la modification
+      queryClient.invalidateQueries({ 
+        queryKey: ['leads', session?.user?.id],
+        exact: true
       })
     }
   }
@@ -44,6 +51,11 @@ export function Dashboard() {
         title: "Ajout à l'export",
         description: "Le lead a été ajouté à l'export avec succès"
       })
+      // Force le rafraîchissement du cache après la modification
+      queryClient.invalidateQueries({ 
+        queryKey: ['leads', session?.user?.id],
+        exact: true
+      })
     }
   }
 
@@ -53,6 +65,11 @@ export function Dashboard() {
       title: "Retrait de l'export",
       description: "Le lead a été retiré de l'export avec succès"
     })
+    // Force le rafraîchissement du cache après la modification
+    queryClient.invalidateQueries({ 
+      queryKey: ['leads', session?.user?.id],
+      exact: true
+    })
   }
 
   const handleRemoveFromAnalytics = (leadId: string) => {
@@ -60,6 +77,11 @@ export function Dashboard() {
     toast({
       title: "Retrait des analytiques",
       description: "Le lead a été retiré des analytiques avec succès"
+    })
+    // Force le rafraîchissement du cache après la modification
+    queryClient.invalidateQueries({ 
+      queryKey: ['leads', session?.user?.id],
+      exact: true
     })
   }
 

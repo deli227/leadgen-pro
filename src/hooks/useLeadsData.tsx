@@ -26,7 +26,7 @@ export function useLeadsData(session: Session | null) {
           table: 'leads',
           filter: `user_id=eq.${session.user.id}`
         },
-        (payload) => {
+        async (payload) => {
           console.log('Événement reçu:', payload.eventType)
           console.log('Payload complet:', payload)
 
@@ -34,39 +34,29 @@ export function useLeadsData(session: Session | null) {
             // Mise à jour instantanée pour les nouveaux leads
             if (payload.eventType === 'INSERT') {
               console.log('Traitement INSERT pour le lead:', payload.new)
-              queryClient.setQueryData(['leads', session.user.id], (oldData: Lead[] | undefined) => {
-                const newLead = payload.new as Lead
-                console.log('Ancien état:', oldData)
-                const newState = oldData ? [newLead, ...oldData] : [newLead]
-                console.log('Nouvel état après insertion:', newState)
-                toast.success('Nouveau lead généré')
-                return newState
+              // Force le rafraîchissement du cache
+              await queryClient.invalidateQueries({ 
+                queryKey: ['leads', session.user.id],
+                exact: true
               })
+              toast.success('Nouveau lead généré')
             }
 
             // Mise à jour instantanée pour les suppressions
             if (payload.eventType === 'DELETE') {
               console.log('Traitement DELETE pour le lead:', payload.old.id)
-              queryClient.setQueryData(['leads', session.user.id], (oldData: Lead[] | undefined) => {
-                if (!oldData) return []
-                console.log('Ancien état:', oldData)
-                const newState = oldData.filter(lead => lead.id !== payload.old.id)
-                console.log('Nouvel état après suppression:', newState)
-                return newState
+              await queryClient.invalidateQueries({ 
+                queryKey: ['leads', session.user.id],
+                exact: true
               })
             }
 
             // Mise à jour instantanée pour les modifications
             if (payload.eventType === 'UPDATE') {
               console.log('Traitement UPDATE pour le lead:', payload.new)
-              queryClient.setQueryData(['leads', session.user.id], (oldData: Lead[] | undefined) => {
-                if (!oldData) return []
-                console.log('Ancien état:', oldData)
-                const newState = oldData.map(lead => 
-                  lead.id === payload.new.id ? { ...lead, ...payload.new } : lead
-                )
-                console.log('Nouvel état après mise à jour:', newState)
-                return newState
+              await queryClient.invalidateQueries({ 
+                queryKey: ['leads', session.user.id],
+                exact: true
               })
             }
           } catch (error) {
@@ -114,13 +104,15 @@ export function useLeadsData(session: Session | null) {
       return data || []
     },
     enabled: !!session?.user?.id,
-    staleTime: 0,
-    refetchOnMount: true
+    staleTime: 0, // Force le rafraîchissement à chaque montage
+    refetchOnMount: true,
+    refetchOnWindowFocus: true // Rafraîchit les données quand la fenêtre reprend le focus
   })
 
   return {
     leads: query.data || [],
     isLoading: query.isLoading,
-    error: query.error
+    error: query.error,
+    refetch: query.refetch // Expose la fonction refetch pour forcer le rafraîchissement si nécessaire
   }
 }
