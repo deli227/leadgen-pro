@@ -3,7 +3,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { validateLead } from './validateLead.ts'
 import { buildPrompt } from './promptBuilder.ts'
 import { extractJSONFromText } from './responseHandler.ts'
-import { checkAndGetAvailableLeads } from './limitHandler.ts'
+import { checkAndGetAvailableLeads, updateLeadCount } from './limitHandler.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -25,12 +25,10 @@ serve(async (req) => {
       throw new Error('UserId non fourni')
     }
 
-    // Configuration du client Supabase
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Vérification des limites et du nombre de leads disponibles
     const { canGenerate, availableLeads, error: limitError } = await checkAndGetAvailableLeads(
       supabase,
       userId,
@@ -61,13 +59,10 @@ serve(async (req) => {
       throw new Error('Clé API Perplexity non configurée')
     }
 
-    // Génération du prompt avec le nombre ajusté de leads
     const adjustedFilters = { ...filters, leadCount: availableLeads };
     const prompt = buildPrompt(adjustedFilters)
     console.log('Prompt généré pour', availableLeads, 'leads');
 
-    // Appel à l'API Perplexity
-    console.log('Envoi de la requête à Perplexity');
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
       headers: {
@@ -100,7 +95,6 @@ serve(async (req) => {
     const result = await response.json()
     console.log('Réponse Perplexity reçue');
 
-    // Extraction et validation des leads
     const content = result.choices[0].message.content;
     console.log('Contenu brut reçu:', content);
     
@@ -110,7 +104,6 @@ serve(async (req) => {
     let validLeads = generatedLeads.filter(validateLead);
     console.log(`${validLeads.length} leads valides générés:`, validLeads);
 
-    // S'assurer que nous ne dépassons pas la limite disponible
     if (validLeads.length > availableLeads) {
       console.log(`Troncature des leads de ${validLeads.length} à ${availableLeads}`);
       validLeads = validLeads.slice(0, availableLeads);
@@ -120,7 +113,6 @@ serve(async (req) => {
       throw new Error('Aucun lead valide n\'a été généré');
     }
 
-    // Préparation des leads pour l'insertion
     const leadsToInsert = validLeads.map(lead => ({
       user_id: userId,
       company: lead.company,
@@ -135,7 +127,6 @@ serve(async (req) => {
 
     console.log(`Tentative d'insertion de ${leadsToInsert.length} leads`);
 
-    // Insertion des leads
     const { data: insertedLeads, error: insertError } = await supabase
       .from('leads')
       .insert(leadsToInsert)
@@ -150,7 +141,9 @@ serve(async (req) => {
       throw new Error('Aucun lead n\'a été inséré');
     }
 
-    console.log(`${insertedLeads.length} leads insérés avec succès`);
+    // Mise à jour explicite des compteurs
+    await updateLeadCount(supabase, userId, insertedLeads.length);
+    console.log(`Compteurs mis à jour pour ${insertedLeads.length} leads`);
 
     return new Response(
       JSON.stringify({ 

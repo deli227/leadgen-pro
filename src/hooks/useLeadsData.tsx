@@ -32,22 +32,25 @@ export function useLeadsData(session: Session | null) {
             
             // Mise à jour optimiste du cache
             queryClient.setQueryData(['leads', session.user.id], (old: Lead[] | undefined) => {
-              const updatedLeads = [newLead, ...(old || [])];
-              console.log('Cache mis à jour avec:', updatedLeads.length, 'leads');
-              return updatedLeads;
+              if (!old) return [newLead];
+              // Vérifier si le lead existe déjà
+              const exists = old.some(lead => lead.id === newLead.id);
+              if (exists) return old;
+              return [newLead, ...old];
             });
 
-            // Force un re-fetch immédiat
-            await queryClient.invalidateQueries({
-              queryKey: ['leads', session.user.id],
-              exact: true,
-              refetchType: 'active'
-            });
-
-            // Mise à jour du profil pour les compteurs
-            await queryClient.invalidateQueries({
-              queryKey: ['profile', session.user.id]
-            });
+            // Force un re-fetch immédiat pour s'assurer de la synchronisation
+            await Promise.all([
+              queryClient.invalidateQueries({
+                queryKey: ['leads', session.user.id],
+                exact: true,
+                refetchType: 'active'
+              }),
+              queryClient.invalidateQueries({
+                queryKey: ['profile', session.user.id],
+                exact: true
+              })
+            ]);
 
             toast.success('Nouveau lead généré');
           } else if (payload.eventType === 'DELETE') {
