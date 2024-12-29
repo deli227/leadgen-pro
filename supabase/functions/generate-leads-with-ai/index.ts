@@ -3,6 +3,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { validateLead } from './validateLead.ts'
 import { buildPrompt } from './promptBuilder.ts'
 import { extractJSONFromText } from './responseHandler.ts'
+import { checkAndGetAvailableLeads, updateLeadCount } from './limitHandler.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -29,35 +30,19 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Vérification des limites
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('subscription_type, leads_generated_this_month')
-      .eq('id', userId)
-      .single()
+    // Vérification des limites et du nombre de leads disponibles
+    const { canGenerate, availableLeads, error: limitError } = await checkAndGetAvailableLeads(
+      supabase,
+      userId,
+      filters.leadCount
+    );
 
-    if (profileError) {
-      throw new Error('Erreur lors de la récupération du profil')
-    }
-
-    const { data: limits, error: limitsError } = await supabase
-      .from('subscription_limits')
-      .select('monthly_leads_limit')
-      .eq('subscription_type', profile.subscription_type)
-      .single()
-
-    if (limitsError) {
-      throw new Error('Erreur lors de la récupération des limites')
-    }
-
-    // Vérification si l'utilisateur a atteint sa limite
-    if (profile.leads_generated_this_month >= limits.monthly_leads_limit) {
+    if (!canGenerate || availableLeads === 0) {
       return new Response(
         JSON.stringify({
           success: false,
-          error: "Limite de leads atteinte",
-          limitReached: true,
-          currentPlan: profile.subscription_type
+          error: limitError || "Limite de leads atteinte",
+          limitReached: true
         }),
         { 
           headers: { 
@@ -69,14 +54,17 @@ serve(async (req) => {
       )
     }
 
+    console.log(`Génération autorisée pour ${availableLeads} leads`);
+
     const perplexityApiKey = Deno.env.get('PERPLEXITY_API_KEY')
     if (!perplexityApiKey) {
       throw new Error('Clé API Perplexity non configurée')
     }
 
-    // Génération du prompt
-    const prompt = buildPrompt(filters)
-    console.log('Prompt généré:', prompt)
+    // Génération du prompt avec le nombre ajusté de leads
+    const adjustedFilters = { ...filters, leadCount: availableLeads };
+    const prompt = buildPrompt(adjustedFilters)
+    console.log('Prompt généré pour', availableLeads, 'leads');
 
     // Appel à l'API Perplexity
     console.log('Envoi de la requête à Perplexity');
@@ -119,8 +107,14 @@ serve(async (req) => {
     const generatedLeads = extractJSONFromText(content);
     console.log('Leads extraits:', generatedLeads);
     
-    const validLeads = generatedLeads.filter(validateLead);
+    let validLeads = generatedLeads.filter(validateLead);
     console.log(`${validLeads.length} leads valides générés:`, validLeads);
+
+    // S'assurer que nous ne dépassons pas la limite disponible
+    if (validLeads.length > availableLeads) {
+      console.log(`Troncature des leads de ${validLeads.length} à ${availableLeads}`);
+      validLeads = validLeads.slice(0, availableLeads);
+    }
 
     if (validLeads.length === 0) {
       throw new Error('Aucun lead valide n\'a été généré');
@@ -139,20 +133,7 @@ serve(async (req) => {
       social_media: lead.socialMedia || null
     }));
 
-    console.log('Tentative d\'insertion des leads:', leadsToInsert);
-
-    // Mise à jour du compteur de leads générés
-    const { error: updateError } = await supabase
-      .from('profiles')
-      .update({ 
-        leads_generated_this_month: profile.leads_generated_this_month + validLeads.length,
-        last_lead_generation_date: new Date().toISOString()
-      })
-      .eq('id', userId);
-
-    if (updateError) {
-      throw new Error('Erreur lors de la mise à jour du profil');
-    }
+    console.log(`Tentative d'insertion de ${leadsToInsert.length} leads`);
 
     // Insertion des leads
     const { data: insertedLeads, error: insertError } = await supabase
@@ -169,7 +150,10 @@ serve(async (req) => {
       throw new Error('Aucun lead n\'a été inséré');
     }
 
-    console.log('Leads insérés avec succès:', insertedLeads);
+    // Mise à jour du compteur de leads générés
+    await updateLeadCount(supabase, userId, insertedLeads.length);
+
+    console.log(`${insertedLeads.length} leads insérés avec succès`);
 
     return new Response(
       JSON.stringify({ 
