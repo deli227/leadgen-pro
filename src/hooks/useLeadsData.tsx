@@ -37,7 +37,17 @@ export function useLeadsData(session: Session | null) {
               return oldData?.filter((lead: Lead) => lead.id !== payload.old.id) || [];
             }
             // Pour les autres événements, force un rafraîchissement complet
-            return queryClient.fetchQuery(['leads', session.user.id]);
+            return queryClient.fetchQuery({
+              queryKey: ['leads', session.user.id],
+              queryFn: async () => {
+                const { data } = await supabase
+                  .from('leads')
+                  .select('*')
+                  .eq('user_id', session.user.id)
+                  .order('created_at', { ascending: false });
+                return data || [];
+              }
+            });
           });
 
           // Rafraîchit également les données du profil
