@@ -1,178 +1,147 @@
-import { LocationFilters } from "./LocationFilters"
-import { IndustrySelect } from "./IndustrySelect"
+import { Button } from "@/components/ui/button"
 import { LeadCountSlider } from "./LeadCountSlider"
-import { Loader2 } from "lucide-react"
-import { supabase } from "@/integrations/supabase/client"
-import { toast } from "sonner"
+import { IndustrySelect } from "./IndustrySelect"
+import { LocationFilters } from "./LocationFilters"
 import { LeadsList } from "../shared/LeadsList"
-import { motion } from "framer-motion"
-import { useState } from "react"
 import { Lead } from "@/types/leads"
-import { LeadFilters } from "@/types/filters"
-import { useQueryClient } from "@tanstack/react-query"
-import { useNavigate } from "react-router-dom"
-import { LeadLimitChecker } from "./LeadLimitChecker"
+import { useQuery } from "@tanstack/react-query"
+import { useSessionData } from "@/hooks/useSessionData"
+import { useProfileData } from "@/hooks/useProfileData"
+import { useSubscriptionLimits } from "@/hooks/useSubscriptionLimits"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
+import { useState } from "react"
+import { toast } from "sonner"
 
 interface FiltersTabContentProps {
-  filters: LeadFilters
-  setFilters: (filters: LeadFilters) => void
+  filters: {
+    leadCount: number
+    industry: string
+    country: string
+    city: string
+  }
+  setFilters: (filters: any) => void
   leads: Lead[]
   onAddToAnalytics: (lead: Lead) => void
-  onLocalRemove?: (leadId: string) => void
 }
 
 export function FiltersTabContent({ 
   filters, 
   setFilters, 
-  leads, 
-  onAddToAnalytics,
-  onLocalRemove
+  leads,
+  onAddToAnalytics 
 }: FiltersTabContentProps) {
   const [isGenerating, setIsGenerating] = useState(false)
-  const queryClient = useQueryClient()
-  const navigate = useNavigate()
+  const [showLimitDialog, setShowLimitDialog] = useState(false)
+  const session = useSessionData()
+  const { data: profile } = useProfileData(session.data)
+  const { data: limits } = useSubscriptionLimits(profile?.subscription_type)
+
+  const remainingLeads = limits?.monthly_leads_limit 
+    ? limits.monthly_leads_limit - (profile?.leads_generated_this_month || 0)
+    : 0
 
   const handleGenerateLeads = async () => {
+    if (!session.data?.user?.id) {
+      toast.error("Vous devez être connecté pour générer des leads")
+      return
+    }
+
+    if (filters.leadCount > remainingLeads) {
+      setShowLimitDialog(true)
+      return
+    }
+
+    setIsGenerating(true)
+    console.log("Envoi de la requête avec les filtres:", filters)
+
     try {
-      setIsGenerating(true)
-
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) {
-        toast.error("Erreur d'authentification", {
-          description: "Veuillez vous reconnecter pour générer des leads."
-        })
-        navigate('/auth')
-        return
-      }
-
-      const { data, error } = await supabase.functions.invoke('generate-leads-with-ai', {
+      const { data: functionData, error: functionError } = await supabase.functions.invoke('generate-leads-with-ai', {
         body: { 
           filters,
-          userId: session.user.id 
-        },
-        headers: {
-          Authorization: `Bearer ${session.access_token}`
+          userId: session.data.user.id
         }
       })
 
-      if (error) {
-        console.error('Erreur détaillée:', error)
-        toast.error("Erreur de génération", {
-          description: error.message || "Une erreur est survenue lors de la génération des leads."
-        })
-        return
+      if (functionError) {
+        throw new Error(`Erreur lors de la génération: ${functionError.message}`)
       }
 
-      if (data?.limitReached) {
-        toast.error("Limite de leads atteinte", {
-          description: "Vous avez atteint votre limite de leads pour ce mois. Passez à un plan supérieur pour générer plus de leads.",
-          action: {
-            label: "Passer au premium",
-            onClick: () => window.location.href = "/#pricing-section"
-          },
-          duration: 10000
-        })
-        return
+      if (!functionData.success) {
+        throw new Error("Échec de la génération des leads")
       }
 
-      await queryClient.invalidateQueries({ queryKey: ['leads'] })
+      toast.success("Leads générés avec succès")
 
-      toast.success("Génération réussie", {
-        description: "Les leads ont été générés avec succès."
-      })
-
-    } catch (error: any) {
-      console.error('Erreur complète:', error)
-      toast.error("Erreur système", {
-        description: "Une erreur inattendue est survenue. Veuillez réessayer plus tard."
-      })
+    } catch (error) {
+      console.error("Erreur lors de la génération:", error)
+      toast.error("Une erreur est survenue lors de la génération des leads")
     } finally {
       setIsGenerating(false)
     }
   }
 
-  const handleDelete = async (lead: Lead) => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) {
-        toast.error("Erreur d'authentification", {
-          description: "Veuillez vous reconnecter pour supprimer des leads."
-        })
-        navigate('/auth')
-        return
-      }
-
-      const { error } = await supabase
-        .from('leads')
-        .delete()
-        .eq('id', lead.id)
-
-      if (error) {
-        console.error('Erreur lors de la suppression:', error)
-        toast.error("Erreur lors de la suppression du lead")
-        return
-      }
-
-      await queryClient.invalidateQueries({ queryKey: ['leads'] })
-      
-      toast.success("Lead supprimé avec succès")
-      
-      if (onLocalRemove) {
-        onLocalRemove(lead.id)
-      }
-    } catch (error) {
-      console.error('Erreur système lors de la suppression:', error)
-      toast.error("Une erreur est survenue lors de la suppression")
-    }
-  }
-
   return (
-    <div className="space-y-6 bg-gradient-to-br from-black/80 to-secondary-dark/80 p-8 rounded-b-xl border border-primary/10 shadow-xl">
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-        className="flex flex-wrap gap-4"
-      >
-        <LocationFilters 
-          country={filters.country}
-          city={filters.city}
-          onCountryChange={(value) => {
-            setFilters({ ...filters, country: value, city: "all" })
-          }}
-          onCityChange={(value) => setFilters({ ...filters, city: value })}
+    <div className="space-y-6">
+      <div className="space-y-4 bg-gradient-to-br from-black/80 to-secondary-dark/80 p-8 rounded-xl border border-primary/10 shadow-xl">
+        <LeadCountSlider 
+          value={filters.leadCount} 
+          onChange={(value) => setFilters({ ...filters, leadCount: value })}
+          maxValue={remainingLeads}
         />
         
-        <IndustrySelect 
+        <IndustrySelect
           value={filters.industry}
           onChange={(value) => setFilters({ ...filters, industry: value })}
         />
+        
+        <LocationFilters
+          country={filters.country}
+          city={filters.city}
+          onCountryChange={(value) => setFilters({ ...filters, country: value, city: "all" })}
+          onCityChange={(value) => setFilters({ ...filters, city: value })}
+        />
 
-        {isGenerating ? (
-          <button disabled className="ml-auto bg-gradient-to-r from-primary to-accent opacity-50 text-white shadow-lg transition-all duration-300">
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Génération...
-          </button>
-        ) : (
-          <LeadLimitChecker
-            requestedLeadCount={filters.leadCount}
-            onValidation={handleGenerateLeads}
-          />
+        <Button 
+          onClick={handleGenerateLeads}
+          disabled={isGenerating || filters.leadCount === 0 || filters.leadCount > remainingLeads}
+          className="w-full bg-primary hover:bg-primary/90"
+        >
+          {isGenerating ? "Génération en cours..." : "Générer les leads"}
+        </Button>
+
+        {remainingLeads > 0 && (
+          <p className="text-sm text-primary-light/70 text-center">
+            Il vous reste {remainingLeads} leads à générer ce mois-ci
+          </p>
         )}
-      </motion.div>
-
-      <LeadCountSlider 
-        value={filters.leadCount}
-        onChange={(value) => setFilters({ ...filters, leadCount: value })}
-      />
+      </div>
 
       <LeadsList 
-        leads={leads} 
+        leads={leads}
         onAddToAnalytics={onAddToAnalytics}
-        onDelete={handleDelete}
-        showActions={true}
-        filterView={true}
+        filterView
       />
+
+      <AlertDialog open={showLimitDialog} onOpenChange={setShowLimitDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Limite de génération atteinte</AlertDialogTitle>
+            <AlertDialogDescription>
+              Votre abonnement actuel vous permet de générer {limits?.monthly_leads_limit} leads par mois.
+              Il vous reste {remainingLeads} leads disponibles.
+              Veuillez ajuster le nombre de leads à générer ou passer à un abonnement supérieur.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Fermer</AlertDialogCancel>
+            <AlertDialogAction onClick={() => {
+              window.location.href = '/pricing'
+            }}>
+              Voir les abonnements
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
