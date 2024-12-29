@@ -49,19 +49,6 @@ export function useLeadsData(session: Session | null) {
               return old.filter(lead => lead.id !== payload.old.id);
             });
           }
-
-          // Force un re-fetch pour s'assurer de la synchronisation
-          await Promise.all([
-            queryClient.invalidateQueries({
-              queryKey: ['leads', session.user.id],
-              exact: true,
-              refetchType: 'active'
-            }),
-            queryClient.invalidateQueries({
-              queryKey: ['profile', session.user.id],
-              exact: true
-            })
-          ]);
         }
       )
       .subscribe((status) => {
@@ -74,7 +61,7 @@ export function useLeadsData(session: Session | null) {
     };
   }, [session?.user?.id, queryClient]);
 
-  return useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['leads', session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) {
@@ -101,6 +88,14 @@ export function useLeadsData(session: Session | null) {
     enabled: !!session?.user?.id,
     refetchOnWindowFocus: true,
     refetchOnMount: true,
-    staleTime: 0
+    staleTime: 0,
+    cacheTime: 0, // Désactive le cache pour toujours avoir les données les plus récentes
+    initialData: [] // Fournit des données initiales vides pour éviter les états de chargement
   });
+
+  return {
+    leads: data,
+    isLoading,
+    error
+  };
 }
