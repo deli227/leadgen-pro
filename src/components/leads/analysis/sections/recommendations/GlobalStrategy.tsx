@@ -167,19 +167,19 @@ export function GlobalStrategy({ recommendations }: GlobalStrategyProps) {
               </div>
               <div className="space-y-3">
                 <div>
-                  <h7 className="text-sm font-medium text-primary-light">Premier Contact</h7>
+                  <span className="text-sm font-medium text-primary-light block">Premier Contact</span>
                   <p className="text-sm text-white/90 mt-1 whitespace-pre-line">
                     {recommendations.relationship_building.first_contact}
                   </p>
                 </div>
                 <div>
-                  <h7 className="text-sm font-medium text-primary-light">Stratégie de Suivi</h7>
+                  <span className="text-sm font-medium text-primary-light block">Stratégie de Suivi</span>
                   <p className="text-sm text-white/90 mt-1 whitespace-pre-line">
                     {recommendations.relationship_building.follow_up_strategy}
                   </p>
                 </div>
                 <div>
-                  <h7 className="text-sm font-medium text-primary-light">Préparation des Réunions</h7>
+                  <span className="text-sm font-medium text-primary-light block">Préparation des Réunions</span>
                   <ul className="mt-1 space-y-1">
                     {recommendations.relationship_building.meeting_preparation.map((step, index) => (
                       <li key={index} className="flex items-start gap-2 text-sm text-white/90">
@@ -190,7 +190,7 @@ export function GlobalStrategy({ recommendations }: GlobalStrategyProps) {
                   </ul>
                 </div>
                 <div>
-                  <h7 className="text-sm font-medium text-primary-light">Sujets Clés</h7>
+                  <span className="text-sm font-medium text-primary-light block">Sujets Clés</span>
                   <ul className="mt-1 space-y-1">
                     {recommendations.relationship_building.key_topics.map((topic, index) => (
                       <li key={index} className="flex items-start gap-2 text-sm text-white/90">
@@ -201,7 +201,7 @@ export function GlobalStrategy({ recommendations }: GlobalStrategyProps) {
                   </ul>
                 </div>
                 <div>
-                  <h7 className="text-sm font-medium text-primary-light">Accroches Conversationnelles</h7>
+                  <span className="text-sm font-medium text-primary-light block">Accroches Conversationnelles</span>
                   <ul className="mt-1 space-y-1">
                     {recommendations.relationship_building.conversation_starters.map((starter, index) => (
                       <li key={index} className="flex items-start gap-2 text-sm text-white/90">
