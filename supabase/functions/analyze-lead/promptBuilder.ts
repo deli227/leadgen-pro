@@ -1,6 +1,6 @@
 import { Lead } from './types.ts';
 
-export function buildPrompt(lead: Lead): string {
+export function buildAnalysisPrompt(lead: Lead): string {
   return `
 Analyse détaillée pour l'entreprise ${lead.company}
 
