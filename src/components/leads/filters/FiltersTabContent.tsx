@@ -29,8 +29,6 @@ export function FiltersTabContent({
   onLocalRemove
 }: FiltersTabContentProps) {
   const [isGenerating, setIsGenerating] = useState(false)
-  const [removedLeads, setRemovedLeads] = useState<string[]>([])
-  const navigate = useNavigate()
   const queryClient = useQueryClient()
 
   const handleGenerateLeads = async () => {
@@ -69,7 +67,7 @@ export function FiltersTabContent({
           description: "Vous avez atteint votre limite de leads pour ce mois. Passez à un plan supérieur pour générer plus de leads.",
           action: {
             label: "Passer au premium",
-            onClick: () => navigate("/#pricing-section")
+            onClick: () => window.location.href = "/#pricing-section"
           },
           duration: 10000
         })
@@ -99,18 +97,6 @@ export function FiltersTabContent({
       setIsGenerating(false)
     }
   }
-
-  const handleDelete = (lead: Lead) => {
-    setRemovedLeads(prev => [...prev, lead.id])
-    if (onLocalRemove) {
-      onLocalRemove(lead.id)
-    }
-    toast.success("Lead supprimé", {
-      description: "Le lead a été retiré de la liste"
-    })
-  }
-
-  const filteredLeads = leads.filter(lead => !removedLeads.includes(lead.id))
 
   return (
     <div className="space-y-6 bg-gradient-to-br from-black/80 to-secondary-dark/80 p-8 rounded-b-xl border border-primary/10 shadow-xl">
@@ -156,9 +142,9 @@ export function FiltersTabContent({
       />
 
       <LeadsList 
-        leads={filteredLeads} 
+        leads={leads} 
         onAddToAnalytics={onAddToAnalytics}
-        onDelete={handleDelete}
+        onDelete={onLocalRemove}
         showActions={true}
         filterView={true}
       />
