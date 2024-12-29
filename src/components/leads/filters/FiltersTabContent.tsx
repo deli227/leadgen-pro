@@ -11,6 +11,7 @@ import { useSubscriptionLimits } from "@/hooks/useSubscriptionLimits"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
 import { useState } from "react"
 import { toast } from "sonner"
+import { supabase } from "@/integrations/supabase/client"
 
 interface FiltersTabContentProps {
   filters: {
