@@ -10,7 +10,6 @@ import { motion } from "framer-motion"
 import { useState } from "react"
 import { Lead } from "@/types/leads"
 import { LeadFilters } from "@/types/filters"
-import { useNavigate } from "react-router-dom"
 import { useQueryClient } from "@tanstack/react-query"
 
 interface FiltersTabContentProps {
@@ -98,6 +97,12 @@ export function FiltersTabContent({
     }
   }
 
+  const handleDelete = (lead: Lead) => {
+    if (onLocalRemove) {
+      onLocalRemove(lead.id)
+    }
+  }
+
   return (
     <div className="space-y-6 bg-gradient-to-br from-black/80 to-secondary-dark/80 p-8 rounded-b-xl border border-primary/10 shadow-xl">
       <motion.div 
@@ -144,7 +149,7 @@ export function FiltersTabContent({
       <LeadsList 
         leads={leads} 
         onAddToAnalytics={onAddToAnalytics}
-        onDelete={onLocalRemove}
+        onDelete={handleDelete}
         showActions={true}
         filterView={true}
       />
