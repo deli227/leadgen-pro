@@ -21,8 +21,6 @@ export function Dashboard() {
   })
   const [analyticsLeads, setAnalyticsLeads] = useState<Lead[]>([])
   const [exportLeads, setExportLeads] = useState<Lead[]>([])
-  const [removedAnalyticsLeads, setRemovedAnalyticsLeads] = useState<string[]>([])
-  const [removedExportLeads, setRemovedExportLeads] = useState<string[]>([])
 
   const { data: session } = useSessionData()
   const { data: profile } = useProfileData(session)
@@ -32,9 +30,6 @@ export function Dashboard() {
   const handleAddToAnalytics = (lead: Lead) => {
     if (!analyticsLeads.find(l => l.id === lead.id)) {
       setAnalyticsLeads(prev => [...prev, lead])
-      if (removedAnalyticsLeads.includes(lead.id)) {
-        setRemovedAnalyticsLeads(prev => prev.filter(id => id !== lead.id))
-      }
       toast({
         title: "Ajout aux analytiques",
         description: "Le lead a été ajouté aux analytiques avec succès"
@@ -53,7 +48,6 @@ export function Dashboard() {
   }
 
   const handleRemoveFromExport = (leadId: string) => {
-    setRemovedExportLeads(prev => [...prev, leadId])
     setExportLeads(prev => prev.filter(lead => lead.id !== leadId))
     toast({
       title: "Retrait de l'export",
@@ -62,7 +56,6 @@ export function Dashboard() {
   }
 
   const handleRemoveFromAnalytics = (leadId: string) => {
-    setRemovedAnalyticsLeads(prev => [...prev, leadId])
     setAnalyticsLeads(prev => prev.filter(lead => lead.id !== leadId))
     toast({
       title: "Retrait des analytiques",
@@ -70,18 +63,10 @@ export function Dashboard() {
     })
   }
 
-  const filteredExportLeads = exportLeads.filter(
-    lead => !removedExportLeads.includes(lead.id)
-  )
-
-  const filteredAnalyticsLeads = analyticsLeads.filter(
-    lead => !removedAnalyticsLeads.includes(lead.id)
-  )
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary-dark via-[#1A1F2C] to-black">
       <div className="container mx-auto py-2 sm:py-4 md:py-8 px-2 sm:px-4 animate-fade-in max-w-[98%] sm:max-w-[95%] lg:max-w-[90%] xl:max-w-[1400px]">
-        <DashboardHeader exportLeads={filteredExportLeads} />
+        <DashboardHeader exportLeads={exportLeads} />
 
         {profile && limits && (
           <motion.div 
@@ -101,10 +86,10 @@ export function Dashboard() {
           filters={filters}
           setFilters={setFilters}
           leads={leads}
-          analyticsLeads={filteredAnalyticsLeads}
+          analyticsLeads={analyticsLeads}
           onAddToAnalytics={handleAddToAnalytics}
           onAddToExport={handleAddToExport}
-          exportLeads={filteredExportLeads}
+          exportLeads={exportLeads}
           onRemoveFromExport={handleRemoveFromExport}
           onRemoveFromAnalytics={handleRemoveFromAnalytics}
         />
