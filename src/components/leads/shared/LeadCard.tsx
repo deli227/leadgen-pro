@@ -3,6 +3,7 @@ import { LeadActions } from "../LeadActions"
 import { FilterLeadActions } from "../filters/FilterLeadActions"
 import { LeadScoreDisplay } from "../LeadScoreDisplay"
 import { Mail, MapPin, Phone, Globe, Facebook, Linkedin, Twitter, Instagram } from "lucide-react"
+import { TagsManager } from "../tags/TagsManager"
 
 interface LeadCardProps {
   lead: Lead
@@ -113,6 +114,10 @@ export function LeadCard({
             {renderSocialLink(lead.socialMedia.instagram, Instagram, "Instagram")}
           </div>
         )}
+
+        <div className="mt-2">
+          <TagsManager leadId={lead.id} />
+        </div>
 
         {showActions && onAddToAnalytics && (
           filterView ? (
