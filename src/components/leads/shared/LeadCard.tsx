@@ -6,13 +6,13 @@ import { supabase } from "@/integrations/supabase/client"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { LeadNotes } from "@/components/leads/LeadNotes"
 import { useState } from "react"
-import { TagsManager } from "./tags/TagsManager"
+import { TagsManager } from "@/components/leads/tags/TagsManager"
 
 interface LeadCardProps {
   lead: any
   onAddToAnalytics: (lead: any) => void
   onLeadDeleted: () => void
-  showTags?: boolean // Nouveau prop pour contrôler l'affichage des tags
+  showTags?: boolean
 }
 
 export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted, showTags = false }: LeadCardProps) {
