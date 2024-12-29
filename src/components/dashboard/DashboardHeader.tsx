@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import { LogOut, Book } from "lucide-react"
+import { LogOut, Book, User } from "lucide-react"
 import { LeadsExport } from "../leads/LeadsExport"
 import { Lead } from "@/types/leads"
 import { useToast } from "@/hooks/use-toast"
@@ -57,6 +57,13 @@ export function DashboardHeader({ exportLeads }: DashboardHeaderProps) {
         >
           <Book className="h-3 w-3 sm:h-4 sm:w-4" />
           <span>Documentation</span>
+        </Link>
+        <Link 
+          to="/profile"
+          className="inline-flex items-center gap-2 px-3 py-2 text-xs sm:text-sm text-primary-light hover:text-white transition-colors"
+        >
+          <User className="h-3 w-3 sm:h-4 sm:w-4" />
+          <span>Profil</span>
         </Link>
         <LeadsExport leads={exportLeads} />
         <Button
