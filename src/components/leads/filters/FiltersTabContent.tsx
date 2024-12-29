@@ -12,6 +12,16 @@ import { Lead } from "@/types/leads"
 import { LeadFilters } from "@/types/filters"
 import { useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "react-router-dom"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 interface FiltersTabContentProps {
   filters: LeadFilters
@@ -29,13 +39,13 @@ export function FiltersTabContent({
   onLocalRemove
 }: FiltersTabContentProps) {
   const [isGenerating, setIsGenerating] = useState(false)
+  const [showLimitDialog, setShowLimitDialog] = useState(false)
+  const [userLimit, setUserLimit] = useState(0)
   const queryClient = useQueryClient()
   const navigate = useNavigate()
 
   const handleGenerateLeads = async () => {
     try {
-      setIsGenerating(true)
-
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) {
         toast.error("Erreur d'authentification", {
@@ -44,6 +54,42 @@ export function FiltersTabContent({
         navigate('/auth')
         return
       }
+
+      // Vérifier la limite de l'utilisateur
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('subscription_type')
+        .eq('id', session.user.id)
+        .single()
+
+      if (!profile) {
+        toast.error("Erreur de profil", {
+          description: "Impossible de récupérer votre profil."
+        })
+        return
+      }
+
+      const { data: limits } = await supabase
+        .from('subscription_limits')
+        .select('monthly_leads_limit')
+        .eq('subscription_type', profile.subscription_type)
+        .single()
+
+      if (!limits) {
+        toast.error("Erreur de limites", {
+          description: "Impossible de récupérer vos limites."
+        })
+        return
+      }
+
+      // Si l'utilisateur essaie de générer plus de leads que sa limite
+      if (filters.leadCount > limits.monthly_leads_limit) {
+        setUserLimit(limits.monthly_leads_limit)
+        setShowLimitDialog(true)
+        return
+      }
+
+      setIsGenerating(true)
 
       const { data, error } = await supabase.functions.invoke('generate-leads-with-ai', {
         body: { 
@@ -183,6 +229,26 @@ export function FiltersTabContent({
         showActions={true}
         filterView={true}
       />
+
+      <AlertDialog open={showLimitDialog} onOpenChange={setShowLimitDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Limite de leads dépassée</AlertDialogTitle>
+            <AlertDialogDescription>
+              Votre abonnement actuel vous permet de générer uniquement {userLimit} leads.
+              Veuillez ajuster le nombre de leads ou passer à un plan supérieur pour en générer davantage.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setShowLimitDialog(false)}>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={() => {
+              window.location.href = "/#pricing-section"
+            }}>
+              Passer au premium
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
