@@ -34,27 +34,27 @@ export function CompanyAnalysis({ analysis }: CompanyAnalysisProps) {
         <div className="space-y-3">
           <div className="bg-black/20 p-3 rounded-lg">
             <span className="text-sm font-medium text-white block mb-1">Position sur le marché :</span>
-            <p className="text-sm text-white/90">{analysis.market_position}</p>
+            <p className="text-sm text-white/90 whitespace-pre-wrap">{analysis.market_position}</p>
           </div>
           
           <div className="bg-black/20 p-3 rounded-lg">
             <span className="text-sm font-medium text-white block mb-1">Taille de l'entreprise :</span>
-            <p className="text-sm text-white/90">{analysis.company_size}</p>
+            <p className="text-sm text-white/90 whitespace-pre-wrap">{analysis.company_size}</p>
           </div>
           
           <div className="bg-black/20 p-3 rounded-lg">
             <span className="text-sm font-medium text-white block mb-1">Stade de développement :</span>
-            <p className="text-sm text-white/90">{analysis.development_stage}</p>
+            <p className="text-sm text-white/90 whitespace-pre-wrap">{analysis.development_stage}</p>
           </div>
           
           <div className="bg-black/20 p-3 rounded-lg">
             <span className="text-sm font-medium text-white block mb-1">Potentiel de croissance :</span>
-            <p className="text-sm text-white/90">{analysis.growth_potential}</p>
+            <p className="text-sm text-white/90 whitespace-pre-wrap">{analysis.growth_potential}</p>
           </div>
           
           <div className="bg-black/20 p-3 rounded-lg">
             <span className="text-sm font-medium text-white block mb-1">Justification détaillée :</span>
-            <p className="text-sm text-white/90">{analysis.detailed_justification}</p>
+            <p className="text-sm text-white/90 whitespace-pre-wrap">{analysis.detailed_justification}</p>
           </div>
         </div>
       </div>

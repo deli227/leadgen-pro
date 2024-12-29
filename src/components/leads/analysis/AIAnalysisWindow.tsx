@@ -50,14 +50,34 @@ export function AIAnalysisWindow({ lead, analysis, isAnalyzing }: AIAnalysisWind
                 <p className="text-primary-light text-sm">Analyse en cours...</p>
               </div>
             ) : analysis && analysis.company_analysis ? (
-              <div className="space-y-3 sm:space-y-4">
-                {analysis.company_analysis && <CompanyAnalysis analysis={analysis.company_analysis} />}
-                {analysis.tech_analysis && <TechAnalysis analysis={analysis.tech_analysis} />}
-                {analysis.marketing_analysis && <MarketingAnalysis analysis={analysis.marketing_analysis} />}
-                {analysis.financial_analysis && <FinancialAnalysis analysis={analysis.financial_analysis} />}
-                {analysis.competitive_analysis && <CompetitiveAnalysis analysis={analysis.competitive_analysis} />}
-                {analysis.recommendations && <ContactRecommendations recommendations={analysis.recommendations} />}
-                {analysis.action_plan && <ActionPlan plan={analysis.action_plan} />}
+              <div className="space-y-6">
+                {analysis.company_analysis && (
+                  <CompanyAnalysis analysis={analysis.company_analysis} />
+                )}
+                
+                {analysis.tech_analysis && (
+                  <TechAnalysis analysis={analysis.tech_analysis} />
+                )}
+                
+                {analysis.marketing_analysis && (
+                  <MarketingAnalysis analysis={analysis.marketing_analysis} />
+                )}
+                
+                {analysis.financial_analysis && (
+                  <FinancialAnalysis analysis={analysis.financial_analysis} />
+                )}
+                
+                {analysis.competitive_analysis && (
+                  <CompetitiveAnalysis analysis={analysis.competitive_analysis} />
+                )}
+                
+                {analysis.recommendations && (
+                  <ContactRecommendations recommendations={analysis.recommendations} />
+                )}
+                
+                {analysis.action_plan && (
+                  <ActionPlan plan={analysis.action_plan} />
+                )}
               </div>
             ) : (
               <div className="space-y-3 sm:space-y-4">
