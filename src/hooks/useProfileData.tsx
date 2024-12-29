@@ -44,8 +44,10 @@ export function useProfileData(session: Session | null) {
         .single();
       
       if (error) throw error;
+      console.log('Profile data fetched:', data);
       return data;
     },
-    enabled: !!session?.user?.id
+    enabled: !!session?.user?.id,
+    staleTime: 1000
   });
 }
