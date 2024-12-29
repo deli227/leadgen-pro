@@ -7,28 +7,46 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { LeadNotes } from "@/components/leads/LeadNotes"
 import { useState } from "react"
 import { TagsManager } from "@/components/leads/tags/TagsManager"
+import { Lead } from "@/types/leads"
 
 interface LeadCardProps {
-  lead: any
-  onAddToAnalytics: (lead: any) => void
-  onLeadDeleted: () => void
+  lead: Lead
+  onAddToAnalytics: (lead: Lead) => void
+  onLeadDeleted?: () => void
   showTags?: boolean
+  onDelete?: (lead: Lead) => void
+  onAddToExport?: (lead: Lead) => void
+  showActions?: boolean
+  filterView?: boolean
 }
 
-export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted, showTags = false }: LeadCardProps) {
+export function LeadCard({ 
+  lead, 
+  onAddToAnalytics, 
+  onLeadDeleted, 
+  showTags = false,
+  onDelete,
+  onAddToExport,
+  showActions = true,
+  filterView = false 
+}: LeadCardProps) {
   const [isNotesOpen, setIsNotesOpen] = useState(false)
 
   const handleDelete = async () => {
     try {
-      const { error } = await supabase
-        .from('leads')
-        .delete()
-        .eq('id', lead.id)
+      if (onDelete) {
+        await onDelete(lead)
+      } else {
+        const { error } = await supabase
+          .from('leads')
+          .delete()
+          .eq('id', lead.id)
 
-      if (error) throw error
+        if (error) throw error
 
-      toast.success("Lead supprimé avec succès")
-      onLeadDeleted()
+        toast.success("Lead supprimé avec succès")
+        onLeadDeleted?.()
+      }
     } catch (error) {
       console.error('Erreur lors de la suppression:', error)
       toast.error("Erreur lors de la suppression du lead")

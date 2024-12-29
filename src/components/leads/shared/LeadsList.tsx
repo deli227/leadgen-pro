@@ -46,9 +46,9 @@ export function LeadsList({
             >
               <LeadCard
                 lead={lead}
-                onAddToAnalytics={onAddToAnalytics}
-                onAddToExport={onAddToExport}
+                onAddToAnalytics={onAddToAnalytics || (() => {})}
                 onDelete={onDelete}
+                onAddToExport={onAddToExport}
                 showActions={showActions}
                 filterView={filterView}
               />
