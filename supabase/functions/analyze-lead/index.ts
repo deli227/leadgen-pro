@@ -25,6 +25,7 @@ serve(async (req) => {
     )
 
     const prompt = buildPrompt(lead)
+    console.log("Prompt envoyé:", prompt)
 
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
@@ -37,23 +38,31 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'Tu es un expert en analyse d\'entreprise. Tu fournis des analyses détaillées et structurées au format JSON.'
+            content: 'Tu es un expert en analyse d\'entreprise. Tu fournis des analyses détaillées et structurées au format JSON uniquement, sans texte additionnel.'
           },
           {
             role: 'user',
             content: prompt
           }
-        ]
+        ],
+        max_tokens: 4000,
+        temperature: 0.7,
+        top_p: 0.9
       })
     })
 
     if (!response.ok) {
+      console.error("Erreur API Perplexity:", response.status, await response.text())
       throw new Error(`Erreur API Perplexity: ${response.statusText}`)
     }
 
     const data = await response.json()
     console.log("Réponse brute de l'API:", data)
     
+    if (!data.choices?.[0]?.message?.content) {
+      throw new Error("Format de réponse invalide de l'API")
+    }
+
     const analysis = JSON.parse(data.choices[0].message.content)
     console.log("Analyse parsée:", analysis)
 
