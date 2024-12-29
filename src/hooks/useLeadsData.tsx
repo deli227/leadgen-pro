@@ -31,6 +31,7 @@ export function useLeadsData(session: Session | null) {
             queryClient.setQueryData(['leads', session.user.id], (oldData: Lead[] | undefined) => {
               const newLead = payload.new as Lead;
               console.log('Ajout du nouveau lead:', newLead);
+              toast.success('Nouveau lead généré');
               return oldData ? [newLead, ...oldData] : [newLead];
             });
           }
@@ -40,6 +41,16 @@ export function useLeadsData(session: Session | null) {
             queryClient.setQueryData(['leads', session.user.id], (oldData: Lead[] | undefined) => {
               if (!oldData) return [];
               return oldData.filter(lead => lead.id !== payload.old.id);
+            });
+          }
+
+          // Mise à jour instantanée pour les modifications
+          if (payload.eventType === 'UPDATE') {
+            queryClient.setQueryData(['leads', session.user.id], (oldData: Lead[] | undefined) => {
+              if (!oldData) return [];
+              return oldData.map(lead => 
+                lead.id === payload.new.id ? { ...lead, ...payload.new } : lead
+              );
             });
           }
         }
@@ -54,7 +65,7 @@ export function useLeadsData(session: Session | null) {
     };
   }, [session?.user?.id, queryClient]);
 
-  return useQuery({
+  const query = useQuery({
     queryKey: ['leads', session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) {
@@ -80,4 +91,10 @@ export function useLeadsData(session: Session | null) {
     staleTime: 0,
     refetchOnMount: true
   });
+
+  return {
+    leads: query.data || [],
+    isLoading: query.isLoading,
+    error: query.error
+  };
 }
