@@ -71,16 +71,24 @@ export const updateLeadCount = async (
 ): Promise<void> => {
   console.log(`Mise à jour du compteur de leads pour l'utilisateur ${userId}, ajout de ${generatedCount} leads`);
 
-  const { error } = await supabase
-    .from('profiles')
-    .update({ 
-      leads_generated_this_month: supabase.sql`leads_generated_this_month + ${generatedCount}`,
-      last_lead_generation_date: new Date().toISOString()
-    })
-    .eq('id', userId);
+  try {
+    const { error } = await supabase
+      .from('profiles')
+      .update({ 
+        leads_generated_this_month: supabase.sql`leads_generated_this_month + ${generatedCount}`,
+        leads_generated_today: supabase.sql`leads_generated_today + ${generatedCount}`,
+        last_lead_generation_date: new Date().toISOString()
+      })
+      .eq('id', userId);
 
-  if (error) {
-    console.error('Erreur lors de la mise à jour du compteur:', error);
-    throw new Error('Erreur lors de la mise à jour du compteur');
+    if (error) {
+      console.error('Erreur lors de la mise à jour du compteur:', error);
+      throw new Error('Erreur lors de la mise à jour du compteur');
+    }
+
+    console.log('Compteur de leads mis à jour avec succès');
+  } catch (error) {
+    console.error('Erreur lors de la mise à jour:', error);
+    throw error;
   }
 };

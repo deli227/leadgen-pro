@@ -13,7 +13,7 @@ export function useLeadsData(session: Session | null) {
 
     console.log('Setting up realtime subscription for leads');
     const channel = supabase
-      .channel('public:leads')
+      .channel('leads-changes')
       .on('postgres_changes', 
         { 
           event: '*', 
@@ -23,14 +23,25 @@ export function useLeadsData(session: Session | null) {
         }, 
         async (payload) => {
           console.log('Lead change detected:', payload);
-          // Invalider à la fois les leads et le profil pour mettre à jour les compteurs
-          await Promise.all([
-            queryClient.invalidateQueries({ queryKey: ['leads', session.user.id] }),
-            queryClient.invalidateQueries({ queryKey: ['profile', session.user.id] })
-          ]);
+          
+          // Forcer le rafraîchissement des données
+          await queryClient.invalidateQueries({ 
+            queryKey: ['leads', session.user.id],
+            refetchType: 'active',
+            exact: true
+          });
+          
+          // Forcer le rafraîchissement du profil
+          await queryClient.invalidateQueries({ 
+            queryKey: ['profile', session.user.id],
+            refetchType: 'active',
+            exact: true
+          });
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log('Subscription status:', status);
+      });
 
     return () => {
       console.log('Cleaning up leads subscription');
@@ -38,7 +49,7 @@ export function useLeadsData(session: Session | null) {
     };
   }, [session?.user?.id, queryClient]);
 
-  const { data: supabaseLeads = [], error } = useQuery({
+  const { data: supabaseLeads = [], error, isLoading } = useQuery({
     queryKey: ['leads', session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) {
@@ -65,7 +76,7 @@ export function useLeadsData(session: Session | null) {
     enabled: !!session?.user?.id,
     refetchOnWindowFocus: true,
     refetchOnMount: true,
-    staleTime: 1000
+    staleTime: 0
   });
 
   const leads: Lead[] = supabaseLeads.map(lead => ({
@@ -88,5 +99,5 @@ export function useLeadsData(session: Session | null) {
     website: lead.website || ""
   }));
 
-  return leads;
+  return { leads, isLoading, error };
 }
