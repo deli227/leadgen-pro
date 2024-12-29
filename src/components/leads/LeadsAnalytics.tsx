@@ -76,8 +76,8 @@ export function LeadsAnalytics({
   }
 
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 sm:gap-6">
-      <div className="xl:col-span-5 xl:max-h-[calc(100vh-12rem)] xl:overflow-y-auto">
+    <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 p-4 xl:p-6 bg-gradient-to-br from-secondary-dark via-[#1A1F2C] to-black rounded-lg shadow-2xl">
+      <div className="xl:col-span-5 xl:max-h-[calc(100vh-12rem)] xl:overflow-y-auto bg-black/20 p-4 rounded-xl backdrop-blur-sm border border-primary/10">
         <LeadsList 
           leads={filteredLeads}
           onAddToAnalytics={handleAnalyzeLead}
