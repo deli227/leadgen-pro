@@ -29,11 +29,26 @@ export const PricingPlan = ({
   const navigate = useNavigate();
 
   const handleSubscribe = async () => {
-    toast({
-      title: "Fonctionnalité temporairement indisponible",
-      description: "Le système de paiement sera bientôt disponible.",
-      variant: "default",
-    });
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (!session) {
+      toast({
+        title: "Authentification requise",
+        description: "Veuillez vous connecter ou créer un compte pour souscrire à un abonnement.",
+      });
+      navigate("/auth");
+      return;
+    }
+
+    // Subscription handling logic
+    // Here you would typically handle the subscription logic, such as calling an API to create a subscription
+    // For example:
+    // const { data, error } = await supabase.functions.invoke('create-subscription', { priceId });
+    // if (error) {
+    //   toast.error("Erreur lors de la souscription");
+    // } else {
+    //   toast.success("Souscription réussie !");
+    // }
   };
 
   return (
