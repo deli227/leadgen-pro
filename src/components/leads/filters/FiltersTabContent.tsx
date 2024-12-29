@@ -82,7 +82,6 @@ export function FiltersTabContent({
         return
       }
 
-      // Si l'utilisateur essaie de générer plus de leads que sa limite
       if (filters.leadCount > limits.monthly_leads_limit) {
         setUserLimit(limits.monthly_leads_limit)
         setShowLimitDialog(true)
@@ -128,7 +127,11 @@ export function FiltersTabContent({
         return
       }
 
-      await queryClient.invalidateQueries({ queryKey: ['leads'] })
+      // Forcer une mise à jour immédiate des données
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['leads', session.user.id] }),
+        queryClient.invalidateQueries({ queryKey: ['profile', session.user.id] })
+      ])
 
       toast.success("Génération réussie", {
         description: "Les leads ont été générés avec succès."

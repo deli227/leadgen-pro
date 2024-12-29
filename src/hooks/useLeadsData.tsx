@@ -30,7 +30,7 @@ export function useLeadsData(session: Session | null) {
             const newLead = payload.new as Lead;
             console.log('Nouveau lead détecté:', newLead);
             
-            // Mise à jour optimiste du cache
+            // Mise à jour optimiste immédiate du cache
             queryClient.setQueryData(['leads', session.user.id], (old: Lead[] | undefined) => {
               if (!old) return [newLead];
               // Vérifier si le lead existe déjà
@@ -39,19 +39,7 @@ export function useLeadsData(session: Session | null) {
               return [newLead, ...old];
             });
 
-            // Force un re-fetch immédiat pour s'assurer de la synchronisation
-            await Promise.all([
-              queryClient.invalidateQueries({
-                queryKey: ['leads', session.user.id],
-                exact: true,
-                refetchType: 'active'
-              }),
-              queryClient.invalidateQueries({
-                queryKey: ['profile', session.user.id],
-                exact: true
-              })
-            ]);
-
+            // Notification de succès
             toast.success('Nouveau lead généré');
           } else if (payload.eventType === 'DELETE') {
             console.log('Suppression du lead:', payload.old.id);
@@ -61,6 +49,19 @@ export function useLeadsData(session: Session | null) {
               return old.filter(lead => lead.id !== payload.old.id);
             });
           }
+
+          // Force un re-fetch pour s'assurer de la synchronisation
+          await Promise.all([
+            queryClient.invalidateQueries({
+              queryKey: ['leads', session.user.id],
+              exact: true,
+              refetchType: 'active'
+            }),
+            queryClient.invalidateQueries({
+              queryKey: ['profile', session.user.id],
+              exact: true
+            })
+          ]);
         }
       )
       .subscribe((status) => {
@@ -73,7 +74,7 @@ export function useLeadsData(session: Session | null) {
     };
   }, [session?.user?.id, queryClient]);
 
-  const { data: leads = [], error, isLoading } = useQuery({
+  return useQuery({
     queryKey: ['leads', session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) {
@@ -102,6 +103,4 @@ export function useLeadsData(session: Session | null) {
     refetchOnMount: true,
     staleTime: 0
   });
-
-  return { leads, isLoading, error };
 }
