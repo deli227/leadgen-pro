@@ -76,8 +76,8 @@ export function LeadsAnalytics({
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-      <div className="lg:col-span-2">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
+      <div className="lg:col-span-5">
         <LeadsList 
           leads={filteredLeads}
           onAddToAnalytics={handleAnalyzeLead}
@@ -87,11 +87,13 @@ export function LeadsAnalytics({
         />
       </div>
       
-      <AIAnalysisWindow 
-        lead={selectedLead} 
-        analysis={currentAnalysis} 
-        isAnalyzing={isAnalyzing}
-      />
+      <div className="lg:col-span-7">
+        <AIAnalysisWindow 
+          lead={selectedLead} 
+          analysis={currentAnalysis} 
+          isAnalyzing={isAnalyzing}
+        />
+      </div>
     </div>
   )
 }
