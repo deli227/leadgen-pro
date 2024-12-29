@@ -39,27 +39,27 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProp
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="h-full p-3 sm:p-4 border border-primary/20 rounded-xl bg-gradient-to-br from-black/40 to-secondary-dark/40 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 group"
+      className="p-4 border border-primary/20 rounded-xl bg-gradient-to-br from-black/40 to-secondary-dark/40 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 group"
     >
-      <div className="flex flex-col h-full gap-3">
+      <div className="flex flex-col gap-3">
         <div className="flex justify-between items-start">
-          <div className="space-y-1 flex-1 min-w-0">
-            <h4 className="text-sm sm:text-base font-semibold text-primary-light group-hover:text-white transition-colors line-clamp-1">
+          <div className="space-y-1">
+            <h4 className="text-base font-semibold text-primary-light group-hover:text-white transition-colors line-clamp-1">
               {lead.company}
             </h4>
-            <p className="text-xs sm:text-sm text-primary-light/70 line-clamp-1">
+            <p className="text-sm text-primary-light/70 line-clamp-1">
               {lead.industry}
             </p>
           </div>
-          <div className="flex gap-1 sm:gap-2 ml-2">
+          <div className="flex gap-2">
             <Dialog open={isNotesOpen} onOpenChange={setIsNotesOpen}>
               <DialogTrigger asChild>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 text-primary-light/70 hover:text-primary hover:bg-primary/10"
+                  className="text-primary-light/70 hover:text-primary hover:bg-primary/10"
                 >
-                  <NotebookPen className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <NotebookPen className="h-4 w-4" />
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[600px] bg-transparent border-none p-0">
@@ -69,19 +69,19 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProp
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-primary-light/70 hover:text-red-500 hover:bg-red-500/10"
+              className="text-primary-light/70 hover:text-red-500 hover:bg-red-500/10"
               onClick={handleDelete}
             >
-              <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+              <Trash2 className="h-4 w-4" />
             </Button>
           </div>
         </div>
 
-        <div className="space-y-2 flex-1">
+        <div className="space-y-2">
           {lead.email && (
             <div className="flex items-center gap-2 text-primary-light/80 hover:text-primary-light transition-colors">
-              <Mail className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-              <a href={`mailto:${lead.email}`} className="text-xs sm:text-sm hover:underline line-clamp-1 break-all">
+              <Mail className="h-4 w-4 flex-shrink-0" />
+              <a href={`mailto:${lead.email}`} className="text-sm hover:underline line-clamp-1 break-all">
                 {lead.email}
               </a>
             </div>
@@ -89,8 +89,8 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProp
           
           {lead.phone && (
             <div className="flex items-center gap-2 text-primary-light/80 hover:text-primary-light transition-colors">
-              <Phone className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-              <a href={`tel:${lead.phone}`} className="text-xs sm:text-sm hover:underline line-clamp-1">
+              <Phone className="h-4 w-4 flex-shrink-0" />
+              <a href={`tel:${lead.phone}`} className="text-sm hover:underline line-clamp-1">
                 {lead.phone}
               </a>
             </div>
@@ -98,19 +98,19 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProp
           
           {lead.address && (
             <div className="flex items-center gap-2 text-primary-light/80 hover:text-primary-light transition-colors">
-              <MapPin className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-              <span className="text-xs sm:text-sm line-clamp-1">{lead.address}</span>
+              <MapPin className="h-4 w-4 flex-shrink-0" />
+              <span className="text-sm line-clamp-1">{lead.address}</span>
             </div>
           )}
 
           {lead.website && (
             <div className="flex items-center gap-2 text-primary-light/80 hover:text-primary-light transition-colors">
-              <Globe className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+              <Globe className="h-4 w-4 flex-shrink-0" />
               <a 
                 href={lead.website.startsWith('http') ? lead.website : `https://${lead.website}`}
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="text-xs sm:text-sm hover:underline line-clamp-1"
+                className="text-sm hover:underline line-clamp-1"
               >
                 {lead.website.replace(/^https?:\/\//, '')}
               </a>
@@ -119,7 +119,7 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProp
         </div>
 
         {lead.socialMedia && (
-          <div className="pt-2 sm:pt-3 border-t border-primary/10 flex gap-2 sm:gap-3">
+          <div className="pt-3 border-t border-primary/10 flex gap-3">
             {lead.socialMedia.linkedin && (
               <a 
                 href={lead.socialMedia.linkedin}
@@ -128,7 +128,7 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProp
                 className="text-primary-light/70 hover:text-primary transition-colors"
                 title="LinkedIn"
               >
-                <Linkedin className="h-3 w-3 sm:h-4 sm:w-4" />
+                <Linkedin className="h-4 w-4" />
               </a>
             )}
             {lead.socialMedia.twitter && (
@@ -139,7 +139,7 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProp
                 className="text-primary-light/70 hover:text-primary transition-colors"
                 title="X (Twitter)"
               >
-                <Twitter className="h-3 w-3 sm:h-4 sm:w-4" />
+                <Twitter className="h-4 w-4" />
               </a>
             )}
             {lead.socialMedia.facebook && (
@@ -150,7 +150,7 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProp
                 className="text-primary-light/70 hover:text-primary transition-colors"
                 title="Facebook"
               >
-                <Facebook className="h-3 w-3 sm:h-4 sm:w-4" />
+                <Facebook className="h-4 w-4" />
               </a>
             )}
             {lead.socialMedia.instagram && (
@@ -161,7 +161,7 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProp
                 className="text-primary-light/70 hover:text-primary transition-colors"
                 title="Instagram"
               >
-                <Instagram className="h-3 w-3 sm:h-4 sm:w-4" />
+                <Instagram className="h-4 w-4" />
               </a>
             )}
           </div>
@@ -175,7 +175,7 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProp
           onClick={() => onAddToAnalytics(lead)}
           variant="outline"
           size="sm"
-          className="w-full mt-2 bg-gradient-to-r from-primary to-primary-dark text-white border-none hover:opacity-90 shadow-lg hover:shadow-xl transition-all duration-300 text-xs sm:text-sm"
+          className="w-full bg-gradient-to-r from-primary to-primary-dark text-white border-none hover:opacity-90 shadow-lg hover:shadow-xl transition-all duration-300 text-sm"
         >
           Ajouter aux analytiques
         </Button>
