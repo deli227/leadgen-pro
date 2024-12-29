@@ -12,6 +12,8 @@ ANALYSE APPROFONDIE :
    - Tendances du marché
    - Évolutions réglementaires
    - Innovations disruptives
+   - Barrières à l'entrée
+   - Facteurs différenciants
 
 2. POTENTIEL DE CROISSANCE :
    - Marchés adjacents
@@ -24,15 +26,19 @@ ANALYSE APPROFONDIE :
    - Risques et opportunités
    - Plan d'expansion
    - Diversification produit
+   - Partenariats stratégiques
+   - Acquisitions potentielles
 
 3. ANALYSE FINANCIÈRE :
-   - Structure financière
+   - Structure financière détaillée
    - Capacité d'investissement
    - Besoins de financement
    - Rentabilité par segment
-   - Coûts d'acquisition
-   - Lifetime value
-   - Marges par produit
+   - Coûts d'acquisition client
+   - Lifetime value client
+   - Marges par produit/service
    - Flux de trésorerie
-   - Ratios financiers
-   - Valorisation estimée`
+   - Ratios financiers clés
+   - Valorisation estimée
+   - Structure de coûts
+   - Leviers d'optimisation`

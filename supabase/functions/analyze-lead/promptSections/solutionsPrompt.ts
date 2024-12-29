@@ -1,45 +1,47 @@
 export const buildSolutionsPrompt = () => `
 SOLUTIONS TRANSFORMATIVES ULTRA-DÉTAILLÉES :
 
-Pour chaque point faible identifié, fournir :
-
 1. SOLUTIONS TECHNIQUES :
-   - Solutions précises avec exemples de mise en œuvre
-   - Outils et technologies recommandés avec versions
-   - Architecture détaillée de la solution
-   - Étapes d'implémentation jour par jour
-   - Coûts détaillés (licences, main d'œuvre, maintenance)
-   - ROI attendu avec calculs détaillés
-   - Temps de mise en place exact
-   - Risques techniques et solutions
-   - Alternatives technologiques
-   - Exemples de réussite similaires
+   - Architecture technique détaillée
+   - Stack technologique recommandé
+   - Plan de migration/implémentation
+   - Estimation des coûts détaillée
+   - ROI attendu avec calculs
+   - Risques techniques et mitigations
+   - Alternatives possibles
+   - Exemples de succès similaires
    - Métriques de performance à suivre
+   - Plan de maintenance
+   - Ressources nécessaires
+   - Timeline d'implémentation
 
 2. SOLUTIONS MARKETING :
-   - Stratégies marketing détaillées par canal
-   - Plan de communication complet
-   - Contenus recommandés avec exemples
-   - Calendrier éditorial sur 90 jours
-   - Budget marketing détaillé
+   - Stratégie marketing multicanal
+   - Plan de communication détaillé
+   - Contenus recommandés par canal
+   - Calendrier éditorial 90 jours
+   - Budget marketing ventilé
    - KPIs marketing précis
-   - Outils de tracking recommandés
+   - Outils analytics recommandés
    - Personas détaillés
    - Messages clés par segment
    - Plan d'acquisition client
    - Stratégie de fidélisation
+   - Positionnement concurrentiel
 
 3. SOLUTIONS BUSINESS :
    - Modèles de revenus optimisés
    - Structures de prix recommandées
    - Stratégies de vente détaillées
    - Scripts de vente personnalisés
-   - Processus de qualification client
+   - Processus de qualification
    - Cycle de vente optimisé
    - Stratégies de négociation
-   - Points de différenciation clés
-   - Avantages concurrentiels à exploiter
-   - Plan de développement commercial
+   - Points de différenciation
+   - Avantages concurrentiels
+   - Plan de développement
+   - Partenariats stratégiques
+   - Opportunités de croissance
 
 4. SOLUTIONS OPÉRATIONNELLES :
    - Optimisation des processus
@@ -52,15 +54,19 @@ Pour chaque point faible identifié, fournir :
    - Contrôle qualité
    - Maintenance et support
    - Plan de continuité
+   - Gestion des risques
+   - Métriques de performance
 
 5. SOLUTIONS FINANCIÈRES :
    - Structure de coûts optimisée
    - Modèles de revenus alternatifs
-   - Stratégies de pricing
-   - Optimisations fiscales
+   - Stratégies de pricing détaillées
+   - Optimisations fiscales possibles
    - Gestion de trésorerie
    - Investissements recommandés
    - Sources de financement
    - Prévisions financières
    - Analyse de rentabilité
-   - Gestion des risques financiers`
+   - Gestion des risques financiers
+   - Plan d'investissement
+   - Métriques financières clés`

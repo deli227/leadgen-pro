@@ -2,40 +2,46 @@ export const buildApproachPrompt = () => `
 STRATÉGIE D'APPROCHE ULTRA-DÉTAILLÉE :
 
 1. PRÉPARATION DU CONTACT :
-   - Recherche approfondie sur l'entreprise
-   - Analyse des décideurs clés
+   - Analyse approfondie de l'entreprise
+   - Profils détaillés des décideurs
    - Points de douleur identifiés
    - Objectifs business précis
    - Historique des interactions
    - Timing optimal de contact
-   - Canaux de communication préférés
-   - Documentation à préparer
-   - Questions stratégiques à poser
+   - Canaux préférés
+   - Documentation préparée
+   - Questions stratégiques
    - Informations à valider
+   - Recherche concurrentielle
+   - Analyse du marché
 
-2. SCRIPTS DE CONTACT DÉTAILLÉS :
+2. SCRIPTS DE CONTACT :
    - Email initial personnalisé
-   - Relances email (3 variations)
+   - Séquence de relance (5 variations)
    - Script d'appel détaillé
    - Message LinkedIn optimisé
    - Présentation commerciale
    - Proposition de valeur unique
    - Démonstration personnalisée
    - Études de cas pertinentes
-   - Témoignages clients similaires
+   - Témoignages clients
    - Documentation technique
+   - Supports de présentation
+   - Contenus d'expertise
 
 3. OBJECTIONS ET RÉPONSES :
-   - 20 objections courantes anticipées
-   - Réponses détaillées par objection
+   - 30 objections anticipées
+   - Réponses argumentées
    - Arguments de vente spécifiques
    - Preuves et références
    - Garanties possibles
    - Alternatives à proposer
    - Points de négociation
-   - Limites à ne pas franchir
-   - Signaux d'achat à détecter
+   - Limites à respecter
+   - Signaux d'achat
    - Techniques de closing
+   - Scénarios de négociation
+   - Solutions de repli
 
 4. PLAN DE SUIVI :
    - Séquence de relance détaillée
@@ -47,4 +53,6 @@ STRATÉGIE D'APPROCHE ULTRA-DÉTAILLÉE :
    - Stratégie long terme
    - Indicateurs de progression
    - Points de décision
-   - Plan B détaillé`
+   - Plan B détaillé
+   - Actions de nurturing
+   - Objectifs par étape`
