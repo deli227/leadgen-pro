@@ -31,32 +31,60 @@ export function Dashboard() {
   const { leads, isLoading, refetch } = useLeadsData(session)
 
   const handleAddToAnalytics = async (lead: Lead) => {
-    if (!analyticsLeads.find(l => l.id === lead.id)) {
-      try {
-        const { error } = await supabase
-          .from('analytics_leads')
-          .insert([{ user_id: session?.user?.id, lead_id: lead.id }])
+    if (!session?.user?.id) {
+      toast({
+        title: "Erreur d'authentification",
+        description: "Vous devez être connecté pour effectuer cette action",
+        variant: "destructive"
+      })
+      return
+    }
 
-        if (error) throw error
+    try {
+      // Vérifier si le lead existe déjà dans analytics_leads
+      const { data: existingAnalytics, error: checkError } = await supabase
+        .from('analytics_leads')
+        .select('id')
+        .eq('user_id', session.user.id)
+        .eq('lead_id', lead.id)
+        .single()
 
-        setAnalyticsLeads(prev => [...prev, lead])
-        toast({
-          title: "Ajout aux analytiques",
-          description: "Le lead a été ajouté aux analytiques avec succès"
-        })
-
-        // Mise à jour immédiate du cache
-        const queryKey = ['leads', session?.user?.id]
-        const currentData = queryClient.getQueryData<Lead[]>(queryKey) || []
-        queryClient.setQueryData(queryKey, currentData)
-      } catch (error) {
-        console.error('Erreur lors de l\'ajout aux analytiques:', error)
-        toast({
-          title: "Erreur",
-          description: "Erreur lors de l'ajout aux analytiques",
-          variant: "destructive"
-        })
+      if (checkError && checkError.code !== 'PGRST116') {
+        throw checkError
       }
+
+      if (existingAnalytics) {
+        toast({
+          title: "Information",
+          description: "Ce lead est déjà dans vos analytiques"
+        })
+        return
+      }
+
+      // Si le lead n'existe pas, on l'ajoute
+      const { error: insertError } = await supabase
+        .from('analytics_leads')
+        .insert([{ user_id: session.user.id, lead_id: lead.id }])
+
+      if (insertError) throw insertError
+
+      setAnalyticsLeads(prev => [...prev, lead])
+      toast({
+        title: "Ajout aux analytiques",
+        description: "Le lead a été ajouté aux analytiques avec succès"
+      })
+
+      // Mise à jour immédiate du cache
+      const queryKey = ['leads', session.user.id]
+      const currentData = queryClient.getQueryData<Lead[]>(queryKey) || []
+      queryClient.setQueryData(queryKey, currentData)
+    } catch (error: any) {
+      console.error('Erreur lors de l\'ajout aux analytiques:', error)
+      toast({
+        title: "Erreur",
+        description: "Erreur lors de l'ajout aux analytiques",
+        variant: "destructive"
+      })
     }
   }
 
