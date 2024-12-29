@@ -5,62 +5,60 @@ interface SearchFilters {
 }
 
 export const buildPrompt = (filters: SearchFilters): string => {
-  let searchQuery = `"${filters.search}"`
+  let prompt = `En tant qu'expert en recherche d'entreprises, effectue une recherche approfondie sur Google pour l'entreprise "${filters.search}"`;
   
   if (filters.country && filters.country !== 'all') {
-    searchQuery += ` "${filters.country}"`
+    prompt += ` en ${filters.country}`;
     if (filters.city && filters.city !== 'all') {
-      searchQuery += ` "${filters.city}"`
+      prompt += ` à ${filters.city}`;
     }
   }
 
-  let prompt = `Tu es un expert en recherche d'informations d'entreprises sur Google. Effectue une recherche Google approfondie avec les termes exacts suivants : ${searchQuery}
+  prompt += `\n\nINSTRUCTIONS DE RECHERCHE DÉTAILLÉES :
+1. Rechercher sur Google en priorité :
+   - Le site web officiel de l'entreprise
+   - Les pages Google My Business / Google Maps
+   - Les annuaires professionnels (Pages Jaunes, LinkedIn, etc.)
+   - Les réseaux sociaux professionnels
 
-INSTRUCTIONS DÉTAILLÉES :
+2. INFORMATIONS À EXTRAIRE (si disponibles) :
+   - Coordonnées complètes :
+     * Numéro de téléphone professionnel vérifié
+     * Email professionnel officiel
+     * Adresse physique complète et exacte (via Google Maps)
+     * Site web officiel (avec vérification du HTTPS)
+   
+   - Présence en ligne :
+     * Profil LinkedIn de l'entreprise
+     * Page Facebook professionnelle
+     * Compte Twitter officiel
+     * Compte Instagram professionnel
+   
+   - Informations business :
+     * Secteur d'activité principal
+     * Taille approximative
+     * Année de création si disponible
 
-1. RECHERCHE GOOGLE :
-   - Utilise exactement ces termes de recherche sur Google
-   - Examine les 5 premiers résultats Google pertinents
-   - Consulte la fiche Google My Business si elle existe
-   - Vérifie les Pages Jaunes et autres annuaires professionnels
-   - Recherche spécifiquement sur Google Maps pour l'adresse
+3. CRITÈRES DE QUALITÉ :
+   - Vérifier la cohérence des informations sur plusieurs sources
+   - Privilégier les sources officielles et récentes
+   - S'assurer que les profils sociaux sont actifs et officiels
+   - Vérifier que les coordonnées sont professionnelles
 
-2. EXTRACTION DES INFORMATIONS :
-   - Commence par le site web officiel s'il existe
-   - Vérifie la fiche Google My Business
-   - Croise avec les informations des annuaires professionnels
-   - Cherche les liens vers les réseaux sociaux dans les résultats Google
-   - Note les informations de contact visibles sur Google Maps
-
-3. VALIDATION DES DONNÉES :
-   - Compare les informations entre les différentes sources
-   - Privilégie les informations les plus récentes
-   - Vérifie que les liens sont actifs
-   - Assure-toi que les profils sociaux sont bien officiels
-
-4. INFORMATIONS À COLLECTER :
-   - Nom exact de l'entreprise (tel qu'affiché sur Google)
-   - Numéro de téléphone (visible sur Google/Pages Jaunes)
-   - Email professionnel (depuis le site web/Google My Business)
-   - Adresse complète (depuis Google Maps)
-   - Site web officiel
-   - Liens des réseaux sociaux trouvés dans les résultats Google
-   - Secteur d'activité (basé sur la description Google)
-
-Réponds UNIQUEMENT avec un objet JSON valide contenant ces champs, sans aucun texte supplémentaire :
+Réponds UNIQUEMENT avec un objet JSON valide contenant ces champs :
 {
-  "company": "Nom exact trouvé sur Google",
-  "email": "email@entreprise.com",
-  "phone": "Numéro trouvé sur Google/Pages Jaunes",
-  "website": "https://site-officiel.com",
-  "address": "Adresse complète depuis Google Maps",
+  "company": "Nom officiel de l'entreprise",
+  "email": "email@professionnel.com",
+  "phone": "+33123456789",
+  "website": "https://site-web.com",
+  "address": "Adresse complète et vérifiée",
   "industry": "Secteur d'activité principal",
   "score": 8,
   "socialMedia": {
-    "linkedin": "URL LinkedIn trouvée sur Google",
-    "twitter": "URL Twitter trouvée sur Google",
-    "facebook": "URL Facebook trouvée sur Google",
-    "instagram": "URL Instagram trouvée sur Google"
+    "linkedin": "linkedin.com/company/...",
+    "twitter": "twitter.com/...",
+    "facebook": "facebook.com/...",
+    "instagram": "instagram.com/..."
   }
 }`
 
