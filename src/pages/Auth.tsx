@@ -37,7 +37,7 @@ export function Auth() {
         try {
           const { error } = await supabase.auth.verifyOtp({
             token_hash,
-            type: 'email_confirmation',
+            type: "signup",
           });
           
           if (error) throw error;
