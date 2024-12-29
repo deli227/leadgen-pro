@@ -1,7 +1,6 @@
 import { LocationFilters } from "./LocationFilters"
 import { IndustrySelect } from "./IndustrySelect"
 import { LeadCountSlider } from "./LeadCountSlider"
-import { Button } from "@/components/ui/button"
 import { Loader2 } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 import { toast } from "sonner"
@@ -12,16 +11,7 @@ import { Lead } from "@/types/leads"
 import { LeadFilters } from "@/types/filters"
 import { useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "react-router-dom"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
+import { LeadLimitChecker } from "./LeadLimitChecker"
 
 interface FiltersTabContentProps {
   filters: LeadFilters
@@ -39,13 +29,13 @@ export function FiltersTabContent({
   onLocalRemove
 }: FiltersTabContentProps) {
   const [isGenerating, setIsGenerating] = useState(false)
-  const [showLimitDialog, setShowLimitDialog] = useState(false)
-  const [userLimit, setUserLimit] = useState(0)
   const queryClient = useQueryClient()
   const navigate = useNavigate()
 
   const handleGenerateLeads = async () => {
     try {
+      setIsGenerating(true)
+
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) {
         toast.error("Erreur d'authentification", {
@@ -54,42 +44,6 @@ export function FiltersTabContent({
         navigate('/auth')
         return
       }
-
-      // Vérifier la limite de l'utilisateur
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('subscription_type')
-        .eq('id', session.user.id)
-        .single()
-
-      if (!profile) {
-        toast.error("Erreur de profil", {
-          description: "Impossible de récupérer votre profil."
-        })
-        return
-      }
-
-      const { data: limits } = await supabase
-        .from('subscription_limits')
-        .select('monthly_leads_limit')
-        .eq('subscription_type', profile.subscription_type)
-        .single()
-
-      if (!limits) {
-        toast.error("Erreur de limites", {
-          description: "Impossible de récupérer vos limites."
-        })
-        return
-      }
-
-      // Si l'utilisateur essaie de générer plus de leads que sa limite
-      if (filters.leadCount > limits.monthly_leads_limit) {
-        setUserLimit(limits.monthly_leads_limit)
-        setShowLimitDialog(true)
-        return
-      }
-
-      setIsGenerating(true)
 
       const { data, error } = await supabase.functions.invoke('generate-leads-with-ai', {
         body: { 
@@ -117,13 +71,6 @@ export function FiltersTabContent({
             onClick: () => window.location.href = "/#pricing-section"
           },
           duration: 10000
-        })
-        return
-      }
-
-      if (!data?.success) {
-        toast.error("Erreur de génération", {
-          description: "La réponse de l'API est invalide. Veuillez réessayer."
         })
         return
       }
@@ -201,20 +148,17 @@ export function FiltersTabContent({
           onChange={(value) => setFilters({ ...filters, industry: value })}
         />
 
-        <Button
-          onClick={handleGenerateLeads}
-          disabled={isGenerating}
-          className="ml-auto bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white shadow-lg hover:shadow-xl transition-all duration-300"
-        >
-          {isGenerating ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Génération...
-            </>
-          ) : (
-            'Générer les leads'
-          )}
-        </Button>
+        {isGenerating ? (
+          <button disabled className="ml-auto bg-gradient-to-r from-primary to-accent opacity-50 text-white shadow-lg transition-all duration-300">
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Génération...
+          </button>
+        ) : (
+          <LeadLimitChecker
+            requestedLeadCount={filters.leadCount}
+            onValidation={handleGenerateLeads}
+          />
+        )}
       </motion.div>
 
       <LeadCountSlider 
@@ -229,26 +173,6 @@ export function FiltersTabContent({
         showActions={true}
         filterView={true}
       />
-
-      <AlertDialog open={showLimitDialog} onOpenChange={setShowLimitDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Limite de leads dépassée</AlertDialogTitle>
-            <AlertDialogDescription>
-              Votre abonnement actuel vous permet de générer uniquement {userLimit} leads.
-              Veuillez ajuster le nombre de leads ou passer à un plan supérieur pour en générer davantage.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setShowLimitDialog(false)}>Annuler</AlertDialogCancel>
-            <AlertDialogAction onClick={() => {
-              window.location.href = "/#pricing-section"
-            }}>
-              Passer au premium
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   )
 }

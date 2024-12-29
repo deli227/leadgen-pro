@@ -3,6 +3,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { validateLead } from './validateLead.ts'
 import { buildPrompt } from './promptBuilder.ts'
 import { extractJSONFromText } from './responseHandler.ts'
+import { checkUserLimits } from './userLimits.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -15,49 +16,31 @@ serve(async (req) => {
   }
 
   try {
-    console.log('Début de la génération de leads');
     const { filters, userId } = await req.json()
-    console.log('Filtres reçus:', filters)
-    console.log('UserId reçu:', userId)
 
     if (!userId) {
       throw new Error('UserId non fourni')
     }
 
     // Configuration du client Supabase
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    const supabase = createClient(supabaseUrl, supabaseKey)
 
-    // Vérification des limites
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('subscription_type, leads_generated_this_month')
-      .eq('id', userId)
-      .single()
-
-    if (profileError) {
-      throw new Error('Erreur lors de la récupération du profil')
+    // Double vérification des limites côté serveur
+    const { isAllowed, currentLimit, error } = await checkUserLimits(supabase, userId, filters.leadCount)
+    
+    if (error) {
+      throw error
     }
 
-    const { data: limits, error: limitsError } = await supabase
-      .from('subscription_limits')
-      .select('monthly_leads_limit')
-      .eq('subscription_type', profile.subscription_type)
-      .single()
-
-    if (limitsError) {
-      throw new Error('Erreur lors de la récupération des limites')
-    }
-
-    // Vérification si l'utilisateur a atteint sa limite
-    if (profile.leads_generated_this_month >= limits.monthly_leads_limit) {
+    if (!isAllowed) {
       return new Response(
         JSON.stringify({
           success: false,
           error: "Limite de leads atteinte",
           limitReached: true,
-          currentPlan: profile.subscription_type
+          currentLimit
         }),
         { 
           headers: { 
@@ -69,11 +52,6 @@ serve(async (req) => {
       )
     }
 
-    const perplexityApiKey = Deno.env.get('PERPLEXITY_API_KEY')
-    if (!perplexityApiKey) {
-      throw new Error('Clé API Perplexity non configurée')
-    }
-
     // Génération du prompt
     const prompt = buildPrompt(filters)
     console.log('Prompt généré:', prompt)
@@ -83,7 +61,7 @@ serve(async (req) => {
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${perplexityApiKey}`,
+        'Authorization': `Bearer ${Deno.env.get('PERPLEXITY_API_KEY')}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
