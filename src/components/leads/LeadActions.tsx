@@ -1,12 +1,14 @@
 import { Button } from "@/components/ui/button"
 import { Brain, FileDown, Trash2, NotebookPen } from "lucide-react"
 import { Lead } from "@/types/leads"
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
+import { LeadNotes } from "./LeadNotes"
+import { useState } from "react"
 
 interface LeadActionsProps {
   lead: Lead
   onAnalyze: (lead: Lead) => void
   onAddToExport: (lead: Lead) => void
-  onShowNotes?: (lead: Lead) => void
   onDelete?: (lead: Lead) => void
   showDelete?: boolean
 }
@@ -15,10 +17,11 @@ export function LeadActions({
   lead, 
   onAnalyze, 
   onAddToExport,
-  onShowNotes,
   onDelete,
   showDelete = true
 }: LeadActionsProps) {
+  const [isNotesOpen, setIsNotesOpen] = useState(false)
+
   return (
     <div className="flex flex-wrap gap-2 w-full sm:w-auto">
       <Button
@@ -30,17 +33,23 @@ export function LeadActions({
         <Brain className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
         Analyser
       </Button>
-      {onShowNotes && (
-        <Button
-          onClick={() => onShowNotes(lead)}
-          variant="outline"
-          size="sm"
-          className="flex-1 sm:flex-none bg-gradient-to-r from-primary to-primary-dark text-primary-light border-none hover:opacity-90 text-xs sm:text-sm"
-        >
-          <NotebookPen className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-          Notes
-        </Button>
-      )}
+
+      <Dialog open={isNotesOpen} onOpenChange={setIsNotesOpen}>
+        <DialogTrigger asChild>
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1 sm:flex-none bg-gradient-to-r from-primary to-primary-dark text-primary-light border-none hover:opacity-90 text-xs sm:text-sm"
+          >
+            <NotebookPen className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+            Notes
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[600px] bg-transparent border-none p-0">
+          <LeadNotes lead={lead} onClose={() => setIsNotesOpen(false)} />
+        </DialogContent>
+      </Dialog>
+
       <Button
         onClick={() => onAddToExport(lead)}
         variant="outline"
@@ -50,6 +59,7 @@ export function LeadActions({
         <FileDown className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
         Exporter
       </Button>
+
       {showDelete && onDelete && (
         <Button
           onClick={() => onDelete(lead)}
