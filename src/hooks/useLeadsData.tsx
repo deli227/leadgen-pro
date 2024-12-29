@@ -30,16 +30,11 @@ export function useLeadsData(session: Session | null) {
             const newLead = payload.new as Lead;
             console.log('Nouveau lead détecté:', newLead);
             
-            // Mise à jour optimiste immédiate du cache
             queryClient.setQueryData(['leads', session.user.id], (old: Lead[] | undefined) => {
               if (!old) return [newLead];
-              // Vérifier si le lead existe déjà
-              const exists = old.some(lead => lead.id === newLead.id);
-              if (exists) return old;
               return [newLead, ...old];
             });
 
-            // Notification de succès
             toast.success('Nouveau lead généré');
           } else if (payload.eventType === 'DELETE') {
             console.log('Suppression du lead:', payload.old.id);
@@ -88,13 +83,11 @@ export function useLeadsData(session: Session | null) {
     enabled: !!session?.user?.id,
     refetchOnWindowFocus: true,
     refetchOnMount: true,
-    staleTime: 0,
-    gcTime: 0, // Remplace cacheTime qui est déprécié
-    initialData: [] as Lead[] // Typage explicite pour éviter l'erreur TypeScript
+    staleTime: 0
   });
 
   return {
-    leads: data,
+    leads: data || [],
     isLoading,
     error
   };
