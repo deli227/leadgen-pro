@@ -9,7 +9,7 @@ import { SearchInput } from "./filters/SearchInput"
 
 export function LeadsTable() {
   const session = useSessionData();
-  const leads = useLeadsData(session.data);
+  const { leads, isLoading, error } = useLeadsData(session.data);
   const [exportLeads, setExportLeads] = useState<Lead[]>([]);
   const [leadCount, setLeadCount] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
