@@ -6,6 +6,9 @@ import { useTranslation } from "react-i18next"
 import { Lead } from "@/types/leads"
 import { LeadFilters } from "@/types/filters"
 import { useIsMobile } from "@/hooks/use-mobile"
+import { useEffect } from "react"
+import { supabase } from "@/integrations/supabase/client"
+import { useQueryClient } from "@tanstack/react-query"
 
 interface DashboardTabsProps {
   filters: LeadFilters
@@ -32,6 +35,38 @@ export function DashboardTabs({
 }: DashboardTabsProps) {
   const { t } = useTranslation()
   const isMobile = useIsMobile()
+  const queryClient = useQueryClient()
+
+  useEffect(() => {
+    // Écouter les changements sur la table leads
+    const leadsChannel = supabase
+      .channel('public:leads')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'leads' }, 
+        () => {
+          console.log('Leads updated, refreshing...')
+          queryClient.invalidateQueries({ queryKey: ['leads'] })
+        }
+      )
+      .subscribe()
+
+    // Écouter les changements sur la table profiles pour les limites
+    const profilesChannel = supabase
+      .channel('public:profiles')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'profiles' }, 
+        () => {
+          console.log('Profile updated, refreshing limits...')
+          queryClient.invalidateQueries({ queryKey: ['profile'] })
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(leadsChannel)
+      supabase.removeChannel(profilesChannel)
+    }
+  }, [queryClient])
 
   return (
     <Tabs defaultValue="leads" className="space-y-4">
