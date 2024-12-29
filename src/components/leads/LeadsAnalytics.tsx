@@ -93,14 +93,16 @@ export function LeadsAnalytics({
 
   const handleAnalyzeLead = async (lead: Lead) => {
     try {
+      if (!session?.user?.id) {
+        throw new Error("Utilisateur non authentifié")
+      }
+
       // Ajouter à la table analytics_leads
       const { error: analyticsError } = await supabase
         .from('analytics_leads')
         .insert([
-          { user_id: session?.user?.id, lead_id: lead.id }
+          { user_id: session.user.id, lead_id: lead.id }
         ])
-        .select()
-        .single()
 
       if (analyticsError) {
         if (analyticsError.code === '23505') { // Code d'erreur pour violation de contrainte unique
@@ -124,6 +126,11 @@ export function LeadsAnalytics({
           return [...prev, lead]
         }
         return prev
+      })
+
+      toast({
+        title: "Lead ajouté aux analytiques",
+        description: "Le lead a été ajouté avec succès"
       })
     } catch (error) {
       console.error("Erreur lors de l'analyse:", error)
