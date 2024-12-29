@@ -49,7 +49,7 @@ export function AIAnalysisWindow({ lead, analysis, isAnalyzing }: AIAnalysisWind
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                 <p className="text-primary-light text-sm">Analyse en cours...</p>
               </div>
-            ) : analysis && analysis.company_analysis ? (
+            ) : analysis ? (
               <div className="space-y-6">
                 {analysis.company_analysis && (
                   <CompanyAnalysis analysis={analysis.company_analysis} />
