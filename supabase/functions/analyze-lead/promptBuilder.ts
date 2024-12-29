@@ -61,11 +61,29 @@ Format de réponse souhaité (JSON) :
     "development_opportunities": string[] (opportunités de développement détaillées)
   },
   "recommendations": {
-    "approach_strategy": string (stratégie d'approche détaillée),
-    "entry_points": string[] (points d'entrée stratégiques),
-    "sales_arguments": string[] (arguments de vente percutants),
-    "optimal_timing": string (timing optimal détaillé),
-    "required_resources": string[] (ressources nécessaires détaillées),
+    "approach_strategy": string (stratégie d'approche ULTRA-DÉTAILLÉE avec psychologie d'approche),
+    "entry_points": string[] (points d'entrée stratégiques TRÈS DÉTAILLÉS),
+    "sales_arguments": string[] (arguments de vente percutants et TRÈS DÉTAILLÉS),
+    "optimal_timing": string (timing optimal DÉTAILLÉ avec justification),
+    "required_resources": string[] (ressources nécessaires DÉTAILLÉES),
+    "communication_style": string (style de communication DÉTAILLÉ avec exemples de phrases à utiliser),
+    "decision_makers": string[] (analyse DÉTAILLÉE des décideurs clés avec leur profil psychologique),
+    "budget_considerations": string (analyse DÉTAILLÉE du budget avec fourchettes de prix),
+    "potential_objections": string[] (objections anticipées TRÈS DÉTAILLÉES avec réponses suggérées),
+    "trust_building_steps": string[] (étapes DÉTAILLÉES de construction de la confiance),
+    "competitive_positioning": string (positionnement concurrentiel DÉTAILLÉ avec arguments différenciants),
+    "value_proposition": string (proposition de valeur ULTRA-DÉTAILLÉE et personnalisée),
+    "success_metrics": string[] (indicateurs de succès DÉTAILLÉS),
+    "risk_factors": string[] (facteurs de risque DÉTAILLÉS avec stratégies d'atténuation),
+    "timeline_expectations": string (attentes temporelles DÉTAILLÉES),
+    "negotiation_strategy": string (stratégie de négociation DÉTAILLÉE),
+    "relationship_building": {
+      "first_contact": string (approche initiale DÉTAILLÉE),
+      "follow_up_strategy": string (stratégie de suivi DÉTAILLÉE),
+      "meeting_preparation": string[] (préparation DÉTAILLÉE des réunions),
+      "key_topics": string[] (sujets clés à aborder DÉTAILLÉS),
+      "conversation_starters": string[] (accroches conversationnelles DÉTAILLÉES)
+    },
     "improvement_solutions": {
       "tech_solutions": [
         {

@@ -42,6 +42,24 @@ export interface LeadAnalysis {
     sales_arguments: string[]
     optimal_timing: string
     required_resources: string[]
+    communication_style: string
+    decision_makers: string[]
+    budget_considerations: string
+    potential_objections: string[]
+    trust_building_steps: string[]
+    competitive_positioning: string
+    value_proposition: string
+    success_metrics: string[]
+    risk_factors: string[]
+    timeline_expectations: string
+    negotiation_strategy: string
+    relationship_building: {
+      first_contact: string
+      follow_up_strategy: string
+      meeting_preparation: string[]
+      key_topics: string[]
+      conversation_starters: string[]
+    }
     improvement_solutions: {
       tech_solutions: Array<{
         weakness: string
