@@ -6,6 +6,7 @@ import { toast } from "sonner"
 import { supabase } from "@/integrations/supabase/client"
 import { TagBadge } from "./TagBadge"
 import { useQuery } from "@tanstack/react-query"
+import { useSessionData } from "@/hooks/useSessionData"
 
 interface TagsManagerProps {
   leadId: string
@@ -15,6 +16,7 @@ export function TagsManager({ leadId }: TagsManagerProps) {
   const [newTagName, setNewTagName] = useState("")
   const [selectedColor, setSelectedColor] = useState("#3B82F6")
   const [isCreating, setIsCreating] = useState(false)
+  const { data: session } = useSessionData()
 
   const { data: tags = [], refetch: refetchTags } = useQuery({
     queryKey: ['tags'],
@@ -59,12 +61,21 @@ export function TagsManager({ leadId }: TagsManagerProps) {
       return
     }
 
+    if (!session?.user?.id) {
+      toast.error("Vous devez être connecté pour créer un tag")
+      return
+    }
+
     setIsCreating(true)
     try {
       const { data, error } = await supabase
         .from('lead_tags')
         .insert([
-          { name: newTagName.trim(), color: selectedColor }
+          { 
+            name: newTagName.trim(), 
+            color: selectedColor,
+            user_id: session.user.id
+          }
         ])
         .select()
         .single()
