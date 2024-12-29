@@ -4,7 +4,7 @@ import { DashboardHeader } from "@/components/dashboard/DashboardHeader"
 import { useSessionData } from "@/hooks/useSessionData"
 import { useProfileData } from "@/hooks/useProfileData"
 import { useSubscriptionLimits } from "@/hooks/useSubscriptionLimits"
-import { useRealtimeLeads } from "@/hooks/useRealtimeLeads"
+import { useLeadsData } from "@/hooks/useLeadsData"
 import { useToast } from "@/hooks/use-toast"
 import { Lead } from "@/types/leads"
 import { motion } from "framer-motion"
@@ -25,7 +25,7 @@ export function Dashboard() {
   const { data: session } = useSessionData()
   const { data: profile } = useProfileData(session)
   const { data: limits } = useSubscriptionLimits(profile?.subscription_type)
-  const { leads, isLoading } = useRealtimeLeads(session)
+  const { leads, isLoading } = useLeadsData(session)
 
   const handleAddToAnalytics = (lead: Lead) => {
     if (!analyticsLeads.find(l => l.id === lead.id)) {

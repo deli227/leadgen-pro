@@ -1,20 +1,23 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Session } from "@supabase/supabase-js";
-import { Lead } from "@/types/leads";
-import { toast } from "sonner";
-import { useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { supabase } from "@/integrations/supabase/client"
+import { Session } from "@supabase/supabase-js"
+import { Lead } from "@/types/leads"
+import { toast } from "sonner"
+import { useEffect } from "react"
 
 export function useLeadsData(session: Session | null) {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
   useEffect(() => {
-    if (!session?.user?.id) return;
+    if (!session?.user?.id) {
+      console.log('Pas de session utilisateur, annulation de la souscription')
+      return
+    }
 
-    console.log('Configuration du canal de synchronisation en temps réel');
+    console.log('Configuration du canal de synchronisation en temps réel')
     
     const channel = supabase
-      .channel('leads-changes')
+      .channel('schema-db-changes')
       .on(
         'postgres_changes',
         {
@@ -24,77 +27,100 @@ export function useLeadsData(session: Session | null) {
           filter: `user_id=eq.${session.user.id}`
         },
         (payload) => {
-          console.log('Changement détecté:', payload);
+          console.log('Événement reçu:', payload.eventType)
+          console.log('Payload complet:', payload)
 
-          // Mise à jour instantanée pour les nouveaux leads
-          if (payload.eventType === 'INSERT') {
-            queryClient.setQueryData(['leads', session.user.id], (oldData: Lead[] | undefined) => {
-              const newLead = payload.new as Lead;
-              console.log('Ajout du nouveau lead:', newLead);
-              toast.success('Nouveau lead généré');
-              return oldData ? [newLead, ...oldData] : [newLead];
-            });
-          }
+          try {
+            // Mise à jour instantanée pour les nouveaux leads
+            if (payload.eventType === 'INSERT') {
+              console.log('Traitement INSERT pour le lead:', payload.new)
+              queryClient.setQueryData(['leads', session.user.id], (oldData: Lead[] | undefined) => {
+                const newLead = payload.new as Lead
+                console.log('Ancien état:', oldData)
+                const newState = oldData ? [newLead, ...oldData] : [newLead]
+                console.log('Nouvel état après insertion:', newState)
+                toast.success('Nouveau lead généré')
+                return newState
+              })
+            }
 
-          // Mise à jour instantanée pour les suppressions
-          if (payload.eventType === 'DELETE') {
-            queryClient.setQueryData(['leads', session.user.id], (oldData: Lead[] | undefined) => {
-              if (!oldData) return [];
-              return oldData.filter(lead => lead.id !== payload.old.id);
-            });
-          }
+            // Mise à jour instantanée pour les suppressions
+            if (payload.eventType === 'DELETE') {
+              console.log('Traitement DELETE pour le lead:', payload.old.id)
+              queryClient.setQueryData(['leads', session.user.id], (oldData: Lead[] | undefined) => {
+                if (!oldData) return []
+                console.log('Ancien état:', oldData)
+                const newState = oldData.filter(lead => lead.id !== payload.old.id)
+                console.log('Nouvel état après suppression:', newState)
+                return newState
+              })
+            }
 
-          // Mise à jour instantanée pour les modifications
-          if (payload.eventType === 'UPDATE') {
-            queryClient.setQueryData(['leads', session.user.id], (oldData: Lead[] | undefined) => {
-              if (!oldData) return [];
-              return oldData.map(lead => 
-                lead.id === payload.new.id ? { ...lead, ...payload.new } : lead
-              );
-            });
+            // Mise à jour instantanée pour les modifications
+            if (payload.eventType === 'UPDATE') {
+              console.log('Traitement UPDATE pour le lead:', payload.new)
+              queryClient.setQueryData(['leads', session.user.id], (oldData: Lead[] | undefined) => {
+                if (!oldData) return []
+                console.log('Ancien état:', oldData)
+                const newState = oldData.map(lead => 
+                  lead.id === payload.new.id ? { ...lead, ...payload.new } : lead
+                )
+                console.log('Nouvel état après mise à jour:', newState)
+                return newState
+              })
+            }
+          } catch (error) {
+            console.error('Erreur lors du traitement de l\'événement:', error)
+            toast.error('Erreur lors de la mise à jour en temps réel')
           }
         }
       )
       .subscribe((status) => {
-        console.log('Statut de la souscription:', status);
-      });
+        console.log('Statut de la souscription:', status)
+        if (status === 'SUBSCRIBED') {
+          console.log('Souscription réussie au canal temps réel')
+        } else if (status === 'CHANNEL_ERROR') {
+          console.error('Erreur de souscription au canal')
+          toast.error('Erreur de connexion au temps réel')
+        }
+      })
 
     return () => {
-      console.log('Nettoyage de la souscription');
-      supabase.removeChannel(channel);
-    };
-  }, [session?.user?.id, queryClient]);
+      console.log('Nettoyage de la souscription')
+      supabase.removeChannel(channel)
+    }
+  }, [session?.user?.id, queryClient])
 
   const query = useQuery({
     queryKey: ['leads', session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) {
-        throw new Error('Aucun ID utilisateur');
+        throw new Error('Aucun ID utilisateur')
       }
 
-      console.log('Récupération initiale des leads');
+      console.log('Récupération initiale des leads')
       const { data, error } = await supabase
         .from('leads')
         .select('*')
         .eq('user_id', session.user.id)
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
 
       if (error) {
-        console.error('Erreur lors de la récupération des leads:', error);
-        throw error;
+        console.error('Erreur lors de la récupération des leads:', error)
+        throw error
       }
 
-      console.log(`${data?.length || 0} leads récupérés`);
-      return data || [];
+      console.log(`${data?.length || 0} leads récupérés`)
+      return data || []
     },
     enabled: !!session?.user?.id,
     staleTime: 0,
     refetchOnMount: true
-  });
+  })
 
   return {
     leads: query.data || [],
     isLoading: query.isLoading,
     error: query.error
-  };
+  }
 }
