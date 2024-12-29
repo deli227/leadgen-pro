@@ -10,6 +10,7 @@ import { Lead } from "@/types/leads"
 import { motion } from "framer-motion"
 import { DashboardTabs } from "@/components/dashboard/DashboardTabs"
 import { useQueryClient } from "@tanstack/react-query"
+import { supabase } from "@/integrations/supabase/client"
 
 export function Dashboard() {
   const { toast } = useToast()
