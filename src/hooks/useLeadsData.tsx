@@ -11,7 +11,7 @@ export function useLeadsData(session: Session | null) {
   useEffect(() => {
     if (!session?.user?.id) return;
 
-    console.log('Configuration de la souscription temps réel pour les leads');
+    console.log('Configuration du canal de synchronisation en temps réel');
     
     const channel = supabase
       .channel('leads-changes')
@@ -24,24 +24,22 @@ export function useLeadsData(session: Session | null) {
           filter: `user_id=eq.${session.user.id}`
         },
         (payload) => {
-          console.log('Changement détecté dans les leads:', payload);
+          console.log('Changement détecté:', payload);
 
+          // Mise à jour instantanée pour les nouveaux leads
           if (payload.eventType === 'INSERT') {
-            const newLead = payload.new as Lead;
-            console.log('Nouveau lead détecté:', newLead);
-            
-            queryClient.setQueryData(['leads', session.user.id], (old: Lead[] | undefined) => {
-              if (!old) return [newLead];
-              return [newLead, ...old];
+            queryClient.setQueryData(['leads', session.user.id], (oldData: Lead[] | undefined) => {
+              const newLead = payload.new as Lead;
+              console.log('Ajout du nouveau lead:', newLead);
+              return oldData ? [newLead, ...oldData] : [newLead];
             });
+          }
 
-            toast.success('Nouveau lead généré');
-          } else if (payload.eventType === 'DELETE') {
-            console.log('Suppression du lead:', payload.old.id);
-            
-            queryClient.setQueryData(['leads', session.user.id], (old: Lead[] | undefined) => {
-              if (!old) return [];
-              return old.filter(lead => lead.id !== payload.old.id);
+          // Mise à jour instantanée pour les suppressions
+          if (payload.eventType === 'DELETE') {
+            queryClient.setQueryData(['leads', session.user.id], (oldData: Lead[] | undefined) => {
+              if (!oldData) return [];
+              return oldData.filter(lead => lead.id !== payload.old.id);
             });
           }
         }
@@ -51,43 +49,35 @@ export function useLeadsData(session: Session | null) {
       });
 
     return () => {
-      console.log('Nettoyage de la souscription aux leads');
+      console.log('Nettoyage de la souscription');
       supabase.removeChannel(channel);
     };
   }, [session?.user?.id, queryClient]);
 
-  const { data, isLoading, error } = useQuery({
+  return useQuery({
     queryKey: ['leads', session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) {
-        console.error('Aucun ID utilisateur disponible');
         throw new Error('Aucun ID utilisateur');
       }
 
-      console.log('Récupération des leads pour l\'utilisateur:', session.user.id);
+      console.log('Récupération initiale des leads');
       const { data, error } = await supabase
         .from('leads')
         .select('*')
         .eq('user_id', session.user.id)
         .order('created_at', { ascending: false });
-      
+
       if (error) {
         console.error('Erreur lors de la récupération des leads:', error);
-        toast.error('Erreur lors du chargement des leads');
         throw error;
       }
-      
-      console.log('Leads récupérés avec succès:', data?.length || 0, 'leads');
+
+      console.log(`${data?.length || 0} leads récupérés`);
       return data || [];
     },
     enabled: !!session?.user?.id,
-    refetchOnWindowFocus: true,
+    staleTime: 0,
     refetchOnMount: true
   });
-
-  return {
-    leads: data || [],
-    isLoading,
-    error
-  };
 }
