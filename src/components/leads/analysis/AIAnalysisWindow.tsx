@@ -30,18 +30,18 @@ export function AIAnalysisWindow({ lead, analysis, isAnalyzing }: AIAnalysisWind
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 20 }}
-      className="w-full h-full xl:h-[calc(100vh-12rem)]"
+      className="h-full"
     >
       <Card className="h-full bg-gradient-to-br from-black/40 to-secondary/20 border border-primary/10 backdrop-blur-sm overflow-hidden shadow-xl hover:shadow-primary/5 transition-all duration-300">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-accent/5 to-primary/5 animate-gradient opacity-50" />
         
-        <ScrollArea className="h-[80vh] xl:h-full">
-          <div className="relative p-8 space-y-8">
-            <div className="flex items-center justify-between bg-black/20 p-6 rounded-xl backdrop-blur-sm border border-primary/5">
-              <h3 className="text-2xl font-bold bg-gradient-to-r from-primary-light to-accent bg-clip-text text-transparent">
+        <ScrollArea className="h-[calc(100vh-12rem)]">
+          <div className="relative p-6 xl:p-8 space-y-6">
+            <div className="flex items-center justify-between bg-black/20 p-4 xl:p-6 rounded-xl backdrop-blur-sm border border-primary/5">
+              <h3 className="text-xl xl:text-2xl font-bold bg-gradient-to-r from-primary-light to-accent bg-clip-text text-transparent">
                 Analyse IA - {lead.company}
               </h3>
-              <CircuitBoard className={`h-7 w-7 text-primary ${isAnalyzing ? 'animate-pulse' : ''}`} />
+              <CircuitBoard className={`h-6 w-6 xl:h-7 xl:w-7 text-primary ${isAnalyzing ? 'animate-pulse' : ''}`} />
             </div>
 
             {isAnalyzing ? (
@@ -50,7 +50,7 @@ export function AIAnalysisWindow({ lead, analysis, isAnalyzing }: AIAnalysisWind
                 <p className="text-primary-light text-base">Analyse en cours...</p>
               </div>
             ) : analysis && analysis.company_analysis ? (
-              <div className="space-y-8">
+              <div className="space-y-6">
                 {analysis.company_analysis && <CompanyAnalysis analysis={analysis.company_analysis} />}
                 {analysis.tech_analysis && <TechAnalysis analysis={analysis.tech_analysis} />}
                 {analysis.marketing_analysis && <MarketingAnalysis analysis={analysis.marketing_analysis} />}
@@ -60,7 +60,7 @@ export function AIAnalysisWindow({ lead, analysis, isAnalyzing }: AIAnalysisWind
                 {analysis.action_plan && <ActionPlan plan={analysis.action_plan} />}
               </div>
             ) : (
-              <div className="space-y-8">
+              <div className="space-y-6">
                 <QualificationScore qualification={lead.qualification || 0} />
                 <StrengthsList strengths={lead.strengths || []} />
                 <WeaknessesList weaknesses={lead.weaknesses || []} />
