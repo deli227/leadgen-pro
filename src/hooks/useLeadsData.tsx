@@ -31,33 +31,31 @@ export function useLeadsData(session: Session | null) {
           console.log('Payload complet:', payload)
 
           try {
-            // Mise à jour instantanée pour les nouveaux leads
+            const queryKey = ['leads', session.user.id]
+            const currentData = queryClient.getQueryData<Lead[]>(queryKey) || []
+
             if (payload.eventType === 'INSERT') {
               console.log('Traitement INSERT pour le lead:', payload.new)
-              // Force le rafraîchissement du cache
-              await queryClient.invalidateQueries({ 
-                queryKey: ['leads', session.user.id],
-                exact: true
-              })
+              queryClient.setQueryData(queryKey, [...currentData, payload.new])
               toast.success('Nouveau lead généré')
             }
 
-            // Mise à jour instantanée pour les suppressions
             if (payload.eventType === 'DELETE') {
               console.log('Traitement DELETE pour le lead:', payload.old.id)
-              await queryClient.invalidateQueries({ 
-                queryKey: ['leads', session.user.id],
-                exact: true
-              })
+              queryClient.setQueryData(
+                queryKey,
+                currentData.filter(lead => lead.id !== payload.old.id)
+              )
             }
 
-            // Mise à jour instantanée pour les modifications
             if (payload.eventType === 'UPDATE') {
               console.log('Traitement UPDATE pour le lead:', payload.new)
-              await queryClient.invalidateQueries({ 
-                queryKey: ['leads', session.user.id],
-                exact: true
-              })
+              queryClient.setQueryData(
+                queryKey,
+                currentData.map(lead => 
+                  lead.id === payload.new.id ? payload.new : lead
+                )
+              )
             }
           } catch (error) {
             console.error('Erreur lors du traitement de l\'événement:', error)
@@ -104,15 +102,15 @@ export function useLeadsData(session: Session | null) {
       return data || []
     },
     enabled: !!session?.user?.id,
-    staleTime: 0, // Force le rafraîchissement à chaque montage
+    staleTime: 0,
     refetchOnMount: true,
-    refetchOnWindowFocus: true // Rafraîchit les données quand la fenêtre reprend le focus
+    refetchOnWindowFocus: true
   })
 
   return {
     leads: query.data || [],
     isLoading: query.isLoading,
     error: query.error,
-    refetch: query.refetch // Expose la fonction refetch pour forcer le rafraîchissement si nécessaire
+    refetch: query.refetch
   }
 }

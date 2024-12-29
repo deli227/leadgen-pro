@@ -29,18 +29,33 @@ export function Dashboard() {
   const { data: limits } = useSubscriptionLimits(profile?.subscription_type)
   const { leads, isLoading, refetch } = useLeadsData(session)
 
-  const handleAddToAnalytics = (lead: Lead) => {
+  const handleAddToAnalytics = async (lead: Lead) => {
     if (!analyticsLeads.find(l => l.id === lead.id)) {
-      setAnalyticsLeads(prev => [...prev, lead])
-      toast({
-        title: "Ajout aux analytiques",
-        description: "Le lead a été ajouté aux analytiques avec succès"
-      })
-      // Force le rafraîchissement du cache après la modification
-      queryClient.invalidateQueries({ 
-        queryKey: ['leads', session?.user?.id],
-        exact: true
-      })
+      try {
+        const { error } = await supabase
+          .from('analytics_leads')
+          .insert([{ user_id: session?.user?.id, lead_id: lead.id }])
+
+        if (error) throw error
+
+        setAnalyticsLeads(prev => [...prev, lead])
+        toast({
+          title: "Ajout aux analytiques",
+          description: "Le lead a été ajouté aux analytiques avec succès"
+        })
+
+        // Mise à jour immédiate du cache
+        const queryKey = ['leads', session?.user?.id]
+        const currentData = queryClient.getQueryData<Lead[]>(queryKey) || []
+        queryClient.setQueryData(queryKey, currentData)
+      } catch (error) {
+        console.error('Erreur lors de l\'ajout aux analytiques:', error)
+        toast({
+          title: "Erreur",
+          description: "Erreur lors de l'ajout aux analytiques",
+          variant: "destructive"
+        })
+      }
     }
   }
 
@@ -51,11 +66,6 @@ export function Dashboard() {
         title: "Ajout à l'export",
         description: "Le lead a été ajouté à l'export avec succès"
       })
-      // Force le rafraîchissement du cache après la modification
-      queryClient.invalidateQueries({ 
-        queryKey: ['leads', session?.user?.id],
-        exact: true
-      })
     }
   }
 
@@ -65,24 +75,36 @@ export function Dashboard() {
       title: "Retrait de l'export",
       description: "Le lead a été retiré de l'export avec succès"
     })
-    // Force le rafraîchissement du cache après la modification
-    queryClient.invalidateQueries({ 
-      queryKey: ['leads', session?.user?.id],
-      exact: true
-    })
   }
 
-  const handleRemoveFromAnalytics = (leadId: string) => {
-    setAnalyticsLeads(prev => prev.filter(lead => lead.id !== leadId))
-    toast({
-      title: "Retrait des analytiques",
-      description: "Le lead a été retiré des analytiques avec succès"
-    })
-    // Force le rafraîchissement du cache après la modification
-    queryClient.invalidateQueries({ 
-      queryKey: ['leads', session?.user?.id],
-      exact: true
-    })
+  const handleRemoveFromAnalytics = async (leadId: string) => {
+    try {
+      const { error } = await supabase
+        .from('analytics_leads')
+        .delete()
+        .eq('lead_id', leadId)
+        .eq('user_id', session?.user?.id)
+
+      if (error) throw error
+
+      setAnalyticsLeads(prev => prev.filter(lead => lead.id !== leadId))
+      toast({
+        title: "Retrait des analytiques",
+        description: "Le lead a été retiré des analytiques avec succès"
+      })
+
+      // Mise à jour immédiate du cache
+      const queryKey = ['leads', session?.user?.id]
+      const currentData = queryClient.getQueryData<Lead[]>(queryKey) || []
+      queryClient.setQueryData(queryKey, currentData)
+    } catch (error) {
+      console.error('Erreur lors du retrait des analytiques:', error)
+      toast({
+        title: "Erreur",
+        description: "Erreur lors du retrait des analytiques",
+        variant: "destructive"
+      })
+    }
   }
 
   return (
