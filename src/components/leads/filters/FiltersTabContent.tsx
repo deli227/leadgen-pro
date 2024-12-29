@@ -11,6 +11,7 @@ import { useState } from "react"
 import { Lead } from "@/types/leads"
 import { LeadFilters } from "@/types/filters"
 import { useQueryClient } from "@tanstack/react-query"
+import { useNavigate } from "react-router-dom"
 
 interface FiltersTabContentProps {
   filters: LeadFilters
@@ -29,6 +30,7 @@ export function FiltersTabContent({
 }: FiltersTabContentProps) {
   const [isGenerating, setIsGenerating] = useState(false)
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
 
   const handleGenerateLeads = async () => {
     try {
@@ -39,6 +41,7 @@ export function FiltersTabContent({
         toast.error("Erreur d'authentification", {
           description: "Veuillez vous reconnecter pour générer des leads."
         })
+        navigate('/auth')
         return
       }
 
@@ -60,7 +63,6 @@ export function FiltersTabContent({
         return
       }
 
-      // Si la limite est atteinte
       if (data?.limitReached) {
         toast.error("Limite de leads atteinte", {
           description: "Vous avez atteint votre limite de leads pour ce mois. Passez à un plan supérieur pour générer plus de leads.",
@@ -80,7 +82,6 @@ export function FiltersTabContent({
         return
       }
 
-      // Invalider le cache pour forcer un rechargement des leads
       await queryClient.invalidateQueries({ queryKey: ['leads'] })
 
       toast.success("Génération réussie", {
@@ -99,6 +100,15 @@ export function FiltersTabContent({
 
   const handleDelete = async (lead: Lead) => {
     try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        toast.error("Erreur d'authentification", {
+          description: "Veuillez vous reconnecter pour supprimer des leads."
+        })
+        navigate('/auth')
+        return
+      }
+
       const { error } = await supabase
         .from('leads')
         .delete()
@@ -110,12 +120,10 @@ export function FiltersTabContent({
         return
       }
 
-      // Invalider le cache pour forcer un rechargement des leads
       await queryClient.invalidateQueries({ queryKey: ['leads'] })
       
       toast.success("Lead supprimé avec succès")
       
-      // Appeler onLocalRemove si fourni
       if (onLocalRemove) {
         onLocalRemove(lead.id)
       }
