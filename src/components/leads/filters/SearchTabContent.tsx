@@ -151,7 +151,7 @@ export function SearchTabContent({ filters, setFilters, onAddToAnalytics }: Sear
           placeholder="Rechercher une entreprise..."
           value={filters.search}
           onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-          className="bg-black/20"
+          className="bg-black/20 text-primary-light placeholder:text-primary-light/50"
         />
         
         <LocationFilters
