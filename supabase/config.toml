@@ -1,21 +1,17 @@
 project_id = "rbsuobpaqwtmiesxwcaw"
 
-[api]
-enabled = true
-port = 54321
-schemas = ["public", "storage", "graphql_public"]
+[[functions]]
+name = "create-checkout"
+verify_jwt = true
 
-[db]
-port = 54322
-shadow_port = 54320
+[[functions]]
+name = "generate-leads-with-ai"
+verify_jwt = true
 
-[studio]
-enabled = true
-port = 54323
+[[functions]]
+name = "send-automated-emails"
+verify_jwt = true
 
-[inbucket]
-enabled = true
-port = 54324
-
-[storage]
-enabled = true
+[[functions]]
+name = "stripe-webhook"
+verify_jwt = false
