@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { useState } from "react";
+import { createPortal } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
@@ -48,8 +48,16 @@ export function WaitlistDialog({ triggerButton = false }: { triggerButton?: bool
     }
   };
 
-  return (
-    <div className="fixed bottom-4 right-4 z-50 w-[320px] bg-gradient-to-br from-secondary-dark to-black border border-primary/20 rounded-lg shadow-xl">
+  const dialog = (
+    <div 
+      className="fixed bottom-4 right-4 z-[99999] w-[320px] bg-gradient-to-br from-secondary-dark to-black border border-primary/20 rounded-lg shadow-xl"
+      style={{
+        position: 'fixed',
+        bottom: '1rem',
+        right: '1rem',
+        zIndex: 99999,
+      }}
+    >
       <div className="p-4">
         <div className="space-y-3">
           <h3 className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
@@ -80,4 +88,6 @@ export function WaitlistDialog({ triggerButton = false }: { triggerButton?: bool
       </div>
     </div>
   );
+
+  return createPortal(dialog, document.body);
 }
