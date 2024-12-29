@@ -34,6 +34,7 @@ export function LeadsAnalytics({
     const fetchAnalyticsLeads = async () => {
       if (!session?.user?.id) return
 
+      console.log('Fetching analytics leads...')
       const { data: analyticsData, error } = await supabase
         .from('analytics_leads')
         .select('lead_id')
@@ -44,8 +45,10 @@ export function LeadsAnalytics({
         return
       }
 
+      console.log('Analytics data received:', analyticsData)
       const analyticsLeadIds = analyticsData.map(row => row.lead_id)
       const filteredLeads = leads.filter(lead => analyticsLeadIds.includes(lead.id))
+      console.log('Filtered leads:', filteredLeads)
       setAnalyticsLeads(filteredLeads)
     }
 
@@ -54,16 +57,19 @@ export function LeadsAnalytics({
 
   const handleDelete = async (lead: Lead) => {
     try {
-      // Supprimer de la table analytics_leads
+      if (!session?.user?.id) {
+        throw new Error("Utilisateur non authentifié")
+      }
+
+      console.log('Deleting lead:', lead.id)
       const { error: analyticsError } = await supabase
         .from('analytics_leads')
         .delete()
         .eq('lead_id', lead.id)
-        .eq('user_id', session?.user?.id)
+        .eq('user_id', session.user.id)
 
       if (analyticsError) throw analyticsError
 
-      // Supprimer le lead lui-même
       const { error } = await supabase
         .from('leads')
         .delete()
@@ -75,6 +81,9 @@ export function LeadsAnalytics({
       if (onRemoveFromAnalytics) {
         onRemoveFromAnalytics(lead.id)
       }
+      
+      setAnalyticsLeads(prev => prev.filter(l => l.id !== lead.id))
+
       toast({
         title: "Lead supprimé",
         description: "Le lead a été supprimé avec succès"
@@ -97,7 +106,7 @@ export function LeadsAnalytics({
         throw new Error("Utilisateur non authentifié")
       }
 
-      // Ajouter à la table analytics_leads
+      console.log('Adding lead to analytics:', lead.id)
       const { error: analyticsError } = await supabase
         .from('analytics_leads')
         .insert([
@@ -105,22 +114,27 @@ export function LeadsAnalytics({
         ])
 
       if (analyticsError) {
-        if (analyticsError.code === '23505') { // Code d'erreur pour violation de contrainte unique
+        if (analyticsError.code === '23505') {
           console.log('Ce lead est déjà dans les analytiques')
-        } else {
-          throw analyticsError
+          toast({
+            title: "Information",
+            description: "Ce lead est déjà dans les analytiques"
+          })
+          return
         }
+        throw analyticsError
       }
 
+      console.log('Lead added to analytics successfully')
       setSelectedLead(lead)
       setCurrentAnalysis(null)
+
       const analysis = await handleAnalyze(lead)
       if (analysis) {
         console.log("Analyse reçue:", analysis)
         setCurrentAnalysis(analysis)
       }
       
-      // Mettre à jour la liste des leads analytiques
       setAnalyticsLeads(prev => {
         if (!prev.find(l => l.id === lead.id)) {
           return [...prev, lead]
