@@ -89,8 +89,8 @@ export function useLeadsData(session: Session | null) {
     refetchOnWindowFocus: true,
     refetchOnMount: true,
     staleTime: 0,
-    cacheTime: 0, // Désactive le cache pour toujours avoir les données les plus récentes
-    initialData: [] // Fournit des données initiales vides pour éviter les états de chargement
+    gcTime: 0, // Remplace cacheTime qui est déprécié
+    initialData: [] as Lead[] // Typage explicite pour éviter l'erreur TypeScript
   });
 
   return {
