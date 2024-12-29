@@ -3,7 +3,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { validateLead } from './validateLead.ts'
 import { buildPrompt } from './promptBuilder.ts'
 import { extractJSONFromText } from './responseHandler.ts'
-import { checkAndGetAvailableLeads, updateLeadCount } from './limitHandler.ts'
+import { checkAndGetAvailableLeads } from './limitHandler.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -149,9 +149,6 @@ serve(async (req) => {
     if (!insertedLeads) {
       throw new Error('Aucun lead n\'a été inséré');
     }
-
-    // Mise à jour du compteur de leads générés
-    await updateLeadCount(supabase, userId, insertedLeads.length);
 
     console.log(`${insertedLeads.length} leads insérés avec succès`);
 

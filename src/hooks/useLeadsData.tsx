@@ -26,12 +26,9 @@ export function useLeadsData(session: Session | null) {
         async (payload) => {
           console.log('Changement détecté dans les leads:', payload);
 
-          // Force une mise à jour immédiate du cache
-          const currentData = queryClient.getQueryData(['leads', session.user.id]) as Lead[] || [];
-
           if (payload.eventType === 'INSERT') {
             const newLead = payload.new as Lead;
-            console.log('Ajout du nouveau lead:', newLead);
+            console.log('Nouveau lead détecté:', newLead);
             
             // Mise à jour optimiste du cache
             queryClient.setQueryData(['leads', session.user.id], (old: Lead[] | undefined) => {
@@ -40,37 +37,27 @@ export function useLeadsData(session: Session | null) {
               return updatedLeads;
             });
 
-            // Force un re-fetch pour s'assurer de la synchronisation
+            // Force un re-fetch immédiat
             await queryClient.invalidateQueries({
               queryKey: ['leads', session.user.id],
               exact: true,
               refetchType: 'active'
             });
 
+            // Mise à jour du profil pour les compteurs
+            await queryClient.invalidateQueries({
+              queryKey: ['profile', session.user.id]
+            });
+
             toast.success('Nouveau lead généré');
           } else if (payload.eventType === 'DELETE') {
             console.log('Suppression du lead:', payload.old.id);
             
-            queryClient.setQueryData(
-              ['leads', session.user.id], 
-              currentData.filter((lead: Lead) => lead.id !== payload.old.id)
-            );
-          } else {
-            console.log('Mise à jour complète des leads');
-            
-            const { data } = await supabase
-              .from('leads')
-              .select('*')
-              .eq('user_id', session.user.id)
-              .order('created_at', { ascending: false });
-            
-            queryClient.setQueryData(['leads', session.user.id], data || []);
+            queryClient.setQueryData(['leads', session.user.id], (old: Lead[] | undefined) => {
+              if (!old) return [];
+              return old.filter(lead => lead.id !== payload.old.id);
+            });
           }
-
-          // Rafraîchit également les données du profil
-          await queryClient.invalidateQueries({
-            queryKey: ['profile', session.user.id]
-          });
         }
       )
       .subscribe((status) => {
