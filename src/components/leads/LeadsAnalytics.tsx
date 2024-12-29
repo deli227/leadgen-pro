@@ -29,6 +29,17 @@ export function LeadsAnalytics({
 
   const handleDelete = async (lead: Lead) => {
     try {
+      // D'abord supprimer les références dans analytics_leads
+      const { error: analyticsError } = await supabase
+        .from('analytics_leads')
+        .delete()
+        .eq('lead_id', lead.id)
+
+      if (analyticsError) {
+        console.error("Erreur lors de la suppression des analytics:", analyticsError)
+      }
+
+      // Ensuite supprimer le lead
       const { error } = await supabase
         .from('leads')
         .delete()
