@@ -23,7 +23,7 @@ interface FiltersTabContentProps {
 export function FiltersTabContent({ 
   filters, 
   setFilters, 
-  leads, 
+  leads = [], // Valeur par défaut pour éviter l'erreur undefined
   onAddToAnalytics,
   onLocalRemove
 }: FiltersTabContentProps) {
