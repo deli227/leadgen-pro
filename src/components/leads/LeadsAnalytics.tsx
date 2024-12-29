@@ -1,51 +1,97 @@
 import { motion } from "framer-motion"
 import { Lead } from "@/types/leads"
+import { useLeadActions } from "@/hooks/useLeadActions"
+import { AIAnalysisWindow } from "./analysis/AIAnalysisWindow"
+import { useState } from "react"
+import { LeadsList } from "./shared/LeadsList"
+import { LeadAnalysis } from "@/types/analysis"
+import { useToast } from "@/hooks/use-toast"
+import { supabase } from "@/integrations/supabase/client"
 
 interface LeadsAnalyticsProps {
   leads: Lead[]
   onAddToExport: (lead: Lead) => void
   onLocalRemove?: (leadId: string) => void
-  onRemoveFromAnalytics: (leadId: string) => void
+  onRemoveFromAnalytics?: (leadId: string) => void
 }
 
 export function LeadsAnalytics({ 
-  leads,
-  onAddToExport,
+  leads, 
+  onAddToExport, 
   onLocalRemove,
-  onRemoveFromAnalytics
+  onRemoveFromAnalytics 
 }: LeadsAnalyticsProps) {
+  const { handleAnalyze, isAnalyzing } = useLeadActions()
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
+  const [currentAnalysis, setCurrentAnalysis] = useState<LeadAnalysis | null>(null)
+  const { toast } = useToast()
+  const [removedLeads, setRemovedLeads] = useState<string[]>([])
+
+  const handleDelete = async (lead: Lead) => {
+    try {
+      const { error } = await supabase
+        .from('leads')
+        .delete()
+        .eq('id', lead.id)
+
+      if (error) throw error
+
+      setRemovedLeads(prev => [...prev, lead.id])
+      if (onRemoveFromAnalytics) {
+        onRemoveFromAnalytics(lead.id)
+      }
+      toast({
+        title: "Lead supprimé",
+        description: "Le lead a été supprimé avec succès"
+      })
+    } catch (error) {
+      console.error("Erreur lors de la suppression:", error)
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la suppression du lead",
+        variant: "destructive"
+      })
+    }
+  }
+
+  const filteredLeads = leads.filter(lead => !removedLeads.includes(lead.id))
+
+  const handleAnalyzeLead = async (lead: Lead) => {
+    try {
+      setSelectedLead(lead)
+      setCurrentAnalysis(null)
+      const analysis = await handleAnalyze(lead)
+      if (analysis) {
+        console.log("Analyse reçue:", analysis)
+        setCurrentAnalysis(analysis)
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'analyse:", error)
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors de l'analyse du lead",
+        variant: "destructive"
+      })
+    }
+  }
+
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.1 }}
-      className="space-y-4"
-    >
-      {leads.map(lead => (
-        <div key={lead.id} className="flex items-center justify-between gap-4">
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold text-primary-light">{lead.company}</h3>
-            <p className="text-sm text-primary-light/70">{lead.industry}</p>
-          </div>
-          <div className="flex gap-2">
-            <button
-              onClick={() => onAddToExport(lead)}
-              className="px-4 py-2 text-sm bg-primary text-white rounded-lg hover:bg-primary/90"
-            >
-              Exporter
-            </button>
-            <button
-              onClick={() => {
-                if (onLocalRemove) onLocalRemove(lead.id)
-                onRemoveFromAnalytics(lead.id)
-              }}
-              className="px-4 py-2 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600"
-            >
-              Supprimer
-            </button>
-          </div>
-        </div>
-      ))}
-    </motion.div>
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+      <div className="lg:col-span-2">
+        <LeadsList 
+          leads={filteredLeads}
+          onAddToAnalytics={handleAnalyzeLead}
+          onAddToExport={onAddToExport}
+          onDelete={handleDelete}
+          title="Leads en analyse"
+        />
+      </div>
+      
+      <AIAnalysisWindow 
+        lead={selectedLead} 
+        analysis={currentAnalysis} 
+        isAnalyzing={isAnalyzing}
+      />
+    </div>
   )
 }

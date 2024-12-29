@@ -15,14 +15,14 @@ interface LeadsListProps {
 
 export function LeadsList({ 
   leads, 
-  onAddToAnalytics = () => {}, 
+  onAddToAnalytics, 
   onAddToExport,
   onDelete,
   showActions = true,
   filterView = false,
   title = "Leads générés"
 }: LeadsListProps) {
-  if (!leads || leads.length === 0) {
+  if (leads.length === 0) {
     return (
       <div className="text-center p-8 text-primary-light/70">
         Aucun lead disponible
@@ -47,8 +47,8 @@ export function LeadsList({
               <LeadCard
                 lead={lead}
                 onAddToAnalytics={onAddToAnalytics}
-                onDelete={onDelete}
                 onAddToExport={onAddToExport}
+                onDelete={onDelete}
                 showActions={showActions}
                 filterView={filterView}
               />
