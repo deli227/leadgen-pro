@@ -11,6 +11,7 @@ import { useState } from "react"
 import { Lead } from "@/types/leads"
 import { LeadFilters } from "@/types/filters"
 import { useNavigate } from "react-router-dom"
+import { useQueryClient } from "@tanstack/react-query"
 
 interface FiltersTabContentProps {
   filters: LeadFilters
@@ -30,6 +31,7 @@ export function FiltersTabContent({
   const [isGenerating, setIsGenerating] = useState(false)
   const [removedLeads, setRemovedLeads] = useState<string[]>([])
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
   const handleGenerateLeads = async () => {
     try {
@@ -81,11 +83,13 @@ export function FiltersTabContent({
         return
       }
 
+      // Invalider le cache pour forcer un rechargement des leads
+      await queryClient.invalidateQueries({ queryKey: ['leads'] })
+
       toast.success("Génération réussie", {
         description: "Les leads ont été générés avec succès."
       })
 
-      window.location.reload()
     } catch (error: any) {
       console.error('Erreur complète:', error)
       toast.error("Erreur système", {
