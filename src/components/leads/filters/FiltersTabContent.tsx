@@ -47,7 +47,8 @@ export function FiltersTabContent({
       return
     }
 
-    if (filters.leadCount > remainingLeads) {
+    // Vérification si l'utilisateur a dépassé sa limite
+    if (remainingLeads <= 0) {
       setShowLimitDialog(true)
       return
     }
@@ -59,7 +60,8 @@ export function FiltersTabContent({
       const { data: functionData, error: functionError } = await supabase.functions.invoke('generate-leads-with-ai', {
         body: { 
           filters,
-          userId: session.data.user.id
+          userId: session.data.user.id,
+          remainingLeads
         }
       })
 
@@ -71,9 +73,9 @@ export function FiltersTabContent({
         throw new Error("Échec de la génération des leads")
       }
 
-      toast.success("Leads générés avec succès")
+      toast.success(`${filters.leadCount} leads générés avec succès`)
 
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erreur lors de la génération:", error)
       toast.error("Une erreur est survenue lors de la génération des leads")
     } finally {
@@ -104,7 +106,7 @@ export function FiltersTabContent({
 
         <Button 
           onClick={handleGenerateLeads}
-          disabled={isGenerating || filters.leadCount === 0 || filters.leadCount > remainingLeads}
+          disabled={isGenerating || filters.leadCount === 0}
           className="w-full bg-primary hover:bg-primary/90"
         >
           {isGenerating ? "Génération en cours..." : "Générer les leads"}
@@ -129,8 +131,8 @@ export function FiltersTabContent({
             <AlertDialogTitle>Limite de génération atteinte</AlertDialogTitle>
             <AlertDialogDescription>
               Votre abonnement actuel vous permet de générer {limits?.monthly_leads_limit} leads par mois.
-              Il vous reste {remainingLeads} leads disponibles.
-              Veuillez ajuster le nombre de leads à générer ou passer à un abonnement supérieur.
+              Vous avez atteint votre limite mensuelle.
+              Pour générer plus de leads, passez à un abonnement supérieur.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

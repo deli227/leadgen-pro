@@ -8,7 +8,7 @@ interface LeadCountSliderProps {
 
 export function LeadCountSlider({ value, onChange, maxValue }: LeadCountSliderProps) {
   const handleValueChange = (newValue: number[]) => {
-    onChange(Math.min(newValue[0], maxValue))
+    onChange(newValue[0])
   }
 
   return (
@@ -18,12 +18,12 @@ export function LeadCountSlider({ value, onChange, maxValue }: LeadCountSliderPr
           Nombre de leads à générer
         </label>
         <span className="text-sm text-primary-light">
-          {value}
+          {value} {maxValue > 0 && `(${maxValue} restants)`}
         </span>
       </div>
       <Slider
         value={[value]}
-        max={Math.max(maxValue, 1)}
+        max={100}
         min={0}
         step={1}
         onValueChange={handleValueChange}
