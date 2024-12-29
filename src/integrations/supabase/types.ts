@@ -393,6 +393,7 @@ export type Database = {
         Row: {
           created_at: string
           email: string | null
+          email_confirmed: boolean | null
           id: string
           last_lead_generation_date: string | null
           leads_generated_this_month: number
@@ -402,6 +403,7 @@ export type Database = {
         Insert: {
           created_at?: string
           email?: string | null
+          email_confirmed?: boolean | null
           id: string
           last_lead_generation_date?: string | null
           leads_generated_this_month?: number
@@ -411,6 +413,7 @@ export type Database = {
         Update: {
           created_at?: string
           email?: string | null
+          email_confirmed?: boolean | null
           id?: string
           last_lead_generation_date?: string | null
           leads_generated_this_month?: number

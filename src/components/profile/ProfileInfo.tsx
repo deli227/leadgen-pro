@@ -24,6 +24,12 @@ export function ProfileInfo({ profile, session }: ProfileInfoProps) {
               day: 'numeric'
             })}
           </p>
+          <p className="text-sm text-primary-light/70">
+            Statut de l'email : {profile?.email_confirmed ? 
+              <span className="text-green-500">Vérifié</span> : 
+              <span className="text-yellow-500">En attente de vérification</span>
+            }
+          </p>
         </div>
       </div>
     </Card>

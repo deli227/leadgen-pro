@@ -1,7 +1,7 @@
 import { Auth as SupabaseAuth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,9 @@ import { toast } from "sonner";
 
 export function Auth() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [isLoading, setIsLoading] = useState(true);
+  const [isConfirming, setIsConfirming] = useState(false);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -25,7 +27,42 @@ export function Auth() {
       setIsLoading(false);
     };
 
+    // Vérifie si nous sommes dans un processus de confirmation d'email
+    const confirmEmail = async () => {
+      const token_hash = searchParams.get('token_hash');
+      const type = searchParams.get('type');
+      
+      if (type === 'email_confirmation' && token_hash) {
+        setIsConfirming(true);
+        try {
+          const { error } = await supabase.auth.verifyOtp({
+            token_hash,
+            type: 'email_confirmation',
+          });
+          
+          if (error) throw error;
+          
+          // Met à jour le statut de confirmation dans la table profiles
+          const { error: updateError } = await supabase
+            .from('profiles')
+            .update({ email_confirmed: true })
+            .eq('id', (await supabase.auth.getUser()).data.user?.id);
+          
+          if (updateError) throw updateError;
+          
+          toast.success("Email confirmé avec succès !");
+          navigate("/dashboard");
+        } catch (error) {
+          console.error("Erreur lors de la confirmation de l'email:", error);
+          toast.error("Erreur lors de la confirmation de l'email");
+        } finally {
+          setIsConfirming(false);
+        }
+      }
+    };
+
     checkSession();
+    confirmEmail();
 
     const {
       data: { subscription },
@@ -47,11 +84,23 @@ export function Auth() {
     return () => {
       subscription.unsubscribe();
     };
-  }, [navigate]);
+  }, [navigate, searchParams]);
+
+  if (isConfirming) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-secondary-dark to-[#1A1F2C] flex flex-col items-center justify-center p-4">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <h2 className="text-xl font-semibold text-primary-light">Confirmation de votre email en cours...</h2>
+          <p className="text-primary-light/70">Veuillez patienter pendant que nous vérifions votre email.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-secondary-dark to-[#1A1F2C]">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
