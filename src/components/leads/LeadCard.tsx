@@ -19,6 +19,12 @@ export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted }: LeadCardProp
 
   const handleDelete = async () => {
     try {
+      // Supprimer d'abord de analytics_leads si présent
+      await supabase
+        .from('analytics_leads')
+        .delete()
+        .eq('lead_id', lead.id)
+
       const { error } = await supabase
         .from('leads')
         .delete()

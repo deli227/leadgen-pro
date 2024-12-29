@@ -2,11 +2,12 @@ import { motion } from "framer-motion"
 import { Lead } from "@/types/leads"
 import { useLeadActions } from "@/hooks/useLeadActions"
 import { AIAnalysisWindow } from "./analysis/AIAnalysisWindow"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { LeadsList } from "./shared/LeadsList"
 import { LeadAnalysis } from "@/types/analysis"
 import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
+import { useSessionData } from "@/hooks/useSessionData"
 
 interface LeadsAnalyticsProps {
   leads: Lead[]
@@ -26,9 +27,43 @@ export function LeadsAnalytics({
   const [currentAnalysis, setCurrentAnalysis] = useState<LeadAnalysis | null>(null)
   const { toast } = useToast()
   const [removedLeads, setRemovedLeads] = useState<string[]>([])
+  const [analyticsLeads, setAnalyticsLeads] = useState<Lead[]>([])
+  const { data: session } = useSessionData()
+
+  useEffect(() => {
+    const fetchAnalyticsLeads = async () => {
+      if (!session?.user?.id) return
+
+      const { data: analyticsData, error } = await supabase
+        .from('analytics_leads')
+        .select('lead_id')
+        .eq('user_id', session.user.id)
+
+      if (error) {
+        console.error('Erreur lors de la récupération des leads analytiques:', error)
+        return
+      }
+
+      const analyticsLeadIds = analyticsData.map(row => row.lead_id)
+      const filteredLeads = leads.filter(lead => analyticsLeadIds.includes(lead.id))
+      setAnalyticsLeads(filteredLeads)
+    }
+
+    fetchAnalyticsLeads()
+  }, [session?.user?.id, leads])
 
   const handleDelete = async (lead: Lead) => {
     try {
+      // Supprimer de la table analytics_leads
+      const { error: analyticsError } = await supabase
+        .from('analytics_leads')
+        .delete()
+        .eq('lead_id', lead.id)
+        .eq('user_id', session?.user?.id)
+
+      if (analyticsError) throw analyticsError
+
+      // Supprimer le lead lui-même
       const { error } = await supabase
         .from('leads')
         .delete()
@@ -54,10 +89,27 @@ export function LeadsAnalytics({
     }
   }
 
-  const filteredLeads = leads.filter(lead => !removedLeads.includes(lead.id))
+  const filteredLeads = analyticsLeads.filter(lead => !removedLeads.includes(lead.id))
 
   const handleAnalyzeLead = async (lead: Lead) => {
     try {
+      // Ajouter à la table analytics_leads
+      const { error: analyticsError } = await supabase
+        .from('analytics_leads')
+        .insert([
+          { user_id: session?.user?.id, lead_id: lead.id }
+        ])
+        .select()
+        .single()
+
+      if (analyticsError) {
+        if (analyticsError.code === '23505') { // Code d'erreur pour violation de contrainte unique
+          console.log('Ce lead est déjà dans les analytiques')
+        } else {
+          throw analyticsError
+        }
+      }
+
       setSelectedLead(lead)
       setCurrentAnalysis(null)
       const analysis = await handleAnalyze(lead)
@@ -65,6 +117,14 @@ export function LeadsAnalytics({
         console.log("Analyse reçue:", analysis)
         setCurrentAnalysis(analysis)
       }
+      
+      // Mettre à jour la liste des leads analytiques
+      setAnalyticsLeads(prev => {
+        if (!prev.find(l => l.id === lead.id)) {
+          return [...prev, lead]
+        }
+        return prev
+      })
     } catch (error) {
       console.error("Erreur lors de l'analyse:", error)
       toast({
