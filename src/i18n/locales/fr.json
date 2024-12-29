@@ -7,6 +7,10 @@
     "generating": "Génération en cours...",
     "generateLeads": "Générer les leads"
   },
+  "hero": {
+    "title": "Une Première Mondiale en Prospection B2B",
+    "mainText": "Propulsez votre marketing et votre prospection dans une nouvelle dimension avec notre IA révolutionnaire ! Identifiez instantanément des leads qualifiés et obtenez une vue à 360° : forces à exploiter, faiblesses à surmonter, opportunités à saisir. Transformez chaque prospect en succès avec des insights puissants et un avantage imbattable. Prêt à dominer votre marché ? Passez au niveau supérieur maintenant !"
+  },
   "filters": {
     "companySize": "Taille de l'entreprise",
     "industry": "Industrie",
