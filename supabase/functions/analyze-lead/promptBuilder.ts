@@ -1,6 +1,6 @@
 import { Lead } from './types.ts';
 
-export function buildPrompt(lead: Lead): string {
+export function buildAnalysisPrompt(lead: Lead): string {
   return `
 Analyse détaillée pour l'entreprise ${lead.company}
 
@@ -83,5 +83,5 @@ Pour chaque solution (technique, marketing, business), fournir :
 - Proposer des jalons de contrôle
 - Prévoir des actions correctives
 
-Format de réponse attendu : Fournir une analyse structurée et détaillée en JSON suivant le schéma défini.`;
+Format de réponse attendu : Fournir une analyse structurée et détaillée en JSON suivant le schéma défini.`
 }
