@@ -39,7 +39,7 @@ export function StatsGrid({ stats }: StatsGridProps) {
       />
       <StatsCard
         icon={DollarSign}
-        label="Revenu mensuel"
+        label="Revenu total"
         value={stats.totalRevenue}
         formatter={(value) => `${value.toFixed(2)}€`}
       />

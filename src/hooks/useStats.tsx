@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { supabase } from "@/integrations/supabase/client"
-import { toast } from "@/hooks/use-toast"
-import { startOfDay, endOfDay, format } from "date-fns"
+import { toast } from "sonner"
+import { startOfDay, endOfDay } from "date-fns"
 
 interface ChartData {
   date: string
@@ -40,7 +40,7 @@ export function useStats(dateRange?: DateRange) {
 
   const fetchStats = async () => {
     try {
-      console.log("Fetching admin dashboard stats...")
+      console.log("Récupération des statistiques du tableau de bord...")
       
       const start = dateRange ? startOfDay(dateRange.start) : startOfDay(new Date())
       const end = dateRange ? endOfDay(dateRange.end) : endOfDay(new Date())
@@ -135,14 +135,10 @@ export function useStats(dateRange?: DateRange) {
 
       setChartData(chartData)
       setLastUpdate(new Date())
-      console.log("Admin dashboard stats updated successfully")
+      console.log("Statistiques du tableau de bord mises à jour avec succès")
     } catch (error) {
       console.error('Erreur lors de la récupération des statistiques:', error)
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Erreur lors du chargement des statistiques"
-      })
+      toast.error("Erreur lors du chargement des statistiques")
     } finally {
       setIsLoading(false)
     }
@@ -157,7 +153,7 @@ export function useStats(dateRange?: DateRange) {
       .on('postgres_changes', 
         { event: '*', schema: 'public', table: 'waitlist' }, 
         () => {
-          console.log('Waitlist updated, refreshing stats...')
+          console.log('Liste d\'attente mise à jour, actualisation des stats...')
           fetchStats()
         }
       )
@@ -169,7 +165,7 @@ export function useStats(dateRange?: DateRange) {
       .on('postgres_changes', 
         { event: '*', schema: 'public', table: 'profiles' }, 
         () => {
-          console.log('Profiles updated, refreshing stats...')
+          console.log('Profils mis à jour, actualisation des stats...')
           fetchStats()
         }
       )
@@ -181,7 +177,7 @@ export function useStats(dateRange?: DateRange) {
       .on('postgres_changes',
         { event: '*', schema: 'public', table: 'payments' },
         () => {
-          console.log('Payments updated, refreshing stats...')
+          console.log('Paiements mis à jour, actualisation des stats...')
           fetchStats()
         }
       )
