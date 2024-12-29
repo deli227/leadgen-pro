@@ -84,6 +84,7 @@ export function LeadsAnalytics({
           onAddToExport={onAddToExport}
           onDelete={handleDelete}
           title="Leads en analyse"
+          isAnalyticsView={true}
         />
       </div>
       
