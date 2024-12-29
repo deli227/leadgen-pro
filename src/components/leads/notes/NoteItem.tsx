@@ -15,7 +15,6 @@ interface NoteItemProps {
 }
 
 export function NoteItem({ note, onNoteDeleted }: NoteItemProps) {
-  const [isDeleting, setIsDeleting] = useState(false)
   const { toast } = useToast()
 
   const formatDate = (dateString: string) => {
@@ -69,25 +68,27 @@ export function NoteItem({ note, onNoteDeleted }: NoteItemProps) {
             <Trash2 className="h-4 w-4 text-red-500" />
           </Button>
         </AlertDialogTrigger>
-        <AlertDialogContent className="bg-black border border-primary-light">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-primary-light">Confirmer la suppression</AlertDialogTitle>
-            <AlertDialogDescription className="text-primary-light/70">
-              Êtes-vous sûr de vouloir supprimer cette note ? Cette action est irréversible.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel className="border-primary-light text-primary-light hover:bg-primary-light/10">
-              Annuler
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDeleteNote}
-              className="bg-red-500 hover:bg-red-600 text-white border-none"
-            >
-              Supprimer
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
+        <div className="fixed inset-0" style={{ zIndex: 999999 }}>
+          <AlertDialogContent className="bg-black border border-primary-light" style={{ position: 'fixed', zIndex: 9999999 }}>
+            <AlertDialogHeader>
+              <AlertDialogTitle className="text-primary-light">Confirmer la suppression</AlertDialogTitle>
+              <AlertDialogDescription className="text-primary-light/70">
+                Êtes-vous sûr de vouloir supprimer cette note ? Cette action est irréversible.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="border-primary-light text-primary-light hover:bg-primary-light/10">
+                Annuler
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleDeleteNote}
+                className="bg-red-500 hover:bg-red-600 text-white border-none"
+              >
+                Supprimer
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </div>
       </AlertDialog>
     </div>
   )
