@@ -91,7 +91,6 @@ export const PricingPlan = ({
         } transform transition-all duration-300 opacity-75 px-2 py-1.5 h-auto min-h-[44px]`}
       >
         <span className="text-xs sm:text-sm font-medium whitespace-nowrap">{buttonText}</span>
-        <span className="text-[10px] sm:text-xs whitespace-nowrap opacity-75">(Bientôt disponible)</span>
       </Button>
     </div>
   );
