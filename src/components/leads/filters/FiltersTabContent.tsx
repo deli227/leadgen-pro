@@ -134,47 +134,55 @@ export function FiltersTabContent({
   }
 
   return (
-    <div className="space-y-6 bg-gradient-to-br from-black/80 to-secondary-dark/80 p-8 rounded-b-xl border border-primary/10 shadow-xl">
+    <div className="space-y-6 bg-gradient-to-br from-black/80 to-secondary-dark/80 p-4 sm:p-6 md:p-8 rounded-b-xl border border-primary/10 shadow-xl">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="flex flex-wrap gap-4"
+        className="flex flex-col sm:flex-row flex-wrap gap-4"
       >
-        <LocationFilters 
-          country={filters.country}
-          city={filters.city}
-          onCountryChange={(value) => {
-            setFilters({ ...filters, country: value, city: "all" })
-          }}
-          onCityChange={(value) => setFilters({ ...filters, city: value })}
-        />
+        <div className="w-full sm:w-auto flex-1 min-w-[200px]">
+          <LocationFilters 
+            country={filters.country}
+            city={filters.city}
+            onCountryChange={(value) => {
+              setFilters({ ...filters, country: value, city: "all" })
+            }}
+            onCityChange={(value) => setFilters({ ...filters, city: value })}
+          />
+        </div>
         
-        <IndustrySelect 
-          value={filters.industry}
-          onChange={(value) => setFilters({ ...filters, industry: value })}
-        />
+        <div className="w-full sm:w-auto flex-1 min-w-[200px]">
+          <IndustrySelect 
+            value={filters.industry}
+            onChange={(value) => setFilters({ ...filters, industry: value })}
+          />
+        </div>
 
-        <Button
-          onClick={handleGenerateLeads}
-          disabled={isGenerating}
-          className="ml-auto bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white shadow-lg hover:shadow-xl transition-all duration-300"
-        >
-          {isGenerating ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Génération...
-            </>
-          ) : (
-            'Générer les leads'
-          )}
-        </Button>
+        <div className="w-full sm:w-auto flex justify-end">
+          <Button
+            onClick={handleGenerateLeads}
+            disabled={isGenerating}
+            className="w-full sm:w-auto bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+          >
+            {isGenerating ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Génération...
+              </>
+            ) : (
+              'Générer les leads'
+            )}
+          </Button>
+        </div>
       </motion.div>
 
-      <LeadCountSlider 
-        value={filters.leadCount}
-        onChange={(value) => setFilters({ ...filters, leadCount: value })}
-      />
+      <div className="w-full">
+        <LeadCountSlider 
+          value={filters.leadCount}
+          onChange={(value) => setFilters({ ...filters, leadCount: value })}
+        />
+      </div>
 
       <LeadsList 
         leads={leads} 
