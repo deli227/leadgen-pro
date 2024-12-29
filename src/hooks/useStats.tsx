@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { supabase } from "@/integrations/supabase/client"
 import { toast } from "@/hooks/use-toast"
+import { startOfDay, endOfDay, format } from "date-fns"
 
 interface ChartData {
   date: string
@@ -18,7 +19,12 @@ interface Stats {
   waitlistCount: number
 }
 
-export function useStats() {
+interface DateRange {
+  start: Date
+  end: Date
+}
+
+export function useStats(dateRange?: DateRange) {
   const [stats, setStats] = useState<Stats>({
     totalUsers: 0,
     newUsersToday: 0,
@@ -36,6 +42,9 @@ export function useStats() {
     try {
       console.log("Fetching admin dashboard stats...")
       
+      const start = dateRange ? startOfDay(dateRange.start) : startOfDay(new Date())
+      const end = dateRange ? endOfDay(dateRange.end) : endOfDay(new Date())
+      
       // Récupérer le nombre total d'utilisateurs
       const { data: profilesData, error: profilesError } = await supabase
         .from('profiles')
@@ -43,35 +52,43 @@ export function useStats() {
 
       if (profilesError) throw profilesError
 
-      // Récupérer les nouveaux utilisateurs d'aujourd'hui
-      const today = new Date()
-      today.setHours(0, 0, 0, 0)
+      // Récupérer les nouveaux utilisateurs sur la période
+      const newUsers = profilesData.filter(profile => {
+        const createdAt = new Date(profile.created_at)
+        return createdAt >= start && createdAt <= end
+      })
 
-      const newUsers = profilesData.filter(profile => 
-        new Date(profile.created_at) >= today
-      )
+      // Récupérer les paiements sur la période
+      const { data: paymentsData, error: paymentsError } = await supabase
+        .from('payments')
+        .select('*')
+        .gte('created_at', start.toISOString())
+        .lte('created_at', end.toISOString())
+        .eq('status', 'succeeded')
+
+      if (paymentsError) throw paymentsError
+
+      // Calculer le revenu total sur la période
+      const periodRevenue = paymentsData?.reduce((sum, payment) => sum + Number(payment.amount), 0) || 0
 
       // Récupérer le nombre total de leads
-      const { count: totalLeads } = await supabase
+      const { data: leadsData, error: leadsError } = await supabase
         .from('leads')
-        .select('*', { count: 'exact' })
+        .select('*')
+        .gte('created_at', start.toISOString())
+        .lte('created_at', end.toISOString())
 
-      // Récupérer les utilisateurs actifs (ceux qui ont généré des leads ce mois)
-      const activeUsers = profilesData.filter(profile => 
-        profile.leads_generated_this_month > 0
-      )
+      if (leadsError) throw leadsError
 
-      // Calculer le revenu total (utilisateurs pro)
-      const proUsers = profilesData.filter(profile => 
-        profile.subscription_type === 'pro'
-      )
-      const monthlyRevenue = proUsers.length * 14.99
+      // Récupérer les utilisateurs actifs (ceux qui ont généré des leads sur la période)
+      const activeUsers = new Set(leadsData?.map(lead => lead.user_id))
 
       // Récupérer la liste d'attente
       const { data: waitlistData, error: waitlistError } = await supabase
         .from('waitlist')
         .select('*')
-        .order('created_at', { ascending: false })
+        .gte('created_at', start.toISOString())
+        .lte('created_at', end.toISOString())
 
       if (waitlistError) throw waitlistError
 
@@ -79,10 +96,10 @@ export function useStats() {
       setStats({
         totalUsers: profilesData.length,
         newUsersToday: newUsers.length,
-        totalLeads: totalLeads || 0,
-        activeUsers: activeUsers.length,
-        totalRevenue: monthlyRevenue,
-        totalViews: profilesData.length * 3, // Estimation basée sur les profils
+        totalLeads: leadsData?.length || 0,
+        activeUsers: activeUsers.size,
+        totalRevenue: periodRevenue,
+        totalViews: (leadsData?.length || 0) * 3, // Estimation basée sur les leads
         waitlistCount: waitlistData?.length || 0
       })
 
@@ -158,15 +175,24 @@ export function useStats() {
       )
       .subscribe()
 
-    // Mettre à jour toutes les minutes pour les vues
-    const interval = setInterval(fetchStats, 60000)
+    // Écouter les changements sur la table payments
+    const paymentsChannel = supabase
+      .channel('public:payments')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'payments' },
+        () => {
+          console.log('Payments updated, refreshing stats...')
+          fetchStats()
+        }
+      )
+      .subscribe()
 
     return () => {
-      clearInterval(interval)
       supabase.removeChannel(waitlistChannel)
       supabase.removeChannel(profilesChannel)
+      supabase.removeChannel(paymentsChannel)
     }
-  }, [])
+  }, [dateRange])
 
   return { stats, chartData, isLoading, lastUpdate }
 }

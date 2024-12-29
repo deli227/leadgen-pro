@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { supabase } from "@/integrations/supabase/client"
 import { StatsGrid } from "@/components/admin/StatsGrid"
 import { UsersChart } from "@/components/admin/UsersChart"
@@ -6,10 +6,16 @@ import { useAdminCheck } from "@/hooks/useAdminCheck"
 import { Navigate } from "react-router-dom"
 import { toast } from "sonner"
 import { useStats } from "@/hooks/useStats"
+import { DateRangeSelector } from "@/components/admin/DateRangeSelector"
 
 export function AdminDashboard() {
-  const { data: isAdmin, isLoading: isCheckingAdmin } = useAdminCheck();
-  const { stats, chartData, isLoading, lastUpdate } = useStats();
+  const { data: isAdmin, isLoading: isCheckingAdmin } = useAdminCheck()
+  const [dateRange, setDateRange] = useState<{ start: Date; end: Date }>({
+    start: new Date(),
+    end: new Date()
+  })
+  
+  const { stats, chartData, isLoading, lastUpdate } = useStats(dateRange)
 
   if (isCheckingAdmin) {
     return (
@@ -38,9 +44,18 @@ export function AdminDashboard() {
         <div className="flex flex-col gap-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <h1 className="text-3xl font-bold text-primary-light">Tableau de bord administrateur</h1>
-            <p className="text-sm text-primary-light/70">
-              Dernière mise à jour: {lastUpdate.toLocaleString()}
-            </p>
+            <div className="flex flex-col md:flex-row items-center gap-4">
+              <DateRangeSelector 
+                onRangeChange={setDateRange}
+                onPeriodChange={(period) => {
+                  // La période est déjà gérée dans le composant DateRangeSelector
+                  console.log("Période sélectionnée:", period)
+                }}
+              />
+              <p className="text-sm text-primary-light/70">
+                Dernière mise à jour: {lastUpdate.toLocaleString()}
+              </p>
+            </div>
           </div>
           
           <StatsGrid stats={stats} />
