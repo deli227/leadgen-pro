@@ -6,30 +6,16 @@ import { supabase } from "@/integrations/supabase/client"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { LeadNotes } from "@/components/leads/LeadNotes"
 import { useState } from "react"
-import { TagsManager } from "@/components/leads/tags/TagsManager"
-import { Lead } from "@/types/leads"
+import { TagsManager } from "./tags/TagsManager"
 
 interface LeadCardProps {
-  lead: Lead
-  onAddToAnalytics?: (lead: Lead) => void
-  onAddToExport?: (lead: Lead) => void
-  onDelete?: (lead: Lead) => void
-  onLeadDeleted?: () => Promise<void>
-  showActions?: boolean
-  filterView?: boolean
-  isAnalyticsView?: boolean
+  lead: any
+  onAddToAnalytics: (lead: any) => void
+  onLeadDeleted: () => void
+  showTags?: boolean // Nouveau prop pour contrôler l'affichage des tags
 }
 
-export function LeadCard({
-  lead,
-  onAddToAnalytics,
-  onAddToExport,
-  onDelete,
-  onLeadDeleted,
-  showActions = true,
-  filterView = false,
-  isAnalyticsView = false
-}: LeadCardProps) {
+export function LeadCard({ lead, onAddToAnalytics, onLeadDeleted, showTags = false }: LeadCardProps) {
   const [isNotesOpen, setIsNotesOpen] = useState(false)
 
   const handleDelete = async () => {
@@ -42,9 +28,7 @@ export function LeadCard({
       if (error) throw error
 
       toast.success("Lead supprimé avec succès")
-      if (onLeadDeleted) {
-        await onLeadDeleted()
-      }
+      onLeadDeleted()
     } catch (error) {
       console.error('Erreur lors de la suppression:', error)
       toast.error("Erreur lors de la suppression du lead")
@@ -184,22 +168,20 @@ export function LeadCard({
           </div>
         )}
 
-        {isAnalyticsView && (
+        {showTags && (
           <div className="mt-2">
             <TagsManager leadId={lead.id} />
           </div>
         )}
 
-        {showActions && onAddToAnalytics && (
-          <Button
-            onClick={() => onAddToAnalytics(lead)}
-            variant="outline"
-            size="sm"
-            className="w-full bg-gradient-to-r from-primary to-primary-dark text-white border-none hover:opacity-90 shadow-lg hover:shadow-xl transition-all duration-300 text-sm"
-          >
-            Ajouter aux analytiques
-          </Button>
-        )}
+        <Button
+          onClick={() => onAddToAnalytics(lead)}
+          variant="outline"
+          size="sm"
+          className="w-full bg-gradient-to-r from-primary to-primary-dark text-white border-none hover:opacity-90 shadow-lg hover:shadow-xl transition-all duration-300 text-sm"
+        >
+          Ajouter aux analytiques
+        </Button>
       </div>
     </motion.div>
   )
