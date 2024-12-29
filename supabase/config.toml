@@ -1,17 +1,9 @@
 project_id = "rbsuobpaqwtmiesxwcaw"
 
-[[functions]]
-name = "create-checkout"
-verify_jwt = true
-
-[[functions]]
-name = "generate-leads-with-ai"
-verify_jwt = true
-
-[[functions]]
-name = "send-automated-emails"
-verify_jwt = true
-
-[[functions]]
-name = "stripe-webhook"
-verify_jwt = false
+[functions]
+[functions.analyze-lead]
+[functions.create-checkout]
+[functions.generate-leads-with-ai]
+[functions.search-company]
+[functions.send-automated-emails]
+[functions.stripe-webhook]
