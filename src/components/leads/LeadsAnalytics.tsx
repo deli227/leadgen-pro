@@ -76,8 +76,8 @@ export function LeadsAnalytics({
   }
 
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 p-4 xl:p-6 bg-gradient-to-br from-secondary-dark via-[#1A1F2C] to-black rounded-lg shadow-2xl">
-      <div className="xl:col-span-5 xl:max-h-[calc(100vh-12rem)] xl:overflow-y-auto bg-black/20 p-4 rounded-xl backdrop-blur-sm border border-primary/10">
+    <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 p-6 xl:p-8">
+      <div className="xl:col-span-5 xl:max-h-[calc(100vh-12rem)] xl:overflow-y-auto bg-gradient-to-br from-black/40 to-secondary/20 p-6 rounded-2xl backdrop-blur-sm border border-primary/10 shadow-xl hover:shadow-primary/5 transition-all duration-300">
         <LeadsList 
           leads={filteredLeads}
           onAddToAnalytics={handleAnalyzeLead}
@@ -87,7 +87,7 @@ export function LeadsAnalytics({
         />
       </div>
       
-      <div className="xl:col-span-7 xl:sticky xl:top-24">
+      <div className="xl:col-span-7">
         <AIAnalysisWindow 
           lead={selectedLead} 
           analysis={currentAnalysis} 
