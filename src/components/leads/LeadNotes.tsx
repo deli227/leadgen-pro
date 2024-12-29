@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
@@ -6,6 +6,13 @@ import { Lead } from "@/types/leads"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
 import { useSessionData } from "@/hooks/useSessionData"
+import { ScrollArea } from "@/components/ui/scroll-area"
+
+interface LeadNote {
+  id: string
+  content: string
+  created_at: string
+}
 
 interface LeadNotesProps {
   lead: Lead
@@ -15,30 +22,60 @@ interface LeadNotesProps {
 export function LeadNotes({ lead, onClose }: LeadNotesProps) {
   const [note, setNote] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [notes, setNotes] = useState<LeadNote[]>([])
   const { toast } = useToast()
   const { data: session } = useSessionData()
 
+  useEffect(() => {
+    const fetchNotes = async () => {
+      if (!session?.user?.id) return
+
+      try {
+        const { data, error } = await supabase
+          .from('lead_notes')
+          .select('*')
+          .eq('lead_id', lead.id)
+          .order('created_at', { ascending: false })
+
+        if (error) throw error
+
+        setNotes(data)
+      } catch (error) {
+        console.error("Erreur lors de la récupération des notes:", error)
+        toast({
+          title: "Erreur",
+          description: "Impossible de charger les notes",
+          variant: "destructive"
+        })
+      }
+    }
+
+    fetchNotes()
+  }, [lead.id, session?.user?.id, toast])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!session?.user?.id) return
+    if (!session?.user?.id || !note.trim()) return
 
     setIsLoading(true)
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('lead_notes')
         .insert({
           lead_id: lead.id,
           user_id: session.user.id,
-          content: note
+          content: note.trim()
         })
+        .select()
 
       if (error) throw error
 
+      setNotes(prev => [data[0], ...prev])
+      setNote("")
       toast({
         title: "Note enregistrée",
         description: "La note a été ajoutée avec succès"
       })
-      onClose()
     } catch (error) {
       console.error("Erreur lors de l'enregistrement de la note:", error)
       toast({
@@ -49,6 +86,17 @@ export function LeadNotes({ lead, onClose }: LeadNotesProps) {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    return new Intl.DateTimeFormat('fr-FR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(date)
   }
 
   return (
@@ -64,7 +112,7 @@ export function LeadNotes({ lead, onClose }: LeadNotesProps) {
             value={note}
             onChange={(e) => setNote(e.target.value)}
             placeholder="Écrivez vos notes ici..."
-            className="min-h-[200px] bg-secondary-dark text-primary-light border-primary-light/50 focus:border-primary-light"
+            className="min-h-[100px] bg-secondary-dark text-primary-light border-primary-light/50 focus:border-primary-light"
             disabled={isLoading}
           />
           <div className="flex justify-end gap-4">
@@ -75,17 +123,41 @@ export function LeadNotes({ lead, onClose }: LeadNotesProps) {
               className="border-primary-light text-primary-light hover:bg-primary-light/10"
               disabled={isLoading}
             >
-              Annuler
+              Fermer
             </Button>
             <Button
               type="submit"
               className="bg-primary hover:bg-primary-dark text-white"
-              disabled={isLoading}
+              disabled={isLoading || !note.trim()}
             >
               {isLoading ? "Enregistrement..." : "Sauvegarder"}
             </Button>
           </div>
         </form>
+
+        <div className="mt-8">
+          <h3 className="text-lg font-semibold text-primary-light mb-4">Historique des notes</h3>
+          <ScrollArea className="h-[300px] pr-4">
+            <div className="space-y-4">
+              {notes.map((note) => (
+                <div
+                  key={note.id}
+                  className="p-4 rounded-lg bg-secondary-dark/50 border border-primary-light/20"
+                >
+                  <p className="text-primary-light whitespace-pre-wrap">{note.content}</p>
+                  <p className="text-xs text-primary-light/60 mt-2">
+                    {formatDate(note.created_at)}
+                  </p>
+                </div>
+              ))}
+              {notes.length === 0 && (
+                <p className="text-primary-light/60 text-center py-4">
+                  Aucune note pour le moment
+                </p>
+              )}
+            </div>
+          </ScrollArea>
+        </div>
       </CardContent>
     </Card>
   )
