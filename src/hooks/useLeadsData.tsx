@@ -26,17 +26,25 @@ export function useLeadsData(session: Session | null) {
         async (payload) => {
           console.log('Changement détecté dans les leads:', payload);
 
-          // Invalider et rafraîchir les requêtes
-          await queryClient.invalidateQueries({
-            queryKey: ['leads', session.user.id]
+          // Force le rafraîchissement immédiat des données
+          queryClient.setQueryData(['leads', session.user.id], (oldData: any) => {
+            if (payload.eventType === 'INSERT') {
+              // Ajoute le nouveau lead au début de la liste
+              return [payload.new, ...(oldData || [])];
+            }
+            if (payload.eventType === 'DELETE') {
+              // Filtre le lead supprimé
+              return oldData?.filter((lead: Lead) => lead.id !== payload.old.id) || [];
+            }
+            // Pour les autres événements, force un rafraîchissement complet
+            return queryClient.fetchQuery(['leads', session.user.id]);
           });
 
-          // Invalider aussi les données du profil pour mettre à jour les compteurs
+          // Rafraîchit également les données du profil
           await queryClient.invalidateQueries({
             queryKey: ['profile', session.user.id]
           });
 
-          // Notification à l'utilisateur
           if (payload.eventType === 'INSERT') {
             toast.success('Nouveau lead généré');
           }
@@ -52,7 +60,7 @@ export function useLeadsData(session: Session | null) {
     };
   }, [session?.user?.id, queryClient]);
 
-  const { data: supabaseLeads = [], error, isLoading } = useQuery({
+  const { data: leads = [], error, isLoading } = useQuery({
     queryKey: ['leads', session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) {
@@ -81,26 +89,6 @@ export function useLeadsData(session: Session | null) {
     refetchOnMount: true,
     staleTime: 0
   });
-
-  const leads: Lead[] = supabaseLeads.map(lead => ({
-    id: lead.id,
-    company: lead.company,
-    email: lead.email || "",
-    phone: lead.phone || "",
-    address: lead.address || undefined,
-    qualification: lead.qualification || 0,
-    socialMedia: {
-      linkedin: (lead.social_media as Record<string, string>)?.linkedin || "",
-      twitter: (lead.social_media as Record<string, string>)?.twitter || "",
-      facebook: (lead.social_media as Record<string, string>)?.facebook || "",
-      instagram: (lead.social_media as Record<string, string>)?.instagram || ""
-    },
-    score: lead.score || 0,
-    industry: lead.industry || "",
-    strengths: lead.strengths || [],
-    weaknesses: lead.weaknesses || [],
-    website: lead.website || ""
-  }));
 
   return { leads, isLoading, error };
 }
