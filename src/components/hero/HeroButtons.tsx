@@ -23,11 +23,11 @@ export const HeroButtons = () => {
   };
 
   return (
-    <div className="flex flex-col sm:flex-row gap-4 justify-center w-full max-w-xl mx-auto px-4 mt-24">
+    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center w-full max-w-xl mx-auto px-3 sm:px-4 mt-12 sm:mt-24">
       <Button
         size="lg"
         onClick={handleAuthRedirect}
-        className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+        className="w-full sm:w-auto text-sm sm:text-lg px-4 sm:px-8 py-4 sm:py-6 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white shadow-lg hover:shadow-xl transition-all duration-300"
         aria-label="Commencer l'essai gratuit"
       >
         Commencer gratuitement
@@ -37,7 +37,7 @@ export const HeroButtons = () => {
       <Button
         size="lg"
         onClick={handleAuthRedirect}
-        className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-primary hover:bg-primary-dark text-white shadow-lg hover:shadow-xl transition-all duration-300"
+        className="w-full sm:w-auto text-sm sm:text-lg px-4 sm:px-8 py-4 sm:py-6 bg-primary hover:bg-primary-dark text-white shadow-lg hover:shadow-xl transition-all duration-300"
         aria-label="Accéder au tableau de bord"
       >
         <LayoutDashboard className="mr-2 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />

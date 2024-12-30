@@ -44,7 +44,7 @@ export const HeroSection = () => {
         ))}
       </div>
 
-      <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 -mt-[2rem] pb-24">
+      <section className="relative min-h-[100svh] flex items-center justify-center px-4 sm:px-6 pb-12 sm:pb-24">
         {/* Background image with overlay - now with increased brightness */}
         <div 
           className="absolute inset-0 z-0"
@@ -52,18 +52,18 @@ export const HeroSection = () => {
             backgroundImage: "url('/lovable-uploads/78755e93-23d8-47a2-815a-90bfd6291210.png')",
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            filter: 'brightness(0.25)', // Augmenté de 0.15 à 0.25 pour éclaircir l'image
+            filter: 'brightness(0.25)',
           }}
         />
 
         {/* Content */}
-        <div className="w-full max-w-6xl relative z-10 pt-16 sm:pt-24">
-          <div className="grid grid-cols-1 gap-12 items-center">
+        <div className="w-full max-w-6xl relative z-10 pt-8 sm:pt-16 md:pt-24">
+          <div className="grid grid-cols-1 gap-8 sm:gap-12 items-center">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
-              className="flex flex-col items-center justify-center space-y-12 text-center"
+              className="flex flex-col items-center justify-center space-y-8 sm:space-y-12 text-center"
             >
               <HeroTitle />
               <HeroFeatures />
