@@ -1,5 +1,4 @@
 import { Slider } from "@/components/ui/slider"
-import { useTranslation } from "react-i18next"
 
 interface LeadCountSliderProps {
   value: number
@@ -7,17 +6,11 @@ interface LeadCountSliderProps {
 }
 
 export function LeadCountSlider({ value, onChange }: LeadCountSliderProps) {
-  const { t } = useTranslation()
-
   return (
     <div className="space-y-2">
       <div className="flex justify-between items-center">
-        <label className="text-xs sm:text-sm text-primary-light">
-          {t('filters.leadsToDisplay')}
-        </label>
-        <span className="text-xs sm:text-sm font-medium text-primary-light">
-          {value}
-        </span>
+        <label className="text-sm text-primary-light">Nombre de leads à afficher</label>
+        <span className="text-sm font-medium text-primary-light">{value}</span>
       </div>
       <Slider
         defaultValue={[value]}

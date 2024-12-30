@@ -34,30 +34,30 @@ export function DashboardTabs({
   const isMobile = useIsMobile()
 
   return (
-    <Tabs defaultValue="leads" className="w-full">
-      <TabsList className="grid w-full grid-cols-2 bg-black/40 border border-primary/20 rounded-xl overflow-hidden h-auto mb-2 sm:mb-4">
+    <Tabs defaultValue="leads" className="space-y-2 sm:space-y-4">
+      <TabsList className="grid w-full grid-cols-2 bg-black/40 border border-primary/20 rounded-xl overflow-hidden h-auto">
         <TabsTrigger 
           value="leads" 
-          className="text-primary-light data-[state=active]:bg-primary/20 text-xs sm:text-base py-1.5 sm:py-3 px-2 sm:px-4"
+          className="text-primary-light data-[state=active]:bg-primary/20 text-xs sm:text-base py-2 sm:py-3"
         >
           <Database className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
           {t('common.leads')}
         </TabsTrigger>
         <TabsTrigger 
           value="automation" 
-          className="text-primary-light data-[state=active]:bg-primary/20 relative text-xs sm:text-base py-1.5 sm:py-3 px-2 sm:px-4"
+          className="text-primary-light data-[state=active]:bg-primary/20 relative text-xs sm:text-base py-2 sm:py-3"
         >
           <Mail className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
           <div className="flex flex-col sm:flex-row items-center gap-0.5 sm:gap-2">
             <span>{t('common.automation')}</span>
-            <span className="text-[8px] sm:text-xs text-primary-light/80 absolute -bottom-2 sm:static whitespace-nowrap">
+            <span className="text-[8px] sm:text-xs text-primary-light/80 absolute -bottom-3 sm:static whitespace-nowrap">
               ({t('common.comingSoon')})
             </span>
           </div>
         </TabsTrigger>
       </TabsList>
 
-      <TabsContent value="leads" className="mt-0 sm:mt-2">
+      <TabsContent value="leads">
         <LeadsTab 
           filters={filters}
           setFilters={setFilters}
@@ -71,7 +71,7 @@ export function DashboardTabs({
         />
       </TabsContent>
 
-      <TabsContent value="automation" className="mt-0 sm:mt-2">
+      <TabsContent value="automation">
         <AutomationTab />
       </TabsContent>
     </Tabs>
