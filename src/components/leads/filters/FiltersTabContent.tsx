@@ -178,12 +178,12 @@ export function FiltersTabContent({
   }
 
   return (
-    <div className="space-y-6 bg-gradient-to-br from-black/80 to-secondary-dark/80 p-8 rounded-b-xl border border-primary/10 shadow-xl">
+    <div className="space-y-4 sm:space-y-6 bg-gradient-to-br from-black/80 to-secondary-dark/80 p-3 sm:p-8 rounded-b-xl border border-primary/10 shadow-xl">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="space-y-4"
+        className="space-y-3 sm:space-y-4"
       >
         <BaseFilters filters={filters} setFilters={setFilters} />
         <FilterActions isGenerating={isGenerating} onGenerate={handleGenerateLeads} />
@@ -203,19 +203,26 @@ export function FiltersTabContent({
       />
 
       <AlertDialog open={showLimitDialog} onOpenChange={setShowLimitDialog}>
-        <AlertDialogContent>
+        <AlertDialogContent className="bg-secondary-dark border border-primary/20">
           <AlertDialogHeader>
-            <AlertDialogTitle>Limite de leads dépassée</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="text-primary-light">Limite de leads dépassée</AlertDialogTitle>
+            <AlertDialogDescription className="text-primary-light/80">
               Votre abonnement actuel vous permet de générer uniquement {userLimit} leads.
               Veuillez ajuster le nombre de leads ou passer à un plan supérieur pour en générer davantage.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setShowLimitDialog(false)}>Annuler</AlertDialogCancel>
+            <AlertDialogCancel 
+              onClick={() => setShowLimitDialog(false)}
+              className="bg-black/40 text-primary-light hover:bg-black/60"
+            >
+              Annuler
+            </AlertDialogCancel>
             <AlertDialogAction onClick={() => {
               window.location.href = "/#pricing-section"
-            }}>
+            }}
+            className="bg-primary hover:bg-primary-dark text-white"
+            >
               Passer au premium
             </AlertDialogAction>
           </AlertDialogFooter>
