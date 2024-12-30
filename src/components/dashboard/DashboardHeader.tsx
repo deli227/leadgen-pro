@@ -38,11 +38,11 @@ export function DashboardHeader({ exportLeads }: DashboardHeaderProps) {
   }
 
   return (
-    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 md:mb-8 w-full">
-      <div className="space-y-2 w-full sm:w-auto">
-        <h1 className="text-xl sm:text-2xl md:text-4xl font-bold bg-gradient-to-r from-primary-light via-primary to-accent bg-clip-text text-transparent flex items-center gap-2">
+    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-4 mb-2 sm:mb-4 md:mb-8 w-full">
+      <div className="space-y-1 sm:space-y-2 w-full sm:w-auto">
+        <h1 className="text-lg sm:text-2xl md:text-4xl font-bold bg-gradient-to-r from-primary-light via-primary to-accent bg-clip-text text-transparent flex items-center gap-2">
           Tableau de bord
-          <span className="text-xs sm:text-sm md:text-base font-normal text-primary-light/80 bg-primary-dark/10 px-2 py-1 rounded-md">
+          <span className="text-[10px] sm:text-sm md:text-base font-normal text-primary-light/80 bg-primary-dark/10 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md">
             Beta
           </span>
         </h1>
@@ -50,17 +50,17 @@ export function DashboardHeader({ exportLeads }: DashboardHeaderProps) {
           Gérez et analysez vos leads en temps réel
         </p>
       </div>
-      <div className="flex gap-2 md:gap-4 items-center w-full sm:w-auto justify-end">
+      <div className="flex gap-1.5 sm:gap-4 items-center w-full sm:w-auto justify-end flex-wrap">
         <Link 
           to="/documentation"
-          className="inline-flex items-center gap-2 px-3 py-2 text-xs sm:text-sm text-primary-light hover:text-white transition-colors"
+          className="inline-flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-sm text-primary-light hover:text-white transition-colors"
         >
           <Book className="h-3 w-3 sm:h-4 sm:w-4" />
           <span>Documentation</span>
         </Link>
         <Link 
           to="/profile"
-          className="inline-flex items-center gap-2 px-3 py-2 text-xs sm:text-sm text-primary-light hover:text-white transition-colors"
+          className="inline-flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-sm text-primary-light hover:text-white transition-colors"
         >
           <User className="h-3 w-3 sm:h-4 sm:w-4" />
           <span>Profil</span>
@@ -70,7 +70,7 @@ export function DashboardHeader({ exportLeads }: DashboardHeaderProps) {
           onClick={handleLogout}
           variant="outline"
           size="sm"
-          className="bg-gradient-to-r from-primary/20 to-primary-dark/20 text-primary-light border-primary-light/20 hover:bg-primary/30 hover:text-white transition-all duration-300 text-xs sm:text-sm"
+          className="bg-gradient-to-r from-primary/20 to-primary-dark/20 text-primary-light border-primary-light/20 hover:bg-primary/30 hover:text-white transition-all duration-300 text-[10px] sm:text-sm px-2 sm:px-3 py-1.5 sm:py-2 h-auto"
         >
           <LogOut className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
           <span className="hidden sm:inline">Déconnexion</span>
