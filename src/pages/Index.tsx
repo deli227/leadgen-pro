@@ -10,6 +10,7 @@ import { ExplanationSection } from "@/components/ExplanationSection";
 import { ValuePropositionSection } from "@/components/ValuePropositionSection";
 import { NeonCursor } from "@/components/NeonCursor";
 import { HiringSection } from "@/components/HiringSection";
+import { VideoSection } from "@/components/VideoSection";
 
 export default function Index() {
   return (
@@ -17,6 +18,7 @@ export default function Index() {
       <NeonCursor />
       <main>
         <HeroSection />
+        <VideoSection />
         <SocialMediaSection />
         <ExplanationSection />
         <LeadExplanationSection />
