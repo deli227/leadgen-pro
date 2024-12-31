@@ -13,7 +13,7 @@ export const HeroTitle = () => {
         <RobotMascot className="mt-1" />
       </div>
       <h2 
-        className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary via-accent to-primary animate-gradient mb-12 leading-[1.15] pb-1" 
+        className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary via-accent to-primary animate-gradient mb-12 leading-[1.2] pb-2" 
         id="main-heading"
       >
         {t('hero.title')}
