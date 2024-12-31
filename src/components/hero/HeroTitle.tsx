@@ -12,7 +12,10 @@ export const HeroTitle = () => {
         </h1>
         <RobotMascot className="mt-1" />
       </div>
-      <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary via-accent to-primary animate-gradient mb-12" id="main-heading">
+      <h2 
+        className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary via-accent to-primary animate-gradient mb-12 leading-tight" 
+        id="main-heading"
+      >
         {t('hero.title')}
       </h2>
       <p className="mt-8 text-base sm:text-lg md:text-xl leading-8 text-gray-300">
